@@ -87,7 +87,7 @@ def Usage():
  *     -M, --MD        [traj]   : calculate frequency shift distribution from Molecular Dynamics simulation  *
  *                              : providing the trajectory [traj] / default are 'amber' files /              *
  *                              : charges file as the args[0]                                                *
- *     -S, --struct             : evaluate solute structural distortions in the first order due              *
+ *     -Q, --struct             : evaluate solute structural distortions in the first order due              *
  *                              : to solvation                                                               *
  *     -E, --eds                : evaluate frequency shifts from direct differentiation of interaction       *
  *                              : energies (default is EDS - Hybrid Variational-Perturbational Interaction)  *
@@ -101,7 +101,7 @@ def Usage():
  *                              : the calculations are performed for 30 epsilon values from                  *
  *                              : 1.1 to 100                                                                 *
  *     -p, --pol                : include molecular polarizability                                           *
- *     -D, --max-iter  [int]    : apply flexible model (if specified) using maximum number of                *
+ *     -j, --max-iter  [int]    : apply flexible model (if specified) using maximum number of                *
  *                              : iterations                                                                 *
  *     -l, --threshold [float]  : set convergence threshold for solvation energy (relevant if                *
  *                              : -l option specified)                                                       *
@@ -109,7 +109,7 @@ def Usage():
  *  [7] INPUT/OUTPUT FILE HANDLING                                                                           *
  *  -------------------------------------------------------------------------------------------------------  *
  *     -R, --read      [file]   : read the parameters from file (coulomb format)                             *
- *     -Q, --save               : save the parameters                                                        *
+ *     -S, --save               : save the parameters                                                        *
  *     -N, --name      [name]   : provide the name of output file                                            *
  *     -w, --cube      [file]   : write a solvatochromic potential/ energy density in a file                 *
  *     -V, --make-sol  [X] [Y]  : create solute_typ and solvent_typ files. Usage:                            *
@@ -221,7 +221,7 @@ def Main(argv):
     solute_atno    = ['C','N','C','C','O','H','H','H','H','H','H','H'] # NMA
     solvent_atno   = ['O','H','H']                                     # H2O
     structural_change = False                                          #
-    target_dir     = '../target'                                       #
+    target_dir     = os.environ.get('TARGET_DIR')                      #
     
     ### Cho-Onsager
     onsager        = False                                             #
@@ -237,14 +237,14 @@ def Main(argv):
     md_package     = 'amber'                                           #
     md_charges     = ''                                                #
     md_trajectory  = ''                                                #
-
+    
 
     ## --------------------------- ##
     ##        O P T I O N S        ##
     ## --------------------------- ##
     
     try:
-        opts, args = getopt.getopt(argv, "hi:a:s:cF:n:gx:fM:ot:m:T:OC:ydu:b:pW:A:B:kSD:l:e:D:w:PN:QR:GEV:" ,
+        opts, args = getopt.getopt(argv, "hi:a:s:cF:n:gx:fM:ot:m:T:OC:ydu:b:pW:A:B:kQj:l:e:D:w:PN:SR:GEV:" ,
                                         ["help"      ,
                                          "inputs="   ,
                                          "anh="      ,
@@ -315,7 +315,7 @@ def Main(argv):
            threshold = float64(arg)
         if opt in ("-e", "--epsilon"):
            epsilon = float64(arg)
-        if opt in ("-D", "--max-iter"):
+        if opt in ("-j", "--max-iter"):
            max_iter = int(arg)
            iterate = True
         if opt in ("-s", "--step"):
@@ -363,13 +363,13 @@ def Main(argv):
         if opt in ("-u", "--make-ua"):
            make_ua = True
            ua_list = ParseUnitedAtoms(arg)
-        if opt in ("-S", "--struct"):
+        if opt in ("-Q", "--struct"):
            structural_change = False
         if opt in ("-P", "--print-derivatives" ):
            print_derivatives   = True
         if opt in ("-N", "--name" ):
            out_name   = arg
-        if opt in ("-Q", "--save" ):
+        if opt in ("-S", "--save" ):
            make_coulomb   = True
         if opt in ("-R", "--read" ):
            read_file   = arg
@@ -469,7 +469,7 @@ def Main(argv):
                         eds=eds)
 
               fdip=0;sdip=0;dipole=0
-          
+
               ### print the derivatives of distributed multipole moments
               if print_derivatives: print CALC
           
@@ -512,8 +512,8 @@ def Main(argv):
                     cube.tofile('slv.cube')
                     
                  ### print the all parameters and Stark tunning rates
-                 #print PARAM[3]
-                 print read_file
+                 print PARAM
+                 #print read_file
                  ### check
                  if check:
                     atoms = PARAM.atoms
@@ -654,8 +654,10 @@ def Main(argv):
           ##          * DISTRIBUTED SOLVATOCHROMIC MULTIPOLES      ##
           ## ----------------------------------------------------- ##
           if Gaussian:
+            out = open('shifts.dat','w') 
+            for typ in open('types.txt').read().split('\n')[:-1]:
              solute  = ParseDMA( target_dir+'/solute_%s'%typ,file_type)[0]
-             solvent = ParseDMA( target_dir+'/solvent_%s'%typ,file_type)[0]     
+             solvent = ParseDMA( target_dir+'/solvent_%s'%typ,file_type)[0]
              try:
                 fderiv = CALC.Fder
              except UnboundLocalError:
@@ -681,10 +683,12 @@ def Main(argv):
                              redmass=ANH.redmass,
                              freq=ANH.freq,
                              ref_structure=parameters.pos)
-                             
-                print Emtp.log
+
+                print  >> out, "%10s"%typ,
+                print  >> out,"%13.2f "*5%tuple( f.shift[0] )
+                #print Emtp.log
                 
-             if SolCAMM: 
+             if SolCAMM:
                 f = SLV(pkg="gaussian",
                              nsatoms=solvent_atno,
                              nstatoms=solute_atno,
@@ -705,12 +709,14 @@ def Main(argv):
                              ref_structure=parameters.pos,
                              solpol=SolPOL)
 
-                print Emtp.log
+                print  >> out, "%10s"%typ,
+                print  >> out,"%13.2f "*5%tuple( f.shift[0] )
+                #print Emtp.log
                 #rrr= f.get_StructuralChange(CALC.Fder,f.SOLVENT,f.solute_structure,ANH.L,PARAM.fragments)\
                 #* UNITS.BohrToAngstrom
-                print
+                #print
                 #print f.solute_structure*UNITS.BohrToAngstrom
-                print 
+                #print 
                 #print PARAM.fragments * UNITS.BohrToAngstrom
 
 
@@ -730,16 +736,18 @@ def Main(argv):
                                bsm_file=bsm_file,
                                ref_structure=parameters.pos)
                         
-                print Emtp.log
-                print "\n SOLUTE SOLVATOCHROMIC MULTIPOLES [A.U.]\n" 
-                print f.SOLUTE
+                #print Emtp.log
+                #print "\n SOLUTE SOLVATOCHROMIC MULTIPOLES [A.U.]\n" 
+                #print f.SOLUTE
+                print  >> out, "%10s"%typ,
+                print  >> out,"%13.2f "*5%tuple( f.shift[0] )
                 
              if (SolCHELPG and mixed):
                 print "   MIXED  "
                 f = SLV(pkg="gaussian",
                                nsatoms=solvent_atno,
                                nstatoms=solute_atno,
-                               L=ANH.L_,
+                               L=ANH.L,
                                mode_id=mode_id,
                                solute=parameters,
                                solute_structure=solute.pos,

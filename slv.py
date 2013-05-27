@@ -85,7 +85,9 @@ class SLV(UNITS):
         self.ref_structure = array(ref_structure)
         # solvatochromic polarizability
         self.solpol = solpol
-        
+        # add non-atomic sites if necessary
+        self.addSites()
+             
         ### construct SOLVENT environment
         self._Solvent()
         ### construct SOLUTE environment
@@ -104,6 +106,26 @@ class SLV(UNITS):
 
     # public methods
 
+    def addSites(self):
+        """add non-atomic sites if requested by the input"""
+        if len(self.solute_structure) != len(self.ref_structure):
+           N_atoms = len(self.solute_structure)
+           # parameters DMA 
+           X = self.solute.pos[:5]
+           # target orientation
+           Y = self.solute_structure[:5]
+           #rot, rms = RotationMatrix(initial=X,final=Y)
+           sup = SVDSuperimposer()
+           sup.set(Y,X)
+           sup.run()
+           rms = sup.get_rms()
+           rot, transl = sup.get_rotran()
+           transformed = dot(self.ref_structure,rot) + transl
+           self.solute_structure = concatenate((self.solute_structure,
+                                             transformed[N_atoms:]),axis=0)
+           #print self.solute_structure * self.BohrToAngstrom
+        return
+       
     def FrequencyShift(self,solute=0,solvent=0,solute_structure=0,solpol=0):
         """calculate frequency shift!!!"""
         
@@ -350,9 +372,9 @@ class SLV(UNITS):
         ### from SVD analysis withdraw rotation matrix
         #sup = SVDSuperimposer()
         # parameters DMA
-        X = self.solute.pos[:5]
+        X = self.solute.pos[:4]
         # target orientation
-        Y = self.solute_structure[:5]
+        Y = self.solute_structure[:4]
         #sup.set(Y,X)
         #sup.run()
         #rot, transl = sup.get_rotran()
@@ -405,7 +427,7 @@ class SLV(UNITS):
            self.r_origin_target = r_origin_target
            self.rot = rot
 
-        ### make solute DMA object                      
+        ### make solute DMA object
         #if (not self.overall_MM and not self.camm and not self.chelpg):
         if (self.chelpg and self.mixed):
            SOLUTE = DMA(nfrag=1)
@@ -453,7 +475,7 @@ class SLV(UNITS):
            self.solute_structure = array([r_origin_target])
            
         elif self.overall_MM:
-           SOLUTE = self.overall_MM
+           SOLUTE = self.overall_MM.copy()
            SOLUTE.MAKE_FULL()
            SOLUTE.ChangeOrigin( array([r_origin]) )
            #r_origin = dot(r_origin,rot)

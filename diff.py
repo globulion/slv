@@ -18,7 +18,7 @@ class DIFF(UNITS,FREQ):
        
     def __init__(self,freq=0,step=0,
                  dir="",cartesian=False,L=0,
-                 camm=False,pol=False,eds=True):
+                 camm=False,pol=False,eds=False):
 
         self.camm = camm
         # number of normal modes
@@ -57,8 +57,8 @@ class DIFF(UNITS,FREQ):
         self.polarizability_set_1 = self.Parse_Polarizability(dir)
         self.polarizability_set_2 = self.Parse_Polarizability(self.sderiv_wrk)
         #if pol:
-        self.fpol = self.get_pol_fder()
-        self.spol = self.get_pol_sder()
+        self.fpol = 0#self.get_pol_fder()
+        self.spol = 0#self.get_pol_sder()
         if eds:
            self.EDS_set_1 = self.Parse_EDS(dir+"w1c_nl/")
            self.EDS_set_2 = self.Parse_EDS(dir+"w1c_nl/sder/20/")
@@ -441,7 +441,7 @@ class DIFF(UNITS,FREQ):
 
         # transform to normal mode space  
         Fder_DMA = DMAMadrixMultiply(transpose(self.L),Fder)
-        Sder_DMA = [ DMA(nfrag=self.nAtoms) for x in range(self.nModes) ]  
+        Sder_DMA = [ DMA(nfrag=self.nfrags) for x in range(self.nModes) ]  
         #FDip = dot( transpose(self.L) ,array( FDip ) )
         Fder_MMM = DMAMadrixMultiply(transpose(self.L),Fmmm)
         Sder_MMM = zeros((self.nModes,3))

@@ -81,10 +81,10 @@ class INPUTS_FACTORY(FF,object):
              self.templ = INPUT_TEMPLATE(self.templ)
           except IOError:
              print "\n              There is NO template file!\n I am creating it on the actual directory. Please check it!\n"
-             print   "                 < %s.templ >\n\n" % self.package      
+             print   "                 < %s.templ >\n\n" % self.package
              open('%s.templ' % self.package ,'w').write(self.templ)
              exit()
-          except AttributeError: 
+          except AttributeError:
              pass
 
       def WriteInputs(self):
@@ -114,7 +114,7 @@ class INPUTS_FACTORY(FF,object):
                                        solute_structure[atom]
                  #mass_sum+= UNITS.mass[ UNITS.atomic_numbers [atoms[atom]]  ]
                  mass_sum+= Atom([atoms[atom]]).mass
-             translation_vector/=mass_sum 
+             translation_vector/=mass_sum
           elif self.translation.lower() == 'coe':
              ### calculate coe in Angstrom
              l_sum = 0
@@ -122,10 +122,10 @@ class INPUTS_FACTORY(FF,object):
              for atom in range(len(atoms)):
                  translation_vector+= vec[atom]**2 * solute_structure[atom]
                  l_sum+= sum(vec[atom]**2)
-             translation_vector/=l_sum 
+             translation_vector/=l_sum
              
           return -translation_vector
-        
+ 
  
 class GAUSSIAN_INPUTS(INPUTS_FACTORY):
    """gaussian input file maker for FF calculations"""
@@ -171,11 +171,37 @@ Finite Field computations
                                 % self.frag_file
           exit(1)
           
+       # FRAGMENT FILE (COORDS IN AU!!!!!)
+       data_frag=[]
+       for i in range(len(frag)): data_frag.append(frag[i].split())
+       inp_frag = array(data_frag[:])
+       f_inp_frag = inp_frag[:,1:]
+       f_inp_frag = array([ map( float, x ) for x in f_inp_frag ])
+       
+       ### translate the structure (if wanted)
+       #f_inp_frag += self.Translate()
+       
+       FFFF  = f_inp_frag.copy()
+       f_inp_frag*= UNITS.AngstromToBohr
+       #f_inp_frag+= (self.displacements[i] )
+       s_inp_frag = array([ map( str  , x ) for x in f_inp_frag ])
+       inp_frag = inp_frag.tolist()
+       kupa = inp_frag[:]
+       for j in range(nFrags):
+           inp_frag[j] = "POINT %16.10f %16.10f %16.10f %9s\n"\
+              % ( f_inp_frag[j][0], f_inp_frag[j][1], f_inp_frag[j][2], 
+                   data_frag[j][0] )
+       FRAG=''.join(inp_frag)
+       FRAG= FRAG[:-1] # without blank line!
+       # WRITE REFERENCE FRAGMENT FILE FOR SLV PACKAGE ROUTINES
+       slv_frag_file = open('slv.frags','w')
+       slv_frag_file.write(FRAG)
+          
        # ------
        # write input files
        data=[]
        for i in range(len(xyz)): data.append(xyz[i].split())
-       ### atom's list 
+       ### atom's list
        self.atoms = array(data)
        
        data_frag=[]
@@ -206,10 +232,29 @@ Finite Field computations
            inp_frag = array(data_frag[:])
            f_inp_frag = inp_frag[:,1:]
            f_inp_frag = array([ map( float, x ) for x in f_inp_frag ])
-           
+
+           #KKKK  = f_inp.copy()###################
+           #KKKK*= UNITS.AngstromToBohr################
+           #for j in range(self.nAtoms):#################
+           #    dupa[j] = "POINT %16.10f %16.10f %16.10f %9s\n"\
+           #       % ( KKKK[j][0], KKKK[j][1], KKKK[j][2], 
+           #            data[j][0] )################
+           #KKKKKKKK=''.join(dupa)################
+           #KKKKKKKK= KKKKKKKK[:-1] # without blank line!############
+           # WRITE REFERENCE FRAGMENT FILE FOR SLV PACKAGE ROUTINES##############
+           #slv_str_file = open('slv.str','w')#############
+           #slv_str_file.write(KKKKKKKK)################           
            ### translate the structure (if wanted)
-           f_inp += self.Translate()
-           
+           #f_inp += self.Translate()
+
+           #################################zdbgiSGfeosahgeasgaweg
+           s_inp_frag = array([ map( str  , x ) for x in f_inp_frag ])
+           for j in range(nFrags):
+               kupa[j] = "%-3s %16.10f %16.10f %16.10f\n"\
+                  % ( data_frag[j][0] , FFFF[j][0], FFFF[j][1], FFFF[j][2], )
+           BULA=''.join(kupa)
+           BULA= BULA[:-1] # without blank line!  
+                  
            f_inp_frag*= UNITS.AngstromToBohr
            #f_inp_frag+= (self.displacements[i] )
            s_inp_frag = array([ map( str  , x ) for x in f_inp_frag ])
@@ -226,13 +271,13 @@ Finite Field computations
               slv_frag_file.write(FRAG)
 
            inpfile = self.xyz_file[:-4] +"_A%02.d" % (atom_id) + "_D%02.d" % (displ_id) + "_.inp"
-           chkfile = self.xyz_file[:-4] +"_A%02.d" % (atom_id) + "_D%02.d" % (displ_id) + "_.chk"    
+           chkfile = self.xyz_file[:-4] +"_A%02.d" % (atom_id) + "_D%02.d" % (displ_id) + "_.chk"
 
            try:
-              finput = self.templ.substitute(DATA=XYZ, CHK=chkfile)
+              finput = self.templ.substitute(DATA=XYZ[:-1], CHK=chkfile, FRAG=BULA)
            except:
-              finput = self.templ.substitute(DATA=XYZ)
-           open(inpfile,'w').write(finput)
+              finput = self.templ.substitute(DATA=XYZ[:-1], CHK=chkfile)
+           open(inpfile,'w').write(finput+'\n')
              
 
        print "\n   The %d input files have been saved in the actual directory!\n"\
@@ -259,6 +304,42 @@ Finite Field computations
                                 % self.frag_file
           exit(1)
           
+       # FRAGMENT FILE (COORDS IN AU!!!!!)
+       data_frag=[]
+       for i in range(len(frag)): data_frag.append(frag[i].split())
+       inp_frag = array(data_frag[:])
+       f_inp_frag = inp_frag[:,1:]
+       f_inp_frag = array([ map( float, x ) for x in f_inp_frag ])
+       
+       ### translate the structure (if wanted)
+       #f_inp_frag += self.Translate()
+       
+       FFFF  = f_inp_frag.copy()
+       f_inp_frag*= UNITS.AngstromToBohr
+       #f_inp_frag+= (self.displacements[i] )
+       s_inp_frag = array([ map( str  , x ) for x in f_inp_frag ])
+       inp_frag = inp_frag.tolist()
+       kupa = inp_frag[:]
+       for j in range(nFrags):
+           inp_frag[j] = "POINT %16.10f %16.10f %16.10f %9s\n"\
+              % ( f_inp_frag[j][0], f_inp_frag[j][1], f_inp_frag[j][2], 
+                   data_frag[j][0] )
+       FRAG=''.join(inp_frag)
+       FRAG= FRAG[:-1] # without blank line!
+       # WRITE REFERENCE FRAGMENT FILE FOR SLV PACKAGE ROUTINES
+       slv_frag_file = open('slv.frags','w')
+       slv_frag_file.write(FRAG)
+       
+       
+       #################################zdbgiSGfeosahgeasgaweg
+       s_inp_frag = array([ map( str  , x ) for x in f_inp_frag ])
+       for j in range(nFrags):
+           kupa[j] = "%-3s %16.10f %16.10f %16.10f\n"\
+              % ( data_frag[j][0] , FFFF[j][0], FFFF[j][1], FFFF[j][2], )
+       BULA=''.join(kupa)
+       BULA= BULA[:-1] # without blank line!  
+       
+       
        # ------
        # write input files
        data=[]
@@ -266,16 +347,29 @@ Finite Field computations
 
        # zero displacement file
        inp = array(data[:])
-       
+       dupa = inp[:]
+       dupa = dupa.tolist()       
        ### atom's list 
        self.atoms = inp
-       print inp
+       #print inp
        
        f_inp = inp[:,1:]
        f_inp = array([ map( float, x ) for x in f_inp ])
        
+       KKKK  = f_inp.copy()###################
+       KKKK*= UNITS.AngstromToBohr################
+       for j in range(self.nAtoms):#################
+           dupa[j] = "POINT %16.10f %16.10f %16.10f %9s\n"\
+              % ( KKKK[j][0], KKKK[j][1], KKKK[j][2], 
+                   data[j][0] )################
+       KKKKKKKK=''.join(dupa)################
+       KKKKKKKK= KKKKKKKK[:-1] # without blank line!############
+       # WRITE REFERENCE FRAGMENT FILE FOR SLV PACKAGE ROUTINES##############
+       slv_str_file = open('slv.str','w')#############
+       slv_str_file.write(KKKKKKKK)################
+       
        ### translate the structure (if wanted)
-       f_inp += self.Translate()
+       #f_inp += self.Translate()
        
        s_inp = array([ map( str  , x ) for x in f_inp ])
        inp = inp.tolist()
@@ -284,39 +378,16 @@ Finite Field computations
               % (data[j][0],
                 f_inp[j][0], f_inp[j][1], f_inp[j][2] )
        XYZ=''.join(inp)
+       XYZ=XYZ[:-1]
        inpfile = self.xyz_file[:-4] + "_A%03.d"% (0) +"_D%02.d" % (0) + "_.inp"
        chkfile = self.xyz_file[:-4] + "_A%03.d"% (0) +"_D%02.d" % (0) + "_.chk"
        try:
            finput = self.templ.substitute(DATA=XYZ, CHK=chkfile)
        except:
-           finput = self.templ.substitute(DATA=XYZ)
-       open(inpfile,'w').write(finput)      
-        
-       # FRAGMENT FILE (COORDS IN AU!!!!!)
-       data_frag=[]
-       for i in range(len(frag)): data_frag.append(frag[i].split())       
-       inp_frag = array(data_frag[:])
-       f_inp_frag = inp_frag[:,1:]
-       f_inp_frag = array([ map( float, x ) for x in f_inp_frag ])
-       
-       ### translate the structure (if wanted)
-       f_inp_frag += self.Translate()
-       
-       f_inp_frag*= UNITS.AngstromToBohr
-       #f_inp_frag+= (self.displacements[i] )
-       s_inp_frag = array([ map( str  , x ) for x in f_inp_frag ])
-       inp_frag = inp_frag.tolist()
-       for j in range(nFrags):
-           inp_frag[j] = "POINT %16.10f %16.10f %16.10f %9s\n"\
-              % ( f_inp_frag[j][0], f_inp_frag[j][1], f_inp_frag[j][2], 
-                   data_frag[j][0] )
-       FRAG=''.join(inp_frag)
-       FRAG= FRAG[:-1] # without blank line!
-       # WRITE REFERENCE FRAGMENT FILE FOR SLV PCKAGE ROUTINES
-       slv_frag_file = open('slv.frags','w')
-       slv_frag_file.write(FRAG)
+           finput = self.templ.substitute(DATA=XYZ, CHK=chkfile, FRAG=BULA)
+       open(inpfile,'w').write(finput+"\n")
 
-       # DISPLACEMENTS       
+       # DISPLACEMENTS
        for i in range(self.nAtoms):
          for d in range(len(self.DisplCart)):
            inp = array(data[:])
@@ -324,7 +395,7 @@ Finite Field computations
            f_inp = array([ map( float, x ) for x in f_inp ])
            
            ### translate the structure (if wanted)
-           f_inp += self.Translate()
+           #f_inp += self.Translate()
            
            for j in range(nAtoms):
                if i==j:
@@ -337,6 +408,7 @@ Finite Field computations
                   % (data[j][0],
                     f_inp[j][0], f_inp[j][1], f_inp[j][2] )
            XYZ=''.join(inp)
+           XYZ=XYZ[:-1]
            
 
 
@@ -344,10 +416,11 @@ Finite Field computations
            chkfile = self.xyz_file[:-4] + "_A%03.d"% (i+1) +"_D%02.d" % (d+1) + "_.chk"  
 
            try:
+              finput = self.templ.substitute(DATA=XYZ, FRAG=BULA, CHK=chkfile)
+           except error:
               finput = self.templ.substitute(DATA=XYZ, CHK=chkfile)
-           except:
-              finput = self.templ.substitute(DATA=XYZ)
-           open(inpfile,'w').write(finput)
+           open(inpfile,'w').write(finput+"\n")
+           
              
 
        print "\n   The %d input files have been saved in the actual directory!\n"\
