@@ -1,13 +1,13 @@
 slv
 ===
 
-The Solvshift (SLV) PYTHON project is designed to
+The Solvshift (SLV) project is designed to
 perform computations of frequency shift
 of a solute immerged in a solvent in terms of discrete and
 implicit solvatochromic models of prof. Minhaeng Cho and its extended versions.
 Available models are:                                    
   * Kirkwood-Onsager continuum model                         
-  * Discrete SolX models and its arbitrary contractions.
+  * Discrete electrostatic SolX models and its arbitrary contractions.
     The SolX models available are SolDMA and SolMMM 
 
 To see the help box and the options type
