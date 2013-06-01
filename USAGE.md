@@ -68,7 +68,7 @@ atomic coordinates are listed (units are *Angstroms*)
   Freq(HPModes,Anharm,VibRot)
 ```
   which specifies the anharmonic analysis to be performed along with vibration-rotation
-  coupling estimation. `HPModes` makes the matrix of eigenvectors printet in 5-digit hihg precision
+  coupling estimation. `HPModes` makes the matrix of eigenvectors printed in 5-digit high precision
   format. Beneath, examplary input specification for NMA molecule is depicted:
   
 ```
@@ -145,5 +145,6 @@ PACKAGE:                                                  gaussian
 SECOND DERIVATIVE MODE: -1
 SECOND DERIVATIVE WORKING DIRECTORY: ./sder
 SECOND DERIVATIVE DIFFERENIATION STEP (DIMENSIONLESS): 10.0000000000
+TRANSLATION:
 ```
 
