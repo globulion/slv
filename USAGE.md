@@ -117,7 +117,8 @@ Finite Field computations
 @DATA
 ```
 The `@` delimiter specifies varying text pattern for various input files (`chk` file name or 
-displaced coordinates due tu finite different procedures).
+displaced coordinates due to finite different procedures). The rest of a template is not changing.
+You can freely modify the content of template file accordingly to your needs.
 
 If you want to create normal coordinate displacements for a selected mode create the directory for them, e.g.:
 ```
@@ -131,3 +132,18 @@ slv -m 7 -x 0 -s 20 -gi nma.xyz -a ../../nma-anh.log
 ```
 Here, `-m` specifies normal mode number in **Python convention**. In the present example this normal mode
 is thus 8th normal mode according to the list `Fundamental Bands` at the end of the anharmonic file.
+The `-x` option is switched now to `0` value which indicates normal coordinates displacements.
+
+#### `slv.step` File ####
+
+As you perhaps noticed, after each input files creation some system file is born: `slv.step`. Its contents
+is as follows:
+```
+DIFFERENTIATION STEP (Å):                   0.0050000000
+NUMERICAL METHOD POINTS:                                    5
+PACKAGE:                                                  gaussian
+SECOND DERIVATIVE MODE: -1
+SECOND DERIVATIVE WORKING DIRECTORY: ./sder
+SECOND DERIVATIVE DIFFERENIATION STEP (DIMENSIONLESS): 10.0000000000
+```
+
