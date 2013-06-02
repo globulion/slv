@@ -43,7 +43,7 @@ will result in help box with a detailed description of Solvshift functionalities
 -------------------
 ## Finite field input files ##
 
-To make cartesian displacements you need three files:
+To make cartesian displacements you need two files:
 - **Geometry file** for solute molecule optimized in gas phase. 
   This file is typical `xyz` format file, e.g. for N-methylacetamide (NMA)
   this file can look like this:
@@ -76,7 +76,8 @@ atomic coordinates are listed (units are *Angstroms*)
   - reduced masses
   - cubic and quartic anharmonic constants
   - matrix of eigenvectors (**L** matrix transforming the derivtives from atomic Cartesian
-    space to normal coordinate space and *vice versa* for transposed matrix)
+    space to normal coordinate space and *vice versa* for transposed matrix).
+
   This file is technically a Gaussian `log` file for which 
   the following option is used in the anharmonic input:`Freq(HPModes,Anharm,VibRot)`
   which specifies the anharmonic analysis to be performed along with vibration-rotation
