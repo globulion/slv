@@ -2,7 +2,7 @@ Mini-Tutorial
 =============
 
 The following small tutorial has the aim to introduce the reader into the basic use of **Solvshift** package.
-If your dream as modelling the solvatochromic response of molecule immerged in solvent environment of other
+If your dream is modelling the solvatochromic response of molecule immerged in solvent environment of other
 molecules **this package is just for you!** Note that this software is a fresh born baby and is still under 
 current intensive work and the changes and new up-to-date versions are appearing from time to time.
 
