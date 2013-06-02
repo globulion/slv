@@ -14,7 +14,7 @@ The following computations can be performed at present:
 - **Coarse-grained SolX-n** frequency shift calculations from molecular dinamics (MD) trajectory (currently *Amber*)
 - **Kirkwood-Onsager-Buckingham-Cho** frequency shift calculations in *Rigid* and *Flexible* molecule approximations
 - **Frequency shift decomposition** using Hybrid Variation-Perturbation Interaction Energy Decomposition (EDS)
-- **Input files** for all of these routines can be created (*Gaussian*, *Gamess* or *Coulomb*)
+- **Input files** for all of these routines can be created ( *Gaussian*, *Gamess* or *Coulomb*)
 
 ********************
 In the future the solvatochromic transition dipole change calculation, anharmonic analysis in solvents as well as 
@@ -122,7 +122,7 @@ you should see on your screen among other informations something like this:
                  < gaussian.templ >
 
 ```
-Note, that the new file `gaussian.templ` have been created which is necessary to create input files set. 
+Note, that the new file `gaussian.templ` have been created which is necessary to create input file set. 
 The content of this file looks like this:
 ```
 %chk=@CHK
@@ -141,11 +141,12 @@ The `@` delimiter specifies varying text pattern for various input files:
 - `@CHK` for `chk` file names (*Gaussian* checkpoint files; relevant if *Gaussian* input mode is choosen)
 - `@DATA` for displaced coordinates due to finite different procedures. 
 - `@FRAG` for specifying fragments (optional; see later)
+
 The rest of a template is not changing.
 You can freely modify the content of template file accordingly to your needs. In the case of *Gamess* input mode
 the `gamess.templ` files is created instead.
 
-If you want to create normal coordinate displacements for a selected mode create the directory for them, e.g.:
+If you want to create normal coordinate displacements for a selected mode **create the directory for them**, e.g.:
 ```
 mkdir sder/20
 cp nma.xyz ./sder/20
@@ -184,7 +185,7 @@ next line into:
 ```
 SECOND DERIVATIVE WORKING DIRECTORY: ./sder/20/
 ```
-as well as the step for normal modedifferentiation:
+Finally, the correct step for normal mode differentiation should be retyped too:
 ```
 SECOND DERIVATIVE DIFFERENIATION STEP (DIMENSIONLESS):   20
 ```
