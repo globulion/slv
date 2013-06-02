@@ -39,7 +39,7 @@ slv --help
 ```
 will result in help box with a detailed description of Solvshift functionalities and usage.
 
-(1) Input file mode 
+1. Input file mode 
 -------------------
 ## Finite field input files ##
 
