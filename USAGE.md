@@ -1,17 +1,33 @@
 Mini-Tutorial
 =============
 
-**Solvshift** is a tool for calculation of solvatochromic vibrational frequency shifts using **implicit** and **coarse-grained** models. 
+The following small tutorial has the aim to introduce the reader into the basic use of **Solvshift** package.
+If your dream as modelling the solvatochromic response of molecule immerged in solvent environment of other
+molecules **this package is just for you!** Note that this software is a fresh born baby and is still under 
+current intensive work and the changes and new up-to-date versions are appearing from time to time.
+
+For the time being, **Solvshift** is generally a tool for calculation of solvatochromic vibrational frequency 
+shifts using **implicit** and **coarse-grained** models. 
 The following computations can be performed at present:
 ********************
-- **Kirkwood-Onsager-Buckingham-Cho** frequency shift calculations in *Rigid* and *Flexible* molecule approximations
 - **SolX-n** vibrational solvatochromic parameters for selected mode
-- **Coarse-grained SolX-n** frequency shift calculations
-- **Input files** for all of these routines to create (Gaussian, Gamess or Coulomb)
+- **Coarse-grained SolX-n** frequency shift calculations from molecular dinamics (MD) trajectory (currently *Amber*)
+- **Kirkwood-Onsager-Buckingham-Cho** frequency shift calculations in *Rigid* and *Flexible* molecule approximations
+- **Frequency shift decomposition** using Hybrid Variation-Perturbation Interaction Energy Decomposition (EDS)
+- **Input files** for all of these routines can be created (*Gaussian*, *Gamess* or *Coulomb*)
 
 ********************
+In the future the solvatochromic transition dipole change calculation, anharmonic analysis in solvents as well as 
+simulation of 1D and 2D infrared spectras are also planned to be added.
+
+Basically, **Solvshift** offers two modes of action: 
+1. *Input* and 
+2. *Calculation* mode. 
 The *Input* mode creates input files needed for finite difference calculations using various differentiation schemes. 
-The default is 5-point central Stencil method. 
+The default is 5-point central Stencil method. The *Calculation* mode offers calculation of SolX-n parameters
+and saving them on the disk and calculation of frequency shifts. Although, the current version computes also 
+solvatochromic polarizability tensor and corresponding frequency shifts, this feature is under current investigation 
+and will be extended to distributed solvatochromic polarizabilities which is more accurate and correct treatment.
 
 To see the version information type:
 ```
@@ -62,11 +78,7 @@ atomic coordinates are listed (units are *Angstroms*)
   - matrix of eigenvectors (**L** matrix transforming the derivtives from atomic Cartesian
     space to normal coordinate space and *vice versa* for transposed matrix)
   This file is technically a Gaussian `log` file for which 
-  the following option is used in the anharmonic input:
-
-```
-  Freq(HPModes,Anharm,VibRot)
-```
+  the following option is used in the anharmonic input:`Freq(HPModes,Anharm,VibRot)`
   which specifies the anharmonic analysis to be performed along with vibration-rotation
   coupling estimation. `HPModes` makes the matrix of eigenvectors printed in 5-digit high precision
   format. Beneath, examplary input specification for NMA molecule is depicted:
@@ -78,23 +90,31 @@ atomic coordinates are listed (units are *Angstroms*)
 ```
 
 ### **ATTENTION!!!** ###
-  - In the current implementation, it is **important** to use **Cartesian** basis sets instead of 
+  - It is **indispensable** not to use symmetry at all (`NOSYMM` keyword), otherwise the frequencies could 
+    have incorrect ordering for *slv* routines and 
+    **all computations could be probably WRONG if the molecule is symmetric!!!**
+  - In the current implementation, it is **necessary** to use **Cartesian** basis sets instead of 
     its spherical counterparts. It is due to the fact that calculation of distributed multipoles 
     (CAMM) by *Coulomb.py* routines requires such basis sets (there is no code for spherical Gaussians 
-    as for now unfortunately). In Gaussian program the usage of Cartesian basis can be achieved either by 
+    as for now unfortunately). In *Gaussian* program the usage of Cartesian basis can be achieved either by 
     specifying `iop(3/8=2)` anywhere in task specification or `6D/10F` just after basis set querry.
-  - It is customary not to use symmetry at all (`NOSYMM` keyword; otherwise the frequencies could have incorrect
-    ordering for *slv* routines and **all computations could be probably WRONG if the molecule is symmetric!!!**)
 
 --------
-Having the geometry (e.g. `nma.xyz`) and anharmonic (e.g. `nma-anh.log`) files created one can make input files! 
-The basic command for creating input files for Gaussian tasks and cartesian displacements of 0.005 Angstrom 
+Having the files with geometry (e.g. `nma.xyz`) and anharmonic analysis (e.g. `nma-anh.log`) created 
+one can make input files! 
+The basic command for creating input files for *Gaussian* tasks and cartesian displacements of 0.005 Angstrom 
 is as follows:
 
 ```
+slv -s 0.005 -g -i nma.xyz -a nma-anh.log
+```
+or shorter
+```
 slv -s 0.005 -gi nma.xyz -a nma-anh.log
 ```
-You should see on your screen among other informations something like this:
+The option `-g` indicates *Gaussian* tasks to be run. If it is ommited, the corresponding *Gamess* 
+input mode is switched on as a default. Try to run one of the above commands. If everything is OK 
+you should see on your screen among other informations something like this:
 ```
               There is NO template file!
  I am creating it on the actual directory. Please check it!
@@ -102,7 +122,8 @@ You should see on your screen among other informations something like this:
                  < gaussian.templ >
 
 ```
-Now the new file `gaussian.templ` have been created. It looks like this:
+Note, that the new file `gaussian.templ` have been created which is necessary to create input files set. 
+The content of this file looks like this:
 ```
 %chk=@CHK
 %mem=1800mb
@@ -116,9 +137,13 @@ Finite Field computations
 0 1
 @DATA
 ```
-The `@` delimiter specifies varying text pattern for various input files (`chk` file name or 
-displaced coordinates due to finite different procedures). The rest of a template is not changing.
-You can freely modify the content of template file accordingly to your needs.
+The `@` delimiter specifies varying text pattern for various input files: 
+- `@CHK` for `chk` file names (*Gaussian* checkpoint files; relevant if *Gaussian* input mode is choosen)
+- `@DATA` for displaced coordinates due to finite different procedures. 
+- `@FRAG` for specifying fragments (optional; see later)
+The rest of a template is not changing.
+You can freely modify the content of template file accordingly to your needs. In the case of *Gamess* input mode
+the `gamess.templ` files is created instead.
 
 If you want to create normal coordinate displacements for a selected mode create the directory for them, e.g.:
 ```
@@ -126,17 +151,18 @@ mkdir sder/20
 cp nma.xyz ./sder/20
 cd sder/20
 ```
-`20` means the normal coordinate step. Now the command is as follows:
+`20` means the normal coordinate step (just a name of directory, it has no meaning for `slv`). 
+Now the command is as follows:
 ```
 slv -m 7 -x 0 -s 20 -gi nma.xyz -a ../../nma-anh.log
 ```
-Here, `-m` specifies normal mode number in **Python convention**. In the present example this normal mode
+Here, `-m` specifies normal mode number in **Python convention** (N+1). In the present example this normal mode
 is thus 8th normal mode according to the list `Fundamental Bands` at the end of the anharmonic file.
-The `-x` option is switched now to `0` value which indicates normal coordinates displacements.
+The `-x` option is switched now to `0` value which indicates normal coordinate displacements.
 
 #### `slv.step` File ####
 
-As you perhaps noticed, after each input files creation some system file is born: `slv.step`. Its contents
+As you perhaps noticed, after each input file set creation some system file is born: `slv.step`. Its contents
 is as follows:
 ```
 DIFFERENTIATION STEP (Å):                   0.0050000000
@@ -147,4 +173,26 @@ SECOND DERIVATIVE WORKING DIRECTORY: ./sder
 SECOND DERIVATIVE DIFFERENIATION STEP (DIMENSIONLESS): 10.0000000000
 TRANSLATION:
 ```
+The line `SECOND DERIVATIVE MODE:` needs some comment. If the mode is negative then `slv` does not 
+take into account **electronic anharmonicity** for parameter calculations. Thus, you should  manually change this line
+for your purpose to include this important contribution. For the presented example the line should look like this:
+```
+SECOND DERIVATIVE MODE: 7
+```
+Secondly, you should type actual second derivative directory, so in our case we would have to change the 
+next line into:
+```
+SECOND DERIVATIVE WORKING DIRECTORY: ./sder/20/
+```
+as well as the step for normal modedifferentiation:
+```
+SECOND DERIVATIVE DIFFERENIATION STEP (DIMENSIONLESS):   20
+```
+#### Submiting the tasks ####
 
+After you succeded in creation of inputs for cartesian displacements as well as normal coordinate displacements
+and also you changed appropriately `slv.step` file you can submit all of the input files to some computer
+cluster where the desired quantum chemistry program is installed. Because the number of input files is generally
+quite huge (e.g. for NMA 145 inputs is required for first derivatives and 5  additional inputs are necessary for 
+second derivatives wrt selected mode) the queueing system is very onvenient because you can submit all of the inputs
+to the queue. 
