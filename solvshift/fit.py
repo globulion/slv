@@ -111,7 +111,8 @@ class FIT(UNITS,DIFF):
             R2 = -Serr/Stot + 1
             print "R-SQUARE COEFFICIENTS FOR MODE %d" %(i+1)
             print
-            print R2    
+            print R2
+            print
 
 
 
