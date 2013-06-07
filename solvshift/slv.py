@@ -6,6 +6,7 @@ from numpy     import *
 from units     import *
 from dma       import *
 from utilities import *
+from slvcor    import SLVCOR
 import sys, copy
 sys.stdout.flush()
 
@@ -33,8 +34,8 @@ class SLV(UNITS):
                  solute="",solvent="",solute_origin="com",
                  solute_structure="",mixed=False,
                  overall_MM=False,camm=False,chelpg=False,bsm_file='',
-                 fderiv=0,redmass=0,freq=0,structural_change=False,
-                 ref_structure=[],solpol=False):
+                 fderiv=0,sderiv=0,redmass=0,freq=0,structural_change=False,
+                 ref_structure=[],solpol=False,gijj=0):
         ### modes of action
         # mixed 
         self.mixed = mixed
@@ -65,12 +66,15 @@ class SLV(UNITS):
         self.solute_origin = solute_origin
         # target solute structure (in solvent)
         self.solute_structure = solute_structure
-        # first DMA derivatives wrt normal mode
+        # first and second DMA derivatives wrt normal mode
         self.fderiv = array(fderiv)
+        self.sderiv = array(sderiv)
         # reduced masses in helico
-        self.redmass = redmass
+        self.redmass = array(redmass)
         # harmonic frequencies in helico
-        self.freq = freq
+        self.freq = array(freq)
+        # cubic anharmonic constants
+        self.gijj = array(gijj)
         # benchmark solvent molecule file
         self.bsm_file = bsm_file
         # number of atoms in solvent molecule
@@ -88,6 +92,9 @@ class SLV(UNITS):
         # add non-atomic sites if necessary
         self.addSites()
              
+        ### BSM
+        if self.bsm_file:
+           self.benchmark_solvent_molecule  = self._bsm()
         ### construct SOLVENT environment
         self._Solvent()
         ### construct SOLUTE environment
@@ -106,6 +113,31 @@ class SLV(UNITS):
 
     # public methods
 
+    def get_ShiftCorr(self,solute_DMA):
+        """evaluates corrections to frequency shifts"""
+        ### get rotated quantities: L, fderiv, solute DMA
+        fderiv_rot, transformed_gas_phase_str, L_rot, rot = self.get_rotated(self.fderiv, self.L, self.solute_structure, self.ref_structure)
+        sol,smiec = ParseDMA(solute_DMA,'coulomb'); del smiec
+        sol.MAKE_FULL()
+        sol.Rotate(rot)
+        sol.set_structure(pos=self.solute_structure, origin=self.solute_structure)
+        ### calculate the corrections!!!
+        corr = SLVCOR(fderiv=fderiv_rot,sderiv=0,redmass=self.redmass.copy(),
+                      freq=self.freq.copy(),L=L_rot.copy(),solute=sol.copy(),
+                      solvent=self.SOLVENT.copy(),
+                      mode_id=self.mode_id,gijj=self.gijj)
+        corr.eval()
+        print corr
+    
+    def _bsm(self):
+        """benchmark_solvent_molecule extractor"""
+        benchmark_solvent_molecule, smiec = ParseDMA(self.bsm_file,'coulomb')
+        smiec, bsm_pos = ParseDMA(self.bsm_file[:-4]+'log','gaussian')
+        del smiec
+        benchmark_solvent_molecule.pos = array(bsm_pos)
+        benchmark_solvent_molecule.origin = array(bsm_pos)
+        return benchmark_solvent_molecule
+    
     def addSites(self):
         """add non-atomic sites if requested by the input"""
         if len(self.solute_structure) != len(self.ref_structure):
@@ -146,9 +178,8 @@ class SLV(UNITS):
         out+= '\n'
         return shift, solute
 
-    def get_StructuralChange(self,fderiv,solvent,solute_structure,L,ref_structure):
-        """estimates the deviations from gas-phase structure"""
-
+    def get_rotated(self,fderiv, L, solute_structure, ref_structure):
+        """rotates first derivatives of DMA and the ref structure to target orientation"""
         ### superimpose structures
         sup = SVDSuperimposer()
         sup.set(solute_structure,ref_structure)
@@ -163,6 +194,20 @@ class SLV(UNITS):
             i.origin  =array(ref_structure)
             i.MAKE_FULL()
             i.Rotate(rot)
+            
+        ### rotate the eigenvectors
+        Lrot = L.reshape(self.stat,3,len(fderiv))
+        Lrot = tensordot(Lrot,rot,(1,0))              # dimension: nstat,nmodes,3
+        Lrot = transpose(Lrot,(0,2,1))                # dimension: nstat,3,nmodes
+        Lrot = Lrot.reshape(self.stat*3,len(fderiv)) # dimension: nstat*3,nmodes
+        
+        return fderiv, transformed_gas_phase_str, Lrot, rot
+    
+    def get_StructuralChange(self,fderiv,solvent,solute_structure,L,ref_structure):
+        """estimates the deviations from gas-phase structure"""
+
+        ### superimpose structures and rotate first derivatives
+        fderiv, transformed_gas_phase_str, Lrot, rot = self.get_rotated(fderiv, L, solute_structure, ref_structure)
 
         ### calculate displacement vector dQ in GC normal mode space
         dQ = []
@@ -291,20 +336,13 @@ class SLV(UNITS):
                   SOLVENT.origin[i] = r_com
 
               ### calculate molecular moments
-              # benchmark_solvent_molecule
-              benchmark_solvent_molecule, smiec = ParseDMA(self.bsm_file,'coulomb')
-              smiec, bsm_pos = ParseDMA(self.bsm_file[:-4]+'log','gaussian')
-              del smiec
-              benchmark_solvent_molecule.pos = zeros((1,3),dtype=float64)
-              benchmark_solvent_molecule.origin = zeros((1,3),dtype=float64)
-
-              X = array(bsm_pos)
+              X = array(self.benchmark_solvent_molecule.pos.copy())
               print " -------------------------------"
               print "          RMS analysis"
               print " -------------------------------"
               for water in range(len(self.solvent.pos)/self.sat):
                       # copying of BSM
-                      bsm_copy = benchmark_solvent_molecule.copy()
+                      bsm_copy = self.benchmark_solvent_molecule.copy()
                       # superimposition
                       Y = self.solvent.pos[self.sat*water:self.sat*water+self.sat]
                       rot, rms = RotationMatrix(final=Y,initial=X)
@@ -324,24 +362,18 @@ class SLV(UNITS):
                 ### --- transform DMA for each water molecule
                 ### --- using solvent_DMA object for one GAS-PHASE
                 ### --- water molecule
-                # benchmark_solvent_molecule
-                benchmark_solvent_molecule, smiec = ParseDMA(self.bsm_file,'coulomb')
-                smiec, struct = ParseDMA(self.bsm_file[:-4]+'log','gaussian')
-                del smiec
-                benchmark_solvent_molecule.pos = array(struct)
-                benchmark_solvent_molecule.origin = array(struct)
                 # make the solvent DMA object
                 SOLVENT = DMA(nfrag=len(self.solvent.pos))
                 SOLVENT.pos = array(self.solvent.pos)
                 SOLVENT.origin = array(self.solvent.pos)
             
-                X = array(benchmark_solvent_molecule.pos)
+                X = array(self.benchmark_solvent_molecule.pos.copy())
                 print " -------------------------------"
                 print "          RMS analysis"
                 print " -------------------------------"
                 for water in range(len(self.solvent.pos)/self.sat):
                     # copying of BSM
-                    bsm_copy = benchmark_solvent_molecule.copy()
+                    bsm_copy = self.benchmark_solvent_molecule.copy()
                     # superimposition
                     Y = self.solvent.pos[self.sat*water:self.sat*water+self.sat]
                     rot, rms = RotationMatrix(final=Y,initial=X)

@@ -707,11 +707,13 @@ def Main(argv):
                              redmass=ANH.redmass,
                              freq=ANH.freq,
                              ref_structure=parameters.pos,
-                             solpol=SolPOL)
+                             solpol=SolPOL,
+                             gijj=ANH.K3)
 
+                f.get_ShiftCorr('nma-opt-b3lyp-6-311++Ggg_A000_D00_.camm')
                 print  >> out, "%10s"%typ,
                 print  >> out,"%13.2f "*5%tuple( f.shift[0] )
-                #print Emtp.log
+                print Emtp.log
                 #rrr= f.get_StructuralChange(CALC.Fder,f.SOLVENT,f.solute_structure,ANH.L,PARAM.fragments)\
                 #* UNITS.BohrToAngstrom
                 #print
