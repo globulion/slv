@@ -24,8 +24,8 @@ class SLVCOR(UNITS):
     def __init__(self,fderiv=0,sderiv=0,redmass=0,freq=0,L=[],
                  solute=0,solvent=0,mode_id=0,gijj=[]):
         # first and second DMA derivatives wrt normal mode
-        self.__fderiv = array(fderiv)
-        self.__sderiv = array(sderiv)
+        self.__fderiv = copy.deepcopy(array(fderiv))
+        self.__sderiv = copy.deepcopy(array(sderiv))
         # reduced masses in helico
         self.__redmass = array(redmass)
         self.__nModes = len(redmass)
@@ -66,27 +66,35 @@ class SLVCOR(UNITS):
             for i in xrange(len(Ra)):
                 for j in xrange(len(Rb)):
                     R    = Rb[j]-Ra[i]
+                    R   *= -1
                     Rab=sqrt(sum(R**2,axis=0))
                     
-                    rf2 = 0; rf3 = 0; rf4 = 0
-                    rk2 = 0; rk3 = 0; rk4 = 0
                     ### fi terms
                     for I in xrange(self.__nModes):
+                        rf2 = 0; rf3 = 0; rf4 = 0
+                        #
                         rf2 -=   qa[i] * qb[j] * dot(self.__Lvec(I,i),R)        / Rab**3
+                        #
                         rf3 -= 3*qa[i] * dot(self.__Lvec(I,i),R) * dot(Db[j],R) / Rab**5
                         rf3 +=   qa[i] * dot(self.__Lvec(I,i),Db[j])            / Rab**3
+                        rf3 += 3*qb[j] * dot(self.__Lvec(I,i),R) * dot(Da[i],R) / Rab**5
+                        rf3 -=   qb[j] * dot(self.__Lvec(I,i),Da[i])            / Rab**3
                         
                         Rn_fi[I,1]+= rf2
                         Rn_fi[I,2]+= rf3
                         
                     ### kjj terms
+                    rk2 = 0; rk3 = 0; rk4 = 0
                     fqa,fDa,fQa,fOa = self.__fdx[J]
                     
                     rk2 -= 2*fqa[i] * qb[j] * dot(self.__Lvec(J,i),R)        / Rab**3
+                    #
                     rk3 -= 6*fqa[i] * dot(self.__Lvec(J,i),R) * dot(Db[j],R) / Rab**5
                     rk3 += 2*fqa[i] * dot(self.__Lvec(J,i),Db[j])            / Rab**3
                     rk3 += 6* qa[i] * qb[j] * dot(self.__Lvec(J,i),R)        / Rab**5
                     rk3 -=    qa[i] * qb[j] * dot(self.__Lvec(J,i),self.__Lvec(J,i)) / Rab**3
+                    rk3 += 6* qb[j] * dot(self.__Lvec(J,i),R) * dot(fDa[i],R)/ Rab**5
+                    rk3 -= 2* qb[j] * dot(fDa[i],self.__Lvec(J,i))           / Rab**3
                     
                     Rn_kjj[1] += rk2
                     Rn_kjj[2] += rk3
@@ -119,7 +127,7 @@ class SLVCOR(UNITS):
             to frequency shift"""
             j = self.__mode_id
             sum = zeros(4,dtype=float64)
-            for i in range(self.__nModes):#sqrt(self.__redmass[i]*self.AmuToElectronMass)*
+            for i in range(self.__nModes):
                 sum -= self.__fi[i]*(self.__gijj[i,j,j]/
                 (self.__redmass[i]*self.AmuToElectronMass*self.__freq_mcho[i]**2))
             sum /= 2.0 * self.__redmass[j]*self.AmuToElectronMass * self.__freq_mcho[j]
@@ -151,12 +159,15 @@ class SLVCOR(UNITS):
             Rb,qb,Db,Qb,Ob = dma2.DMA_FULL
             self.__sx = (Ra,qa,Da,Qa,Oa)
             self.__sy = (Rb,qb,Db,Qb,Ob)
-            
+            del dma1
             ### derivatives of DMA objects
             dma1=self.__fderiv.copy()
             #dma2=self.__sderiv.copy()
             self.__fdx = []
+            ua_list = [ ( 1,12,11, 6), ( 4, 7, 9,10) ]
             for i in range(self.__nModes):
+                #dma1[i].set_structure(pos=self.__solute.pos, origin=self.__solute.pos)
+                #dma1[i].MakeUa(ua_list,change_origin=True)
                 dma1[i].MAKE_FULL()
                 dma1[i].MakeTraceless()
                 Ra,qa,Da,Qa,Oa = dma1[i].DMA_FULL
