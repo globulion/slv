@@ -22,7 +22,7 @@ class SLVCOR(UNITS):
     in cm-1 and other quantities in AU."""
     
     def __init__(self,fderiv=0,sderiv=0,redmass=0,freq=0,L=[],
-                 solute=0,solvent=0,mode_id=0,gijj=[]):
+                 solute=0,solvent=0,mode_id=0,gijj=[]): 
         # first and second DMA derivatives wrt normal mode
         self.__fderiv = copy.deepcopy(array(fderiv))
         self.__sderiv = copy.deepcopy(array(sderiv))
