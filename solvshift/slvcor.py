@@ -22,7 +22,7 @@ class SLVCOR(UNITS):
     in cm-1 and other quantities in AU."""
     
     def __init__(self,fderiv=0,sderiv=0,redmass=0,freq=0,L=[],
-                 solute=0,solvent=0,mode_id=0,gijj=[]): 
+                 solute=0,solvent=0,mode_id=0,gijj=[]):
         # first and second DMA derivatives wrt normal mode
         self.__fderiv = copy.deepcopy(array(fderiv))
         self.__sderiv = copy.deepcopy(array(sderiv))
@@ -72,12 +72,12 @@ class SLVCOR(UNITS):
                     for I in xrange(self.__nModes):
                         rf2 = 0; rf3 = 0; rf4 = 0
                         #
-                        rf2 -=   qa[i] * qb[j] * dot(self.__Lvec(I,i),R)        / Rab**3
+                        rf2 -=   qa[i] * qb[j] * dot(self.__Lvec(I,i),R)               / Rab**3
                         #
-                        rf3 -= 3*qa[i] * dot(self.__Lvec(I,i),R) * dot(Db[j],R) / Rab**5
-                        rf3 +=   qa[i] * dot(self.__Lvec(I,i),Db[j])            / Rab**3
-                        rf3 += 3*qb[j] * dot(self.__Lvec(I,i),R) * dot(Da[i],R) / Rab**5
-                        rf3 -=   qb[j] * dot(self.__Lvec(I,i),Da[i])            / Rab**3
+                        rf3 -= 3*qa[i] * dot(self.__Lvec(I,i),R) * dot(Db[j],R)        / Rab**5
+                        rf3 +=   qa[i] * dot(self.__Lvec(I,i),Db[j])                   / Rab**3
+                        rf3 += 3*qb[j] * dot(self.__Lvec(I,i),R) * dot(Da[i],R)        / Rab**5
+                        rf3 -=   qb[j] * dot(self.__Lvec(I,i),Da[i])                   / Rab**3
                         #
                         rf4 -= 5*qa[i] * dot(self.__Lvec(I,i),R) * dot(dot(Qb[j],R),R) / Rab**7
                         rf4 += 2*qa[i] * dot(dot(Qb[j],self.__Lvec(I,i)),R)            / Rab**5
@@ -85,7 +85,7 @@ class SLVCOR(UNITS):
                         f1   =   dot(Da[i],R) * dot(self.__Lvec(I,i),Db[j])
                         f1  +=   dot(self.__Lvec(I,i),R) * dot(Da[i],Db[j])
                         f1  +=   dot(Db[j],R) * dot(self.__Lvec(I,i),Da[i])
-                        f1  *= -3/Rab**5
+                        f1  *= -3                                                      /Rab**5
                         rf4 += f1
                         rf4 +=15*dot(Da[i],R) * dot(Db[j],R) * dot(self.__Lvec(I,i),R) / Rab**7
                         #
@@ -100,29 +100,40 @@ class SLVCOR(UNITS):
                     rk2 = 0; rk3 = 0; rk4 = 0
                     fqa,fDa,fQa,fOa = self.__fdx[J]
                     
-                    rk2 -= 2*fqa[i] * qb[j] * dot(self.__Lvec(J,i),R)        / Rab**3
+                    rk2 -= 2*fqa[i] * qb[j] * dot(self.__Lvec(J,i),R)                  / Rab**3
                     #
-                    rk3 -= 6*fqa[i] * dot(self.__Lvec(J,i),R) * dot(Db[j],R) / Rab**5
-                    rk3 += 2*fqa[i] * dot(self.__Lvec(J,i),Db[j])            / Rab**3
-                    rk3 += 6* qa[i] * qb[j] * dot(self.__Lvec(J,i),R)        / Rab**5
-                    rk3 -=    qa[i] * qb[j] * dot(self.__Lvec(J,i),self.__Lvec(J,i)) / Rab**3
-                    rk3 += 6* qb[j] * dot(self.__Lvec(J,i),R) * dot(fDa[i],R)/ Rab**5
-                    rk3 -= 2* qb[j] * dot(fDa[i],self.__Lvec(J,i))           / Rab**3
+                    rk3 -= 6*fqa[i] * dot(self.__Lvec(J,i),R) * dot(Db[j],R)           / Rab**5
+                    rk3 += 2*fqa[i] * dot(self.__Lvec(J,i),Db[j])                      / Rab**3
+                    rk3 += 6* qa[i] * qb[j] * dot(self.__Lvec(J,i),R)                  / Rab**5
+                    rk3 -=    qa[i] * qb[j] * dot(self.__Lvec(J,i),self.__Lvec(J,i))   / Rab**3
+                    rk3 += 6* qb[j] * dot(self.__Lvec(J,i),R) * dot(fDa[i],R)          / Rab**5
+                    rk3 -= 2* qb[j] * dot(fDa[i],self.__Lvec(J,i))                     / Rab**3
                     #
-                    rk4 += 4*fqa[i] * dot(dot(Qb[j],self.__Lvec(J,i)),R)     / Rab**5
-                    rk4 -=10*fqa[i] * dot(self.__Lvec(J,i),R) * dot(dot(Qb[j],R),R) / Rab**7
+                    rk4 += 4*fqa[i] * dot(dot(Qb[j],self.__Lvec(J,i)),R)               / Rab**5
+                    rk4 -=10*fqa[i] * dot(self.__Lvec(J,i),R) * dot(dot(Qb[j],R),R)    / Rab**7
                     #
                     k1   = 2*dot(self.__Lvec(J,i),R) * dot(self.__Lvec(J,i),Db[j])
                     k1  +=   dot(self.__Lvec(J,i),self.__Lvec(J,i)) * dot(Db[j],R)
-                    k1  *=-3*qa[i]                                           / Rab**5
+                    k1  *=-3*qa[i]                                                     / Rab**5
                     rk4 += k1
-                    rk4 +=15*qa[i] * (dot(self.__Lvec(J,i),R))**2 * dot(Db[j],R) / Rab**7
+                    rk4 +=15*qa[i] * (dot(self.__Lvec(J,i),R))**2 * dot(Db[j],R)       / Rab**7
                     #
                     k1   = 2*dot(self.__Lvec(J,i),R) * dot(self.__Lvec(J,i),Da[i])
                     k1  +=   dot(self.__Lvec(J,i),self.__Lvec(J,i)) * dot(Da[i],R)
-                    k1  *= 3*qb[j]                                           / Rab**5
+                    k1  *= 3*qb[j]                                                     / Rab**5
                     rk4 += k1
-                    rk4 -=15*qb[j] * (dot(self.__Lvec(J,i),R))**2 * dot(Da[i],R) / Rab**7
+                    rk4 -=15*qb[j] * (dot(self.__Lvec(J,i),R))**2 * dot(Da[i],R)       / Rab**7
+                    #
+                    k1   =   dot(fDa[i],R) * dot(self.__Lvec(J,i),Db[j])
+                    k1  +=   dot(self.__Lvec(J,i),R) * dot(fDa[i],Db[j])
+                    k1  +=   dot(fDa[i],self.__Lvec(J,i)) * dot(Db[j],R)
+                    k1  *=-6                                                           /Rab**5
+                    rk4 += k1
+                    #
+                    rk4 +=30*dot(fDa[i],R) * dot(self.__Lvec(J,i),R) * dot(Db[j],R)    / Rab**7
+                    #
+                    rk4 += 4*qb[j] * dot(dot(Qa[i],self.__Lvec(J,i)),R)                / Rab**5
+                    rk4 -=10*qb[j] * dot(dot(Qa[i],R),R) * dot(self.__Lvec(J,i),R)     / Rab**7
                     
                     Rn_kjj[1] += rk2
                     Rn_kjj[2] += rk3
@@ -183,6 +194,8 @@ class SLVCOR(UNITS):
             dma2.MAKE_FULL()
             # transform FULL format to fraceless forms for quadrupoles and octupoles
             dma1.MakeTraceless()
+            dma1.makeDMAfromFULL()
+            dma1.MAKE_FULL()
             #
             Ra,qa,Da,Qa,Oa = dma1.DMA_FULL
             Rb,qb,Db,Qb,Ob = dma2.DMA_FULL
@@ -196,6 +209,7 @@ class SLVCOR(UNITS):
             ua_list = [ ( 1,12,11, 6), ( 4, 7, 9,10) ]
             for i in range(self.__nModes):
                 #dma1[i].set_structure(pos=self.__solute.pos, origin=self.__solute.pos)
+                #print dma1[i].pos
                 #dma1[i].MakeUa(ua_list,change_origin=True)
                 dma1[i].MAKE_FULL()
                 dma1[i].MakeTraceless()
