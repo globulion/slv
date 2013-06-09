@@ -82,7 +82,8 @@ def Usage():
  *  [5] FREQUENCY SHIFTS                                                                                     *
  *  -------------------------------------------------------------------------------------------------------  *
  *     -f, --freq               : calculate frequency shift                                                  *
- *     -t, --typ       [type]   : provide the type of solute/solvent file (relevant if -f option is used)    *
+ *     -t, --typ       [type]   : provide the file of solute/solvent system names (relevant if -f option     *
+ *                              : is used)                                                                   *
  *     -D, --target    [dir]    : provide the directory with solute/solvent system files                     *
  *     -M, --MD        [traj]   : calculate frequency shift distribution from Molecular Dynamics simulation  *
  *                              : providing the trajectory [traj] / default are 'amber' files /              *
@@ -216,7 +217,7 @@ def Main(argv):
     ### frequency shift (SLV)
     frequency_shift= False                                             #
     eds            = False                                             #
-    typ            = ''                                                #
+    types          = 'types.txt'                                       #
     bsm_file       = ''                                                #
     solute_atno    = ['C','N','C','C','O','H','H','H','H','H','H','H'] # NMA
     solvent_atno   = ['O','H','H']                                     # H2O
@@ -355,7 +356,7 @@ def Main(argv):
            md_trajectory = arg
            md_charges = args[0]  
         if opt in ("-t", "--typ"):
-           typ = arg
+           types = arg
         if opt in ("-m", "--mode-id"):
            mode_id = int(arg)
         if opt in ("-y", "--mixed"):
@@ -512,7 +513,7 @@ def Main(argv):
                     cube.tofile('slv.cube')
                     
                  ### print the all parameters and Stark tunning rates
-                 print PARAM
+                 #print PARAM
                  #print read_file
                  ### check
                  if check:
@@ -655,7 +656,7 @@ def Main(argv):
           ## ----------------------------------------------------- ##
           if Gaussian:
             out = open('shifts.dat','w') 
-            for typ in open('types.txt').read().split('\n')[:-1]:
+            for typ in open(types).read().split('\n')[:-1]:
              solute  = ParseDMA( target_dir+'/solute_%s'%typ,file_type)[0]
              solvent = ParseDMA( target_dir+'/solvent_%s'%typ,file_type)[0]
              try:
@@ -686,9 +687,10 @@ def Main(argv):
 
                 print  >> out, "%10s"%typ,
                 print  >> out,"%13.2f "*5%tuple( f.shift[0] )
-                #print Emtp.log
+                print Emtp.log
                 
              if SolCAMM:
+                
                 f = SLV(pkg="gaussian",
                              nsatoms=solvent_atno,
                              nstatoms=solute_atno,
@@ -711,6 +713,7 @@ def Main(argv):
                              gijj=ANH.K3)
 
                 f.get_ShiftCorr('nma-opt-b3lyp-6-311++Ggg_A000_D00_.camm')
+
                 print  >> out, "%10s"%typ,
                 print  >> out,"%13.2f "*5%tuple( f.shift[0] )
                 print Emtp.log
@@ -738,7 +741,7 @@ def Main(argv):
                                bsm_file=bsm_file,
                                ref_structure=parameters.pos)
                         
-                #print Emtp.log
+                print Emtp.log
                 #print "\n SOLUTE SOLVATOCHROMIC MULTIPOLES [A.U.]\n" 
                 #print f.SOLUTE
                 print  >> out, "%10s"%typ,
