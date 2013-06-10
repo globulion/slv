@@ -12,14 +12,15 @@ sys.stdout.flush()
 __all__ = ["SLVCOR" ]
 
 class SLVCOR(UNITS):
-    """It contains the implementation of additional terms arising from 
-    taking into account potential derivatives and applying local 
-    approximation to normal coordinate gradient operator:
-    grad(normal_coord) \approx L \dot \nabla. Here it is assumed,
-    that solvent DMA object, L-eigenvectors as well as all of the 
-    derivative tensors are properly rotated and translated!
-    Reduced masses should be given in AMU, harmonic frequencies
-    in cm-1 and other quantities in AU."""
+    """\
+It contains the implementation of additional terms arising from 
+taking into account potential derivatives and applying local 
+approximation to normal coordinate gradient operator:
+grad(normal_coord) \approx L \dot \nabla. Here it is assumed,
+that solvent DMA object, L-eigenvectors as well as all of the 
+derivative tensors are properly rotated and translated!
+Reduced masses should be given in AMU, harmonic frequencies
+in cm-1 and other quantities in AU."""
     
     def __init__(self,fderiv=0,sderiv=0,redmass=0,freq=0,L=[],
                  solute=0,solvent=0,mode_id=0,gijj=[]):
