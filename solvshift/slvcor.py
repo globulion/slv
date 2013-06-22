@@ -133,8 +133,8 @@ in cm-1 and other quantities in AU."""
                     #
                     rk4 +=30*dot(fDa[i],R) * dot(self.__Lvec(J,i),R) * dot(Db[j],R)    / Rab**7
                     #
-                    rk4 += 4*qb[j] * dot(dot(Qa[i],self.__Lvec(J,i)),R)                / Rab**5
-                    rk4 -=10*qb[j] * dot(dot(Qa[i],R),R) * dot(self.__Lvec(J,i),R)     / Rab**7
+                    rk4 += 4*qb[j] * dot(dot(fQa[i],self.__Lvec(J,i)),R)                / Rab**5
+                    rk4 -=10*qb[j] * dot(dot(fQa[i],R),R) * dot(self.__Lvec(J,i),R)     / Rab**7
                     
                     Rn_kjj[1] += rk2
                     Rn_kjj[2] += rk3
