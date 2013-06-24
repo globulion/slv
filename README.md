@@ -23,5 +23,5 @@ The [tutorial](https://github.com/globulion/slv/edit/master/USAGE.md "Title") is
 
 Good Luck!
 
-  [1] Distributed Multipole Moments (Mulliken, Chelpg, DMA, CAMM etc.)
-  [2] Molecular Multipole Moments (centered at molecular origin, eg. center of mass)
+  [1]: Distributed Multipole Moments (Mulliken, Chelpg, DMA, CAMM etc.)
+  [2]: Molecular Multipole Moments (centered at molecular origin, eg. center of mass)
