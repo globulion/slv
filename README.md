@@ -19,7 +19,7 @@ To install the package you have to type:
 sudo python setup.py install
 ```
 
-The [tutorial](https://github.com/globulion/slv/edit/master/USAGE.md "Title") is under preparation. 
+The [tutorial](https://github.com/globulion/slv/blob/master/USAGE.md "Title") is under preparation. 
 
 Good Luck!
 
