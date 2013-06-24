@@ -1,5 +1,6 @@
 1. Input file mode 
--------------------
+==================
+
 ## Finite field input files ##
 
 To make cartesian displacements you need two files:
@@ -34,7 +35,7 @@ atomic coordinates are listed (units are *Angstroms*)
   - harmonic vibrational frequencies
   - reduced masses
   - cubic and quartic anharmonic constants
-  - matrix of eigenvectors (**L** matrix transforming the derivtives from atomic Cartesian
+  - matrix of eigenvectors ( **L** matrix transforming the derivtives from atomic Cartesian
     space to normal coordinate space and *vice versa* for transposed matrix).
 
   This file is technically a Gaussian `log` file for which 
