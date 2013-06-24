@@ -36,6 +36,7 @@ class SLV(UNITS):
                  overall_MM=False,camm=False,chelpg=False,bsm_file='',
                  fderiv=0,sderiv=0,redmass=0,freq=0,structural_change=False,
                  ref_structure=[],solpol=False,gijj=0):
+        self.log = 'None'
         ### modes of action
         # mixed 
         self.mixed = mixed
@@ -101,7 +102,7 @@ class SLV(UNITS):
         self._Solute()
         a = self.SOLVENT.copy()
         ### calculate frequency shift!!!
-        self.shift=self.FrequencyShift(self.SOLUTE,
+        self.shift=self.__shift(self.SOLUTE,
                                  self.SOLVENT,
                                  self.solute_structure,
                                  self.solpol)
@@ -113,21 +114,29 @@ class SLV(UNITS):
 
     # public methods
 
-    def get_ShiftCorr(self,solute_DMA):
+    def eval_shiftcorr(self,solute_DMA):
         """evaluates corrections to frequency shifts"""
+        
         ### get rotated quantities: L, fderiv, solute DMA
         fderiv_rot, transformed_gas_phase_str, L_rot, rot = self.get_rotated(self.fderiv, self.L, self.solute_structure, self.ref_structure)
         sol,smiec = ParseDMA(solute_DMA,'coulomb'); del smiec
+        ua_list = [ ( 1,12,11, 6), ( 4, 7, 9,10) ]
+        #ua_list = [ ( 1,5,6,7) ]
+        self.SOLVENT.makeDMAfromFULL()
+        sol.MakeUa(ua_list,change_origin=True)
         sol.MAKE_FULL()
         sol.Rotate(rot)
         sol.set_structure(pos=self.solute_structure, origin=self.solute_structure)
+
         ### calculate the corrections!!!
         corr = SLVCOR(fderiv=fderiv_rot,sderiv=0,redmass=self.redmass.copy(),
                       freq=self.freq.copy(),L=L_rot.copy(),solute=sol.copy(),
                       solvent=self.SOLVENT.copy(),
                       mode_id=self.mode_id,gijj=self.gijj)
         corr.eval()
-        print corr
+        corr.shift = self.shift
+        self.log = self.log[:-1]+str(corr)
+        return
     
     def _bsm(self):
         """benchmark_solvent_molecule extractor"""
@@ -158,7 +167,7 @@ class SLV(UNITS):
            #print self.solute_structure * self.BohrToAngstrom
         return
        
-    def FrequencyShift(self,solute=0,solvent=0,solute_structure=0,solpol=0):
+    def __shift(self,solute=0,solvent=0,solute_structure=0,solpol=0):
         """calculate frequency shift!!!"""
         
         #print solvent.pos*self.BohrToAngstrom
@@ -176,6 +185,7 @@ class SLV(UNITS):
            print " SHIFT-POL [cm-1]: ",shift_pol
         out = "\n INTERACTION ENERGY TERMS [cm-1]"
         out+= '\n'
+        self.log = Emtp.log
         return shift, solute
 
     def get_rotated(self,fderiv, L, solute_structure, ref_structure):
@@ -189,7 +199,8 @@ class SLV(UNITS):
         transformed_gas_phase_str = sup.get_transformed()
 
         ### rotate the fderiv[i]
-        for i in fderiv:
+        fderiv_copy = copy.deepcopy(fderiv)
+        for i in fderiv_copy:
             i.pos  =array(ref_structure)
             i.origin  =array(ref_structure)
             i.MAKE_FULL()
@@ -201,7 +212,7 @@ class SLV(UNITS):
         Lrot = transpose(Lrot,(0,2,1))                # dimension: nstat,3,nmodes
         Lrot = Lrot.reshape(self.stat*3,len(fderiv)) # dimension: nstat*3,nmodes
         
-        return fderiv, transformed_gas_phase_str, Lrot, rot
+        return fderiv_copy, transformed_gas_phase_str, Lrot, rot
     
     def get_StructuralChange(self,fderiv,solvent,solute_structure,L,ref_structure):
         """estimates the deviations from gas-phase structure"""
@@ -253,6 +264,10 @@ class SLV(UNITS):
         rot, rms = RotationMatrix(initial=solute_structure,final=ref_structure)
         print " RMS  SOL/REF: %16.4f"% rms
         return pred_structure
+    
+    def __repr__(self):
+        """print nice table of results"""
+        return str(self.log)
     
     # private methods
     

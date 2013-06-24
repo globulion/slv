@@ -143,98 +143,108 @@ in cm-1 and other quantities in AU."""
             return Rn_fi, Rn_kjj
         
     def eval(self):
-            """evaluate the corrections to shifts"""
-            self.__fi,self.__kjj  = self.fi_kjj()
-            self.__ma = self.ma()
-            self.__ea = self.ea()
-            return
+        """evaluate the corrections to shifts"""
+        self.__fi,self.__kjj  = self.fi_kjj()
+        self.__ma = self.ma()
+        self.__ea = self.ea()
+        return
             
     def __repr__(self):
-            """print the correction terms to the frequency shift"""
-            log  = '\n'
-            a,b = self.get()
-            log += 4*'%13.2f'% tuple( a * self.HartreePerHbarToCmRec )
-            log += '\n'
-            log += 4*'%13.2f'% tuple( b * self.HartreePerHbarToCmRec )
-            log += '\n'
-            return str(log)
+        """print the correction terms to the frequency shift"""
+        A,B,C,D,E = self.shift[0]
+        log  = " CORRECTION TERMS [cm-1]         : CORRECTED SHIFTS [cm-1]  \n"
+        log += " --------------------------------:--------------------------\n"
+        a,b = self.get()
+        a*=self.HartreePerHbarToCmRec;b*=self.HartreePerHbarToCmRec
+        log += " %12s %10s         :  1        %10.2f\n" % ('MA','EA',      A)
+        log += " %3s %10.2f %10.2f       :  1+2      %10.2f\n" % ('R-2',a[1],b[1],B+a[1]+b[1])
+        log += " %3s %10.2f %10.2f       :  1+2+3    %10.2f\n" % ('R-3',a[2],b[2],C+a[2]+b[2]+a[1]+b[1])
+        log += " %3s %10.2f %10.2f       :  1+2+3+4  %10.2f\n" % ('R-4',a[3],b[3],D+a[3]+b[3]+a[2]+b[2]+a[1]+b[1])
+        log += "                                 :  1+2+3+4+5%10s\n" % ('???')
+        log += "                                 :\n"
+        log += " --------------------------------:--------------------------\n"
+        #log += 3*'%13.2f'% tuple( a[1:] * self.HartreePerHbarToCmRec )
+        #log += '\n'
+        #log += 3*'%13.2f'% tuple( b[1:] * self.HartreePerHbarToCmRec )
+        #log += '\n'
+        return str(log)
         
     def get(self):
-            """return the corrections to shifts"""
-            return self.__ma, self.__ea
+        """return the corrections to shifts"""
+        return array(self.__ma), array(self.__ea)
         
     def ma(self):
-            """evaluates the contributions from mechanical anharmonicity
-            to frequency shift"""
-            j = self.__mode_id
-            sum = zeros(4,dtype=float64)
-            for i in range(self.__nModes):
-                sum -= self.__fi[i]*(self.__gijj[i,j,j]/
-                (self.__redmass[i]*self.AmuToElectronMass*self.__freq_mcho[i]**2))
-            sum /= 2.0 * self.__redmass[j]*self.AmuToElectronMass * self.__freq_mcho[j]
+        """evaluates the contributions from mechanical anharmonicity
+        to frequency shift"""
+        j = self.__mode_id
+        sum = zeros(4,dtype=float64)
+        for i in range(self.__nModes):
+            sum -= self.__fi[i]*(self.__gijj[i,j,j]/
+            (self.__redmass[i]*self.AmuToElectronMass*self.__freq_mcho[i]**2))
+        sum /= 2.0 * self.__redmass[j]*self.AmuToElectronMass * self.__freq_mcho[j]
             
-            return sum
+        return sum
         
     def ea(self):
-            """evaluates the contributions from electronic anharmonicity
-            to frequency shift"""
-            j = self.__mode_id
-            sum = self.__kjj.copy() #* self.__redmass[j]*self.AmuToElectronMass
-            sum/= 2.0 * self.__redmass[j]*self.AmuToElectronMass * self.__freq_mcho[j]
+        """evaluates the contributions from electronic anharmonicity
+        to frequency shift"""
+        j = self.__mode_id
+        sum = self.__kjj.copy() #* self.__redmass[j]*self.AmuToElectronMass
+        sum/= 2.0 * self.__redmass[j]*self.AmuToElectronMass * self.__freq_mcho[j]
             
-            return sum
+        return sum
         
     def __prepare_dma(self):
-            """preparation of DMA: making them in traceless forms and 
-            projection to explicit array format from DMA format"""
-            ### normal electrostatic DMA objects
-            dma1=self.__solute.copy()
-            dma2=self.__solvent.copy()
-            # make FULL format of DMA distribution
-            dma1.MAKE_FULL()
-            dma2.MAKE_FULL()
-            # transform FULL format to fraceless forms for quadrupoles and octupoles
-            dma1.MakeTraceless()
-            dma1.makeDMAfromFULL()
-            dma1.MAKE_FULL()
-            #
-            Ra,qa,Da,Qa,Oa = dma1.DMA_FULL
-            Rb,qb,Db,Qb,Ob = dma2.DMA_FULL
-            self.__sx = (Ra,qa,Da,Qa,Oa)
-            self.__sy = (Rb,qb,Db,Qb,Ob)
-            del dma1
-            ### derivatives of DMA objects
-            dma1=self.__fderiv.copy()
-            #dma2=self.__sderiv.copy()
-            self.__fdx = []
-            ua_list = [ ( 1,12,11, 6), ( 4, 7, 9,10) ]
-            for i in range(self.__nModes):
-                #dma1[i].set_structure(pos=self.__solute.pos, origin=self.__solute.pos)
-                #print dma1[i].pos
-                #dma1[i].MakeUa(ua_list,change_origin=True)
-                dma1[i].MAKE_FULL()
-                dma1[i].MakeTraceless()
-                Ra,qa,Da,Qa,Oa = dma1[i].DMA_FULL
-                self.__fdx.append((qa,Da,Qa,Oa))
-            #dma2.MAKE_FULL()
-            #dma2.MakeTraceless()
-            #Rb,qb,Db,Qb,Ob = dma2.DMA_FULL
-            #self.__sdx = (qb,Db,Qb,Ob)
-            return
+        """preparation of DMA: making them in traceless forms and 
+projection to explicit array format from DMA format"""
+        ### normal electrostatic DMA objects
+        dma1=self.__solute.copy()
+        dma2=self.__solvent.copy()
+        # make FULL format of DMA distribution
+        dma1.MAKE_FULL()
+        dma2.MAKE_FULL()
+        # transform FULL format to fraceless forms for quadrupoles and octupoles
+        dma1.MakeTraceless()
+        dma1.makeDMAfromFULL()
+        dma1.MAKE_FULL()
+        #
+        Ra,qa,Da,Qa,Oa = dma1.DMA_FULL
+        Rb,qb,Db,Qb,Ob = dma2.DMA_FULL
+        self.__sx = (Ra,qa,Da,Qa,Oa)
+        self.__sy = (Rb,qb,Db,Qb,Ob)
+        del dma1
+        ### derivatives of DMA objects
+        dma1=self.__fderiv.copy()
+        #dma2=self.__sderiv.copy()
+        self.__fdx = []
+        ua_list = [ ( 1,12,11, 6), ( 4, 7, 9,10) ]
+        for i in range(self.__nModes):
+            #dma1[i].set_structure(pos=self.__solute.pos, origin=self.__solute.pos)
+            #print dma1[i].pos
+            #dma1[i].MakeUa(ua_list,change_origin=True)
+            dma1[i].MAKE_FULL()
+            dma1[i].MakeTraceless()
+            Ra,qa,Da,Qa,Oa = dma1[i].DMA_FULL
+            self.__fdx.append((qa,Da,Qa,Oa))
+        #dma2.MAKE_FULL()
+        #dma2.MakeTraceless()
+        #Rb,qb,Db,Qb,Ob = dma2.DMA_FULL
+        #self.__sdx = (qb,Db,Qb,Ob)
+        return
         
     def __weight(self):
-            """weights L-matrix and derivative tensor elements
-            using reduced masses"""
-            # L-matrix
-            temp = sqrt(self.__redmass*self.AmuToElectronMass)[newaxis,:]
-            self.__L = temp * self.__L
-            # fderiv & sderiv
-            self.__fderiv *= sqrt(self.__redmass*self.AmuToElectronMass)
-            #self.__sderiv *=      self.__redmass*self.AmuToElectronMass
-            # cubic anharmonic constants
-            temp = sqrt(self.__redmass)[:,newaxis,newaxis,]
-            self.__gijj = temp * self.__gijj
-            temp = sqrt(self.__redmass)[newaxis,:,newaxis,]
-            self.__gijj = temp * self.__gijj
-            temp = sqrt(self.__redmass)[newaxis,newaxis,:,]
-            self.__gijj = temp * self.__gijj
+        """weights L-matrix and derivative tensor elements
+using reduced masses"""
+        # L-matrix
+        temp = sqrt(self.__redmass*self.AmuToElectronMass)[newaxis,:]
+        self.__L = temp * self.__L
+        # fderiv & sderiv
+        self.__fderiv *= sqrt(self.__redmass*self.AmuToElectronMass)
+        #self.__sderiv *=      self.__redmass*self.AmuToElectronMass
+        # cubic anharmonic constants
+        temp = sqrt(self.__redmass)[:,newaxis,newaxis,]
+        self.__gijj = temp * self.__gijj
+        temp = sqrt(self.__redmass)[newaxis,:,newaxis,]
+        self.__gijj = temp * self.__gijj
+        temp = sqrt(self.__redmass)[newaxis,newaxis,:,]
+        self.__gijj = temp * self.__gijj

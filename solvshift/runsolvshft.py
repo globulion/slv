@@ -209,6 +209,8 @@ def Main(argv):
     translation    = ''                                                #
     allign         = False                                             #
     charges        = {'H': 0.34242, 'O': -0.777834, 'Na': 1.00}        # BSM charges
+    zero_camm      = ''                                                # for correction terms
+    fderiv_j       = ''                                                # for correction terms
     
     ### checking and troubleshooting
     print_derivatives = False                                          #
@@ -216,6 +218,7 @@ def Main(argv):
     
     ### frequency shift (SLV)
     frequency_shift= False                                             #
+    corrections    = False                                             # correction terms
     eds            = False                                             #
     types          = 'types.txt'                                       #
     bsm_file       = ''                                                #
@@ -245,7 +248,7 @@ def Main(argv):
     ## --------------------------- ##
     
     try:
-        opts, args = getopt.getopt(argv, "hi:a:s:cF:n:gx:fM:ot:m:T:OC:ydu:b:pW:A:B:kQj:l:e:D:w:PN:SR:GEV:" ,
+        opts, args = getopt.getopt(argv, "hi:a:s:cF:n:gx:fM:ot:m:T:OC:ydu:b:pW:A:B:kQj:l:e:D:w:PN:SR:GEV:z:Z:N" ,
                                         ["help"      ,
                                          "inputs="   ,
                                          "anh="      ,
@@ -284,7 +287,10 @@ def Main(argv):
                                          "read="     ,
                                          "allign"    ,
                                          "eds"       ,
-                                         "make-sol="]    )
+                                         "make-sol=" ,
+                                         "camm="     ,
+                                         "fderiv-j=" ,
+                                         "correction-terms"]    )
     except getopt.GetoptError, error:  
         print "\n   !Error! Quitting...\n"
         exit()
@@ -378,6 +384,12 @@ def Main(argv):
            eds   = True
         if opt in ("-G", "--allign" ):
            allign   = True
+        if opt in ("-z", "--camm" ):
+           zero_camm   = arg
+        if opt in ("-Z", "--fderiv-j" ):
+           fderiv_j   = arg
+        if opt in ("-N", "--correction-terms" ):
+           corrections   = True
         if opt in ("-V", "--make-sol" ):
            N,typ = arg.split(',')
            N = int(N)
@@ -711,12 +723,18 @@ def Main(argv):
                              ref_structure=parameters.pos,
                              solpol=SolPOL,
                              gijj=ANH.K3)
-
-                f.get_ShiftCorr('nma-opt-b3lyp-6-311++Ggg_A000_D00_.camm')
-
+                             
+                
                 print  >> out, "%10s"%typ,
                 print  >> out,"%13.2f "*5%tuple( f.shift[0] )
-                print Emtp.log
+                #print Emtp.log
+                
+                ### evaluate corrections to the frequency shifts
+                if corrections:
+                   f.eval_shiftcorr(zero_camm)
+                   
+                print f
+                #f.get_ShiftCorr('CH3N3_A000_D00_.camm')
                 #rrr= f.get_StructuralChange(CALC.Fder,f.SOLVENT,f.solute_structure,ANH.L,PARAM.fragments)\
                 #* UNITS.BohrToAngstrom
                 #print
