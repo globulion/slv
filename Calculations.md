@@ -197,7 +197,7 @@ semi-manually the next two files containing the distributed multipole moments an
 derivatives with respect
 to the normal coordinate of interest. To do this first:
 * calculate the moments.
-If you were creating the solvatochromic parameters you already have this file. Otherwise
+If you were creating the solvatochromic parameters **you already have this file**. Otherwise
 create it using *Coulomb.py* package.
 Next 
 * calculate the first derivatives of moments by typing:
@@ -206,17 +206,68 @@ slv -m 7 -cg -a nma.log --print > derivatives.txt
 ```
 The derivatives and other very useful information are printed to `derivatives.txt` file.
 Then select the first derivatives of your mode of interest and copy them **maintaining coulomb format**
-to the new file, let say, `nma-dcamm6.par`. Now copy the structure of the solute molecule
+to the new file, let say, `nma-dcamm12.par`. Now copy the structure of the solute molecule
 from parameter file (`Structure` section) to the derivative file (under derivatives).
  
-It is important to note here, that your derivatives as well as electrostatic moments
-are fully distributed (no united atoms). However suppose we want to use SolCAMM-6 model
+It is important to note here, that your  electrostatic moments as well as their derivatives 
+are fully distributed (no united atoms). However, suppose we want to use SolCAMM-6 model
 so we should contract the derivatives as well as electrostatic moments in the same way.
+Fortunately, it is very easy to contract the models as you wish. You just have to have LIBBBG
+installed and everything will came very strightforward. Do it e.g. within python:
+```
+python
+>>> from utilities import ParseDMA
+>>> dma = ParseDMA('nma-dcamm12.par','coulomb')[0]
+>>> dma.MakeUa(ualist)
+>>> dma.write('nma-dcamm6.par')
+```
+I think that these commands are self-explanatory. You can make a script which contracts
+for you any distribute multipole moment set.
 
-When you have these necessary additional files type the command like this:
+When you have these two necessary additional files type the command like this:
 ```
 slv -m 7 -cgfd -a nma.log -t system -R ../par/nma-solcamm6.par -b ../bsm/water.camm -D ./target \
     -Xz nma-camm-6.par -Z nma-dcamm6.par
 ```
+The output is similar as after normal frequency shift calculation run but the next two  windows
+are present:
+```
+ -------------------------------
+          RMS analysis
+ -------------------------------
+  - solvent rms:   0.014602
+  - solvent rms:   0.015199
+  - solvent rms:   0.009917
+  - solute  rms:   0.014725
+
+ --------------------------------:--------------------------
+ INTERACTION ENERGY TERMS [cm-1] : PARTITIONING TERMS [cm-1]
+ --------------------------------:--------------------------
+ Total               -45.28      :
+ --------------------------------:--------------------------
+    q-q              -21.42      :  1            -21.42
+    q-D              -23.00      :  1+2          -44.42
+    q-Q               -3.89      :  1+2+3        -54.42
+    q-O                6.32      :  1+2+3+4      -47.74
+    D-D               -6.11      :  1+2+3+4+5    -45.23
+    D-Q                0.36      :
+    D-O                0.58      :
+    Q-Q                1.93      :
+    Q-O               -5.09      :
+    O-O                5.04      :
+ --------------------------------:--------------------------
+ CORRECTION TERMS [cm-1]         : CORRECTED SHIFTS [cm-1]  
+ --------------------------------:--------------------------
+           MA         EA         :  1            -21.42
+ R-2      -5.48      -1.16       :  1+2          -51.06
+ R-3      -6.80       3.79       :  1+2+3        -64.07
+ R-4      -4.83       1.68       :  1+2+3+4      -60.55
+                                 :  1+2+3+4+5       ???
+ --------------------------------:--------------------------
+```
+The left panel contains the information about the corrections to 
+mechanical (`MA`) and electonic (`EA`) anharmonicities, respectively,
+providing each of R-n contributions. The right panel contains corrected
+frequency shifts.
 
 # 2.2 Kirkwood-Onsager-Buckingham-Cho continuum model
