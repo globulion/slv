@@ -59,6 +59,11 @@ atomic coordinates are listed (units are *Angstroms*)
     (CAMM) by *Coulomb.py* routines requires such basis sets (there is no code for spherical Gaussians 
     as for now unfortunately). In *Gaussian* program the usage of Cartesian basis can be achieved either by 
     specifying `iop(3/8=2)` anywhere in task specification or `6D/10F` just after basis set querry.
+  - **If your vibrational probe molecule is linear** you have to use a specific tool for creation
+    of anharmonic file. In Gaussian it is not possible to run the anharmonic analysis task for linear
+    molecules. See the link [here](https://github.com/globulion/slv/blob/master/doc/linear_molecules.md)
+    to find easy instructions how to prepare anharmonic file in these 
+    circumstances.
 
 --------
 Having the files with geometry (e.g. `nma.xyz`) and anharmonic analysis (e.g. `nma-anh.log`) created 
