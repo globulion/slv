@@ -140,10 +140,83 @@ slv -m 7 -cgfd -a nma.log -t system --read ../par/nma-solcamm6.par -b ../bsm/wat
 The new options used here are: 1. `--read` or `-R` reads the solvatochromic
 parameters prepared previously, 2. `--bsm` or `-b` for BSM moments, 3. `--typ` or `-t`
 specifies the file with system names and 4. `--target` or `-D` tells where are solute
-and solvent files.
+and solvent files. If you are using SolChelpG parameters you don't need to use BSM as well
+as you skip `-d` option.
 
-### 2.1.3.2 Calculations  of frequency shifts from MD trajectories
+If everything went correct you should see the final log with information on the shifts
+on your screen. For example for one of the systems it looks like this:
+```
+ -------------------------------
+          RMS analysis
+ -------------------------------
+  - solvent rms:   0.014602
+  - solvent rms:   0.015199
+  - solvent rms:   0.009917
+  - solute  rms:   0.014725
+
+ --------------------------------:--------------------------
+ INTERACTION ENERGY TERMS [cm-1] : PARTITIONING TERMS [cm-1]
+ --------------------------------:--------------------------
+ Total               -45.28      :
+ --------------------------------:--------------------------
+    q-q              -21.42      :  1            -21.42
+    q-D              -23.00      :  1+2          -44.42
+    q-Q               -3.89      :  1+2+3        -54.42
+    q-O                6.32      :  1+2+3+4      -47.74
+    D-D               -6.11      :  1+2+3+4+5    -45.23
+    D-Q                0.36      :
+    D-O                0.58      :
+    Q-Q                1.93      :
+    Q-O               -5.09      :
+    O-O                5.04      :
+ --------------------------------:--------------------------
+```
+The first window tells you the RMS (in atomic units) from superimpositions of solute and solvent molecules
+with gas-phase solute and BSM. The RMS values should be smaller than 0.05 au. If the RMS
+is larger than 0.5 probably you have done incorrect files (check the atom ordering in those cases!).
+The next window shows the frequency shift analysis with providing the asymptotic
+convergence (right panel) and the magnitudes of each separate term (left panel).
+If you don't use SolMMM model **remember to ignore** `1+2+3+4+5` **value because hexadecapoles are not implemented!**
+This convergence value is valid only for SolMMM analysis when solute and solvent molecules
+are **neutral** (terms with hexatecapoles are then zero). Thus for SolCAMM models
+the most accurate prediction of frequency shift is `1+2+3+4` (up to R-4 terms included).
+
+### 2.1.3.2 Calculations of frequency shifts from MD trajectories
+
+In preparation
+The command is as follows:
+```
+slv -m 7 -a nma.log --read nma-solcamm6.par --package amber -M traj.dcd charges
+```
 
 ## 2.1.4 Corrections to the SolX-n frequency shifts
+
+The correction terms to frequency shifts coming from solely distributed 
+solvatochromic moments can be easily evaluated in Solvshift. However, you have to prepare
+semi-manually the next two files containing the distributed multipole moments and their 
+derivatives with respect
+to the normal coordinate of interest. To do this first:
+* calculate the moments.
+If you were creating the solvatochromic parameters you already have this file. Otherwise
+create it using *Coulomb.py* package.
+Next 
+* calculate the first derivatives of moments by typing:
+```
+slv -m 7 -cg -a nma.log --print > derivatives.txt
+```
+The derivatives and other very useful information are printed to `derivatives.txt` file.
+Then select the first derivatives of your mode of interest and copy them **maintaining coulomb format**
+to the new file, let say, `nma-dcamm6.par`. Now copy the structure of the solute molecule
+from parameter file (`Structure` section) to the derivative file (under derivatives).
+ 
+It is important to note here, that your derivatives as well as electrostatic moments
+are fully distributed (no united atoms). However suppose we want to use SolCAMM-6 model
+so we should contract the derivatives as well as electrostatic moments in the same way.
+
+When you have these necessary additional files type the command like this:
+```
+slv -m 7 -cgfd -a nma.log -t system -R ../par/nma-solcamm6.par -b ../bsm/water.camm -D ./target \
+    -Xz nma-camm-6.par -Z nma-dcamm6.par
+```
 
 # 2.2 Kirkwood-Onsager-Buckingham-Cho continuum model
