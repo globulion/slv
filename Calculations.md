@@ -84,13 +84,66 @@ The latter way enables you to confront the results with experiment whereas the f
 route is rather for the testing of the model on the chosen level of theory. If there is 
 no data about the quality of the parameters you should first do some *ab initio* or DFT
 optimizations followed by vibrational analyses to correlate the exact frequency shifts
-with the ones coming from chosen coarse-grained SolX-*n* models. Remember that SolX-*n* models
+with the ones coming from chosen coarse-grained SolX-n models. Remember that SolX-n models
 are purely electrostatic in first order.
 
-### 2.1.3.1 Validation of the SolX-*n* models
+### 2.1.3.1 Validation of the SolX-n models
+
+To validate the parameters you have to make a set of various clusters of solute
+with several solvent molecules (at least 30 clusters). For each system perform
+frequency analysis with ChelpgG population analysis using *Gaussian*. The ChelpgG
+run is necessary just for the technical purposes, mainly *slv* reads atomic coordinates
+from *Gaussian* ChelpgG output. An examplary input for such model calculations is depicted
+beneath:
+```
+#p DFT/6-311++G** iop(3/8=2) freq integral(grid=199974) scf(conver=10,xqc) pop(chelpg)
+```
+Of course the system must be in energy minimum.
+
+Now, if you managed with the model frequency analysis for the solute-solvent cluster
+you need to make special files: 1. `solute_<type>` and 2. `solvent_<type>`. These
+files can be readily made by running the following command:
+```
+slv -V <N>,<type> <file>
+```
+For example, our solute is NMA molecule (12 atoms) and we want to create the respective
+files for `A.log` and `B.log` frequency files. We simply run this:
+```
+slv -V 12,A A.log
+slv -V 12,B B.log
+```
+If everything was done correctly you should see on the screen the following message:
+```
+ The files: 
+      < solute_A > and < solvent_A > 
+ have been saved in the actuall directory!
+```
+and the same for the second file. To calculate frequency shift basing on this files
+you have to use `-f` option, which specifies frequency shift mode for model validation.
+Now create the file with names of your systems, i.e. for our example the names are `A` and `B`
+and the file content (let it be named `systems`) would be:
+```
+A
+B
+```
+You have also know the directory with your target systems (i.e. the solute and olvent files).
+Now you have them written in the actual directory but it is more convienient
+to store them in special place, e.g. `target` directory. In the case of SolCAMM
+and SolMMM models you need also **benchmark solvent molecule** electrostatic moments
+which are multipole moments for equilibrium gas phase solvent molecule. This file
+is in coulomb format and can be easily prepared using *Coulomb.py* package. 
+
+Thus, the command running the frequency shift calculation looks like this:
+```
+slv -m 7 -cgfd -a nma.log -t system --read ../par/nma-solcamm6.par -b ../bsm/water.camm -D ./target
+```
+The new options used here are: 1. `--read` or `-R` reads the solvatochromic
+parameters prepared previously, 2. `--bsm` or `-b` for BSM moments, 3. `--typ` or `-t`
+specifies the file with system names and 4. `--target` or `-D` tells where are solute
+and solvent files.
 
 ### 2.1.3.2 Calculations  of frequency shifts from MD trajectories
 
-## 2.1.4 Corrections to the SolX-*n* frequency shifts
+## 2.1.4 Corrections to the SolX-n frequency shifts
 
 # 2.2 Kirkwood-Onsager-Buckingham-Cho continuum model
