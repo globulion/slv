@@ -38,7 +38,7 @@ This file is written in *coulomb* format (see the link
 only `--save` option is used without specification of a name the file will be written to `slv.par`
 file as a default name.
 
-### 2.1.1.1 Preparation of SolX parameters
+### Preparation of SolX parameters
 
 Beneath the suitable commands are provided for creation of various SolX models for
 a molecule under study:
@@ -52,8 +52,11 @@ slv -cgd -a nma.anh -S
 ```
 * **SolMMM model**
 ```
-slv -cgO -a nma.anh -S --transl coe [can be com and others, see the --help option)
+slv -cgO -a nma.anh -S --transl coe
 ```
+The last case relates to SolMMM centered at COE molecular point **(add reference!)**.
+The other arguments of `--transl` can be `com` (center of mass) and others like weighted
+center between two atoms. For further referene see the `--help` option.
 
 ## 2.1.2 Making contracted models
 
@@ -70,3 +73,24 @@ slv -cg -a nma.anh --save --name nma-solchelpg-12.par -u 1,2,3,11-5,10,12,7
 The moments for protons in methyl groups are now zeroed out. We remark here, however, that
 technically there is still 12 solvatochromic centers but 6 of them are **zero** and contribute nothing, so
 as if they were absent.
+
+## 2.1.3 Frequency shift calculations
+
+To calculate the frequency shifts you have to provide the structural information
+about solute-solvent system. You can prepare the necessary files directly from using
+*Gaussian* log file in which population analysis were performed (the form of output
+is important). The second way is to use Molecular Dynamics simulation trajectory files.
+The latter way enables you to confront the results with experiment whereas the first 
+route is rather for the testing of the model on the chosen level of theory. If there is 
+no data about the quality of the parameters you should first do some *ab initio* or DFT
+optimizations followed by vibrational analyses to correlate the exact frequency shifts
+with the ones coming from chosen coarse-grained SolX-*n* models. Remember that SolX-*n* models
+are purely electrostatic in first order.
+
+### 2.1.3.1 Validation of the SolX-*n* models
+
+### 2.1.3.2 Calculations  of frequency shifts from MD trajectories
+
+## 2.1.4 Corrections to the SolX-*n* frequency shifts
+
+# 2.2 Kirkwood-Onsager-Buckingham-Cho continuum model
