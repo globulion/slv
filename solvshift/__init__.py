@@ -1,2 +1,4 @@
+﻿# -*- coding: utf-8 -*-
 ### Dummy file
-__version__="0.1.3"
+__author__=    "bartosz Błasiak"
+__version__=   "0.1.4"

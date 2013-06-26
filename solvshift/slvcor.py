@@ -1,4 +1,4 @@
-# --------------------------------------------------------------------- #
+﻿# --------------------------------------------------------------------- #
 #           SOLVATOCHROMIC FREQUENCY SHIFT CORRECTION MODULE            #
 # --------------------------------------------------------------------- #
 
@@ -22,11 +22,11 @@ derivative tensors are properly rotated and translated!
 Reduced masses should be given in AMU, harmonic frequencies
 in cm-1 and other quantities in AU."""
     
-    def __init__(self,fderiv=0,sderiv=0,redmass=0,freq=0,L=[],
-                 solute=0,solvent=0,mode_id=0,gijj=[]):
+    def __init__(self,fderiv=0,redmass=0,freq=0,L=[],
+                 solute=0,solvent=0,mode_id=0,gijj=[],
+                 ua_list=None):
         # first and second DMA derivatives wrt normal mode
         self.__fderiv = copy.deepcopy(array(fderiv))
-        self.__sderiv = copy.deepcopy(array(sderiv))
         # reduced masses in helico
         self.__redmass = array(redmass)
         self.__nModes = len(redmass)
@@ -44,6 +44,8 @@ in cm-1 and other quantities in AU."""
         self.__solute = solute.copy()
         # solvent DMA
         self.__solvent = solvent.copy()
+        # ua_list
+        self.__ua_list = ua_list
         
         ### weight L-matrix and derivative tensors elements
         self.__weight()
@@ -99,7 +101,7 @@ in cm-1 and other quantities in AU."""
                         
                     ### kjj terms
                     rk2 = 0; rk3 = 0; rk4 = 0
-                    fqa,fDa,fQa,fOa = self.__fdx[J]
+                    fqa,fDa,fQa,fOa = self.__fdx
                     
                     rk2 -= 2*fqa[i] * qb[j] * dot(self.__Lvec(J,i),R)                  / Rab**3
                     #
@@ -161,12 +163,8 @@ in cm-1 and other quantities in AU."""
         log += " %3s %10.2f %10.2f       :  1+2+3    %10.2f\n" % ('R-3',a[2],b[2],C+a[2]+b[2]+a[1]+b[1])
         log += " %3s %10.2f %10.2f       :  1+2+3+4  %10.2f\n" % ('R-4',a[3],b[3],D+a[3]+b[3]+a[2]+b[2]+a[1]+b[1])
         log += "                                 :  1+2+3+4+5%10s\n" % ('???')
-        log += "                                 :\n"
         log += " --------------------------------:--------------------------\n"
-        #log += 3*'%13.2f'% tuple( a[1:] * self.HartreePerHbarToCmRec )
-        #log += '\n'
-        #log += 3*'%13.2f'% tuple( b[1:] * self.HartreePerHbarToCmRec )
-        #log += '\n'
+        
         return str(log)
         
     def get(self):
@@ -215,21 +213,21 @@ projection to explicit array format from DMA format"""
         del dma1
         ### derivatives of DMA objects
         dma1=self.__fderiv.copy()
-        #dma2=self.__sderiv.copy()
-        self.__fdx = []
-        ua_list = [ ( 1,12,11, 6), ( 4, 7, 9,10) ]
-        for i in range(self.__nModes):
-            #dma1[i].set_structure(pos=self.__solute.pos, origin=self.__solute.pos)
-            #print dma1[i].pos
-            #dma1[i].MakeUa(ua_list,change_origin=True)
-            dma1[i].MAKE_FULL()
-            dma1[i].MakeTraceless()
-            Ra,qa,Da,Qa,Oa = dma1[i].DMA_FULL
-            self.__fdx.append((qa,Da,Qa,Oa))
-        #dma2.MAKE_FULL()
-        #dma2.MakeTraceless()
-        #Rb,qb,Db,Qb,Ob = dma2.DMA_FULL
-        #self.__sdx = (qb,Db,Qb,Ob)
+        ##### ten zahaszowany kod dotyczy przypadku używania wszystkich pochodnych, jednak to nie jest konieczne i wytarczą j-th mode's pochodne
+        #for i in range(self.__nModes):                                               
+            #dma1[i].set_structure(pos=self.__solute.pos, origin=self.__solute.pos)   
+            #print dma1[i].pos                                                        
+            #dma1[i].MakeUa(ua_list,change_origin=True)                               
+        #    dma1[i].MAKE_FULL()                                                      
+        #    dma1[i].MakeTraceless()                                                  
+        #    Ra,qa,Da,Qa,Oa = dma1[i].DMA_FULL                                        
+        dma1.set_structure(pos=self.__solute.pos, origin=self.__solute.pos)
+        if self.__ua_list is not None: dma1.MakeUa(self.__ua_list,change_origin=True)
+        dma1.MAKE_FULL()
+        dma1.MakeTraceless()
+        Ra,qa,Da,Qa,Oa = dma1.DMA_FULL
+        self.__fdx = (qa,Da,Qa,Oa)
+        #self.__fdx.append((qa,Da,Qa,Oa))
         return
         
     def __weight(self):
@@ -238,9 +236,8 @@ using reduced masses"""
         # L-matrix
         temp = sqrt(self.__redmass*self.AmuToElectronMass)[newaxis,:]
         self.__L = temp * self.__L
-        # fderiv & sderiv
-        self.__fderiv *= sqrt(self.__redmass*self.AmuToElectronMass)
-        #self.__sderiv *=      self.__redmass*self.AmuToElectronMass
+        # fderiv
+        self.__fderiv *= sqrt(self.__redmass[self.__mode_id]*self.AmuToElectronMass)
         # cubic anharmonic constants
         temp = sqrt(self.__redmass)[:,newaxis,newaxis,]
         self.__gijj = temp * self.__gijj

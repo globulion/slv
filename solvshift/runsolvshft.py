@@ -73,7 +73,11 @@ def Usage():
  *                              : [file] containing harmonic and anharmonic data                             *
  *     -m, --mode-id   [int]    : provide normal mode ID number in Python convention (i.e. N-1)              *
  *     -F, --frag      [file]   : provide xyz file containing non-atomic fragments to be parametrized        *
+ *     -R, --read      [file]   : read the parameters from file (coulomb format)                             *
  *     -b, --bsm       [file]   : parameters for benchmark solvent molecule (BSM) in coulomb format          *
+ *     -z  --camm      [file]   : read electrostatic moments of solute molecule (for shoft corrections)      *
+ *     -Z  --fderiv-j  [file]   : read derivatives of electrostatic moments of solute molecule (for shift    *
+ *                              : corrections)                                                               *
  *     -A, --solute    [atoms]  : provide a string of atomic symbols for solute separated by a comma and     *
  *                              : without space, eg.: -A C,C,O,H,H,H,H                                       *
  *     -B, --solvent   [atoms]  :provide a string of atomic symbols for solvent separated by a comma and     *
@@ -82,12 +86,14 @@ def Usage():
  *  [5] FREQUENCY SHIFTS                                                                                     *
  *  -------------------------------------------------------------------------------------------------------  *
  *     -f, --freq               : calculate frequency shift                                                  *
+ *     -X, --corr               : evaluate corrections to frequency shifts                                   *
  *     -t, --typ       [type]   : provide the file of solute/solvent system names (relevant if -f option     *
  *                              : is used)                                                                   *
  *     -D, --target    [dir]    : provide the directory with solute/solvent system files                     *
  *     -M, --MD        [traj]   : calculate frequency shift distribution from Molecular Dynamics simulation  *
  *                              : providing the trajectory [traj] / default are 'amber' files /              *
  *                              : charges file as the args[0]                                                *
+ *     -U, --md-package         : specify MD package software (GROMACS or AMBER)                             *
  *     -Q, --struct             : evaluate solute structural distortions in the first order due              *
  *                              : to solvation                                                               *
  *     -E, --eds                : evaluate frequency shifts from direct differentiation of interaction       *
@@ -190,8 +196,8 @@ def Main(argv):
     sder_work_dir  = './sder'                                          #
     make_ua        = False                                             #
     ua_list_5      = [ ( 1,12,11, 6), ( 4, 7, 9,10), ( 2, 8) ]         # methyl groups + NH amide
-    ua_list        = [ ( 1,12,11, 6), ( 4, 7, 9,10) ]                  # methyl groups
     ua_list        = [ ( 4, 5, 6, 7) ]
+    ua_list        = [ ( 1,12,11, 6), ( 4, 7, 9,10) ]                  # methyl groups
     
     ### input/output file handling
     read_file      = ''                                                #
@@ -248,7 +254,7 @@ def Main(argv):
     ## --------------------------- ##
     
     try:
-        opts, args = getopt.getopt(argv, "hi:a:s:cF:n:gx:fM:ot:m:T:OC:ydu:b:pW:A:B:kQj:l:e:D:w:PN:SR:GEV:z:Z:N" ,
+        opts, args = getopt.getopt(argv, "hi:a:s:cF:n:gx:fM:ot:m:T:OC:ydu:b:pW:A:B:kQj:l:e:D:w:PN:SR:GEV:z:Z:XU:" ,
                                         ["help"      ,
                                          "inputs="   ,
                                          "anh="      ,
@@ -290,7 +296,8 @@ def Main(argv):
                                          "make-sol=" ,
                                          "camm="     ,
                                          "fderiv-j=" ,
-                                         "correction-terms"]    )
+                                         "correction-terms",
+                                         "md-package="]    )
     except getopt.GetoptError, error:  
         print "\n   !Error! Quitting...\n"
         exit()
@@ -360,7 +367,9 @@ def Main(argv):
         if opt in ("-M", "--MD"):
            md = True
            md_trajectory = arg
-           md_charges = args[0]  
+           md_charges = args[0]
+        if opt in ("-U", "--md-package" ):
+           md_package   = arg.lower()
         if opt in ("-t", "--typ"):
            types = arg
         if opt in ("-m", "--mode-id"):
@@ -388,7 +397,7 @@ def Main(argv):
            zero_camm   = arg
         if opt in ("-Z", "--fderiv-j" ):
            fderiv_j   = arg
-        if opt in ("-N", "--correction-terms" ):
+        if opt in ("-X", "--correction-terms" ):
            corrections   = True
         if opt in ("-V", "--make-sol" ):
            N,typ = arg.split(',')
@@ -448,9 +457,10 @@ def Main(argv):
        ### [2.2] SolX - distributed solvatochromic multipole model mode
        if not onsager:
           
-          ### [2.2.1] read external file in COULOMB format
+          ### [2.2.1] read external files in COULOMB format
           if read_file:
              parameters, smiec = ParseDMA(read_file,'coulomb'); del smiec
+             if fderiv_j: fderiv    , smiec = ParseDMA(fderiv_j ,'coulomb'); del smiec
              
              ### allign the parameters
              if allign:
@@ -672,7 +682,7 @@ def Main(argv):
              solute  = ParseDMA( target_dir+'/solute_%s'%typ,file_type)[0]
              solvent = ParseDMA( target_dir+'/solvent_%s'%typ,file_type)[0]
              try:
-                fderiv = CALC.Fder
+                if not fderiv_j: fderiv = CALC.Fder[mode_id]
              except UnboundLocalError:
                 fderiv = []
                 
@@ -731,7 +741,8 @@ def Main(argv):
                 
                 ### evaluate corrections to the frequency shifts
                 if corrections:
-                   f.eval_shiftcorr(zero_camm)
+                   if fderiv_j: f.eval_shiftcorr(zero_camm)
+                   else:        f.eval_shiftcorr(zero_camm,ua_list)
                    
                 print f
                 #f.get_ShiftCorr('CH3N3_A000_D00_.camm')
@@ -795,14 +806,15 @@ def Main(argv):
           #solute.DMA[0][1] = PARAM[mode_id][0][40-1]
           #solute.DMA[0][2] = PARAM[mode_id][0][41-1]
           #solute.DMA[0][3] = PARAM[mode_id][0][6-1]
-          solute_atoms = arange( len(solute_atno) )#arange(2411-1,2414-1+1)
+          solute_atoms = [198,199,200,201,202,203]#arange( len(solute_atno) )#arange(2411-1,2414-1+1)
           md_freq_shifts = SLV_MD(pkg=md_package,
                                   charges=md_charges,
                                   trajectory=md_trajectory,
                                   solute_atoms=solute_atoms,
                                   solute_parameters=parameters,
                                   threshold=900000,
-                                  camm=SolCAMM)
+                                  camm=SolCAMM,
+                                  suplist=[0,3,4,5])
           
           print md_freq_shifts                     
           shifts, averages, stds = md_freq_shifts.get_shifts()

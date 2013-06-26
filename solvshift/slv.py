@@ -74,6 +74,8 @@ class SLV(UNITS):
         self.redmass = array(redmass)
         # harmonic frequencies in helico
         self.freq = array(freq)
+        # number of modes
+        self.nModes = len(freq)
         # cubic anharmonic constants
         self.gijj = array(gijj)
         # benchmark solvent molecule file
@@ -114,25 +116,23 @@ class SLV(UNITS):
 
     # public methods
 
-    def eval_shiftcorr(self,solute_DMA):
+    def eval_shiftcorr(self,solute_DMA,ua_list=None):
         """evaluates corrections to frequency shifts"""
         
         ### get rotated quantities: L, fderiv, solute DMA
         fderiv_rot, transformed_gas_phase_str, L_rot, rot = self.get_rotated(self.fderiv, self.L, self.solute_structure, self.ref_structure)
         sol,smiec = ParseDMA(solute_DMA,'coulomb'); del smiec
-        ua_list = [ ( 1,12,11, 6), ( 4, 7, 9,10) ]
-        #ua_list = [ ( 1,5,6,7) ]
         self.SOLVENT.makeDMAfromFULL()
-        sol.MakeUa(ua_list,change_origin=True)
+        if ua_list is not None: sol.MakeUa(ua_list,change_origin=True)
         sol.MAKE_FULL()
         sol.Rotate(rot)
         sol.set_structure(pos=self.solute_structure, origin=self.solute_structure)
 
         ### calculate the corrections!!!
-        corr = SLVCOR(fderiv=fderiv_rot,sderiv=0,redmass=self.redmass.copy(),
+        corr = SLVCOR(fderiv=fderiv_rot,redmass=self.redmass.copy(),
                       freq=self.freq.copy(),L=L_rot.copy(),solute=sol.copy(),
                       solvent=self.SOLVENT.copy(),
-                      mode_id=self.mode_id,gijj=self.gijj)
+                      mode_id=self.mode_id,gijj=self.gijj,ua_list=ua_list)
         corr.eval()
         corr.shift = self.shift
         self.log = self.log[:-1]+str(corr)
@@ -200,17 +200,21 @@ class SLV(UNITS):
 
         ### rotate the fderiv[i]
         fderiv_copy = copy.deepcopy(fderiv)
-        for i in fderiv_copy:
-            i.pos  =array(ref_structure)
-            i.origin  =array(ref_structure)
-            i.MAKE_FULL()
-            i.Rotate(rot)
+        #for i in fderiv_copy:
+        #    i.pos  =array(ref_structure)
+        #    i.origin  =array(ref_structure)
+        #    i.MAKE_FULL()
+        #    i.Rotate(rot)
+        fderiv_copy.pos  =array(ref_structure)
+        fderiv_copy.origin  =array(ref_structure)
+        fderiv_copy.MAKE_FULL()
+        fderiv_copy.Rotate(rot)
             
         ### rotate the eigenvectors
-        Lrot = L.reshape(self.stat,3,len(fderiv))
+        Lrot = L.reshape(self.stat,3,self.nModes)
         Lrot = tensordot(Lrot,rot,(1,0))              # dimension: nstat,nmodes,3
         Lrot = transpose(Lrot,(0,2,1))                # dimension: nstat,3,nmodes
-        Lrot = Lrot.reshape(self.stat*3,len(fderiv)) # dimension: nstat*3,nmodes
+        Lrot = Lrot.reshape(self.stat*3,self.nModes) # dimension: nstat*3,nmodes
         
         return fderiv_copy, transformed_gas_phase_str, Lrot, rot
     
