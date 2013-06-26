@@ -26,7 +26,7 @@ are created in flow during frequency shift evaluation they are not saved.
 To create the set of parameters for SolCHELPG method you have to type the following command:
 
 ```
-slv -cg -a nma.anh --save --name nma-solchelpg-12.par
+slv -c -g -a nma.anh --save --name nma-solchelpg-12.par
 ```
 or shorter
 ```
@@ -183,11 +183,17 @@ the most accurate prediction of frequency shift is `1+2+3+4` (up to R-4 terms in
 
 ### 2.1.3.2 Calculations of frequency shifts from MD trajectories
 
-In preparation
+In prepaation. As for now you can calculate frequency shifts
+from:
+* *Gromacs* using `.xtc` trajectories and `.itp` file with charges
+* *Amber* using `.mdcrd` trajectories and `.prmtop` file with charges
 The command is as follows:
 ```
-slv -m 7 -a nma.log --read nma-solcamm6.par --package amber -M traj.dcd charges
+slv -m 7 -cfd -a nma.log --read nma-solcamm6.par --md-package amber -M traj.dcd charges.prmtop
 ```
+The option `--md-package` or `U` provides the package and `-M` provides trajectory. Charges
+are treated as last argument so it should be nothigh after their specification within a command line.
+In this run don't use `-f` option because it is not validation of the model mode.
 
 ## 2.1.4 Corrections to the SolX-n frequency shifts
 
@@ -207,7 +213,7 @@ slv -m 7 -cg -a nma.log --print > derivatives.txt
 The derivatives and other very useful information are printed to `derivatives.txt` file.
 Then select the first derivatives of your mode of interest and copy them **maintaining coulomb format**
 to the new file, let say, `nma-dcamm12.par`. Now copy the structure of the solute molecule
-from parameter file (`Structure` section) to the derivative file (under derivatives).
+from parameter file (`Structure` section) to the derivative file (under the derivatives).
  
 It is important to note here, that your  electrostatic moments as well as their derivatives 
 are fully distributed (no united atoms). However, suppose we want to use SolCAMM-6 model
@@ -217,20 +223,21 @@ installed and everything will came very strightforward. Do it e.g. within python
 ```
 python
 >>> from utilities import ParseDMA
+>>> ualist = [ (3,5,6,7), (8,9,10,11) ]
 >>> dma = ParseDMA('nma-dcamm12.par','coulomb')[0]
 >>> dma.MakeUa(ualist)
 >>> dma.write('nma-dcamm6.par')
 ```
 I think that these commands are self-explanatory. You can make a script which contracts
-for you any distribute multipole moment set.
+for you any distributed multipole moment set.
 
 When you have these two necessary additional files type the command like this:
 ```
 slv -m 7 -cgfd -a nma.log -t system -R ../par/nma-solcamm6.par -b ../bsm/water.camm -D ./target \
     -Xz nma-camm-6.par -Z nma-dcamm6.par
 ```
-The output is similar as after normal frequency shift calculation run but the next two  windows
-are present:
+The output is similar as after normal frequency shift calculation run now but the next two  windows
+are present at the bottom:
 ```
  -------------------------------
           RMS analysis
@@ -270,4 +277,4 @@ mechanical (`MA`) and electonic (`EA`) anharmonicities, respectively,
 providing each of R-n contributions. The right panel contains corrected
 frequency shifts.
 
-# 2.2 Kirkwood-Onsager-Buckingham-Cho continuum model
+# 2.2 Continuum models of solvatochromism
