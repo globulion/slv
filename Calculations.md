@@ -183,13 +183,14 @@ the most accurate prediction of frequency shift is `1+2+3+4` (up to R-4 terms in
 
 ### 2.1.3.2 Calculations of frequency shifts from MD trajectories
 
-In prepaation. As for now you can calculate frequency shifts
+In preparation. As for now you can calculate frequency shifts
 from:
 * *Gromacs* using `.xtc` trajectories and `.itp` file with charges
 * *Amber* using `.mdcrd` trajectories and `.prmtop` file with charges
+
 The command is as follows:
 ```
-slv -m 7 -cfd -a nma.log --read nma-solcamm6.par --md-package amber -M traj.dcd charges.prmtop
+slv -m 7 -cfd -a nma.log --read nma-solcamm6.par --md-package amber -M traj.dcd topology.prmtop
 ```
 The option `--md-package` or `U` provides the package and `-M` provides trajectory. Charges
 are treated as last argument so it should be nothigh after their specification within a command line.
