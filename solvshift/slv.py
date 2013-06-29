@@ -121,7 +121,7 @@ class SLV(UNITS):
         
         ### get rotated quantities: L, fderiv, solute DMA
         fderiv_rot, transformed_gas_phase_str, L_rot, rot = self.get_rotated(self.fderiv, self.L, self.solute_structure, self.ref_structure)
-        sol,smiec = ParseDMA(solute_DMA,'coulomb'); del smiec
+        sol = ParseDMA(solute_DMA,'coulomb')
         self.SOLVENT.makeDMAfromFULL()
         if ua_list is not None: sol.MakeUa(ua_list,change_origin=True)
         sol.MAKE_FULL()
@@ -140,11 +140,7 @@ class SLV(UNITS):
     
     def _bsm(self):
         """benchmark_solvent_molecule extractor"""
-        benchmark_solvent_molecule, smiec = ParseDMA(self.bsm_file,'coulomb')
-        smiec, bsm_pos = ParseDMA(self.bsm_file[:-4]+'log','gaussian')
-        del smiec
-        benchmark_solvent_molecule.pos = array(bsm_pos)
-        benchmark_solvent_molecule.origin = array(bsm_pos)
+        benchmark_solvent_molecule = ParseDMA(self.bsm_file,'coulomb')
         return benchmark_solvent_molecule
     
     def addSites(self):

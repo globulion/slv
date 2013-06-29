@@ -35,6 +35,7 @@ def Usage():
  *     -g, --gaussian           : sets Gaussian log files to be parsed (relevant if -c option is used)       *
  *                              : as well as gaussian input files were created (relevant if -i option used)  *
  *                              :             / default is Gamess                                            *
+ *     -H, --ncpus     [int]    : number of processors (default is one)                                      *
  *  -------------------------------------------------------------------------------------------------------  *
  *  [2] DIFFERENTIATION                                                                                      *
  *  -------------------------------------------------------------------------------------------------------  *
@@ -183,6 +184,7 @@ def Main(argv):
     ## --------------------------- ##
     
     ### operational options                                            # comments and annotations
+    ncpus          = 1                                                 #
     Inputs         = False                                             #
     Calculate      = False                                             #
     Gamess         = True                                              #
@@ -254,7 +256,7 @@ def Main(argv):
     ## --------------------------- ##
     
     try:
-        opts, args = getopt.getopt(argv, "hi:a:s:cF:n:gx:fM:ot:m:T:OC:ydu:b:pW:A:B:kQj:l:e:D:w:PN:SR:GEV:z:Z:XU:" ,
+        opts, args = getopt.getopt(argv, "hi:a:s:cF:n:gx:fM:ot:m:T:OC:ydu:b:pW:A:B:kQj:l:e:D:w:PN:SR:GEV:z:Z:XU:H:" ,
                                         ["help"      ,
                                          "inputs="   ,
                                          "anh="      ,
@@ -297,7 +299,8 @@ def Main(argv):
                                          "camm="     ,
                                          "fderiv-j=" ,
                                          "correction-terms",
-                                         "md-package="]    )
+                                         "md-package=",
+                                         "ncpus="     ]    )
     except getopt.GetoptError, error:  
         print "\n   !Error! Quitting...\n"
         exit()
@@ -312,7 +315,9 @@ def Main(argv):
            Inputs   = True 
            xyz_file = arg
         if opt in ("-W", "--sder-work" ):
-           sder_work_dir = arg 
+           sder_work_dir = arg
+        if opt in ("-H", "--ncpus"):
+           ncpus = int(arg)
         if opt in ("-T", "--transl" ):
            translation   = arg 
         if opt in ("-w", "--cube" ):
@@ -459,8 +464,9 @@ def Main(argv):
           
           ### [2.2.1] read external files in COULOMB format
           if read_file:
-             parameters, smiec = ParseDMA(read_file,'coulomb'); del smiec
-             if fderiv_j: fderiv    , smiec = ParseDMA(fderiv_j ,'coulomb'); del smiec
+             parameters = ParseDMA(read_file,'coulomb')
+             if fderiv_j: 
+                fderiv  = ParseDMA(fderiv_j ,'coulomb')
              
              ### allign the parameters
              if allign:
@@ -679,8 +685,8 @@ def Main(argv):
           if Gaussian:
             out = open('shifts.dat','w') 
             for typ in open(types).read().split('\n')[:-1]:
-             solute  = ParseDMA( target_dir+'/solute_%s'%typ,file_type)[0]
-             solvent = ParseDMA( target_dir+'/solvent_%s'%typ,file_type)[0]
+             solute  = ParseDMA( target_dir+'/solute_%s'%typ,file_type)
+             solvent = ParseDMA( target_dir+'/solvent_%s'%typ,file_type)
              try:
                 if not fderiv_j: fderiv = CALC.Fder[mode_id]
              except UnboundLocalError:
@@ -694,7 +700,7 @@ def Main(argv):
                              L=ANH.L,
                              mode_id=mode_id,
                              solute=parameters,
-                             solute_structure=solute.pos,
+                             solute_structure=solute.get_pos(),
                              solvent=solvent,
                              solute_origin=translation,
                              mixed=mixed,
@@ -705,7 +711,7 @@ def Main(argv):
                              fderiv=fderiv,
                              redmass=ANH.redmass,
                              freq=ANH.freq,
-                             ref_structure=parameters.pos)
+                             ref_structure=parameters.get_pos() )
 
                 print  >> out, "%10s"%typ,
                 print  >> out,"%13.2f "*5%tuple( f.shift[0] )
@@ -719,7 +725,7 @@ def Main(argv):
                              L=ANH.L,
                              mode_id=mode_id,
                              solute=parameters,
-                             solute_structure=solute.pos,
+                             solute_structure=solute.get_pos(),
                              solvent=solvent,
                              solute_origin=translation,
                              mixed=mixed,
@@ -730,7 +736,7 @@ def Main(argv):
                              fderiv=fderiv,
                              redmass=ANH.redmass,
                              freq=ANH.freq,
-                             ref_structure=parameters.pos,
+                             ref_structure=parameters.get_pos(),
                              solpol=SolPOL,
                              gijj=ANH.K3)
                              
@@ -762,13 +768,13 @@ def Main(argv):
                                L=ANH.L_,
                                mode_id=mode_id,
                                solute=parameters,
-                               solute_structure=solute.pos,
+                               solute_structure=solute.get_pos(),
                                solvent=solvent,
                                solute_origin=translation,
                                mixed=mixed,
                                overall_MM=parameters,
                                bsm_file=bsm_file,
-                               ref_structure=parameters.pos)
+                               ref_structure=parameters.get_pos() )
                         
                 print Emtp.log
                 #print "\n SOLUTE SOLVATOCHROMIC MULTIPOLES [A.U.]\n" 
@@ -784,13 +790,13 @@ def Main(argv):
                                L=ANH.L,
                                mode_id=mode_id,
                                solute=parameters,
-                               solute_structure=solute.pos,
+                               solute_structure=solute.get_pos(),
                                solvent=solvent,
                                solute_origin=translation,
                                mixed=mixed,
                                overall_MM=parameters,
                                bsm_file=bsm_file,
-                               ref_structure=parameters.pos)
+                               ref_structure=parameters.get_pos() )
                         
                 print Emtp.log
                 print "\n SOLUTE SOLVATOCHROMIC MULTIPOLES [A.U.]\n" 
@@ -812,7 +818,7 @@ def Main(argv):
                                   trajectory=md_trajectory,
                                   solute_atoms=solute_atoms,
                                   solute_parameters=parameters,
-                                  threshold=900000,
+                                  threshold=190,
                                   camm=SolCAMM,
                                   suplist=[0,3,4,5])
           
@@ -856,12 +862,12 @@ def sprawdz_transformacje_calkowitych_multipoli():
     print normal
     print point
 
-    normal_DMA = ParseDMA( argv[1],'gaussian' )[0]
-    point_DMA  = ParseDMA( argv[2],'gaussian' )[0]
+    normal_DMA = ParseDMA( argv[1],'gaussian' )
+    point_DMA  = ParseDMA( argv[2],'gaussian' )
 
     sup = SVDSuperimposer()
-    Y = point_DMA.pos
-    X = normal_DMA.pos
+    Y = point_DMA.get_pos()
+    X = normal_DMA.get_pos()
     #       rot     
     # Y <--------- X
     #               

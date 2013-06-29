@@ -181,11 +181,11 @@ class SLV_MD(UNITS):
                    # evaluate frequency shift for the current frame and save
                    self.__eval(frame)
                    
-                   #xdrfile_close(XTC)
-                   #break
+                   xdrfile_close(XTC)
+                   break
                    
              # close the trajectory file      
-             xdrfile_close(XTC)
+             #xdrfile_close(XTC)
              
         ### finalize the results
         self.frequency_shifts = array( self.frequency_shifts )
@@ -223,7 +223,7 @@ class SLV_MD(UNITS):
         for i in self.solute_atoms:
             solute_pos.append(frame[i])
         solute_pos = array(solute_pos)
-
+        
         ### rotate the solute!
         if self.camm:
             ### control the rms of solute wrt reference (gas phase)

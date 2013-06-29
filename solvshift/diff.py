@@ -527,7 +527,9 @@ class DIFF(UNITS,FREQ):
         DMA_set = []
         Overall_MM_set = []
         for file in files:
-            dma, Fragment = ParseDMA ( file, type ) # zmieniono z ( dir+file, type )
+            #dma, Fragment = ParseDMA ( file, type ) # zmieniono z ( dir+file, type )
+            dma = ParseDMA ( file, type ) # zmieniono z ( dir+file, type )
+            Fragment = dma.get_pos()
             DMA_set.append( dma )
             Fragments_set.append( Fragment )
             
@@ -876,9 +878,9 @@ if __name__ == '__main__':
    
    ### first test
    #test1()
-   def CalculateCAMM(basis='6-311++G**'): 
+   def CalculateCAMM(basis='6-311++G**',bonds=[]): 
        """calculates CAMMs from density matrix from GAUSSIAN09
-       using COULOMB.py routines"""
+using COULOMB.py routines"""
        from head import *
        from sys import argv
        import os, glob
@@ -893,8 +895,10 @@ if __name__ == '__main__':
        print
        
        for i,file_log in enumerate(pliki_log):
-           dma, fragment = ParseDMA( file_log, 'gaussian' )
-       
+           dma = ParseDMA( file_log, 'gaussian' )
+           fragment = dma.get_pos()
+           
+           ### read atomic symbols
            frag_file = open('slv.frags','r')
            frag_names = []
            line = frag_file.readline()
@@ -920,47 +924,25 @@ if __name__ == '__main__':
            dmat = ParseDmatFromFchk(pliki_fchk[i],basis_size)
        
            ### calculate CAMMs                    
-           CAMM = multip.MULTIP(molecule=molecule,
+           camm = multip.MULTIP(molecule=molecule,
                          basis=basis,
                          #basis='sto-3g',
                          method='b3lyp',
                          matrix=dmat,
-                         transition=False)
-           CAMM.camms()
-           CAMM.mmms()
-           CAMM.__printMMMs__()
+                         transition=False,
+                         bonds=bonds)
+           camm.camms()
+           camm.mmms()
+           camm.__printMMMs__()
            #CAMM.__printCAMMs__()
        
-           result = DMA(nfrag=len(structure))
-           result.DMA[0][:] = CAMM.Mon
-           #
-           result.DMA[1][:] = CAMM.Dip
-           #
-           result.DMA[2][:,0] = array(CAMM.Quad)[:,0,0]
-           result.DMA[2][:,1] = array(CAMM.Quad)[:,1,1]
-           result.DMA[2][:,2] = array(CAMM.Quad)[:,2,2]
-           result.DMA[2][:,3] = array(CAMM.Quad)[:,0,1]
-           result.DMA[2][:,4] = array(CAMM.Quad)[:,0,2]
-           result.DMA[2][:,5] = array(CAMM.Quad)[:,1,2]
-           #
-           result.DMA[3][:,0] = array(CAMM.Oct)[:,0,0,0]
-           result.DMA[3][:,1] = array(CAMM.Oct)[:,1,1,1]
-           result.DMA[3][:,2] = array(CAMM.Oct)[:,2,2,2]
-           result.DMA[3][:,3] = array(CAMM.Oct)[:,0,0,1]
-           result.DMA[3][:,4] = array(CAMM.Oct)[:,0,0,2]
-           result.DMA[3][:,5] = array(CAMM.Oct)[:,0,1,1]
-           result.DMA[3][:,6] = array(CAMM.Oct)[:,1,1,2]
-           result.DMA[3][:,7] = array(CAMM.Oct)[:,0,2,2]
-           result.DMA[3][:,8] = array(CAMM.Oct)[:,1,2,2]
-           result.DMA[3][:,9] = array(CAMM.Oct)[:,0,1,2]
-           #
-           #print result
-           out = open(file_log[:-4]+'.camm','w')
-           out.write(str(result))
-           out.close()
+           dma = camm.get()[0]
+           dma.write(file_log[:-4]+'.camm')
            print " Writing file:  :", file_log[:-4]+'.camm'
        print
-           
+
+
+                  
    ### calculate camms!
    from sys  import argv
    CalculateCAMM(basis=argv[1])
