@@ -419,9 +419,9 @@ class SLV(UNITS):
         ### from SVD analysis withdraw rotation matrix
         #sup = SVDSuperimposer()
         # parameters DMA
-        X = self.solute.pos[:4]
+        X = self.solute.pos[:5]
         # target orientation
-        Y = self.solute_structure[:4]
+        Y = self.solute_structure[:5]
         #sup.set(Y,X)
         #sup.run()
         #rot, transl = sup.get_rotran()

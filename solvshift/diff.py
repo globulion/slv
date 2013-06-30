@@ -13,8 +13,8 @@ import os, glob
 
 class DIFF(UNITS,FREQ):
     """contains usefull procedures for differentiation
-       of DMA and molecular multipole moments in FFXpt-diag scheme
-       where X=5,9"""
+of DMA and molecular multipole moments in FFXpt-diag scheme
+where X=5,9"""
        
     def __init__(self,freq=0,step=0,
                  dir="",cartesian=False,L=0,
@@ -35,23 +35,23 @@ class DIFF(UNITS,FREQ):
         
         # step of differentiation and differentiation mode (pointity)
         self.step, self.n_point, self.file_type, self.mode_id, \
-                   self.sderiv_wrk, self.sderiv_step = self.ReadStep(dir)
+        self.sderiv_wrk, self.sderiv_step = self.ReadStep(dir)
         if self.mode_id>0: self.calculate_sder=True
         else:              self.calculate_sder=False
         
         # DMA set from FFxpt input files
         if camm:
-           self.DMA_set, smiec1, smiec2 = self.ParseDMA_set(dir,'coulomb')
-           smiec1, self.Fragments_set, self.Overall_MM_set = self.ParseDMA_set(dir,self.file_type)
-           for i,dma in enumerate(self.DMA_set):
-               dma.pos = array(self.Fragments_set[i])
-               dma.origin = array(self.Fragments_set[i])
-           del smiec1, smiec2
+           self.DMA_set, smiec1 = self.ParseDMA_set(dir,'coulomb')
+           smiec1, self.Overall_MM_set = self.ParseDMA_set(dir,self.file_type)
+           del smiec1
         else:
-           self.DMA_set, self.Fragments_set, self.Overall_MM_set = self.ParseDMA_set(dir,self.file_type)
-           
+           self.DMA_set, self.Overall_MM_set = self.ParseDMA_set(dir,self.file_type)
+        
+        self.reference_str   = self.DMA_set[0].get_pos()
+        self.reference_origin= self.DMA_set[0].get_origin()
         # number of distributed fragments
-        self.nfrags = len(self.Fragments_set[0])
+        ###self.nfrags = len(self.reference_str)
+        self.nfrags = len(self.reference_origin)
         
         # parse polarizability sets
         self.polarizability_set_1 = self.Parse_Polarizability(dir)
@@ -59,6 +59,8 @@ class DIFF(UNITS,FREQ):
         #if pol:
         self.fpol = 0#self.get_pol_fder()
         self.spol = 0#self.get_pol_sder()
+        
+        # EDS
         if eds:
            self.EDS_set_1 = self.Parse_EDS(dir+"w1c_nl/")
            self.EDS_set_2 = self.Parse_EDS(dir+"w1c_nl/sder/20/")
@@ -69,38 +71,23 @@ class DIFF(UNITS,FREQ):
         
         # --- [!] Calculate the derivatives!
         self.Fder, self.Sder ,self.FDip, self.SDip = self._CalcDerCartesian()
-        #if cartesian: self.Fder, self.Sder ,self.FDip, self.SDip = self._CalcDerCartesian() <--- obsolete
-        #else: self.Fder, self.Sder ,self.FDip, self.SDip = self._CalcDer() <--- obsolete
+        
         if self.calculate_sder:
-           if camm: 
-              self.sder_DMA_set, smiec1, smiec2\
+           if camm:
+              self.sder_DMA_set, smiec1\
               =  self.ParseDMA_set(self.sderiv_wrk,'coulomb')
-              smiec1, self.sder_DMA_frags, self.Overall_MM_set\
+              smiec1, self.Overall_MM_set\
               =  self.ParseDMA_set(self.sderiv_wrk,self.file_type)
-              del smiec1, smiec2
+              del smiec1
            else:
-              self.sder_DMA_set, self.sder_DMA_frags, self.Overall_MM_set\
+              self.sder_DMA_set, self.Overall_MM_set\
               =  self.ParseDMA_set(self.sderiv_wrk,self.file_type)
-           
-           for i,dma in enumerate(self.sder_DMA_set):
-               dma.pos = array(self.sder_DMA_frags[i])
-               dma.origin = array(self.sder_DMA_frags[i])
                
            self.Sder[self.mode_id],self.sder_MM = \
                 self._Sderivatives(self.sderiv_wrk,self.mode_id,self.sderiv_step) 
                 
         # --- [!] Calculate IR Harmonic intensities
         self.IR_Harm_Int = self.CalcIrInt()
-        
-        # --- [!] Calculate CAMM derivatives!
-        if 0:#camm:
-           self.fder_CAMM_set = self.Fderivatives_CAMM(dir=dir,
-                                                       basis='',
-                                                       step=self.step)
-           if self.calculate_sder:
-              self.sder_CAMM_set = self.Sderivatives_CAMM(dir=self.sderiv_wrk,
-                                                          basis='',
-                                                          step=self.sderiv_step)
 
 
     def get_EDS_fder(self):
@@ -193,123 +180,6 @@ class DIFF(UNITS,FREQ):
                 #I += 1
        
         return array(P)
- 
-
-    if os.environ['__IMPORT__COULOMB__']:
-        
-       def Fderivatives_CAMM(self,dir,basis,step):
-           """calculates CAMM_set from fchk files of FF directory"""
-           #files2= os.listdir(dir)
-           #files = [ ]
-           #for i in files2:
-           #    if i.endswith('_.fchk'):
-           #       files.append(i)
-           #del files2
-           ## sort the input files (necessary!)
-           #files.sort()  
-           ##print files
-           ##print len(files)
-       
-           #CAMM_set = []
-           #basis_size = len(Ints.getbasis(molecule,'6-311++G**'))
-           ## calculate CAMMs from respective density matrices
-           #for i,file in enumerate(files):
-           #    dmat = self.ParseDmatFromFchk(file,basis_size)
-           #    ### create Molecule object
-           #    structure = []
-           #    for j in range(self.nfrags):
-           #        structure.append( (self.atomic_numbers[self.frag_names[j]],
-           #                           self.Fragments_set[i,j]) ) 
-           #    molecule = Molecule('mol',
-           #                         structure,
-           #                         multiplicity=1,
-           #                         charge=0,
-           #                         units='Bohr')
-           #    ### calculate CAMMs                    
-           #    CAMM = multip.MULTIP(molecule=molecule,
-           #                         basis='6-311++G**',
-           #                        #basis='sto-3g',
-           #                         method='b3lyp',
-           #                         matrix=dmat,
-           #                         transition=False)
-           #    CAMM.camms()
-           #    del dmat
-           #    ### construct DMA object
-           #    camm = DMA(nfrag=self.nfrags)
-           #    camm.DMA[0] = CAMM.Mon
-           #    camm.DMA[1] = CAMM.Dip # DODAJ resztę!!!!
-           #
-           #   CAMM_set.append( camm )
-           
-           # calculate first derivatives!
-           s1 = 1./(step * self.AngstromToBohr)
-           for i in range(self.nAtoms*3):
-               K = 1 + 4*i 
-               fder_CAMM = (1./12.) *  (\
-                          (CAMM_set[K+3] - CAMM_set[K+0] ) \
-                    + 8*  (CAMM_set[K+1] - CAMM_set[K+2] ))\
-                    *s1
-                
-           ### transform derivatives from cart to normal mode space         
-           fder_CAMM = DMAMadrixMultiply(transpose(self.L),fder_CAMM) 
-          
-           return fder_CAMM
-       
-           
-       def Sderivatives_CAMM(self,dir,basis_size,step):
-           """calculates CAMM_set from fchk files of FF directory"""
-           files2= os.listdir(dir)
-           files = [ ]
-           for i in files2:
-               if i.endswith('_.fchk'):
-                  files.append(i)
-           del files2
-           # sort the input files (necessary!)
-           files.sort()  
-           #print files
-           #print len(files)
-       
-           CAMM_set = []
-           basis_size = len(Ints.getbasis(molecule,'6-311++G**'))
-           # calculate CAMMs from respective density matrices
-           for i,file in enumerate(files):
-               dmat = self.ParseDmatFromFchk(file,basis_size)
-               ### create Molecule object
-               structure = []
-               for j in range(self.nfrags):
-                   structure.append( (self.atomic_numbers[self.frag_names[j]],
-                                      self.Fragments_set[i,j]) ) 
-               molecule = Molecule('mol',
-                                    structure,
-                                    multiplicity=1,
-                                    charge=0,
-                                    units='Bohr')
-               ### calculate CAMMs                    
-               CAMM = multip.MULTIP(molecule=molecule,
-                                    basis='6-311++G**',
-                                   #basis='sto-3g',
-                                    method='b3lyp',
-                                    matrix=dmat,
-                                    transition=False)
-               CAMM.camms()
-               del dmat
-               ### construct DMA object
-               camm = DMA(nfrag=self.nfrags)
-               camm.DMA[0] = CAMM.Mon
-               camm.DMA[1] = CAMM.Dip # DODAJ resztę!!!!
-           
-               CAMM_set.append( camm )
-           
-           # calculate second derivatives!
-           s2 = 1./step**2
-           for i in range(1):
-               K = 1 + 4*i 
-               sder_DMA = (1./12.) *  (\
-                    -     (CAMM_set[K+3] + CAMM_set[K+0] ) \
-                    +16*  (CAMM_set[K+1] + CAMM_set[K+2] ) \
-                    -30*   CAMM_set[0  ] )                 \
-                    *s2
-           return sder_CAMM
        
     def _CalcDerCartesian(self):
         """calculates FIRST (and diagonal second - but ONLY diagonal!!!)
@@ -333,11 +203,11 @@ class DIFF(UNITS,FREQ):
         Smmm = []
         # change origin in the case of CAMM
         if self.camm:
-           reference_structure = array(self.Fragments_set[0])
            for i,dma in enumerate(self.DMA_set):
                #print i,"fder"
                dma.MAKE_FULL()
-               dma.ChangeOrigin(new_origin_set=reference_structure)
+               ###dma.ChangeOrigin(new_origin_set=self.reference_str)
+               dma.ChangeOrigin(new_origin_set=self.reference_origin)
         #print Dipole_Moments
         s1 = 1./self.step
         s2 = 1./(self.step**2)
@@ -458,11 +328,11 @@ class DIFF(UNITS,FREQ):
 
         # change origin in the case of CAMM
         if self.camm:
-           reference_structure = array(self.Fragments_set[0])
            for i,dma in enumerate(self.sder_DMA_set):
                #print i, "sder"
                dma.MAKE_FULL()
-               dma.ChangeOrigin(new_origin_set=reference_structure)
+               ###dma.ChangeOrigin(new_origin_set=self.reference_str)
+               dma.ChangeOrigin(new_origin_set=self.reference_origin)
                
         ### 5-point formulae
         if self.n_point == 5:
@@ -523,7 +393,7 @@ class DIFF(UNITS,FREQ):
         #print len(files)
         
         # construct DMA_set, Fragments_set and Overall_MM_set
-        Fragments_set = []
+        ###Fragments_set = []
         DMA_set = []
         Overall_MM_set = []
         for file in files:
@@ -531,7 +401,7 @@ class DIFF(UNITS,FREQ):
             dma = ParseDMA ( file, type ) # zmieniono z ( dir+file, type )
             Fragment = dma.get_pos()
             DMA_set.append( dma )
-            Fragments_set.append( Fragment )
+            ###Fragments_set.append( Fragment )
             
             if type.lower() == 'gaussian':
                ### --- TIP ---
@@ -551,7 +421,7 @@ class DIFF(UNITS,FREQ):
 
                Overall_MM_set.append( MM )
         
-        return DMA_set, array(Fragments_set), Overall_MM_set
+        return DMA_set, Overall_MM_set ###array(Fragments_set), as a second thing
 
     def Parse_EDS(self,dir):
         """parses files to collect polarisabilities"""
@@ -665,117 +535,12 @@ class DIFF(UNITS,FREQ):
             
         return str(log)
 
-    def _CalcDer_old(self):
-        """calculates first and second (diagonal) 
-           derivatives wrt normal modes
-           of DMA distribution as well as
-           first derivatives of molecular dipole moment
-           wrt normal modes"""
-           
-        # calculate set of molecular dipole moments in [Bohr*ElectronCharge]
-        Dipole_Moments = []
-        for i,dma in enumerate(self.DMA_set):
-            moment = dma[0].reshape((self.nfrags,1)) * self.Fragments_set[i] + dma[1]
-            Dipole_Moments.append(sum(moment,axis=0))
-        Dipole_Moments = array(Dipole_Moments)
-        #print "Dipole moments [au] \n"
-        #print Dipole_Moments
-        # store first and diagonal second derivatives in the lists
-        Fder = [] 
-        Sder = []
-        FDip = []
-        SDip = []
-        #print Dipole_Moments
-        s1 = 1./self.step
-        s2 = 1./(self.step**2)
-        ### 5-point formulae
-        if self.n_point == 5:
-          for i in range(self.nModes):
-            #print "calculation for %d mode"%(i+1)
-            K = 1 + 4*i 
-            
-            # first derivatves of DMA
-            fder_DMA = (1./12.) *  (\
-                       (self.DMA_set[K+3] - self.DMA_set[K+0] ) \
-                 + 8*  (self.DMA_set[K+1] - self.DMA_set[K+2] ))\
-                 * s1
-
-            # second derivatves of DMA
-            sder_DMA = (1./12.) *  (\
-                 -     (self.DMA_set[K+3] + self.DMA_set[K+0] ) \
-                 +16*  (self.DMA_set[K+1] + self.DMA_set[K+2] ) \
-                 -30*   self.DMA_set[0  ] )                     \
-                 * s2
-                 
-            # first derivatves of molecular dipole moment     
-            fdip     = (1./12.) *  (\
-                       (Dipole_Moments[K+3] - Dipole_Moments[K+0] ) \
-                 + 8*  (Dipole_Moments[K+1] - Dipole_Moments[K+2] ))\
-                 * s1
-                 
-            # second derivatves of molecular dipole moment     
-            sdip     = (1./12.) *  (\
-                 -     (Dipole_Moments[K+3] + Dipole_Moments[K+0] ) \
-                 +16*  (Dipole_Moments[K+1] + Dipole_Moments[K+2] ) \
-                 -30*   Dipole_Moments[0  ] )                     \
-                 * s2
-
-            Fder.append( fder_DMA )
-            Sder.append( sder_DMA )
-            FDip.append( fdip )
-            SDip.append( sdip )
-
-        ### 9-point formulae
-        if self.n_point == 9:
-          for i in range(self.nModes):
-            K = 1 + 8*i 
-
-            # first derivatves of DMA
-            fder_DMA = (\
-                (4./5.)   * (self.DMA_set[K+3] - self.DMA_set[K+4] ) \
-               -(1./5.)   * (self.DMA_set[K+2] - self.DMA_set[K+5] ) \
-               +(4./105.) * (self.DMA_set[K+1] - self.DMA_set[K+6] ) \
-               -(1./280.) * (self.DMA_set[K+0] - self.DMA_set[K+7] ))\
-               * s1
-
-            # second derivatves of DMA
-            sder_DMA = (\
-                (8./5.)   * (self.DMA_set[K+3] + self.DMA_set[K+4] ) \
-               -(1./5.)   * (self.DMA_set[K+2] + self.DMA_set[K+5] ) \
-               +(8./315.) * (self.DMA_set[K+1] + self.DMA_set[K+6] ) \
-               -(1./560.) * (self.DMA_set[K+0] + self.DMA_set[K+7] ) \
-               -(205./72.)*  self.DMA_set[0  ] )\
-               * s2
-                 
-            # first derivatves of molecular dipole moment     
-            fdip = (\
-                (4./5.)   * (Dipole_Moments[K+3] - Dipole_Moments[K+4] ) \
-               -(1./5.)   * (Dipole_Moments[K+2] - Dipole_Moments[K+5] ) \
-               +(4./105.) * (Dipole_Moments[K+1] - Dipole_Moments[K+6] ) \
-               -(1./280.) * (Dipole_Moments[K+0] - Dipole_Moments[K+7] ))\
-               * s1
-                 
-            # second derivatves of molecular dipole moment     
-            sdip = (\
-                (8./5.)   * (Dipole_Moments[K+3] + Dipole_Moments[K+4] ) \
-               -(1./5.)   * (Dipole_Moments[K+2] + Dipole_Moments[K+5] ) \
-               +(8./315.) * (Dipole_Moments[K+1] + Dipole_Moments[K+6] ) \
-               -(1./560.) * (Dipole_Moments[K+0] + Dipole_Moments[K+7] ) \
-               -(205./72.)*  Dipole_Moments[0  ] )\
-               * s2
-            #sdip     = 1 *  (\
-            #            (Dipole_Moments[K+1] + Dipole_Moments[K+2] - 
-            #             2* Dipole_Moments[0]) * s2 )          
-            #     
-            Fder.append( fder_DMA )
-            Sder.append( sder_DMA )
-            FDip.append( fdip )
-            SDip.append( sdip )
-                        
-        return Fder, Sder, array( FDip ), array( SDip )
-    
-
+##############################################################################
 if __name__ == '__main__':
+   from head import *
+   from sys import argv
+   import os, glob, pp, PyQuante, utilities, coulomb.multip
+   
    def ParseDmatFromFchk(file,basis_size):
         """parses density matrix from Gaussian fchk file"""
         
@@ -878,12 +643,10 @@ if __name__ == '__main__':
    
    ### first test
    #test1()
-   def CalculateCAMM(basis='6-311++G**',bonds=[]): 
+   def CalculateCAMM(basis='6-311++G**',bonds=[],ncpus=1): 
        """calculates CAMMs from density matrix from GAUSSIAN09
 using COULOMB.py routines"""
-       from head import *
-       from sys import argv
-       import os, glob
+       job_server = pp.Server(ncpus)
        
        pliki_fchk  = glob.glob('./*_.fchk')
        pliki_fchk.sort()
@@ -941,10 +704,88 @@ using COULOMB.py routines"""
            print " Writing file:  :", file_log[:-4]+'.camm'
        print
 
+   def bua(i,pliki_fchk,file_log,basis,bonds):
+       dma = utilities.ParseDMA( file_log, 'gaussian' )
+       fragment = dma.get_pos()
+           
+       ### read atomic symbols
+       frag_file = open('slv.frags','r')
+       frag_names = []
+       line = frag_file.readline()
+       while 1:
+             if not line: break
+             frag_names.append( line.split()[-1])
+             line = frag_file.readline()  
 
-                  
+       ### create Molecule object
+       structure = []
+       for j in range(len(fragment)):
+           #structure.append( (UNITS.atomic_numbers[frag_names[j]],
+           structure.append( (units.Atom(frag_names[j]).atno, fragment[j]) ) 
+           
+       molecule = PyQuante.Molecule('mol',
+                                     structure,
+                                     multiplicity=1,
+                                     charge=0,
+                                     units='Bohr')
+                           
+       basis_size = len(PyQuante.Ints.getbasis(molecule,basis))
+       print " - basis size= ", basis_size
+       dmat = utilities.ParseDmatFromFchk(pliki_fchk[i],basis_size)
+       
+       ### calculate CAMMs                    
+       camm = coulomb.multip.MULTIP(molecule=molecule,
+                                    basis=basis,
+                                    method='b3lyp',
+                                    matrix=dmat,
+                                    transition=False,
+                                    bonds=bonds)
+       camm.camms()
+       camm.mmms()
+       camm.__printMMMs__()
+       #CAMM.__printCAMMs__()
+       
+       dma = camm.get()[0]
+       dma.write(file_log[:-4]+'.camm')
+       print " Writing file:  :", file_log[:-4]+'.camm'    
+       return
+          
+   def CalculateCAMM_(basis='6-311++G**',bonds=[],ncpus=3): 
+       """calculates CAMMs from density matrix from GAUSSIAN09
+using COULOMB.py routines"""
+
+       job_server = pp.Server(ncpus)
+       jobs = []
+       
+       pliki_fchk  = glob.glob('./*_.fchk')
+       pliki_fchk.sort()
+       pliki_log   = glob.glob('./*_.log')
+       pliki_log .sort()    
+       print "\n Kolejność plików. Sprawdź czy się zgadzają!\n"  
+       for i in range(len(pliki_log)):
+           print pliki_log[i], pliki_fchk[i]
+       print
+       
+       # submit the jobs!
+       for i,file_log in enumerate(pliki_log):
+           jobs.append( job_server.submit(bua, (i,pliki_fchk,file_log,basis,bonds,),
+                                          (ParseDmatFromFchk,ParseDMA,),
+                                          ("coulomb.multip","PyQuante",
+                                           "PyQuante.Ints","utilities","units") ) )
+       print
+       
+       for job in jobs:
+           result = job()
+           
+       job_server.print_stats()
+       return
+              
    ### calculate camms!
    from sys  import argv
-   CalculateCAMM(basis=argv[1])
+   bonds = [map(int,(x.split(','))) for x in argv[-1].split('-')]
+   #bonds=[]
+   for i in range(len(bonds)): bonds[i]=tuple(bonds[i])
+   #print bonds
+   CalculateCAMM_(basis=argv[1],bonds=bonds)
 
    
