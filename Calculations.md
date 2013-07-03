@@ -54,6 +54,7 @@ slv -cgd -a nma.anh -S
 ```
 slv -cgO -a nma.anh -S --transl coe
 ```
+
 The last case relates to SolMMM centered at COE molecular point **(add reference!)**.
 The other arguments of `--transl` can be `com` (center of mass) and others like weighted
 center between two atoms. For further referene see the `--help` option.
