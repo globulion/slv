@@ -12,9 +12,9 @@ The following computations can be performed at present:
 ********************
 - **SolX-n** vibrational solvatochromic parameters for selected mode
 - **Coarse-grained SolX-n** frequency shift calculations from molecular dinamics (MD) trajectory (currently *Amber*)
-- **Onsager** frequency shift calculations in *Rigid* and *Flexible* molecule approximations
 - **Frequency shift decomposition** using Hybrid Variation-Perturbation Interaction Energy Decomposition (EDS)
 - **Input files** for all of these routines can be created ( *Gaussian*, *Gamess* or *Coulomb*)
+- **Onsager** frequency shift calculations in *Rigid* and *Flexible* molecule approximations
 
 ********************
 In the future the solvatochromic transition dipole change calculation, anharmonic analysis in solvents as well as 
