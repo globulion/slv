@@ -149,16 +149,23 @@ in cm-1 and other quantities in AU."""
         self.__fi,self.__kjj  = self.fi_kjj()
         self.__ma = self.ma()
         self.__ea = self.ea()
+        corr = array(self.__ma) + array(self.__ea)
+        # corrections added together, they can be added to self.shift[0] from SLV class
+        self.corr = array([0,
+                           corr[1],
+                           corr[1]+corr[2],
+                           corr[1]+corr[2]+corr[3],
+                           0]) * self.HartreePerHbarToCmRec
         return
             
     def __repr__(self):
         """print the correction terms to the frequency shift"""
-        A,B,C,D,E = self.shift[0]
+        A,B,C,D,E = self.shift
         log  = " CORRECTION TERMS [cm-1]         : CORRECTED SHIFTS [cm-1]  \n"
         log += " --------------------------------:--------------------------\n"
         a,b = self.get()
         a*=self.HartreePerHbarToCmRec;b*=self.HartreePerHbarToCmRec
-        log += " %12s %10s         :  1        %10.2f\n" % ('MA','EA',      A)
+        log += " %12s %10s         :  1        %10.2f\n"       % ('MA','EA',      A)
         log += " %3s %10.2f %10.2f       :  1+2      %10.2f\n" % ('R-2',a[1],b[1],B+a[1]+b[1])
         log += " %3s %10.2f %10.2f       :  1+2+3    %10.2f\n" % ('R-3',a[2],b[2],C+a[2]+b[2]+a[1]+b[1])
         log += " %3s %10.2f %10.2f       :  1+2+3+4  %10.2f\n" % ('R-4',a[3],b[3],D+a[3]+b[3]+a[2]+b[2]+a[1]+b[1])

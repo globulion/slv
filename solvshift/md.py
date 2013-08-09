@@ -216,7 +216,7 @@ class SLV_MD(UNITS):
     def __eval(self,frame):
         """evaluates frequency shifts for one MD frame"""
         ### update DMA solvent position
-        self.solvent.pos = frame
+        self.solvent.set_structure( pos=frame, equal=True )
 
         ### update solute position
         solute_pos = []
@@ -234,7 +234,7 @@ class SLV_MD(UNITS):
                                         initial=self.solute_parameters.pos[self.suplist])
             ### update positions and origins of parameters
             self.solute_parameters.set_structure( pos=solute_pos, equal=True )
-               
+            
             ### rotate parameters
             self.solute_parameters.MAKE_FULL()
             self.solute_parameters.Rotate(rot)

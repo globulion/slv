@@ -12,30 +12,30 @@ sys.stdout.flush()
 
 class SLV(UNITS):
     """\
-    Frequency shift calculator
-    ----------------------------------------------------------------------
-    Frequency shift of solute immersed in solvent. Solute is a set of
-    solvatochromic parameters including:
-    - distributed charges
-    - overall multipole moment
-    - overall multipole moment from partial charges
-    - multi-site (distributed) multipole moments
-    Data to be loaded:
-    - file with solute
-    - file with solvent
-    - benchmark solvent molecule file for CAMM/DMA-based computations
-    Note:
-    Solvent has to be set in the same order for each molecule!
-    Eg. : O1H1H1 O2H2H2 O3H3H3 ...
-    ---------------------------------------------------------------------
-    """
+Frequency shift calculator
+----------------------------------------------------------------------
+Frequency shift of solute immersed in solvent. Solute is a set of
+solvatochromic parameters including:
+- distributed charges
+- overall multipole moment
+- overall multipole moment from partial charges
+- multi-site (distributed) multipole moments
+Data to be loaded:
+- file with solute
+- file with solvent
+- benchmark solvent molecule file for CAMM/DMA-based computations
+Note:
+Solvent has to be set in the same order for each molecule!
+Eg. : O1H1H1 O2H2H2 O3H3H3 ...
+---------------------------------------------------------------------
+"""
     
     def __init__(self,pkg="gaussian",nsatoms=('O','H','H'),nstatoms=(),L=[],mode_id=0,
                  solute="",solvent="",solute_origin="com",
                  solute_structure="",mixed=False,
-                 overall_MM=False,camm=False,chelpg=False,bsm_file='',
+                 overall_MM=False,camm=False,chelpg=False,bsm=None,bsm_file='',
                  fderiv=0,sderiv=0,redmass=0,freq=0,structural_change=False,
-                 ref_structure=[],solpol=False,gijj=0):
+                 ref_structure=[],solpol=False,gijj=0,lprint=True):
         self.log = 'None'
         ### modes of action
         # mixed 
@@ -78,7 +78,8 @@ class SLV(UNITS):
         self.nModes = len(freq)
         # cubic anharmonic constants
         self.gijj = array(gijj)
-        # benchmark solvent molecule file
+        # benchmark solvent molecule
+        self.bsm = bsm
         self.bsm_file = bsm_file
         # number of atoms in solvent molecule
         self.sat = len(nsatoms)
@@ -94,9 +95,12 @@ class SLV(UNITS):
         self.solpol = solpol
         # add non-atomic sites if necessary
         self.addSites()
+        self.lprint = lprint
              
         ### BSM
         if self.bsm_file:
+           self.benchmark_solvent_molecule  = self._bsm()
+        if self.bsm is not None:
            self.benchmark_solvent_molecule  = self._bsm()
         ### construct SOLVENT environment
         self._Solvent()
@@ -134,13 +138,16 @@ class SLV(UNITS):
                       solvent=self.SOLVENT.copy(),
                       mode_id=self.mode_id,gijj=self.gijj,ua_list=ua_list)
         corr.eval()
-        corr.shift = self.shift
+        corr.shift = self.shift[0]
+        # set the corrected shift
+        self.shift_corr = self.shift[0] + corr.corr
         self.log = self.log[:-1]+str(corr)
         return
     
     def _bsm(self):
         """benchmark_solvent_molecule extractor"""
-        benchmark_solvent_molecule = ParseDMA(self.bsm_file,'coulomb')
+        if self.bsm is not None: benchmark_solvent_molecule = self.bsm.copy()
+        else:                    benchmark_solvent_molecule = ParseDMA(self.bsm_file,'coulomb')
         return benchmark_solvent_molecule
     
     def addSites(self):
@@ -188,7 +195,7 @@ class SLV(UNITS):
         """rotates first derivatives of DMA and the ref structure to target orientation"""
         ### superimpose structures
         sup = SVDSuperimposer()
-        sup.set(solute_structure,ref_structure)
+        sup.set(solute_structure[:5],ref_structure[:5])
         sup.run()
         rms = sup.get_rms()
         rot, transl = sup.get_rotran()
@@ -208,9 +215,11 @@ class SLV(UNITS):
             
         ### rotate the eigenvectors
         Lrot = L.reshape(self.stat,3,self.nModes)
+        #Lrot = L.reshape(7,3,self.nModes)
         Lrot = tensordot(Lrot,rot,(1,0))              # dimension: nstat,nmodes,3
         Lrot = transpose(Lrot,(0,2,1))                # dimension: nstat,3,nmodes
         Lrot = Lrot.reshape(self.stat*3,self.nModes) # dimension: nstat*3,nmodes
+        #Lrot = Lrot.reshape(7*3,self.nModes)
         
         return fderiv_copy, transformed_gas_phase_str, Lrot, rot
     
@@ -352,9 +361,10 @@ class SLV(UNITS):
 
               ### calculate molecular moments
               X = array(self.benchmark_solvent_molecule.pos.copy())
-              print " -------------------------------"
-              print "          RMS analysis"
-              print " -------------------------------"
+              if self.lprint:
+                 print " -------------------------------"
+                 print "          RMS analysis"
+                 print " -------------------------------"
               for water in range(len(self.solvent.pos)/self.sat):
                       # copying of BSM
                       bsm_copy = self.benchmark_solvent_molecule.copy()
@@ -370,7 +380,7 @@ class SLV(UNITS):
                       SOLVENT.DMA[2][water] = array(bsm_copy[2])
                       SOLVENT.DMA[3][water] = array(bsm_copy[3])
                       #
-                      print "  - solvent rms: %10.6f" % rms
+                      if self.lprint: print "  - solvent rms: %10.6f" % rms
               
         
            elif (self.camm and not self.mixed):
@@ -383,9 +393,10 @@ class SLV(UNITS):
                 SOLVENT.origin = array(self.solvent.pos)
             
                 X = array(self.benchmark_solvent_molecule.pos.copy())
-                print " -------------------------------"
-                print "          RMS analysis"
-                print " -------------------------------"
+                if self.lprint:
+                   print " -------------------------------"
+                   print "          RMS analysis"
+                   print " -------------------------------"
                 for water in range(len(self.solvent.pos)/self.sat):
                     # copying of BSM
                     bsm_copy = self.benchmark_solvent_molecule.copy()
@@ -401,7 +412,7 @@ class SLV(UNITS):
                     SOLVENT.DMA[2][self.sat*water:self.sat*water+self.sat] = array(bsm_copy[2])
                     SOLVENT.DMA[3][self.sat*water:self.sat*water+self.sat] = array(bsm_copy[3])
                     #
-                    print "  - solvent rms: %10.6f" % rms
+                    if self.lprint: print "  - solvent rms: %10.6f" % rms
 
            else:
                   SOLVENT = self.solvent.copy()
@@ -419,14 +430,14 @@ class SLV(UNITS):
         ### from SVD analysis withdraw rotation matrix
         #sup = SVDSuperimposer()
         # parameters DMA
-        X = self.solute.pos[:5]
+        X = self.solute.pos[:3]
         # target orientation
-        Y = self.solute_structure[:5]
+        Y = self.solute_structure[:3]
         #sup.set(Y,X)
         #sup.run()
         #rot, transl = sup.get_rotran()
         rot, rms = RotationMatrix(initial=X,final=Y)
-        print "  - solute  rms: %10.6f" % rms  #% sup.get_rms()
+        if self.lprint: print "  - solute  rms: %10.6f" % rms  #% sup.get_rms()
        
         if (not self.camm and not self.chelpg):
         #if 1:

@@ -750,7 +750,7 @@ using COULOMB.py routines"""
        print " Writing file:  :", file_log[:-4]+'.camm'    
        return
           
-   def CalculateCAMM_(basis='6-311++G**',bonds=[],ncpus=3): 
+   def CalculateCAMM_(basis='6-311++G**',bonds=[],ncpus=4): 
        """calculates CAMMs from density matrix from GAUSSIAN09
 using COULOMB.py routines"""
 

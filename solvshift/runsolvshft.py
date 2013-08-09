@@ -684,6 +684,14 @@ def Main(argv):
           ## ----------------------------------------------------- ##
           if Gaussian:
             out = open('shifts.dat','w') 
+            print  >> out, " SLV FREQUENCY SHIFT REPORT. ALL VALUES IN [cm-1]"
+            print  >> out, " ------------------------------------------------"
+            if corrections:
+               print  >> out, " %9s %13s %13s %13s %13s %13s %13s %13s %13s %13s %13s"% ('SYSTEM','R-1','R-2','R-3','R-4','R-5',
+                                                                                                  'R-1','R-2','R-3','R-4','R-5')
+            else:
+               print  >> out, " %9s %13s %13s %13s %13s %13s"% ('SYSTEM','R-1','R-2','R-3','R-4','R-5')
+            
             for typ in open(types).read().split('\n')[:-1]:
              solute  = ParseDMA( target_dir+'/solute_%s'%typ,file_type)
              solvent = ParseDMA( target_dir+'/solvent_%s'%typ,file_type)
@@ -739,17 +747,22 @@ def Main(argv):
                              ref_structure=parameters.get_pos(),
                              solpol=SolPOL,
                              gijj=ANH.K3)
-                             
-                
-                print  >> out, "%10s"%typ,
-                print  >> out,"%13.2f "*5%tuple( f.shift[0] )
-                #print Emtp.log
                 
                 ### evaluate corrections to the frequency shifts
                 if corrections:
                    if fderiv_j: f.eval_shiftcorr(zero_camm)
                    else:        f.eval_shiftcorr(zero_camm,ua_list)
-                   
+
+                ### nice report
+                print " ===== ",typ," ===== "
+                if corrections:
+                   print  >> out, "%10s"%typ,
+                   print  >> out,"%13.2f "*5%tuple( f.shift[0] ),
+                   print  >> out,"%13.2f "*5%tuple( f.shift_corr )
+                else:
+                   print  >> out, "%10s"%typ,
+                   print  >> out,"%13.2f "*5%tuple( f.shift[0] )
+                                      
                 print f
                 #f.get_ShiftCorr('CH3N3_A000_D00_.camm')
                 #rrr= f.get_StructuralChange(CALC.Fder,f.SOLVENT,f.solute_structure,ANH.L,PARAM.fragments)\
@@ -802,6 +815,7 @@ def Main(argv):
                 print "\n SOLUTE SOLVATOCHROMIC MULTIPOLES [A.U.]\n" 
                 #print f.SOLUTE
              
+            out.close()
               
        ## ------------------------------------------- ##
        ##             MOLECULAR DYNAMICS              ##
@@ -818,7 +832,7 @@ def Main(argv):
                                   trajectory=md_trajectory,
                                   solute_atoms=solute_atoms,
                                   solute_parameters=parameters,
-                                  threshold=190,
+                                  threshold=90,
                                   camm=SolCAMM,
                                   suplist=[0,3,4,5])
           
