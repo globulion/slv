@@ -1,6 +1,13 @@
 2. Calculation mode
 ===================
 
+Calculation mode in *Solvshift* offers two types of calculations of frequency shifts using either 
+1. goarse-grained or 2. *continuum* models. Because of the fact that the latter is of minor importance and 
+its practical applicability is rather very poor we focus on **coarse-grained** calculations. 
+Continuum model of solvatochromism is actually only an elegant test of solvatochromic operator
+in very simple theoretical framework and should not be used in frequency shift calculations for
+confronting the theory with experiment.
+
 # 2.1 Coarse-grained calculations
 
 The coarse-grained calculations of frequency shifts can be easily performed using *Solvshift*. 
@@ -54,6 +61,7 @@ slv -cgd -a nma.anh -S
 ```
 slv -cgO -a nma.anh -S --transl coe
 ```
+
 The last case relates to SolMMM centered at COE molecular point **(add reference!)**.
 The other arguments of `--transl` can be `com` (center of mass) and others like weighted
 center between two atoms. For further referene see the `--help` option.
