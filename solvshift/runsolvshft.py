@@ -832,11 +832,12 @@ def Main(argv):
                                   trajectory=md_trajectory,
                                   solute_atoms=solute_atoms,
                                   solute_parameters=parameters,
-                                  threshold=90,
+                                  threshold=30,
                                   camm=SolCAMM,
-                                  suplist=[0,3,4,5])
+                                  suplist=[0,3,4,5],
+                                  ncpus=ncpus)
           
-          print md_freq_shifts                     
+          print md_freq_shifts
           shifts, averages, stds = md_freq_shifts.get_shifts()
         
           ### make a histogram!!!
