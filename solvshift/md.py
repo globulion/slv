@@ -121,8 +121,8 @@ Usage: will be added soon!"""
 
     
     def __init__(self,pkg="amber",charges="",trajectory="",
-                 solute_atoms=(),solute_parameters=0,threshold=2000,
-                 camm=False,suplist=[],ion_no=4,ion_charge=1,ncpus=None):
+                 solute_atoms=(),solute_parameters=None,threshold=2000,
+                 camm=False,suplist=[],ion_no=0,ion_charge=1,ncpus=None):
 
         self.pkg = pkg
         self.charges = charges
@@ -285,7 +285,7 @@ Usage: will be added soon!"""
              # read frames
              i=0
              while self.status == exdrOK:
-             #for i in range(30):
+             #for i in range(4):
                  group = "group-%i"%(i/4)
                  self.__read_xtc(XTC,natoms,frame,box,DIM)
                    

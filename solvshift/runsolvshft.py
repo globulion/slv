@@ -81,8 +81,10 @@ def Usage():
  *                              : corrections)                                                               *
  *     -A, --solute    [atoms]  : provide a string of atomic symbols for solute separated by a comma and     *
  *                              : without space, eg.: -A C,C,O,H,H,H,H                                       *
- *     -B, --solvent   [atoms]  :provide a string of atomic symbols for solvent separated by a comma and     *
+ *     -B, --solvent   [atoms]  : provide a string of atomic symbols for solvent separated by a comma and    *
  *                              : without space, eg.: -A C,C,O,H,H,H,H                                       *
+ *     -L, --suplist   [list]   : provide superimposition indices. '5' means superimpose first 5 atoms of    *
+ *                              : solute; '1,2,4,6' means superimpose first, second, fourth and sixth atom   *
  *  -------------------------------------------------------------------------------------------------------  *
  *  [5] FREQUENCY SHIFTS                                                                                     *
  *  -------------------------------------------------------------------------------------------------------  *
@@ -184,71 +186,72 @@ def Main(argv):
     ## --------------------------- ##
     
     ### operational options                                            # comments and annotations
-    ncpus          = 1                                                 #
-    Inputs         = False                                             #
-    Calculate      = False                                             #
-    Gamess         = True                                              #
-    Gaussian       = False                                             #
-    Fragments      = False                                             #
-    step           = 0.05                                              #
-    n_point        = 5                                                 #
-    mode_id        =-1                                                 #
-    file_type      = 'gamess'                                          #
-    cartesian      = True                                              #
-    sder_work_dir  = './sder'                                          #
-    make_ua        = False                                             #
-    ua_list_5      = [ ( 1,12,11, 6), ( 4, 7, 9,10), ( 2, 8) ]         # methyl groups + NH amide
-    ua_list        = [ ( 4, 5, 6, 7) ]
-    ua_list        = [ ( 1,12,11, 6), ( 4, 7, 9,10) ]                  # methyl groups
+    ncpus          = 1                                                 # number of cpu units
+    Inputs         = False                                             # input mode
+    Calculate      = False                                             # calculation mode
+    Gamess         = True                                              # Gamess input files
+    Gaussian       = False                                             # Gaussian input files
+    Fragments      = False                                             # non-atomic cites
+    step           = 0.05                                              # step for cartesian differentiation
+    n_point        = 5                                                 # pointity of differentiation
+    mode_id        =-1                                                 # normal mode index
+    file_type      = 'gamess'                                          # 
+    cartesian      = True                                              # make cartesian displacements
+    sder_work_dir  = './sder'                                          # directory for sder
+    make_ua        = False                                             # contracted models
+    ua_list_5      = [ ( 1,12,11, 6), ( 4, 7, 9,10), ( 2, 8) ]         # UA; methyl groups + NH amide
+    ua_list        = [ ( 4, 5, 6, 7) ]                                 # UA
+    ua_list        = [ ( 1,12,11, 6), ( 4, 7, 9,10) ]                  # UA; methyl groups
+    suplist        = [ 0, 1, 2, 3, 4]                                  # superimposition indices
     
     ### input/output file handling
-    read_file      = ''                                                #
-    make_cube      = False                                             #
-    make_coulomb   = False                                             #
-    out_name       = 'slv.par'                                         #
-    make_sol       = '12,default'                                      #
+    read_file      = ''                                                # read parameters
+    make_cube      = False                                             # create cube
+    make_coulomb   = False                                             # 
+    out_name       = 'slv.par'                                         # output file name
+    make_sol       = '12,default'                                      # solute/solvent target files
 
     ### parameters
-    SolCHELPG      = True                                              #
-    SolMMM         = False                                             #
-    SolCAMM        = False                                             #
-    SolPOL         = False                                             #
-    mixed          = False                                             #
-    translation    = ''                                                #
-    allign         = False                                             #
+    SolCHELPG      = True                                              # SolCHELPG mode
+    SolMMM         = False                                             # SolMMM mode
+    SolCAMM        = False                                             # SolCBAMM mode
+    SolPOL         = False                                             # SolPOL mode
+    mixed          = False                                             # mixed mode
+    translation    = ''                                                # center of MMM
+    allign         = False                                             # allign DMA in some ways
     charges        = {'H': 0.34242, 'O': -0.777834, 'Na': 1.00}        # BSM charges
-    zero_camm      = ''                                                # for correction terms
-    fderiv_j       = ''                                                # for correction terms
+    zero_camm      = ''                                                # for correction terms: moments
+    fderiv_j       = ''                                                # for correction terms: fderivs of moments
     
     ### checking and troubleshooting
-    print_derivatives = False                                          #
-    check             = False                                          #
+    print_derivatives = False                                          # prints derivatives of DMTP
+    check             = False                                          # summ DMTP to MMM
     
     ### frequency shift (SLV)
-    frequency_shift= False                                             #
-    corrections    = False                                             # correction terms
-    eds            = False                                             #
-    types          = 'types.txt'                                       #
-    bsm_file       = ''                                                #
+    frequency_shift= False                                             # calculate shifts
+    corrections    = False                                             # calculate correction terms
+    eds            = False                                             # calculate shifts from EDS differentiation
+    types          = 'types.txt'                                       # file with stems of target system files
+    bsm_file       = ''                                                # BSM file
     solute_atno    = ['C','N','C','C','O','H','H','H','H','H','H','H'] # NMA
     solvent_atno   = ['O','H','H']                                     # H2O
-    structural_change = False                                          #
-    target_dir     = os.environ.get('TARGET_DIR')                      #
+    structural_change = False                                          # evaluate dQ
+    target_dir     = os.environ.get('TARGET_DIR')                      # directory with target system files
     
     ### Cho-Onsager
-    onsager        = False                                             #
-    ons_pol        = False                                             #
+    onsager        = False                                             # calculate shifts from continuum models
+    ons_pol        = False                                             # including polarization explicitly
     cavity_radius  = 7.000                                             # in Bohr
-    epsilon        = 0                                                 #
-    iterate        = False                                             #
-    max_iter       = 0                                                 #
-    threshold      = 1.E-6                                             #
+    epsilon        = 0                                                 # dielectric constant
+    iterate        = False                                             # apply iterative algorithm
+    max_iter       = 0                                                 # maximum no of iterations
+    threshold      = 1.E-6                                             # threshold for polarization energy convergence
 
     ### molecular dynamics frequency shifts (SLV_MD)
-    md             = False                                             #
-    md_package     = 'amber'                                           #
-    md_charges     = ''                                                #
-    md_trajectory  = ''                                                #
+    md             = False                                             # calculate shifts from MD trajectory
+    md_package     = 'amber'                                           # MD package
+    md_charges     = ''                                                # file with charges
+    md_trajectory  = ''                                                # file with trajectory
     
 
     ## --------------------------- ##
@@ -256,7 +259,7 @@ def Main(argv):
     ## --------------------------- ##
     
     try:
-        opts, args = getopt.getopt(argv, "hi:a:s:cF:n:gx:fM:ot:m:T:OC:ydu:b:pW:A:B:kQj:l:e:D:w:PN:SR:GEV:z:Z:XU:H:" ,
+        opts, args = getopt.getopt(argv, "hi:a:s:cF:n:gx:fM:ot:m:T:OC:ydu:b:pW:A:B:kQj:l:e:D:w:PN:SR:GEV:z:Z:XU:H:L:" ,
                                         ["help"      ,
                                          "inputs="   ,
                                          "anh="      ,
@@ -300,9 +303,10 @@ def Main(argv):
                                          "fderiv-j=" ,
                                          "correction-terms",
                                          "md-package=",
-                                         "ncpus="     ]    )
+                                         "ncpus="     ,
+                                         "suplist="]    )
     except getopt.GetoptError, error:  
-        print "\n   !Error! Quitting...\n"
+        print "\n   SLV: Error in command line! Quitting...\n"
         exit()
     if not argv: 
        Version()
@@ -409,6 +413,12 @@ def Main(argv):
            N = int(N)
            solute_ids   = asarray(linspace(0,N-1,N),dtype=int)
            MakeSoluteAndSolventFiles(args[-1], typ, solute_ids, charges )
+        if opt in ("-L", "--suplist" ):
+           if ',' in arg: 
+              m1 = lambda i: i-1
+              suplist = map(int,arg.split(','))
+              suplist = map(m1 ,suplist)
+           else: suplist = [x for x in range(int(arg))]
                     
     ### --- choose the task --------------------------------------------------
     
@@ -719,7 +729,8 @@ def Main(argv):
                              fderiv=fderiv,
                              redmass=ANH.redmass,
                              freq=ANH.freq,
-                             ref_structure=parameters.get_pos() )
+                             ref_structure=parameters.get_pos(),
+                             suplist=suplist)
 
                 print  >> out, "%10s"%typ,
                 print  >> out,"%13.2f "*5%tuple( f.shift[0] )
@@ -746,7 +757,8 @@ def Main(argv):
                              freq=ANH.freq,
                              ref_structure=parameters.get_pos(),
                              solpol=SolPOL,
-                             gijj=ANH.K3)
+                             gijj=ANH.K3,
+                             suplist=suplist)
                 
                 ### evaluate corrections to the frequency shifts
                 if corrections:
@@ -787,7 +799,8 @@ def Main(argv):
                                mixed=mixed,
                                overall_MM=parameters,
                                bsm_file=bsm_file,
-                               ref_structure=parameters.get_pos() )
+                               ref_structure=parameters.get_pos(),
+                               suplist=suplist )
                         
                 print Emtp.log
                 #print "\n SOLUTE SOLVATOCHROMIC MULTIPOLES [A.U.]\n" 
@@ -809,7 +822,8 @@ def Main(argv):
                                mixed=mixed,
                                overall_MM=parameters,
                                bsm_file=bsm_file,
-                               ref_structure=parameters.get_pos() )
+                               ref_structure=parameters.get_pos(),
+                               suplist=suplist )
                         
                 print Emtp.log
                 print "\n SOLUTE SOLVATOCHROMIC MULTIPOLES [A.U.]\n" 
@@ -821,12 +835,12 @@ def Main(argv):
        ##             MOLECULAR DYNAMICS              ##
        ## ------------------------------------------- ##
        elif md:
-          #solute = DMA(nfrag=4)
-          #solute.DMA[0][0] = PARAM[mode_id][0][39-1]
-          #solute.DMA[0][1] = PARAM[mode_id][0][40-1]
-          #solute.DMA[0][2] = PARAM[mode_id][0][41-1]
-          #solute.DMA[0][3] = PARAM[mode_id][0][6-1]
-          solute_atoms = [198,199,200,201,202,203]#arange( len(solute_atno) )#arange(2411-1,2414-1+1)
+          ### === RAL MONOMERS === ###
+          #solute_atoms = [198,199,200,201,202,203]    # 36-I18C
+          #solute_atoms = [236,237,238,239,240,241]    # 37-R20C
+          #solute_atoms = [346,347,348,349,350,351]    # 38-N27C
+          solute_atoms = [360,361,362,363,364,365]    # 39-G28C
+          #
           md_freq_shifts = SLV_MD(pkg=md_package,
                                   charges=md_charges,
                                   trajectory=md_trajectory,
@@ -835,7 +849,9 @@ def Main(argv):
                                   threshold=30,
                                   camm=SolCAMM,
                                   suplist=[0,3,4,5],
-                                  ncpus=ncpus)
+                                  ncpus=ncpus,
+                                  ion_no=4,
+                                  ion_charge=1)
           
           print md_freq_shifts
           shifts, averages, stds = md_freq_shifts.get_shifts()

@@ -35,7 +35,7 @@ Eg. : O1H1H1 O2H2H2 O3H3H3 ...
                  solute_structure="",mixed=False,
                  overall_MM=False,camm=False,chelpg=False,bsm=None,bsm_file='',
                  fderiv=0,sderiv=0,redmass=0,freq=0,structural_change=False,
-                 ref_structure=[],solpol=False,gijj=0,lprint=True):
+                 ref_structure=[],solpol=False,gijj=0,lprint=True,suplist=[0,1,2,3]):
         self.log = 'None'
         ### modes of action
         # mixed 
@@ -93,9 +93,13 @@ Eg. : O1H1H1 O2H2H2 O3H3H3 ...
         self.ref_structure = array(ref_structure)
         # solvatochromic polarizability
         self.solpol = solpol
-        # add non-atomic sites if necessary
-        self.addSites()
+        # print the calculation progress
         self.lprint = lprint
+        # superimposition list
+        self.__suplist = suplist
+        
+        ### add non-atomic sites if necessary
+        self.addSites()        
              
         ### BSM
         if self.bsm_file:
@@ -155,9 +159,9 @@ Eg. : O1H1H1 O2H2H2 O3H3H3 ...
         if len(self.solute_structure) != len(self.ref_structure):
            N_atoms = len(self.solute_structure)
            # parameters DMA 
-           X = self.solute.pos[:5]
+           X = self.solute.pos[self.__suplist]
            # target orientation
-           Y = self.solute_structure[:5]
+           Y = self.solute_structure[self.__suplist]
            #rot, rms = RotationMatrix(initial=X,final=Y)
            sup = SVDSuperimposer()
            sup.set(Y,X)
@@ -191,11 +195,11 @@ Eg. : O1H1H1 O2H2H2 O3H3H3 ...
         self.log = Emtp.log
         return shift, solute
 
-    def get_rotated(self,fderiv, L, solute_structure, ref_structure):
+    def get_rotated(self,fderiv, L, solute_structure, ref_structure, suplist):
         """rotates first derivatives of DMA and the ref structure to target orientation"""
         ### superimpose structures
         sup = SVDSuperimposer()
-        sup.set(solute_structure[:5],ref_structure[:5])
+        sup.set(solute_structure[suplist],ref_structure[suplist])
         sup.run()
         rms = sup.get_rms()
         rot, transl = sup.get_rotran()
@@ -223,11 +227,11 @@ Eg. : O1H1H1 O2H2H2 O3H3H3 ...
         
         return fderiv_copy, transformed_gas_phase_str, Lrot, rot
     
-    def get_StructuralChange(self,fderiv,solvent,solute_structure,L,ref_structure):
+    def get_StructuralChange(self,fderiv,solvent,solute_structure,L,ref_structure, suplist):
         """estimates the deviations from gas-phase structure"""
 
         ### superimpose structures and rotate first derivatives
-        fderiv, transformed_gas_phase_str, Lrot, rot = self.get_rotated(fderiv, L, solute_structure, ref_structure)
+        fderiv, transformed_gas_phase_str, Lrot, rot = self.get_rotated(fderiv, L, solute_structure, ref_structure, suplist)
 
         ### calculate displacement vector dQ in GC normal mode space
         dQ = []
@@ -430,9 +434,9 @@ Eg. : O1H1H1 O2H2H2 O3H3H3 ...
         ### from SVD analysis withdraw rotation matrix
         #sup = SVDSuperimposer()
         # parameters DMA
-        X = self.solute.pos[:3]
+        X = self.solute.pos[self.__suplist]
         # target orientation
-        Y = self.solute_structure[:3]
+        Y = self.solute_structure[self.__suplist]
         #sup.set(Y,X)
         #sup.run()
         #rot, transl = sup.get_rotran()
