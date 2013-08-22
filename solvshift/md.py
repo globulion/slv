@@ -21,7 +21,7 @@ def md_shifts_pp(frame,frame_idx,
                  prot_no,slt_no,ion_no,water_no,solute_atoms,
                  epdma,idma,wdma_l,suplist,solute_parameters,
                  camm,reference_structure,
-                 threshold,):
+                 threshold,non_atomic):
     """calculate shifts for parallel SLV-MD run"""
     
     ### [1] __updateDMA
@@ -54,6 +54,17 @@ def md_shifts_pp(frame,frame_idx,
     ### find solute's geometric center
     sltcnt = numpy.sum(solute_pos,axis=0)/slt_no
         
+    ### add sites to solute
+    if non_atomic:
+       X = reference_structure[suplist]
+       Y = solute_pos[suplist]
+       sup = utilities.SVDSuperimposer()
+       sup.set(Y,X)
+       sup.run()
+       rms = sup.get_rms()
+       rot, transl = sup.get_rotran()
+       transformed = numpy.dot(reference_structure,rot) + transl
+       
     ### rotate the solute!
     if camm:
         ### control the rms of solute wrt reference (gas phase)
@@ -68,19 +79,19 @@ def md_shifts_pp(frame,frame_idx,
         solute_parameters.Rotate(rot)
 
         ### update positions and origins of parameters
-        solute_parameters.set_structure( pos=solute_pos, equal=True )
+        if non_atomic: solute_parameters.set_structure( pos=transformed, equal=True )
+        else: solute_parameters.set_structure( pos=solute_pos, equal=True )
         
-    #sys.exit()       
     ### calculate frequency shifts!!!
     # eprotein
     shift = utilities.FrequencyShift(solute=solute_parameters,
                                      solvent=epdma,
-                                     solute_structure=solute_pos,
+                                     solute_structure=solute_parameters.get_origin(),
                                      threshold=1e10)
     # ions
     shift+= utilities.FrequencyShift(solute=solute_parameters,
                                      solvent=idma,
-                                     solute_structure=solute_pos,
+                                     solute_structure=solute_parameters.get_origin(),
                                      threshold=1e10)
     # solvent molecules
     for mol in xrange(water_no):
@@ -89,7 +100,7 @@ def md_shifts_pp(frame,frame_idx,
         if R < threshold:
             shift+= utilities.FrequencyShift(solute=solute_parameters,
                                              solvent=wdma_l[mol],
-                                             solute_structure=solute_pos,
+                                             solute_structure=solute_parameters.get_origin(),
                                              threshold=1e10)
            
     ### update the report
@@ -122,7 +133,8 @@ Usage: will be added soon!"""
     
     def __init__(self,pkg="amber",charges="",trajectory="",
                  solute_atoms=(),solute_parameters=None,threshold=2000,
-                 camm=False,suplist=[],ion_no=0,ion_charge=1,ncpus=None):
+                 camm=False,suplist=[],ion_no=0,ion_charge=1,ncpus=None,
+                 non_atomic=False):
 
         self.pkg = pkg
         self.charges = charges
@@ -138,6 +150,7 @@ Usage: will be added soon!"""
         self.ion_no = ion_no
         self.ion_charge = ion_charge
         self.natoms = read_xtc_natoms(self.trajectory)
+        self.__non_atomic = non_atomic
         ### parallel computing processes
         if ncpus is not None:
            self.job_server = pp.Server(ncpus)
@@ -226,9 +239,13 @@ Usage: will be added soon!"""
                icharges.append(self.ion_charge)
                
            self.water_no = (self.natoms - self.prot_no - self.ion_no) / 3
-           wcharges.append(-0.784994)
-           wcharges.append( 0.392497)
-           wcharges.append( 0.392497)
+           qo =-0.780821;qo_ =-0.784994
+           qh1= 0.390411;qh1_= 0.392497
+           qh2= 0.390411;qh2_= 0.392497
+           #
+           wcharges.append(qo)
+           wcharges.append(qh1)
+           wcharges.append(qh2)
         
         ### remove the charges for a probe from a list!
         k = 0
@@ -285,7 +302,7 @@ Usage: will be added soon!"""
              # read frames
              i=0
              while self.status == exdrOK:
-             #for i in range(4):
+             #for i in range(8):
                  group = "group-%i"%(i/4)
                  self.__read_xtc(XTC,natoms,frame,box,DIM)
                    
@@ -294,7 +311,7 @@ Usage: will be added soon!"""
                             self.ion_no,self.water_no,self.solute_atoms,
                             self.epdma,self.idma,self.wdma_l,self.suplist,
                             self.solute_parameters,self.camm,
-                            self.reference_structure,self.threshold),
+                            self.reference_structure,self.threshold,self.__non_atomic),
                       depfuncs=(),
                       group=group,
                       modules=("utilities","numpy","units","dma",
