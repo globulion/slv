@@ -836,10 +836,17 @@ def Main(argv):
        ## ------------------------------------------- ##
        elif md:
           ### === RAL MONOMERS === ###
-          #solute_atoms = [198,199,200,201,202,203]    # 36-I18C
+          ral_suplist = [0,3,4,5]
+          solute_atoms = [198,199,200,201,202,203]    # 36-I18C
           #solute_atoms = [236,237,238,239,240,241]    # 37-R20C
           #solute_atoms = [346,347,348,349,350,351]    # 38-N27C
-          solute_atoms = [360,361,362,363,364,365]    # 39-G28C
+          #solute_atoms = [360,361,362,363,364,365]    # 39-G28C
+          #solute_atoms = [367,368,369,370,371,372]    # 40-N29C
+          #solute_atoms = [398,399,400,401,402,403]    # 41-Y31C
+          #solute_atoms = [419,420,421,422,423,424]    # 42-K32C
+          #solute_atoms = [441,442,443,444,445,446]    # 43-S33C
+          #solute_atoms = [775,776,777,778,779,780]    # 44-N54C
+          #solute_atoms = [0,1,2,3,4,5,6]               # MeSCN Gas Phase
           #
           md_freq_shifts = SLV_MD(pkg=md_package,
                                   charges=md_charges,
@@ -848,10 +855,11 @@ def Main(argv):
                                   solute_parameters=parameters,
                                   threshold=30,
                                   camm=SolCAMM,
-                                  suplist=[0,3,4,5],
+                                  suplist=ral_suplist,
                                   ncpus=ncpus,
                                   ion_no=4,
-                                  ion_charge=1)
+                                  ion_charge=1,
+                                  non_atomic=True)
           
           print md_freq_shifts
           shifts, averages, stds = md_freq_shifts.get_shifts()

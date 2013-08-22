@@ -215,7 +215,7 @@ where X=5,9"""
         if self.n_point == 5:
           for i in range(self.nAtoms*3):
             #print "calculation for %d mode"%(i+1)
-            K = 1 + 4*i 
+            K = 1 + 4*i
             
             # first derivatves of DMA
             fder_DMA = (1./12.) *  (\
@@ -704,53 +704,49 @@ using COULOMB.py routines"""
            print " Writing file:  :", file_log[:-4]+'.camm'
        print
 
-   def bua(i,pliki_fchk,file_log,basis,bonds):
-       dma = utilities.ParseDMA( file_log, 'gaussian' )
-       fragment = dma.get_pos()
-           
-       ### read atomic symbols
-       frag_file = open('slv.frags','r')
-       frag_names = []
-       line = frag_file.readline()
-       while 1:
-             if not line: break
-             frag_names.append( line.split()[-1])
-             line = frag_file.readline()  
-
-       ### create Molecule object
-       structure = []
-       for j in range(len(fragment)):
-           #structure.append( (UNITS.atomic_numbers[frag_names[j]],
-           structure.append( (units.Atom(frag_names[j]).atno, fragment[j]) ) 
-           
-       molecule = PyQuante.Molecule('mol',
-                                     structure,
-                                     multiplicity=1,
-                                     charge=0,
-                                     units='Bohr')
-                           
-       basis_size = len(PyQuante.Ints.getbasis(molecule,basis))
-       print " - basis size= ", basis_size
-       dmat = utilities.ParseDmatFromFchk(pliki_fchk[i],basis_size)
+   def bua(file_fchk,basis,bonds,vec):
+       molecule = utilities.Read_xyz_file(file_fchk,mol=True,
+                                          mult=1,charge=0,
+                                          name='happy dummy molecule')
        
-       ### calculate CAMMs                    
+       bfs        = PyQuante.Ints.getbasis(molecule,basis)
+       basis_size = len(bfs)
+       print " - basis size= ", basis_size
+       dmat = utilities.ParseDmatFromFchk(file_fchk,basis_size)
+       
+       ### parse vectors and make Pipek-Mezey transformation
+       if vec is not None:
+          natoms= len(molecule.atoms)
+          SAO   = PyQuante.Ints.getS(bfs)
+          print " - ovelrap AO matrix evaluation..."
+          nae = vec
+          vec = utilities.ParseVecFromFchk(file_fchk)[:nae,:]
+          print " - Pipek-Mezey localization of %i orbitals..." %nae
+          tran, vec = utilities.get_pmloca(natoms,mapi=bfs.LIST1,sao=SAO,
+                                           vecin=vec,nae=nae,
+                                           maxit=1000,conv=1.0E-06,
+                                           lprint=False,
+                                           freeze=None)
+       ### calculate CAMMs
+       print " - multipole integrals in AO basis evaluation..."
        camm = coulomb.multip.MULTIP(molecule=molecule,
                                     basis=basis,
                                     method='b3lyp',
                                     matrix=dmat,
                                     transition=False,
-                                    bonds=bonds)
+                                    bonds=bonds,vec=vec)
+       print " - calculation of %s"%camm.operation
        camm.camms()
-       camm.mmms()
-       camm.__printMMMs__()
+       #camm.mmms()
+       #camm.__printMMMs__()
        #CAMM.__printCAMMs__()
        
        dma = camm.get()[0]
-       dma.write(file_log[:-4]+'.camm')
-       print " Writing file:  :", file_log[:-4]+'.camm'    
+       dma.write(file_fchk[:-5]+'.camm')
+       print " --- Writing file:  :", file_fchk[:-5]+'.camm'    
        return
-          
-   def CalculateCAMM_(basis='6-311++G**',bonds=[],ncpus=4): 
+
+   def CalculateCAMM_(basis='6-311++G**',bonds=[],ncpus=4,vec=None): 
        """calculates CAMMs from density matrix from GAUSSIAN09
 using COULOMB.py routines"""
 
@@ -759,19 +755,17 @@ using COULOMB.py routines"""
        
        pliki_fchk  = glob.glob('./*_.fchk')
        pliki_fchk.sort()
-       pliki_log   = glob.glob('./*_.log')
-       pliki_log .sort()    
        print "\n Kolejność plików. Sprawdź czy się zgadzają!\n"  
-       for i in range(len(pliki_log)):
-           print pliki_log[i], pliki_fchk[i]
+       for i in range(len(pliki_fchk)):
+           print pliki_fchk[i]
        print
        
        # submit the jobs!
-       for i,file_log in enumerate(pliki_log):
-           jobs.append( job_server.submit(bua, (i,pliki_fchk,file_log,basis,bonds,),
-                                          (ParseDmatFromFchk,ParseDMA,),
+       for file_fchk in pliki_fchk:
+           jobs.append( job_server.submit(bua, (file_fchk,basis,bonds,vec),
+                                          (Read_xyz_file,ParseDmatFromFchk,ParseDMA,ParseVecFromFchk,get_pmloca,),
                                           ("coulomb.multip","PyQuante",
-                                           "PyQuante.Ints","utilities","units") ) )
+                                           "PyQuante.Ints","utilities","units","orbloc") ) )
        print
        
        for job in jobs:
@@ -779,13 +773,14 @@ using COULOMB.py routines"""
            
        job_server.print_stats()
        return
-              
+                 
    ### calculate camms!
    from sys  import argv
-   bonds = [map(int,(x.split(','))) for x in argv[-1].split('-')]
-   #bonds=[]
-   for i in range(len(bonds)): bonds[i]=tuple(bonds[i])
+   #bonds = [map(int,(x.split(','))) for x in argv[-1].split('-')]
+   bonds=None
+   vec = None
+   #for i in range(len(bonds)): bonds[i]=tuple(bonds[i])
    #print bonds
-   CalculateCAMM_(basis=argv[1],bonds=bonds)
+   CalculateCAMM_(basis=argv[1],bonds=bonds,vec=vec)
 
    

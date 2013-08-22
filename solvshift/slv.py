@@ -158,7 +158,7 @@ Eg. : O1H1H1 O2H2H2 O3H3H3 ...
         """add non-atomic sites if requested by the input"""
         if len(self.solute_structure) != len(self.ref_structure):
            N_atoms = len(self.solute_structure)
-           # parameters DMA 
+           # parameters DMA
            X = self.solute.pos[self.__suplist]
            # target orientation
            Y = self.solute_structure[self.__suplist]
@@ -171,6 +171,8 @@ Eg. : O1H1H1 O2H2H2 O3H3H3 ...
            transformed = dot(self.ref_structure,rot) + transl
            self.solute_structure = concatenate((self.solute_structure,
                                              transformed[N_atoms:]),axis=0)
+           #print  "AAAAA"
+           #print self.solute_structure * self.BohrToAngstrom
            #print self.solute_structure * self.BohrToAngstrom
         return
        
@@ -180,6 +182,8 @@ Eg. : O1H1H1 O2H2H2 O3H3H3 ...
         #print solvent.pos*self.BohrToAngstrom
         #print solvent.origin*self.BohrToAngstrom
         solvent.origin = array(solvent.pos)
+        #print "SOLVENT"
+        #print solvent.pos * self.BohrToAngstrom
         shift = FrequencyShift(solute=solute,
                                solvent=solvent,
                                solute_structure=solute_structure)
@@ -557,9 +561,10 @@ Eg. : O1H1H1 O2H2H2 O3H3H3 ...
            SOLUTE = self.camm.copy()
            SOLUTE.MAKE_FULL()
            SOLUTE.Rotate(rot)
-           SOLUTE.pos = array(self.solute_structure)
-           SOLUTE.origin = array(self.solute_structure)
+           SOLUTE.set_structure(pos=self.solute_structure,equal=True)
            self.update_structure = 0
+           #print "BBBB"
+           #print self.solute_structure * self.BohrToAngstrom
            if self.update_structure:
               sup = SVDSuperimposer()
               sup.set(self.solute_structure,self.ref_structure)
