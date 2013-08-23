@@ -704,14 +704,14 @@ using COULOMB.py routines"""
            print " Writing file:  :", file_log[:-4]+'.camm'
        print
 
-   def bua(file_fchk,basis,bonds,vec):
+   def bua(file_fchk,basis,bonds,vec,vec_ref):
        molecule = utilities.Read_xyz_file(file_fchk,mol=True,
                                           mult=1,charge=0,
                                           name='happy dummy molecule')
        
        bfs        = PyQuante.Ints.getbasis(molecule,basis)
        basis_size = len(bfs)
-       print " - basis size= ", basis_size
+       #print " - basis size= ", basis_size
        dmat = utilities.ParseDmatFromFchk(file_fchk,basis_size)
        
        ### parse vectors and make Pipek-Mezey transformation
@@ -721,12 +721,15 @@ using COULOMB.py routines"""
           print " - ovelrap AO matrix evaluation..."
           nae = vec
           vec = utilities.ParseVecFromFchk(file_fchk)[:nae,:]
+          
           print " - Pipek-Mezey localization of %i orbitals..." %nae
           tran, vec = utilities.get_pmloca(natoms,mapi=bfs.LIST1,sao=SAO,
                                            vecin=vec,nae=nae,
-                                           maxit=1000,conv=1.0E-06,
+                                           maxit=1000,conv=1.0E-10,
                                            lprint=False,
                                            freeze=None)
+          vec, sim = utilities.order(vec_ref,vec,start=0)
+          print sim
        ### calculate CAMMs
        print " - multipole integrals in AO basis evaluation..."
        camm = coulomb.multip.MULTIP(molecule=molecule,
@@ -746,7 +749,8 @@ using COULOMB.py routines"""
        print " --- Writing file:  :", file_fchk[:-5]+'.camm'    
        return
 
-   def CalculateCAMM_(basis='6-311++G**',bonds=[],ncpus=4,vec=None): 
+   def CalculateCAMM_(basis='6-311++G**',bonds=[],ncpus=4,
+                      vec=None,vec_ref=None,natoms=11): 
        """calculates CAMMs from density matrix from GAUSSIAN09
 using COULOMB.py routines"""
 
@@ -760,12 +764,32 @@ using COULOMB.py routines"""
            print pliki_fchk[i]
        print
        
+       # compute reference vectors
+       if vec is not None:
+          ref_mol = utilities.Read_xyz_file(pliki_fchk[0],mol=True,
+                                            mult=1,charge=0,
+                                            name='happy dummy molecule')
+          bfs_ref    = PyQuante.Ints.getbasis(ref_mol,basis)
+          basis_size = len(bfs_ref)
+          sao_ref    = PyQuante.Ints.getS(bfs_ref)
+          print " - basis size= ", basis_size
+          nae = vec
+          vec_ref = utilities.ParseVecFromFchk(pliki_fchk[0])[:nae,:]
+          t, vec_ref = utilities.get_pmloca(natoms,mapi=bfs_ref.LIST1,
+                                            sao=sao_ref,
+                                            vecin=vec_ref,nae=nae,
+                                            maxit=1000,conv=1.0E-10,
+                                            lprint=False,
+                                            freeze=None)
        # submit the jobs!
+       i=0
        for file_fchk in pliki_fchk:
-           jobs.append( job_server.submit(bua, (file_fchk,basis,bonds,vec),
+           jobs.append( job_server.submit(bua, (file_fchk,basis,bonds,vec,vec_ref),
                                           (Read_xyz_file,ParseDmatFromFchk,ParseDMA,ParseVecFromFchk,get_pmloca,),
                                           ("coulomb.multip","PyQuante",
                                            "PyQuante.Ints","utilities","units","orbloc") ) )
+           if (i%4==0 and i!=0): job_server.wait()
+           i+=1
        print
        
        for job in jobs:
@@ -778,7 +802,7 @@ using COULOMB.py routines"""
    from sys  import argv
    #bonds = [map(int,(x.split(','))) for x in argv[-1].split('-')]
    bonds=None
-   vec = None
+   vec = 20
    #for i in range(len(bonds)): bonds[i]=tuple(bonds[i])
    #print bonds
    CalculateCAMM_(basis=argv[1],bonds=bonds,vec=vec)
