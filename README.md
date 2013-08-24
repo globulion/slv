@@ -32,7 +32,7 @@ References
 
 [3]: H. Lee, J.-H. Choi and M. Cho, J. Chem. Phys. 137 (11), 114307 (2012)
 
-[3]: B. Błasiak, H. Lee and M. Cho, J. Chem. Phys. (to be published soon)
+[4]: B. Błasiak, H. Lee and M. Cho, J. Chem. Phys. 139, 044111 (2013)
 
 [5]: Distributed Multipole Moments (Mulliken, Chelpg, DMA, CAMM etc.)
 
