@@ -39,55 +39,61 @@ where X=5,9"""
         if self.mode_id>0: self.calculate_sder=True
         else:              self.calculate_sder=False
         
-        # DMA set from FFxpt input files
-        if camm:
-           self.DMA_set, smiec1 = self.ParseDMA_set(dir,'coulomb')
-           smiec1, self.Overall_MM_set = self.ParseDMA_set(dir,self.file_type)
-           del smiec1
-        else:
-           self.DMA_set, self.Overall_MM_set = self.ParseDMA_set(dir,self.file_type)
+        if not eds:
+          # DMA set from FFxpt input files
+          if camm:
+             self.DMA_set, smiec1 = self.ParseDMA_set(dir,'coulomb')
+             smiec1, self.Overall_MM_set = self.ParseDMA_set(dir,self.file_type)
+             del smiec1
+          else:
+             self.DMA_set, self.Overall_MM_set = self.ParseDMA_set(dir,self.file_type)
         
-        self.reference_str   = self.DMA_set[0].get_pos()
-        self.reference_origin= self.DMA_set[0].get_origin()
-        # number of distributed fragments
-        ###self.nfrags = len(self.reference_str)
-        self.nfrags = len(self.reference_origin)
+          self.reference_str   = self.DMA_set[0].get_pos()
+          self.reference_origin= self.DMA_set[0].get_origin()
+          # number of distributed fragments
+          ###self.nfrags = len(self.reference_str)
+          self.nfrags = len(self.reference_origin)
         
-        # parse polarizability sets
-        self.polarizability_set_1 = self.Parse_Polarizability(dir)
-        self.polarizability_set_2 = self.Parse_Polarizability(self.sderiv_wrk)
-        #if pol:
-        self.fpol = 0#self.get_pol_fder()
-        self.spol = 0#self.get_pol_sder()
+          # parse polarizability sets
+          self.polarizability_set_1 = self.Parse_Polarizability(dir)
+          self.polarizability_set_2 = self.Parse_Polarizability(self.sderiv_wrk)
+          #if pol:
+          self.fpol = 0#self.get_pol_fder()
+          self.spol = 0#self.get_pol_sder()
         
+
+        
+          # --- [!] Calculate the derivatives!
+          self.Fder, self.Sder ,self.FDip, self.SDip = self._CalcDerCartesian()
+        
+          if self.calculate_sder:
+             if camm:
+                self.sder_DMA_set, smiec1\
+                =  self.ParseDMA_set(self.sderiv_wrk,'coulomb')
+                smiec1, self.Overall_MM_set\
+                =  self.ParseDMA_set(self.sderiv_wrk,self.file_type)
+                del smiec1
+             else:
+                self.sder_DMA_set, self.Overall_MM_set\
+                =  self.ParseDMA_set(self.sderiv_wrk,self.file_type)
+               
+             self.Sder[self.mode_id],self.sder_MM = \
+                  self._Sderivatives(self.sderiv_wrk,self.mode_id,self.sderiv_step) 
+                
+          # --- [!] Calculate IR Harmonic intensities
+          self.IR_Harm_Int = self.CalcIrInt()
+          
         # EDS
-        if eds:
-           self.EDS_set_1 = self.Parse_EDS(dir+"w1c_nl/")
-           self.EDS_set_2 = self.Parse_EDS(dir+"w1c_nl/sder/20/")
+        else:
+           fdir,sdir = eds.split(':')
+           #self.EDS_set_1 = self.Parse_EDS(dir+"w1c_nl/")
+           #self.EDS_set_2 = self.Parse_EDS(dir+"w1c_nl/sder/20/")
+           self.EDS_set_1 = self.Parse_EDS(dir+fdir)
+           self.EDS_set_2 = self.Parse_EDS(dir+sdir)
            #self.EDS_set_1 = self.Parse_EDS(dir+"el40/")
            #self.EDS_set_2 = self.Parse_EDS(dir+"el40/sder/20/")
            self.fEDS = self.get_EDS_fder()
            self.sEDS = self.get_EDS_sder()
-        
-        # --- [!] Calculate the derivatives!
-        self.Fder, self.Sder ,self.FDip, self.SDip = self._CalcDerCartesian()
-        
-        if self.calculate_sder:
-           if camm:
-              self.sder_DMA_set, smiec1\
-              =  self.ParseDMA_set(self.sderiv_wrk,'coulomb')
-              smiec1, self.Overall_MM_set\
-              =  self.ParseDMA_set(self.sderiv_wrk,self.file_type)
-              del smiec1
-           else:
-              self.sder_DMA_set, self.Overall_MM_set\
-              =  self.ParseDMA_set(self.sderiv_wrk,self.file_type)
-               
-           self.Sder[self.mode_id],self.sder_MM = \
-                self._Sderivatives(self.sderiv_wrk,self.mode_id,self.sderiv_step) 
-                
-        # --- [!] Calculate IR Harmonic intensities
-        self.IR_Harm_Int = self.CalcIrInt()
 
 
     def get_EDS_fder(self):

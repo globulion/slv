@@ -837,7 +837,7 @@ def Main(argv):
        elif md:
           ### === RAL MONOMERS === ###
           ral_suplist = [0,3,4,5]
-          solute_atoms = [198,199,200,201,202,203]    # 36-I18C
+          #solute_atoms = [198,199,200,201,202,203]    # 36-I18C
           #solute_atoms = [236,237,238,239,240,241]    # 37-R20C
           #solute_atoms = [346,347,348,349,350,351]    # 38-N27C
           #solute_atoms = [360,361,362,363,364,365]    # 39-G28C
@@ -846,18 +846,21 @@ def Main(argv):
           #solute_atoms = [419,420,421,422,423,424]    # 42-K32C
           #solute_atoms = [441,442,443,444,445,446]    # 43-S33C
           #solute_atoms = [775,776,777,778,779,780]    # 44-N54C
-          #solute_atoms = [0,1,2,3,4,5,6]               # MeSCN Gas Phase
+          solute_atoms = [0,1,2,3,4,5,6]               # MeSCN Gas Phase
+          solvent_atno = 4                             # tip4p water
+          suplist      = [0,1,2,3]
           #
           md_freq_shifts = SLV_MD(pkg=md_package,
                                   charges=md_charges,
                                   trajectory=md_trajectory,
                                   solute_atoms=solute_atoms,
+                                  solvent_atno=solvent_atno,
                                   solute_parameters=parameters,
                                   threshold=30,
                                   camm=SolCAMM,
-                                  suplist=ral_suplist,
+                                  suplist=suplist,
                                   ncpus=ncpus,
-                                  ion_no=4,
+                                  ion_no=0,
                                   ion_charge=1,
                                   non_atomic=True)
           

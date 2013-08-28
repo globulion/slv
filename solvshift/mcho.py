@@ -57,9 +57,11 @@ class MCHO(UNITS):
                  ### EDS interaction energy derifatives
                  eds=False,
                  fEDS=0,
-                 sEDS=0):
+                 sEDS=0,
+                 nmodes=0):
                     
-        self.nModes = len(fderiv)
+        if not eds:self.nModes = len(fderiv)
+        else:      self.nModes = nmodes
         self.nAtoms = (self.nModes + 6)/3
         self.__ReadSlvFragFile()  ### ---> fragments,atoms
         self.nfrag=len(self.fragments)
@@ -103,44 +105,45 @@ class MCHO(UNITS):
         self.report()
         
         # --- Calculate the parameters!!!
-        if not onsager: self.parameters_set = self.Parameters(fderiv=self.fderiv,
+        if not eds:
+           if not onsager: self.parameters_set = self.Parameters(fderiv=self.fderiv,
                                                               sderiv=self.sderiv)
                                                               
-        # --- Calculate solute DMA object of overall molecular solvatochromic CAMMs
-        if camm:
-           self.parameters_CAMM = self.Parameters(fderiv=fder_CAMM,
-                                                  sderiv=sder_CAMM)
+           # --- Calculate solute DMA object of overall molecular solvatochromic CAMMs
+           if camm:
+              self.parameters_CAMM = self.Parameters(fderiv=fder_CAMM,
+                                                     sderiv=sder_CAMM)
                                                           
-        # --- Calculate the Stark tunning rates
-        if not onsager: self.stark          = self.StarkTunningRates(self.parameters_set)
+           # --- Calculate the Stark tunning rates
+           if not onsager: self.stark          = self.StarkTunningRates(self.parameters_set)
         
-        # --- Calculate the Cho-Onsager coefficients
-        if onsager: self.onsager = self.ChoOnsagerShift(cavity_radius)
+           # --- Calculate the Cho-Onsager coefficients
+           if onsager: self.onsager = self.ChoOnsagerShift(cavity_radius)
         
-        # --- Calculate the Cho-Onsager+Polarisation frequency shifts
-        if ons_pol:
-           self.Moja(cavity_radius=cavity_radius,mode_id=MM_mode_id,
-                     max_iter=self.max_iter,iterate=self.iterate,
-                     threshold=self.threshold,epsilon=self.epsilon)
+           # --- Calculate the Cho-Onsager+Polarisation frequency shifts
+           if ons_pol:
+              self.Moja(cavity_radius=cavity_radius,mode_id=MM_mode_id,
+                        max_iter=self.max_iter,iterate=self.iterate,
+                        threshold=self.threshold,epsilon=self.epsilon)
            
-        # --- Calculate solute DMA object of overall molecular solvatochromic MMs
-        if overall_MM:
-           self.parameters_MM = self.SolvatochromicMultipoles(fder_MM=fder_MM,sder_MM=sder_MM,
-                                                              mode_id=MM_mode_id,fdip=fdip,sdip=sdip)
+           # --- Calculate solute DMA object of overall molecular solvatochromic MMs
+           if overall_MM:
+              self.parameters_MM = self.SolvatochromicMultipoles(fder_MM=fder_MM,sder_MM=sder_MM,
+                                                                 mode_id=MM_mode_id,fdip=fdip,sdip=sdip)
                                                               
-           #p = self.Moja(cavity_radius=7.0298,mode_id=MM_mode_id)
-           #p = self.Moja(cavity_radius=7.8611,mode_id=MM_mode_id)
-           #p = self.Moja(cavity_radius=7.9711,mode_id=MM_mode_id)
+              #p = self.Moja(cavity_radius=7.0298,mode_id=MM_mode_id)
+              #p = self.Moja(cavity_radius=7.8611,mode_id=MM_mode_id)
+              #p = self.Moja(cavity_radius=7.9711,mode_id=MM_mode_id)
 
-        # --- Molecular Solvatochromic polarizability
-        self.solpol = [None]
-        if pol:
-           self.solpol = self.SolvatochromicPolarizability(MM_mode_id,fpol,spol)
-        # --- Reconstruct new Hessian matrix from DMA objects of fder and sder
-        if Hess:
-           print "not yet written but soon will be"
+           # --- Molecular Solvatochromic polarizability
+           self.solpol = [None]
+           if pol:
+              self.solpol = self.SolvatochromicPolarizability(MM_mode_id,fpol,spol)
+           # --- Reconstruct new Hessian matrix from DMA objects of fder and sder
+           if Hess:
+              print "not yet written but soon will be"
         # --- Calculate explicitly frequency shifts using interaction energy derivatives
-        if eds:
+        else:
            self.eds_shifts = self.EDS_FrequencyShifts(MM_mode_id,fEDS,sEDS)
            
     def StructuralChange(self,fderiv=0):
