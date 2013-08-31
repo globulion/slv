@@ -54,16 +54,18 @@ def read_inp(input):
        querry1 = 'solute atoms'
        querry2 = 'charges'
        while '[ ' not in line:
-           if querry1 in line:
-              solat = array(line.split('=')[-1].split(','),dtype=int)
-           elif querry2 in line:
-              line = file.readline()
-              while 'end charges' not in line:
-                  l = line.split()
-                  solchind.append(l[0])
-                  solch   .append(l[1])
-                  line = file.readline()
-           line = file.readline()
+          if not line.startswith('!'):
+             if querry1 in line:
+                solat = array(line.split('=')[-1].split(','),dtype=int)
+             elif querry2 in line:
+                line = file.readline()
+                while 'end charges' not in line:
+                    if line.startswith('!'): line = file.readline()
+                    l = line.split()
+                    solchind.append(l[0])
+                    solch   .append(eval(l[1]))
+                    line = file.readline()
+          line = file.readline()
        solchind = array(solchind,dtype=int)
        solch    = array(solch   ,dtype=float64)
        
@@ -82,22 +84,24 @@ def read_inp(input):
     iname = 'default ion'; ich=[]; inmol=1; ithr=60
     if ions:
        while '[ ' not in line:
-          if   querry1 in line:
-               iname = line.split('=')[1]
-          elif querry2 in line:
-             if '=' in line:
-               ich = array(line.split('=')[-1].split(','),dtype=float64)
-             else:
-               line = file.readline()
-               while 'end charges' not in line:
-                  l = line.split()
-                  ich   .append(l[0])
+          if not line.startswith('!'):
+             if   querry1 in line:
+                  iname = line.split('=')[1]
+             elif querry2 in line:
+                if '=' in line:
+                  ich = array(line.split('=')[-1].split(','),dtype=float64)
+                else:
                   line = file.readline()
-               ich = array(ich,dtype=float64)
-          elif querry3 in line:
-             inmol = int(line.split('=')[1])
-          elif querry4 in line:
-             ithr = float64(line.split('=')[1])
+                  while 'end charges' not in line:
+                     if line.startswith('!'): line = file.readline()
+                     l = line.split()
+                     ich   .append(l[0])
+                     line = file.readline()
+                  ich = array(ich,dtype=float64)
+             elif querry3 in line:
+                inmol = int(line.split('=')[1])
+             elif querry4 in line:
+                ithr = float64(line.split('=')[1])
           line = file.readline()
 
     # search for solvent
@@ -115,22 +119,24 @@ def read_inp(input):
     sname = 'default solvent'; sch=[]; snmol=1; sthr=30
     if solvent:
        while '[ ' not in line:
-          if   querry1 in line:
-               sname = line.split('=')[1]
-          elif querry2 in line:
-             if '=' in line:
-               sch = array(line.split('=')[-1].split(','),dtype=float64)
-             else:
-               line = file.readline()
-               while 'end charges' not in line:
-                  l = line.split()
-                  sch   .append(l[0])
+          if not line.startswith('!'):
+             if   querry1 in line:
+                  sname = line.split('=')[1]
+             elif querry2 in line:
+                if '=' in line:
+                  sch = array(line.split('=')[-1].split(','),dtype=float64)
+                else:
                   line = file.readline()
-               sch = array(sch,dtype=float64)
-          elif querry3 in line:
-             snmol = int(line.split('=')[1])
-          elif querry4 in line:
-             sthr = float64(line.split('=')[1])
+                  while 'end charges' not in line:
+                     if line.startswith('!'): line = file.readline()
+                     l = line.split()
+                     sch   .append(l[0])
+                     line = file.readline()
+                  sch = array(sch,dtype=float64)
+             elif querry3 in line:
+                snmol = int(line.split('=')[1])
+             elif querry4 in line:
+                sthr = float64(line.split('=')[1])
           line = file.readline()
     #
     file.close()
