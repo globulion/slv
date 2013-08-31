@@ -1,0 +1,26 @@
+!
+! Hiv protease X11-f472g
+! In TIP4P water
+!
+[ eprotein ]
+
+solute atoms=236,237,238,239,240,241
+
+[ ions-1 ]
+
+name=Sodium cation
+nmol=7
+charges=1.0
+
+[ solvent-1 ]
+
+name=water
+
+charges
+ -0.780821
+  0.390411
+  0.390411
+  0.000000
+end charges
+
+[ end ]

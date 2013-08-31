@@ -17,8 +17,129 @@ __all__ = ['SLV_MD',]
 
 sys.stdout.flush()
 
+class layer(UNITS):
+    """represents single layer in SLV-MD environment"""
+    def __init__(self,charges,nmol=1,):
+        self.nmol = nmol
+        self.charges = array(charges,dtype=float64)
+        self.nat = len(charges)
+        
+    def set_frame(self,frame):
+        """sets the coordinates for layer"""
+        self.frame = frame
+        return
+    
+    def get_shift(self,thr=None):
+        """calculate frequency shifts"""
+        pass
+
+def read_inp(input):
+    """parse charge input file for SLV-MD routines"""
+    file = open(input)
+    eprotein = True
+    solvent = True
+    ions = True
+    # search for eprotein
+    querry = '[ eprotein'
+    line = file.readline()
+    while True:
+        if (not line.startswith('!') and querry in line): break
+        elif ('[ ' in line and 'eprotein' not in line):
+           eprotein = False; break
+        line = file.readline()
+    line = file.readline()
+
+    solat = []; solch=[]; solchind=[]
+    if eprotein:
+       querry1 = 'solute atoms'
+       querry2 = 'charges'
+       while '[ ' not in line:
+           if querry1 in line:
+              solat = array(line.split('=')[-1].split(','),dtype=int)
+           elif querry2 in line:
+              line = file.readline()
+              while 'end charges' not in line:
+                  l = line.split()
+                  solchind.append(l[0])
+                  solch   .append(l[1])
+                  line = file.readline()
+           line = file.readline()
+       solchind = array(solchind,dtype=int)
+       solch    = array(solch   ,dtype=float64)
+       
+    # search for ions
+    querry = '[ ions'
+    while True:
+        if (not line.startswith('!') and querry in line): break
+        elif ('[ ' in line and 'ions' not in line):
+           ions = False; break
+        line = file.readline()
+    line = file.readline()
+    querry1 = 'name'
+    querry2 = 'charges'
+    querry3 = 'nmol'
+    querry4 = 'threshold'
+    iname = 'default ion'; ich=[]; inmol=1; ithr=60
+    if ions:
+       while '[ ' not in line:
+          if   querry1 in line:
+               iname = line.split('=')[1]
+          elif querry2 in line:
+             if '=' in line:
+               ich = array(line.split('=')[-1].split(','),dtype=float64)
+             else:
+               line = file.readline()
+               while 'end charges' not in line:
+                  l = line.split()
+                  ich   .append(l[0])
+                  line = file.readline()
+               ich = array(ich,dtype=float64)
+          elif querry3 in line:
+             inmol = int(line.split('=')[1])
+          elif querry4 in line:
+             ithr = float64(line.split('=')[1])
+          line = file.readline()
+
+    # search for solvent
+    querry = '[ solvent'
+    while True:
+        if (not line.startswith('!') and querry in line): break
+        elif ('[ ' in line and 'solvent' not in line):
+           solvent = False; break
+        line = file.readline()
+    line = file.readline()
+    querry1 = 'name'
+    querry2 = 'charges'
+    querry3 = 'nmol'
+    querry4 = 'threshold'
+    sname = 'default solvent'; sch=[]; snmol=1; sthr=30
+    if solvent:
+       while '[ ' not in line:
+          if   querry1 in line:
+               sname = line.split('=')[1]
+          elif querry2 in line:
+             if '=' in line:
+               sch = array(line.split('=')[-1].split(','),dtype=float64)
+             else:
+               line = file.readline()
+               while 'end charges' not in line:
+                  l = line.split()
+                  sch   .append(l[0])
+                  line = file.readline()
+               sch = array(sch,dtype=float64)
+          elif querry3 in line:
+             snmol = int(line.split('=')[1])
+          elif querry4 in line:
+             sthr = float64(line.split('=')[1])
+          line = file.readline()
+    #
+    file.close()
+    return solat, solchind, solch, ich, inmol, iname, ithr, sch, snmol, sname, sthr
+
+
+
 def md_shifts_pp(frame,frame_idx,
-                 prot_no,slt_no,ion_no,water_no,solute_atoms,solvent_atoms,
+                 prot_no,slt_no,ion_no,water_no,solute_atoms,solvent_nat,
                  epdma,idma,wdma_l,suplist,solute_parameters,
                  camm,reference_structure,
                  threshold,non_atomic):
@@ -35,17 +156,21 @@ def md_shifts_pp(frame,frame_idx,
     # waters
     wframe  = frame[M+ion_no:]
     #
-    #epdma.set_structure(pos=epframe,equal=True)
-    #idma.set_structure(pos= iframe,equal=True)
-    #epdma.set_name('eprotein')
-    #idma.set_name('ions')
-    #epdma.write('eprotein.xyz','xyz')
-    #idma.write('ions.xyz','xyz')
+    if prot_no:
+       epdma.set_structure(pos=epframe,equal=True)
+       epdma.set_name('eprotein')
+       #epdma.write('eprotein.xyz','xyz')
+       
+    if ion_no:
+       idma.set_structure(pos= iframe,equal=True)
+       idma.set_name('ions')
+       #idma.write('ions.xyz','xyz')
+
     for mol in xrange(water_no):
-        wdma_l[mol].set_structure(pos=frame[K+mol*solvent_atoms:K+mol*solvent_atoms+solvent_atoms],equal=True)
+        wdma_l[mol].set_structure(pos=frame[K+mol*solvent_nat:K+mol*solvent_nat+solvent_nat],equal=True)
         wdma_l[mol].set_name('solvent-%i'%(mol+1))
         #wdma_l[mol].write('solvent-%i.xyz'%(mol+1),'xyz')
-        #
+        
     ### [2] __eval
     solute_pos = []
     for i in solute_atoms:
@@ -83,18 +208,20 @@ def md_shifts_pp(frame,frame_idx,
         else: solute_parameters.set_structure( pos=solute_pos, equal=True )
         
     ### calculate frequency shifts!!!
+    shift = numpy.zeros(5,dtype=numpy.float64)
     # eprotein
-    #shift = utilities.FrequencyShift(solute=solute_parameters,
-    #                                 solvent=epdma,
-    #                                 solute_structure=solute_parameters.get_origin())
+    if prot_no:
+       shift+= utilities.FrequencyShift(solute=solute_parameters,
+                                        solvent=epdma,
+                                        solute_structure=solute_parameters.get_origin())
     # ions
-    #shift+= utilities.FrequencyShift(solute=solute_parameters,
-    #                                 solvent=idma,
-    #                                 solute_structure=solute_parameters.get_origin())
+    if ion_no:
+       shift+= utilities.FrequencyShift(solute=solute_parameters,
+                                        solvent=idma,
+                                        solute_structure=solute_parameters.get_origin())
     # solvent molecules
-    shift =0
     for mol in xrange(water_no):
-        solcnt = numpy.sum(wdma_l[mol].get_pos(),axis=0)/numpy.float64(solvent_atoms)
+        solcnt = numpy.sum(wdma_l[mol].get_pos(),axis=0)/numpy.float64(solvent_nat)
         R  = numpy.sqrt(numpy.sum((solcnt-sltcnt)**2))
         if R < threshold:
             shift+= utilities.FrequencyShift(solute=solute_parameters,
@@ -111,101 +238,6 @@ def md_shifts_pp(frame,frame_idx,
                             
     return shift, report_line
 
-def md_shifts_pp_old(frame,frame_idx,
-                 prot_no,slt_no,ion_no,water_no,solute_atoms,
-                 epdma,idma,wdma_l,suplist,solute_parameters,
-                 camm,reference_structure,
-                 threshold,non_atomic):
-    """calculate shifts for parallel SLV-MD run"""
-    
-    ### [1] __updateDMA
-    N = prot_no-slt_no
-    M = prot_no
-    K = M+ion_no
-    # eprotein
-    epframe = utilities.choose(frame,solute_atoms)[:N]
-    # ions
-    iframe  = frame[M:M+ion_no]
-    # waters
-    wframe  = frame[M+ion_no:]
-    #
-    epdma.set_structure(pos=epframe,equal=True)
-    idma.set_structure(pos= iframe,equal=True)
-    epdma.set_name('eprotein')
-    idma.set_name('ions')
-    epdma.write('eprotein.xyz','xyz')
-    idma.write('ions.xyz','xyz')
-    for mol in xrange(water_no):
-        o = mol*3 + 0
-        h1= mol*3 + 1
-        h2= mol*3 + 2
-        wdma_l[mol].set_structure(pos=frame[K+mol*3:K+mol*3+3],equal=True)
-        wdma_l[mol].set_name('solvent-%i'%(mol+1))
-        wdma_l[mol].write('solvent-%i.xyz'%(mol+1),'xyz')
-        #
-    ### [2] __eval
-    solute_pos = []
-    for i in solute_atoms:
-        solute_pos.append(frame[i])
-    solute_pos = numpy.array(solute_pos)
-    ### find solute's geometric center
-    sltcnt = numpy.sum(solute_pos,axis=0)/slt_no
-        
-    ### add sites to solute
-    if non_atomic:
-       X = reference_structure[suplist]
-       Y = solute_pos[suplist]
-       sup = utilities.SVDSuperimposer()
-       sup.set(Y,X)
-       sup.run()
-       rms = sup.get_rms()
-       rot, transl = sup.get_rotran()
-       transformed = numpy.dot(reference_structure,rot) + transl
-       
-    ### rotate the solute!
-    if camm:
-        ### control the rms of solute wrt reference (gas phase)
-        rot, rms_ref  = utilities.RotationMatrix(final=solute_pos[suplist],
-                                                 initial=reference_structure[suplist])
-        ### superimpose solute and parameters
-        rot, rms_inst = utilities.RotationMatrix(final=solute_pos[suplist],
-                                                 initial=solute_parameters.pos[suplist])
-            
-        ### rotate parameters
-        solute_parameters.MAKE_FULL()
-        solute_parameters.Rotate(rot)
-
-        ### update positions and origins of parameters
-        if non_atomic: solute_parameters.set_structure( pos=transformed, equal=True )
-        else: solute_parameters.set_structure( pos=solute_pos, equal=True )
-        
-    ### calculate frequency shifts!!!
-    # eprotein
-    shift = utilities.FrequencyShift(solute=solute_parameters,
-                                     solvent=epdma,
-                                     solute_structure=solute_parameters.get_origin())
-    # ions
-    shift+= utilities.FrequencyShift(solute=solute_parameters,
-                                     solvent=idma,
-                                     solute_structure=solute_parameters.get_origin())
-    # solvent molecules
-    for mol in xrange(water_no):
-        solcnt = numpy.sum(wdma_l[mol].get_pos(),axis=0)/3.
-        R  = numpy.sqrt(numpy.sum((solcnt-sltcnt)**2))
-        if R < threshold:
-            shift+= utilities.FrequencyShift(solute=solute_parameters,
-                                             solvent=wdma_l[mol],
-                                             solute_structure=solute_parameters.get_origin())
-           
-    ### update the report
-    if not camm: 
-        rms_inst = 0
-        rms_ref  = 0
-    report_line = "%5i %10.3f %10.3f %10.3f %10.3f %10.3f %10.4f %10.4f\n"\
-                        % (frame_idx-1,shift[0],shift[1],shift[2],shift[3],shift[4],
-                            rms_inst, rms_ref)
-                            
-    return shift, report_line
 
 class SLV_MD(UNITS):
     """\
@@ -226,24 +258,28 @@ Usage: will be added soon!"""
 
     
     def __init__(self,pkg="amber",charges="",trajectory="",
-                 solute_atoms=(),solvent_atno=3,solute_parameters=None,threshold=2000,
-                 camm=False,suplist=[],ion_no=0,ion_charge=1,ncpus=None,
-                 non_atomic=False):
-
+                 solute_parameters=None,
+                 camm=False,suplist=[],ncpus=None,
+                 non_atomic=False,inp=None):
+        solat, solchind, solch, ich, inmol,\
+        iname, ithr, sch, snmol, sname, sthr = read_inp(inp)
+        self.solchind = solchind
+        self.solch = solch
+        self.wcharges = sch
         self.pkg = pkg
         self.charges = charges
         self.trajectory = trajectory
-        self.solute_atoms = solute_atoms
-        self.solvent_atno = solvent_atno
+        self.solute_atoms = solat
+        self.solvent_atno = len(sch)
         self.solute_parameters = solute_parameters
-        self.threshold = threshold
+        self.threshold = sthr
         self.log = '\n'
         self.camm = camm
         self.reference_structure = solute_parameters.pos.copy()
         self.suplist = suplist
-        self.slt_no  = len(solute_atoms)
-        self.ion_no = ion_no
-        self.ion_charge = ion_charge
+        self.slt_no  = len(solat)
+        self.ion_no = inmol
+        self.ion_charge = ich[0]
         self.natoms = read_xtc_natoms(self.trajectory)
         self.__non_atomic = non_atomic
         ### parallel computing processes
@@ -276,13 +312,17 @@ Usage: will be added soon!"""
     def _CreateDMA(self, epcharges, icharges, wcharges):
         """initialize DMA objects appropriately"""
         # protein environment
-        #epdma = DMA(nfrag=self.prot_no-self.slt_no)
-        #epdma.set_moments(charges=epcharges)
-        epdma=0
-        idma=0
+        if self.prot_no:
+           epdma = DMA(nfrag=self.prot_no-self.slt_no)
+           epdma.set_moments(charges=epcharges)
+        else:
+           epdma=None
         # ions environment
-        #idma = DMA(nfrag=self.ion_no)
-        #idma.set_moments(charges=icharges)
+        if self.ion_no:
+           idma = DMA(nfrag=self.ion_no)
+           idma.set_moments(charges=icharges)
+        else:
+           idma=None
         # solvent environment
         wdma_l = []
         for mol in xrange(self.water_no):
@@ -336,16 +376,21 @@ Usage: will be added soon!"""
                icharges.append(self.ion_charge)
                
            self.water_no = (self.natoms - self.prot_no - self.ion_no) / self.solvent_atno
-           qo =-0.780821;qo_ =-0.784994
-           qh1= 0.390411;qh1_= 0.392497
-           qh2= 0.390411;qh2_= 0.392497
-           qh3= 0.000000 # for tip4p model
+           #qo =-0.780821;qo_ =-0.784994
+           #qh1= 0.390411;qh1_= 0.392497
+           #qh2= 0.390411;qh2_= 0.392497
+           #qh3= 0.000000 # for tip4p model
            #
-           wcharges.append(qo)
-           wcharges.append(qh1)
-           wcharges.append(qh2)
-           wcharges.append(qh3) # for tip4p model
+           #wcharges.append(qo)
+           #wcharges.append(qh1)
+           #wcharges.append(qh2)
+           #wcharges.append(qh3) # for tip4p model
+           wcharges = self.wcharges
         
+        ### substitute the charges by new ones provided in the input file
+        for i,index in enumerate(self.solchind):
+            epcharges[index] = self.solch[i]
+            
         ### remove the charges for a probe from a list!
         k = 0
         for atom in self.solute_atoms:
@@ -401,7 +446,7 @@ Usage: will be added soon!"""
              # read frames
              i=0
              #while self.status == exdrOK:
-             for i in range(20000):
+             for i in range(10):
                  group = "group-%i"%(i/4)
                  self.__read_xtc(XTC,natoms,frame,box,DIM)
                  self.jobs.append( self.job_server.submit(func=md_shifts_pp,
@@ -413,7 +458,7 @@ Usage: will be added soon!"""
                       depfuncs=(),
                       group=group,
                       modules=("utilities","numpy","units","dma",
-                               "MDAnalysis.coordinates.xdrfile.libxdrfile","clemtp"), 
+                               "MDAnalysis.coordinates.xdrfile.libxdrfile","clemtp"),
                            ) )
                  if (i%4==0 and i!=0): self.job_server.wait()
                  i+=1

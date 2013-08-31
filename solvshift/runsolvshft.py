@@ -252,6 +252,7 @@ def Main(argv):
     md_package     = 'amber'                                           # MD package
     md_charges     = ''                                                # file with charges
     md_trajectory  = ''                                                # file with trajectory
+    md_input       = ''                                                # input file with charge information
     
 
     ## --------------------------- ##
@@ -377,6 +378,7 @@ def Main(argv):
            md = True
            md_trajectory = arg
            md_charges = args[0]
+           md_input = args[1]
         if opt in ("-U", "--md-package" ):
            md_package   = arg.lower()
         if opt in ("-t", "--typ"):
@@ -853,16 +855,17 @@ def Main(argv):
           md_freq_shifts = SLV_MD(pkg=md_package,
                                   charges=md_charges,
                                   trajectory=md_trajectory,
-                                  solute_atoms=solute_atoms,
-                                  solvent_atno=solvent_atno,
+                                  #solute_atoms=solute_atoms,
+                                  #solvent_atno=solvent_atno,
                                   solute_parameters=parameters,
-                                  threshold=30,
+                                  #threshold=30,
                                   camm=SolCAMM,
-                                  suplist=suplist,
+                                  suplist=ral_suplist,
                                   ncpus=ncpus,
-                                  ion_no=0,
-                                  ion_charge=1,
-                                  non_atomic=True)
+                                  #ion_no=0,
+                                  #ion_charge=1,
+                                  non_atomic=True,
+                                  inp=md_input)
           
           print md_freq_shifts
           shifts, averages, stds = md_freq_shifts.get_shifts()
