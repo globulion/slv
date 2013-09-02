@@ -81,7 +81,7 @@ def read_inp(input):
     querry2 = 'charges'
     querry3 = 'nmol'
     querry4 = 'threshold'
-    iname = 'default ion'; ich=[]; inmol=1; ithr=60
+    iname = 'default ion'; ich=[]; inmol=0; ithr=60
     if ions:
        while '[ ' not in line:
           if not line.startswith('!'):
@@ -95,7 +95,7 @@ def read_inp(input):
                   while 'end charges' not in line:
                      if line.startswith('!'): line = file.readline()
                      l = line.split()
-                     ich   .append(l[0])
+                     ich   .append(eval(l[0]))
                      line = file.readline()
                   ich = array(ich,dtype=float64)
              elif querry3 in line:
@@ -130,7 +130,7 @@ def read_inp(input):
                   while 'end charges' not in line:
                      if line.startswith('!'): line = file.readline()
                      l = line.split()
-                     sch   .append(l[0])
+                     sch   .append(eval(l[0]))
                      line = file.readline()
                   sch = array(sch,dtype=float64)
              elif querry3 in line:
@@ -162,7 +162,7 @@ def md_shifts_pp(frame,frame_idx,
     # waters
     wframe  = frame[M+ion_no:]
     #
-    if prot_no:
+    if prot_no-slt_no:
        epdma.set_structure(pos=epframe,equal=True)
        epdma.set_name('eprotein')
        #epdma.write('eprotein.xyz','xyz')
@@ -212,11 +212,12 @@ def md_shifts_pp(frame,frame_idx,
         ### update positions and origins of parameters
         if non_atomic: solute_parameters.set_structure( pos=transformed, equal=True )
         else: solute_parameters.set_structure( pos=solute_pos, equal=True )
+    #solute_parameters.write('param.xyz','xyz')
         
     ### calculate frequency shifts!!!
     shift = numpy.zeros(5,dtype=numpy.float64)
     # eprotein
-    if prot_no:
+    if prot_no-slt_no:
        shift+= utilities.FrequencyShift(solute=solute_parameters,
                                         solvent=epdma,
                                         solute_structure=solute_parameters.get_origin())
@@ -230,9 +231,13 @@ def md_shifts_pp(frame,frame_idx,
         solcnt = numpy.sum(wdma_l[mol].get_pos(),axis=0)/numpy.float64(solvent_nat)
         R  = numpy.sqrt(numpy.sum((solcnt-sltcnt)**2))
         if R < threshold:
-            shift+= utilities.FrequencyShift(solute=solute_parameters,
-                                             solvent=wdma_l[mol],
-                                             solute_structure=solute_parameters.get_origin())
+            s = utilities.FrequencyShift(solute=solute_parameters,
+                                         solvent=wdma_l[mol],
+                                         solute_structure=solute_parameters.get_origin())
+            #if R>50.: print " solvent-%4d  %36.4f %10.3f"%((mol+1),s[3],R)
+            #if numpy.abs(s[3])>1.: wdma_l[mol].write('solvent-%d.xyz'%(mol+1),'xyz' )
+            #if numpy.abs(s[3])>3.: print wdma_l[mol]
+            shift+=s
  
     ### update the report
     if not camm: 
@@ -285,7 +290,10 @@ Usage: will be added soon!"""
         self.suplist = suplist
         self.slt_no  = len(solat)
         self.ion_no = inmol
-        self.ion_charge = ich[0]
+        try:
+            self.ion_charge = ich[0]
+        except IndexError:
+            self.ion_charge = None
         self.natoms = read_xtc_natoms(self.trajectory)
         self.__non_atomic = non_atomic
         ### parallel computing processes
@@ -318,7 +326,7 @@ Usage: will be added soon!"""
     def _CreateDMA(self, epcharges, icharges, wcharges):
         """initialize DMA objects appropriately"""
         # protein environment
-        if self.prot_no:
+        if (self.prot_no-self.slt_no):
            epdma = DMA(nfrag=self.prot_no-self.slt_no)
            epdma.set_moments(charges=epcharges)
         else:
@@ -382,15 +390,6 @@ Usage: will be added soon!"""
                icharges.append(self.ion_charge)
                
            self.water_no = (self.natoms - self.prot_no - self.ion_no) / self.solvent_atno
-           #qo =-0.780821;qo_ =-0.784994
-           #qh1= 0.390411;qh1_= 0.392497
-           #qh2= 0.390411;qh2_= 0.392497
-           #qh3= 0.000000 # for tip4p model
-           #
-           #wcharges.append(qo)
-           #wcharges.append(qh1)
-           #wcharges.append(qh2)
-           #wcharges.append(qh3) # for tip4p model
            wcharges = self.wcharges
         
         ### substitute the charges by new ones provided in the input file
@@ -416,7 +415,7 @@ Usage: will be added soon!"""
         self.frequency_shifts = []
         self.shift_corrections= []
                 
-        if self.pkg == 'amber':           
+        if self.pkg == 'amber':
            # read frames
            traj = open(self.trajectory)
            line = traj.readline()
@@ -452,7 +451,7 @@ Usage: will be added soon!"""
              # read frames
              i=0
              #while self.status == exdrOK:
-             for i in range(10):
+             for i in range(1):
                  group = "group-%i"%(i/4)
                  self.__read_xtc(XTC,natoms,frame,box,DIM)
                  self.jobs.append( self.job_server.submit(func=md_shifts_pp,
