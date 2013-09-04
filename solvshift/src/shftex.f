@@ -26,7 +26,7 @@ C -----------------------------------------------------------------------------
      &          CIKA1(NMOSA,NBSA,NMODES),SKM(NBSA,NBSB),TKM(NBSA,NBSB),
      &          SK1M(NBSA,NBSB,3),TK1M(NBSA,NBSB,3),MLIST(NBSA),
      &          FAIJ(NMOSA,NMOSA),FBIJ(NMOSB,NMOSB),
-     &          FAIJ1(NMOSA,NMOSA,NMODES)
+     &          FAIJ1(NMOSA,NMOSA,NMODES),ZA(NATA),ZB(NATB)
       DOUBLE PRECISION LVEC(NMODES,NATA,3)
       COMMON /FEX   / FIEX(MAXMOD), FJEX
       COMMON /INTIJ / SIJ(MAXORB,MAXORB), TIJ(MAXORB,MAXORB),
@@ -70,7 +70,7 @@ C          Calculate first derivatives of exchange-repulsion enegy
 C
       IMPLICIT DOUBLE PRECISION(A-H,O-Z)
       DIMENSION RIA(NMOSA,3),RIB(NMOSB,3),RIA1(NMOSA,NMODES,3),
-     &          RNA(NATA),RNB(NATB)
+     &          RNA(NATA,3),RNB(NATB,3),ZA(NATA),ZB(NATB)
       DOUBLE PRECISION LVEC(NMODES,NATA,3)
       COMMON /FEX   / FIEX(MAXMOD), FJEX
       COMMON /INTIJ / SIJ(MAXORB,MAXORB), TIJ(MAXORB,MAXORB),
@@ -91,24 +91,68 @@ C
          RIAIB3 = RIA(I,3)-RIB(J,3)
 C
          RIJ = DSQRT( RIAIB1**2 + RIAIB2**2 + RIAIB3**2 )
-         FIEXMM = ZERO
+         DDD = DLOG(DABS(SIJV))
+         AAA = SIJV / RIJ
+C
+C        evaluate TERM1
+C
+         SUM1 = ZERO
+         SUM2 = ZERO
+         SUM3 = ZERO
+         SUM4 = ZERO
+         SUM5 = ZERO
+         SUM6 = ZERO
+         DO 1010 K=1,NMOSA 
+            SUM1 = SUM1 + FAIJ(I,K) * SIJ(K,J)
+            RKJ  = DSQRT( (RIA(K,1) - RIB(J,1))**2 + 
+     &                    (RIA(K,2) - RIB(J,2))**2 + 
+     &                    (RIA(K,3) - RIB(J,3))**2 )
+            SUM3 = SUM3 + (ONE / RKJ)
+ 1010    CONTINUE
+C
+         DO 1020 L=1,NMOSB
+            SUM2 = SUM2 + FBIJ(J,L) * SIJ(I,L)
+            RIL  = DSQRT( (RIA(I,1) - RIB(L,1))**2 + 
+     &                    (RIA(I,2) - RIB(L,2))**2 + 
+     &                    (RIA(I,3) - RIB(L,3))**2 )
+            SUM4 = SUM4 + (ONE / RIL)
+ 1020    CONTINUE
+C
+         DO 1030 N=1,NATA
+            RNJ  = DSQRT( (RNA(N,1) - RIB(J,1))**2 + 
+     &                    (RNA(N,2) - RIB(J,2))**2 +
+     &                    (RNA(N,3) - RIB(J,3))**2 )
+            SUM5 = SUM5 + (ZA(N) / RNJ)
+ 1030    CONTINUE
+C
+         DO 1040 M=1,NATB
+            RIM  = DSQRT( (RNB(M,1) - RIA(I,1))**2 + 
+     &                    (RNB(M,2) - RIA(I,2))**2 +
+     &                    (RNB(M,3) - RIA(I,3))**2 )
+            SUM6 = SUM6 + (ZB(M) / RIM)
+ 1040    CONTINUE
+C
+         TERM1 = SUM1 + SUM2 - ( TWO * TIJV )
+         TERM2 = SUM6 + SUM5 - TWO * ( SUM4 + SUM3 ) + RIJ
+C
          DO 2000  MM=1,NMODES
+            FIEXMM = FIEX(MM)
+C
             SIJM1V = SIJM1(I,J,MM)
             TIJM1V = TIJM1(I,J,MM)
             RIJM1 = RIAIB1 * RIA1(I,MM,1) + RIAIB2 * RIA1(I,MM,2) + 
      &              RIAIB3 * RIA1(I,MM,3)
             RIJM1 = RIJM1 / RIJ
 C
-            DDD = DLOG(DABS(SIJV))
-            AAA = SIJV / RIJ
-            FIEXMM = FIEXMM + DSQRT(-ONE/(TWOPI*DDD)) - 
-     &               TWO * DSQRT(-TWO*DDD/ONEPI)
-            FIEXMM = FIEXMM * FOUR * AAA * SIJM1V
-            FIEXMM = FIEXMM - AAA*AAA * RIJM1 * DSQRT(-TWO*DDD/ONEPI)
+            FIEXMM = FIEXMM + ( DSQRT(-ONE/(TWOPI*DDD)) - 
+     &               TWO * DSQRT(-TWO*DDD/ONEPI) ) * 
+     &               FOUR * AAA * SIJM1V
+            FIEXMM = FIEXMM - AAA * AAA * RIJM1 * DSQRT(-TWO*DDD/ONEPI)
+            FIEXMM = FIEXMM - TWO * SIJM1V * TERM1 - 
+     &                        FOUR * SIJV * SIJM1V
 C
-            TERM1 = -TWO * TIJV
- 2000 CONTINUE
-      FIEX(MM) = FIEXMM
+            FIEX(MM) = FIEXMM
+ 2000    CONTINUE
  1000 CONTINUE
 C
       RETURN

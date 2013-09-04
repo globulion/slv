@@ -75,7 +75,7 @@ func_name = '$f(\Delta\omega) = \\frac{1}{\sigma\sqrt{2\pi}} e^{-\\frac{(\Delta\
 func_parm = 'Parameters:\n'
 func_parm+= '$\Delta\omega_0=%3.2f$\n'% n_o
 func_parm+= '$\sigma=%3.2f$\n'% sigma
-func_parm+= '$r^2=%3.4f$\n'% r2
+func_parm+= '$r^2=%3.4f$'% r2
 # plot the distribution
 ax = pl.gca()
 pl.title('Frequency shift distribution')

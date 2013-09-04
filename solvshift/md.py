@@ -451,7 +451,7 @@ Usage: will be added soon!"""
              # read frames
              i=0
              #while self.status == exdrOK:
-             for i in range(1):
+             for i in range(20000):
                  group = "group-%i"%(i/4)
                  self.__read_xtc(XTC,natoms,frame,box,DIM)
                  self.jobs.append( self.job_server.submit(func=md_shifts_pp,
