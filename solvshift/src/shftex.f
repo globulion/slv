@@ -46,7 +46,7 @@ C     calculate first derivatives of exchange-repulsion energy
 C     with respect to normal coordinates MM
 C
       CALL CALCFX(NMOSA,NMOSB,NMODES,NATA,NATB,ZA,ZB,LVEC,
-     &            RIA,RIB,RIA1,RNA,RNB)
+     &            RIA,RIB,RIA1,RNA,RNB,FAIJ,FBIJ,FAIJ1)
 C
 C     calculate mechanical and electronic frequency shift!!!
 C
@@ -64,18 +64,23 @@ C
 C-----|--|---------|---------|---------|---------|---------|---------|--|------|
 
       SUBROUTINE CALCFX(NMOSA,NMOSB,NMODES,NATA,NATB,ZA,ZB,LVEC,
-     &                  RIA,RIB,RIA1,RNA,RNB)
+     &                  RIA,RIB,RIA1,RNA,RNB,FAIJ,FBIJ,FAIJ1)
 C
 C          Calculate first derivatives of exchange-repulsion enegy
 C
       IMPLICIT DOUBLE PRECISION(A-H,O-Z)
       DIMENSION RIA(NMOSA,3),RIB(NMOSB,3),RIA1(NMOSA,NMODES,3),
-     &          RNA(NATA,3),RNB(NATB,3),ZA(NATA),ZB(NATB)
+     &          RNA(NATA,3),RNB(NATB,3),ZA(NATA),ZB(NATB),
+     &          FAIJ(NMOSA,NMOSA),FBIJ(NMOSB,NMOSB),
+     &          FAIJ1(NMOSA,NMOSA,NMODES)
       DOUBLE PRECISION LVEC(NMODES,NATA,3)
       COMMON /FEX   / FIEX(MAXMOD), FJEX
       COMMON /INTIJ / SIJ(MAXORB,MAXORB), TIJ(MAXORB,MAXORB),
      &                SIJM1(MAXORB,MAXORB,MAXMOD), 
      &                TIJM1(MAXORB,MAXORB,MAXMOD)
+      COMMON /SUMS  / SUM1,SUM2,SUM3,SUM4,SUM5,SUM6,
+     &                SUM7(MAXMOD),SUM8(MAXMOD),SUM9(MAXMOD),
+     &                SUM10(MAXMOD),SUM11(MAXMOD),SUM12(MAXMOD)
       PARAMETER (ZERO=0.0D+00,ONE=1.0D+00,TWO=2.0D+00,THREE=3.0D+00,
      &           FOUR=4.0D+00,FIVE=5.0D+00,ONEPI=3.141592654D+00,
      &           TWOPI=6.283185307D+00)
@@ -96,40 +101,75 @@ C
 C
 C        evaluate TERM1
 C
-         SUM1 = ZERO
-         SUM2 = ZERO
-         SUM3 = ZERO
-         SUM4 = ZERO
-         SUM5 = ZERO
-         SUM6 = ZERO
          DO 1010 K=1,NMOSA 
             SUM1 = SUM1 + FAIJ(I,K) * SIJ(K,J)
-            RKJ  = DSQRT( (RIA(K,1) - RIB(J,1))**2 + 
-     &                    (RIA(K,2) - RIB(J,2))**2 + 
-     &                    (RIA(K,3) - RIB(J,3))**2 )
+            RIAKB1 = RIA(K,1)-RIB(J,1)
+            RIAKB2 = RIA(K,2)-RIB(J,2)
+            RIAKB3 = RIA(K,3)-RIB(J,3)
+C
+            RKJ = DSQRT( RIAKB1**2 + RIAKB2**2 + RIAKB3**2 )
+C
             SUM3 = SUM3 + (ONE / RKJ)
+            DO 1019 MM=1,NMODES
+               SUM7(MM) = SUM7(MM) + FAIJ1(I,K,MM) * SIJ(K,J) + 
+     &                               FAIJ(I,K) * SIJM1(K,J,MM)
+               RKJM1 = RIAKB1 * RIA1(K,MM,1) + RIAKB2 * RIA1(K,MM,2) + 
+     &                 RIAKB3 * RIA1(K,MM,3)
+               RKJM1 = RKJM1 / RKJ
+C
+               SUM12(MM) = SUM12(MM) + RKJM1 / (RKJ**2)
+ 1019       CONTINUE
  1010    CONTINUE
 C
          DO 1020 L=1,NMOSB
             SUM2 = SUM2 + FBIJ(J,L) * SIJ(I,L)
-            RIL  = DSQRT( (RIA(I,1) - RIB(L,1))**2 + 
-     &                    (RIA(I,2) - RIB(L,2))**2 + 
-     &                    (RIA(I,3) - RIB(L,3))**2 )
+            RIALB1 = RIA(I,1)-RIB(L,1)
+            RIALB2 = RIA(I,2)-RIB(L,2)
+            RIALB3 = RIA(I,3)-RIB(L,3)
+C
+            RIL = DSQRT( RIALB1**2 + RIALB2**2 + RIALB3**2 )
+C
             SUM4 = SUM4 + (ONE / RIL)
+            DO 1029 MM=1,NMODES
+               SUM8(MM) = SUM8(MM) + FBIJ(J,L) * SIJM1(I,L,MM)
+C
+               RILM1 = RIALB1 * RIA1(I,MM,1) + RIALB2 * RIA1(I,MM,2) + 
+     &                 RIALB3 * RIA1(I,MM,3)
+               RILM1 = RILM1 / RIL
+C
+               SUM11(MM) = SUM11(MM) + RILM1 / (RIL**2)
+ 1029       CONTINUE
  1020    CONTINUE
 C
          DO 1030 N=1,NATA
-            RNJ  = DSQRT( (RNA(N,1) - RIB(J,1))**2 + 
-     &                    (RNA(N,2) - RIB(J,2))**2 +
-     &                    (RNA(N,3) - RIB(J,3))**2 )
+            RNAJB1 = RNA(N,1) - RIB(J,1)
+            RNAJB2 = RNA(N,2) - RIB(J,2)
+            RNAJB3 = RNA(N,3) - RIB(J,3)
+C
+            RNJ  = DSQRT( RNAJB1**2 + RNAJB2**2 + RNAJB3**2 )
             SUM5 = SUM5 + (ZA(N) / RNJ)
+C
+            DO 1039 MM=1,NMODES
+               RNJM1 = RNAJB1 * LVEC(MM,N,1) + RNAJB2 * LVEC(MM,N,2) +
+     &                 RNAJB3 * LVEC(MM,N,3)
+               RNJM1 = RNJM1 / RNJ
+               SUM10(MM) = SUM10(MM) + RNJM1 * ZA(M) / (RNJ**2)
+ 1039       CONTINUE
  1030    CONTINUE
 C
          DO 1040 M=1,NATB
-            RIM  = DSQRT( (RNB(M,1) - RIA(I,1))**2 + 
-     &                    (RNB(M,2) - RIA(I,2))**2 +
-     &                    (RNB(M,3) - RIA(I,3))**2 )
+            RIAMB1 = RIA(I,1) - RNB(M,1)
+            RIAMB2 = RIA(I,2) - RNB(M,2)
+            RIAMB3 = RIA(I,3) - RNB(M,3)
+            RIM  = DSQRT( RIAMB1**2 + RIAMB2**2 + RIAMB3**2 )
             SUM6 = SUM6 + (ZB(M) / RIM)
+C
+            DO 1049 MM=1,NMODES
+               RIMM1 = RIAMB1 * RIA1(I,MM,1) + RIAMB2 * RIA1(I,MM,2) +
+     &                 RIAMB3 * RIA1(I,MM,3)
+               RIMM1 = RIMM1 / RIM
+               SUM9(MM) = SUM9(MM) + RIMM1 * ZB(M) / (RIM**2)
+ 1049       CONTINUE
  1040    CONTINUE
 C
          TERM1 = SUM1 + SUM2 - ( TWO * TIJV )
@@ -144,15 +184,22 @@ C
      &              RIAIB3 * RIA1(I,MM,3)
             RIJM1 = RIJM1 / RIJ
 C
+            TERM3 = SUM7(MM) + SUM8(MM) - TWO * TIJM1V
+            TERM4 = SUM9(MM) + SUM10(MM) + RIJM1 / (RIJ**2) -
+     &              TWO * (SUM11(MM) + SUM12(MM))
+C
             FIEXMM = FIEXMM + ( DSQRT(-ONE/(TWOPI*DDD)) - 
      &               TWO * DSQRT(-TWO*DDD/ONEPI) ) * 
      &               FOUR * AAA * SIJM1V
             FIEXMM = FIEXMM - AAA * AAA * RIJM1 * DSQRT(-TWO*DDD/ONEPI)
             FIEXMM = FIEXMM - TWO * SIJM1V * TERM1 - 
-     &                        FOUR * SIJV * SIJM1V
+     &                        FOUR * SIJV * SIJM1V * TERM2
+            FIEXMM = FIEXMM - TWO * SIJV * TERM3 + 
+     &                        TWO * SIJV * SIJV * TERM4
 C
             FIEX(MM) = FIEXMM
  2000    CONTINUE
+         CALL ZROSUM(NMODES)
  1000 CONTINUE
 C
       RETURN
@@ -221,14 +268,49 @@ C
       END
 C-----|--|---------|---------|---------|---------|---------|---------|--|------|
 
+      SUBROUTINE ZROSUM(NMODES)
+C
+C          Zero-out the auxilliary sums
+C
+      IMPLICIT DOUBLE PRECISION(A-H,O-Z)
+      COMMON /SUMS  / SUM1,SUM2,SUM3,SUM4,SUM5,SUM6,
+     &                SUM7(MAXMOD),SUM8(MAXMOD),SUM9(MAXMOD),
+     &                SUM10(MAXMOD),SUM11(MAXMOD),SUM12(MAXMOD)
+      PARAMETER (ZERO=0.0D+00)
+      SUM1 = ZERO
+      SUM2 = ZERO
+      SUM3 = ZERO
+      SUM4 = ZERO 
+      SUM5 = ZERO
+      SUM6 = ZERO
+      DO 1498 I=1,NMODES
+         SUM7(I) = ZERO 
+         SUM8(I) = ZERO
+         SUM9(I) = ZERO
+         SUM10(I) = ZERO
+         SUM11(I) = ZERO
+         SUM12(I) = ZERO
+ 1498 CONTINUE
+C
+      RETURN
+      END
+C-----|--|---------|---------|---------|---------|---------|---------|--|------|
+
       BLOCK DATA
       IMPLICIT DOUBLE PRECISION(A-H,O-Z)
       COMMON /FEX   / FIEX(MAXMOD), FJEX
       COMMON /INTIJ / SIJ(MAXORB,MAXORB), TIJ(MAXORB,MAXORB),
      &                SIJM1(MAXORB,MAXORB,MAXMOD), 
      &                TIJM1(MAXORB,MAXORB,MAXMOD)
+      COMMON /SUMS  / SUM1,SUM2,SUM3,SUM4,SUM5,SUM6,
+     &                SUM7(MAXMOD),SUM8(MAXMOD),SUM9(MAXMOD),
+     &                SUM10(MAXMOD),SUM11(MAXMOD),SUM12(MAXMOD)
       DATA FJEX/0.D0/
       DATA FIEX/MAXMOD*0.D0/
+      DATA SUM1,SUM2,SUM3,SUM4,SUM5,SUM6/0.D0,0.D0,0.D0,0.D0,0.D0,0.D0/
+      DATA SUM7,SUM8,SUM9,SUM10,SUM11,SUM12/MAXMOD*0.D0,MAXMOD*0.D0,
+     &                                      MAXMOD*0.D0,MAXMOD*0.D0,
+     &                                      MAXMOD*0.D0,MAXMOD*0.D0/ 
       DATA SIJ/MAXORB2*0.D0/ 
       DATA TIJ/MAXORB2*0.D0/
       DATA SIJM1/MAXORB2MOD*0.D0/
