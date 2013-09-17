@@ -15,12 +15,13 @@ from sys import argv, exit        #
 from numpy import array,float64   #
 from numpy import average, std    #
 from scipy import optimize        #
+#import utilities                  #
 import pylab as pl                #
 import math, numpy                #
 # ------------------------------- #
 print __doc__                     #
 if len(argv)==1: exit()           #
-# ------------------------------- #
+# ------------------------------- #        
 
 def Gaussian(n,sigma,n_o):
     """single Gaussian distribution"""
@@ -64,6 +65,19 @@ n, bins, patches = pl.hist(shifts, bins,
 N = len(bins)-1
 X = numpy.zeros(N)
 X[:N] = (bins[1:N+1]+bins[:N])/2.
+
+#P = utilities.Peak(x=X,y=n)
+#P.set_peak(1)
+#s0 = ['A',1]
+#s1 = ['sigma',5.0]
+#s2 = ['x_o',0.0]
+#P.fit([s0,s1,s2],method='l-bfgs-b')
+#print P.get_r2()
+#print P.param
+#r = P.get_fit()
+#for i in range(len(r)):
+# print r[i], P.y[i]
+
 # initial guess for parameters
 sigma0 = 5.0 ; n_o0 = 0.;
 [sigma, n_o], flag = optimize.leastsq(ResidGaussian, 

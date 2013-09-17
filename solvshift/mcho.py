@@ -649,10 +649,10 @@ class MCHO(UNITS):
              print >> out, "%d %d %d %14.6f"%(i+1,i+1,i+1,
                 self.gijj[i,i,i]*sqrt(self.redmass[i]*self.redmass[i]**2)) 
                 
-         print >> out, "SEMI-OFFDIAGONALS" 
+         print >> out, "SEMI-OFFDIAGONALS"
          for i in range(   self.nModes): 
              for j in range(   self.nModes):
-                if j==7: 
+                if j==6: 
                  print >> out, "%d %d %d %14.6f"%(i+1,j+1,j+1,
                 self.gijj[i,j,j]*sqrt(self.redmass[i]*self.redmass[j]**2)) 
         return

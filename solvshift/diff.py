@@ -811,6 +811,7 @@ using COULOMB.py routines"""
    vec = 20
    #for i in range(len(bonds)): bonds[i]=tuple(bonds[i])
    #print bonds
+   #os.environ['__IMPORT__COULOMB__']=1
    CalculateCAMM_(basis=argv[1],bonds=bonds,vec=vec)
 
    

@@ -8,11 +8,11 @@ C
 C                      version 0.0a    3 Sep 2013    Bartosz Błasiak
 C -----------------------------------------------------------------------------
 C
-#define MAXORB 40
-#define MAXMOD 40
-#define MAXBSF 300
-#define MAXORB2 1600
-#define MAXORB2MOD 64000
+C#define MsAXORB 40
+C#define MsAXMOD 40
+C#define MsAXBSF 300
+C#define MsAXORB2 1600
+C#define MsAXORB2MOD 64000
 C -----------------------------------------------------------------------------
       SUBROUTINE SHFTEX(REDMSS,FREQ,GIJJ,LVEC,RIA,RIB,RNA,RNB,RIA1,
      &                  CIKA,CIKB,CIKA1,SKM,TKM,SK1M,TK1M,ZA,ZB,
@@ -28,10 +28,10 @@ C -----------------------------------------------------------------------------
      &          FAIJ(NMOSA,NMOSA),FBIJ(NMOSB,NMOSB),
      &          FAIJ1(NMOSA,NMOSA,NMODES),ZA(NATA),ZB(NATB)
       DOUBLE PRECISION LVEC(NMODES,NATA,3)
-      COMMON /FEX   / FIEX(MAXMOD), FJEX
-      COMMON /INTIJ / SIJ(MAXORB,MAXORB), TIJ(MAXORB,MAXORB),
-     &                SIJM1(MAXORB,MAXORB,MAXMOD), 
-     &                TIJM1(MAXORB,MAXORB,MAXMOD)
+      COMMON /FEX   / FIEX(40), FJEX
+      COMMON /INTIJ / SIJ(40,40), TIJ(40,40),
+     &                SIJM1(40,40,40), 
+     &                TIJM1(40,40,40)
       PARAMETER (ZERO=0.0D+00,ONE=1.0D+00,TWO=2.0D+00,THREE=3.0D+00,
      &           FOUR=4.0D+00,FIVE=5.0D+00)
 Cf2py INTENT(OUT) SHFTMA,SHFTEA
@@ -39,8 +39,8 @@ C
 C     calculate <I|O|J> integrals and their derivatives dMM
 C     Operator O is 1 for overlap and -HALF*LAPLACIAN for kinetic
 C
-      CALL CALCIJ(NMOSA,NMOSB,NMODES,NATA,NBSA,NBSB,
-     &            SKM,TKM,MLIST,SK1M,TK1M,LVEC,CIKA,CIKB,CIKA1)
+      CALL CALCIJ(NMOSA,NMOSB,NMODES,NATA,NBSA,NBSB,SKM,
+     &            TKM,MLIST,SK1M,TK1M,LVEC,CIKA,CIKB,CIKA1)
 C
 C     calculate first derivatives of exchange-repulsion energy
 C     with respect to normal coordinates MM
@@ -74,13 +74,13 @@ C
      &          FAIJ(NMOSA,NMOSA),FBIJ(NMOSB,NMOSB),
      &          FAIJ1(NMOSA,NMOSA,NMODES)
       DOUBLE PRECISION LVEC(NMODES,NATA,3)
-      COMMON /FEX   / FIEX(MAXMOD), FJEX
-      COMMON /INTIJ / SIJ(MAXORB,MAXORB), TIJ(MAXORB,MAXORB),
-     &                SIJM1(MAXORB,MAXORB,MAXMOD), 
-     &                TIJM1(MAXORB,MAXORB,MAXMOD)
+      COMMON /FEX   / FIEX(40), FJEX
+      COMMON /INTIJ / SIJ(40,40), TIJ(40,40),
+     &                SIJM1(40,40,40), 
+     &                TIJM1(40,40,40)
       COMMON /SUMS  / SUM1,SUM2,SUM3,SUM4,SUM5,SUM6,
-     &                SUM7(MAXMOD),SUM8(MAXMOD),SUM9(MAXMOD),
-     &                SUM10(MAXMOD),SUM11(MAXMOD),SUM12(MAXMOD)
+     &                SUM7(40),SUM8(40),SUM9(40),
+     &                SUM10(40),SUM11(40),SUM12(40)
       PARAMETER (ZERO=0.0D+00,ONE=1.0D+00,TWO=2.0D+00,THREE=3.0D+00,
      &           FOUR=4.0D+00,FIVE=5.0D+00,ONEPI=3.141592654D+00,
      &           TWOPI=6.283185307D+00)
@@ -217,9 +217,9 @@ C
      &          CIKA1(NMOSA,NBSA,NMODES),SKM(NBSA,NBSB),TKM(NBSA,NBSB),
      &          SK1M(NBSA,NBSB,3),TK1M(NBSA,NBSB,3),MLIST(NBSA)
       DOUBLE PRECISION LVEC(NMODES,NATA,3)
-      COMMON /INTIJ / SIJ(MAXORB,MAXORB), TIJ(MAXORB,MAXORB),
-     &                SIJM1(MAXORB,MAXORB,MAXMOD), 
-     &                TIJM1(MAXORB,MAXORB,MAXMOD)
+      COMMON /INTIJ / SIJ(40,40), TIJ(40,40),
+     &                SIJM1(40,40,40), 
+     &                TIJM1(40,40,40)
       PARAMETER (ZERO=0.0D+00,ONE=1.0D+00,TWO=2.0D+00,THREE=3.0D+00,
      &           FOUR=4.0D+00,FIVE=5.0D+00)
 C
@@ -274,8 +274,8 @@ C          Zero-out the auxilliary sums
 C
       IMPLICIT DOUBLE PRECISION(A-H,O-Z)
       COMMON /SUMS  / SUM1,SUM2,SUM3,SUM4,SUM5,SUM6,
-     &                SUM7(MAXMOD),SUM8(MAXMOD),SUM9(MAXMOD),
-     &                SUM10(MAXMOD),SUM11(MAXMOD),SUM12(MAXMOD)
+     &                SUM7(40),SUM8(40),SUM9(40),
+     &                SUM10(40),SUM11(40),SUM12(40)
       PARAMETER (ZERO=0.0D+00)
       SUM1 = ZERO
       SUM2 = ZERO
@@ -298,22 +298,22 @@ C-----|--|---------|---------|---------|---------|---------|---------|--|------|
 
       BLOCK DATA
       IMPLICIT DOUBLE PRECISION(A-H,O-Z)
-      COMMON /FEX   / FIEX(MAXMOD), FJEX
-      COMMON /INTIJ / SIJ(MAXORB,MAXORB), TIJ(MAXORB,MAXORB),
-     &                SIJM1(MAXORB,MAXORB,MAXMOD), 
-     &                TIJM1(MAXORB,MAXORB,MAXMOD)
+      COMMON /FEX   / FIEX(40), FJEX
+      COMMON /INTIJ / SIJ(40,40), TIJ(40,40),
+     &                SIJM1(40,40,40), 
+     &                TIJM1(40,40,40)
       COMMON /SUMS  / SUM1,SUM2,SUM3,SUM4,SUM5,SUM6,
-     &                SUM7(MAXMOD),SUM8(MAXMOD),SUM9(MAXMOD),
-     &                SUM10(MAXMOD),SUM11(MAXMOD),SUM12(MAXMOD)
+     &                SUM7(40),SUM8(40),SUM9(40),
+     &                SUM10(40),SUM11(40),SUM12(40)
       DATA FJEX/0.D0/
-      DATA FIEX/MAXMOD*0.D0/
+      DATA FIEX/40*0.D0/
       DATA SUM1,SUM2,SUM3,SUM4,SUM5,SUM6/0.D0,0.D0,0.D0,0.D0,0.D0,0.D0/
-      DATA SUM7,SUM8,SUM9,SUM10,SUM11,SUM12/MAXMOD*0.D0,MAXMOD*0.D0,
-     &                                      MAXMOD*0.D0,MAXMOD*0.D0,
-     &                                      MAXMOD*0.D0,MAXMOD*0.D0/ 
-      DATA SIJ/MAXORB2*0.D0/ 
-      DATA TIJ/MAXORB2*0.D0/
-      DATA SIJM1/MAXORB2MOD*0.D0/
-      DATA TIJM1/MAXORB2MOD*0.D0/
+      DATA SUM7,SUM8,SUM9,SUM10,SUM11,SUM12/40*0.D0,40*0.D0,
+     &                                      40*0.D0,40*0.D0,
+     &                                      40*0.D0,40*0.D0/ 
+      DATA SIJ/1600*0.D0/ 
+      DATA TIJ/1600*0.D0/
+      DATA SIJM1/64000*0.D0/
+      DATA TIJM1/64000*0.D0/
       END
 C-----|--|---------|---------|---------|---------|---------|---------|--|------|
