@@ -64,19 +64,38 @@ in cm-1 and other quantities in AU."""
             fder.append(dma1)
         self.__fderiv = fder
         return
-    
+    def _M(self):
+        """M matrix"""
+        N = len(self.__mol.atoms)
+        M = zeros((N*3,N*3),dtype=float64)
+        for i in xrange(N):
+            m = 1./sqrt(self.__mol.atoms[i].mass()*self.AmuToElectronMass)
+            M[3*i+0,3*i+0] = m
+            M[3*i+1,3*i+1] = m
+            M[3*i+2,3*i+2] = m
+        return M
+    def _M1(self):
+        """M matrix"""
+        N = len(self.__mol.atoms)
+        M = zeros((N*3,N*3),dtype=float64)
+        for i in xrange(N):
+            m = sqrt(self.__mol.atoms[i].mass()*self.AmuToElectronMass)
+            M[3*i+0,3*i+0] = m
+            M[3*i+1,3*i+1] = m
+            M[3*i+2,3*i+2] = m
+        return M
     def diag(self):
         """diagonalize Hessian. Returns new frequencies in [cm-1]"""
         if self.__hess is None: return 0
         else:
             print self.__freq
             n = 0
-            L = self.__L#[:,:-n]
+            L = dot(self._M1(),self.__L)#[:,:-n]
             H = self.__hess#[:-n,:-n]
             self.__hess_mwc = dot(dot(L,H),transpose(L))
-            VecAnal = VIB(self.__mol,self.__hess_mwc)
+            VecAnal = VIB(self.__mol,self.__hess_mwc,weight=False)
             VecAnal.eval()
-            self.__freq_new, self.__u = VecAnal.get()
+            self.__freq_new, self.__redmass_new, self.__u = VecAnal.get()
             #self.__eigh,self.__u = linalg.eigh(self.__hess_mwc)
             #self.__freq_new = where(self.__eigh>0.,
             #                  sqrt(self.__eigh)\
@@ -106,16 +125,18 @@ in cm-1 and other quantities in AU."""
                 for i in xrange(self.__nModes):
                     SUM += self.__gijj[i,j,k] * self.__fi[i]/\
                     (self.__redmass[i]*self.__freq_mcho[i]**2)
-                self.__hess[j,k]-= SUM
+                    #(self.__redmass[i]*self.__freq_mcho[i]**2)
+                self.__hess[j,k]-= SUM/sqrt(self.__redmass[j]*self.__redmass[k]) 
                 if j==k:
-                   self.__hess[j,k]+= self.__redmass[j]*self.__freq_mcho[j]**2
+                   #self.__hess[j,k]+= self.__redmass[j]*self.__freq_mcho[j]**2
+                   self.__hess[j,k]+= self.__freq_mcho[j]**2
                    #self.__hess[j,k] /= sqrt(self.__redmass[j]*self.__redmass[k])
                    #print sqrt(self.__freq_mcho[j]**2 ) *self.HartreePerHbarToCmRec
-                #else:
+                else:
                    #self.__hess[j,k] /= sqrt(self.__redmass[j]*self.__redmass[k]) 
-                   #self.__hess[k,j] = self.__hess[j,k]
+                   self.__hess[k,j] = self.__hess[j,k]
         
-        self.__freq_new  = self.diag()           
+        self.__freq_new  = self.diag()
         self.__dq = self.dq()
         return
     
@@ -167,6 +188,50 @@ using reduced masses"""
         # fderiv
         for i in xrange(self.__nModes):
             self.__fderiv[i] *= sqrt(self.__redmass[i]*self.AmuToElectronMass)
+        self.__fderiv[-1].DMA[0].fill(0)
+        self.__fderiv[-1].DMA[1].fill(0)
+        self.__fderiv[-1].DMA[2].fill(0)
+        self.__fderiv[-1].DMA[3].fill(0)
+        
+        self.__fderiv[-2].DMA[0].fill(0)
+        self.__fderiv[-2].DMA[1].fill(0)
+        self.__fderiv[-2].DMA[2].fill(0)
+        self.__fderiv[-2].DMA[3].fill(0)
+        
+        #self.__fderiv[-3].DMA[0].fill(0)
+        #self.__fderiv[-3].DMA[1].fill(0)
+        #self.__fderiv[-3].DMA[2].fill(0)
+        #self.__fderiv[-3].DMA[3].fill(0)
+
+        #self.__fderiv[-4].DMA[0].fill(0)
+        #self.__fderiv[-4].DMA[1].fill(0)
+        #self.__fderiv[-4].DMA[2].fill(0)
+        #self.__fderiv[-4].DMA[3].fill(0)
+        
+        #self.__fderiv[-5].DMA[0].fill(0)
+        #self.__fderiv[-5].DMA[1].fill(0)
+        #self.__fderiv[-5].DMA[2].fill(0)
+        #self.__fderiv[-5].DMA[3].fill(0)
+        
+        #self.__fderiv[-6].DMA[0].fill(0)
+        #self.__fderiv[-6].DMA[1].fill(0)
+        #self.__fderiv[-6].DMA[2].fill(0)
+        #self.__fderiv[-6].DMA[3].fill(0)
+        
+        #self.__fderiv[-7].DMA[0].fill(0)
+        #self.__fderiv[-7].DMA[1].fill(0)
+        #self.__fderiv[-7].DMA[2].fill(0)
+        #self.__fderiv[-7].DMA[3].fill(0)
+
+        #self.__fderiv[-8].DMA[0].fill(0)
+        #self.__fderiv[-8].DMA[1].fill(0)
+        #self.__fderiv[-8].DMA[2].fill(0)
+        #self.__fderiv[-8].DMA[3].fill(0)
+
+        #self.__fderiv[-9].DMA[0].fill(0)
+        #self.__fderiv[-9].DMA[1].fill(0)
+        #self.__fderiv[-9].DMA[2].fill(0)
+        #self.__fderiv[-9].DMA[3].fill(0)
         # cubic anharmonic constants
         temp = sqrt(self.__redmass)[:,newaxis,newaxis,]
         self.__gijj = temp * self.__gijj
@@ -174,5 +239,6 @@ using reduced masses"""
         self.__gijj = temp * self.__gijj
         temp = sqrt(self.__redmass)[newaxis,newaxis,:,]
         self.__gijj = temp * self.__gijj
+        #self.__gijj[-3:,-3:,-3:] = 0.0
         # reduced masses
         self.__redmass *= self.AmuToElectronMass

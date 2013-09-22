@@ -784,8 +784,8 @@ def Main(argv):
                 
                 ### evaluate mean Hessian
                 if Hessian:
-                   mol = Read_xyz_file('CH3N3.xyz',mol=True)
-                   #mol = Read_xyz_file('nma-opt-b3lyp-6-311++Ggg.xyz',mol=True)
+                   #mol = Read_xyz_file('CH3N3.xyz',mol=True)
+                   mol = Read_xyz_file('nma-opt-b3lyp-6-311++Ggg.xyz',mol=True)
                    if make_ua:
                       hess = f.eval_hessian(mol,ua_list)
                    else: hess = f.eval_hessian(mol)
