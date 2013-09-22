@@ -7,6 +7,7 @@ from units     import *
 from dma       import *
 from utilities import *
 from slvcor    import SLVCOR
+from hessian   import HESSIAN
 import sys, copy
 sys.stdout.flush()
 
@@ -30,12 +31,13 @@ Eg. : O1H1H1 O2H2H2 O3H3H3 ...
 ---------------------------------------------------------------------
 """
     
-    def __init__(self,pkg="gaussian",nsatoms=('O','H','H'),nstatoms=(),L=[],mode_id=0,
+    def __init__(self,pkg="gaussian",nsatoms=('O','H','H'),nstatoms=(),L=[],L_=[],mode_id=0,
                  solute="",solvent="",solute_origin="com",
                  solute_structure="",mixed=False,
                  overall_MM=False,camm=False,chelpg=False,bsm=None,bsm_file='',
                  fderiv=0,sderiv=0,redmass=0,freq=0,structural_change=False,
-                 ref_structure=[],solpol=False,gijj=0,lprint=True,suplist=[0,1,2,3]):
+                 ref_structure=[],solpol=False,gijj=0,lprint=True,suplist=[0,1,2,3],
+                 sol_suplist=[0,1,2]):
         self.log = 'None'
         ### modes of action
         # mixed 
@@ -57,6 +59,7 @@ Eg. : O1H1H1 O2H2H2 O3H3H3 ...
         self.soluteAtoms = [ Atom(x) for x in nstatoms ] 
         # L matrix
         self.L = L
+        self.L_= L_
         # mode of interest for frequency shift
         self.mode_id = mode_id
         # solute parameters
@@ -97,6 +100,7 @@ Eg. : O1H1H1 O2H2H2 O3H3H3 ...
         self.lprint = lprint
         # superimposition list
         self.__suplist = suplist
+        self.__sol_suplist = sol_suplist
         
         ### add non-atomic sites if necessary
         self.addSites()        
@@ -111,9 +115,13 @@ Eg. : O1H1H1 O2H2H2 O3H3H3 ...
         ### construct SOLUTE environment
         self._Solute()
         a = self.SOLVENT.copy()
-        ### calculate frequency shift!!!
-        self.shift=self.__shift(self.SOLUTE,
-                                 self.SOLVENT,
+        
+    # public methods
+    
+    def eval(self):
+        """calculate shifts"""
+        self.shift=self.__shift(self.SOLUTE.copy(),
+                                 self.SOLVENT.copy(),
                                  self.solute_structure,
                                  self.solpol)
         ##### estimate structural shifts!!!
@@ -122,8 +130,53 @@ Eg. : O1H1H1 O2H2H2 O3H3H3 ...
         #                         self.SOLVENT,
         #                         self.solute_structure)
 
-    # public methods
 
+    def eval_hessian(self,mol,ua_list=None):
+        """evaluates Hessian"""
+        fderiv_rot, L_rot, transformed_gas_phase_str, rot =\
+         self.get_fder_rotated(self.fderiv, self.L, self.solute_structure, self.ref_structure, )
+        hess =HESSIAN(fderiv=fderiv_rot,
+                      redmass=self.redmass.copy(),
+                      freq=self.freq.copy(),
+                      solute=self.SOLUTE.copy(),
+                      solvent=self.SOLVENT.copy(),
+                      mode_id=self.mode_id,
+                      L=L_rot.copy(),
+                      #L=self.L.copy(),
+                      gijj=self.gijj,
+                      ua_list=ua_list,
+                      mol=mol)
+        hess.eval()
+        return hess
+    
+    def get_fder_rotated(self,fderiv, L, solute_structure, ref_structure):
+        """rotates first derivatives of DMA and the ref structure to target orientation"""
+        ### superimpose structures
+        sup = SVDSuperimposer()
+        sup.set(solute_structure[self.__suplist],ref_structure[self.__suplist])
+        sup.run()
+        rms = sup.get_rms()
+        rot, transl = sup.get_rotran()
+        transformed_gas_phase_str = sup.get_transformed()
+
+        ### rotate the fderiv[i]
+        fderiv_copy = copy.deepcopy(fderiv)
+        for i in fderiv_copy:
+            i.pos  =array(solute_structure)
+            i.origin  =array(solute_structure)
+            i.MAKE_FULL()
+            i.Rotate(rot)
+        
+        ### rotate the eigenvectors
+        Lrot = L.reshape(self.stat,3,self.nModes)
+        #Lrot = L.reshape(7,3,self.nModes)
+        Lrot = tensordot(Lrot,rot,(1,0))              # dimension: nstat,nmodes,3
+        Lrot = transpose(Lrot,(0,2,1))                # dimension: nstat,3,nmodes
+        Lrot = Lrot.reshape(self.stat*3,self.nModes) # dimension: nstat*3,nmodes
+        #Lrot = Lrot.reshape(7*3,self.nModes)
+        
+        return fderiv_copy, Lrot, transformed_gas_phase_str, rot
+    
     def eval_shiftcorr(self,solute_DMA,ua_list=None):
         """evaluates corrections to frequency shifts"""
         
@@ -395,32 +448,46 @@ Eg. : O1H1H1 O2H2H2 O3H3H3 ...
                 ### --- transform DMA for each water molecule
                 ### --- using solvent_DMA object for one GAS-PHASE
                 ### --- water molecule
+                nmol = len(self.solvent.get_pos())/self.sat
+                X = self.benchmark_solvent_molecule.get_origin()
+                nscnt = len(X)
+                X = X[self.__sol_suplist]
                 # make the solvent DMA object
-                SOLVENT = DMA(nfrag=len(self.solvent.pos))
-                SOLVENT.pos = array(self.solvent.pos)
-                SOLVENT.origin = array(self.solvent.pos)
-            
-                X = array(self.benchmark_solvent_molecule.pos.copy())
+                SOLVENT = DMA(nfrag=nscnt*nmol)
                 if self.lprint:
                    print " -------------------------------"
                    print "          RMS analysis"
                    print " -------------------------------"
-                for water in range(len(self.solvent.pos)/self.sat):
+                Ys = self.solvent.get_pos()
+                orig = None
+                for mol in xrange(nmol):
                     # copying of BSM
                     bsm_copy = self.benchmark_solvent_molecule.copy()
                     # superimposition
-                    Y = self.solvent.pos[self.sat*water:self.sat*water+self.sat]
-                    rot, rms = RotationMatrix(final=Y,initial=X)
+                    Y = Ys[self.sat*mol:self.sat*mol+self.sat]
+                    sup = SVDSuperimposer()
+                    sup.set(Y,X)
+                    sup.run()
+                    rms = sup.get_rms()
+                    rot, transl = sup.get_rotran()
+                    transformed = dot(self.benchmark_solvent_molecule.get_origin(),rot) + transl
+                    #Yp = concatenate((Y,transformed[self.sat:]),axis=0)
+                    Yp = transformed.copy()
+                    if orig is not None:
+                       orig = concatenate((orig,Yp),axis=0)
+                    else: orig = Yp.copy()
                     # rotation
                     bsm_copy.MAKE_FULL()
                     bsm_copy.Rotate(rot)
                     # building DMA object for solvent environment 
-                    SOLVENT.DMA[0][self.sat*water:self.sat*water+self.sat] = array(bsm_copy[0])
-                    SOLVENT.DMA[1][self.sat*water:self.sat*water+self.sat] = array(bsm_copy[1])
-                    SOLVENT.DMA[2][self.sat*water:self.sat*water+self.sat] = array(bsm_copy[2])
-                    SOLVENT.DMA[3][self.sat*water:self.sat*water+self.sat] = array(bsm_copy[3])
+                    SOLVENT.DMA[0][nscnt*mol:nscnt*mol+nscnt] = array(bsm_copy[0])
+                    SOLVENT.DMA[1][nscnt*mol:nscnt*mol+nscnt] = array(bsm_copy[1])
+                    SOLVENT.DMA[2][nscnt*mol:nscnt*mol+nscnt] = array(bsm_copy[2])
+                    SOLVENT.DMA[3][nscnt*mol:nscnt*mol+nscnt] = array(bsm_copy[3])
                     #
                     if self.lprint: print "  - solvent rms: %10.6f" % rms
+                #
+                SOLVENT.set_structure(pos=orig,equal=True)
 
            else:
                   SOLVENT = self.solvent.copy()
@@ -581,9 +648,6 @@ Eg. : O1H1H1 O2H2H2 O3H3H3 ...
 
       ### memorize the solute
       self.SOLUTE = SOLUTE
-
-
-
 
 
 ### tests

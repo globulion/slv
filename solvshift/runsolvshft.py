@@ -83,8 +83,10 @@ def Usage():
  *                              : without space, eg.: -A C,C,O,H,H,H,H                                       *
  *     -B, --solvent   [atoms]  : provide a string of atomic symbols for solvent separated by a comma and    *
  *                              : without space, eg.: -A C,C,O,H,H,H,H                                       *
- *     -L, --suplist   [list]   : provide superimposition indices. '5' means superimpose first 5 atoms of    *
- *                              : solute; '1,2,4,6' means superimpose first, second, fourth and sixth atom   *
+ *     -L, --suplist   [list]   : provide superimposition indices for solute molecule. '5' means superimpose *
+ *                              : first 5 atoms of solute; '1,2,4,6' means superimpose first, second, fourth *
+ *                              : and sixth atom                                                             *
+ *     -T, --sol-supl  [list]   : provide superimposition indices for solvent molecule. The same as above.   *
  *  -------------------------------------------------------------------------------------------------------  *
  *  [5] FREQUENCY SHIFTS                                                                                     *
  *  -------------------------------------------------------------------------------------------------------  *
@@ -192,6 +194,7 @@ def Main(argv):
     Gamess         = True                                              # Gamess input files
     Gaussian       = False                                             # Gaussian input files
     Fragments      = False                                             # non-atomic cites
+    Hessian        = False                                             # Hessian reconstruction
     step           = 0.05                                              # step for cartesian differentiation
     n_point        = 5                                                 # pointity of differentiation
     mode_id        =-1                                                 # normal mode index
@@ -203,6 +206,7 @@ def Main(argv):
     ua_list        = [ ( 4, 5, 6, 7) ]                                 # UA
     ua_list        = [ ( 1,12,11, 6), ( 4, 7, 9,10) ]                  # UA; methyl groups
     suplist        = [ 0, 1, 2, 3, 4]                                  # superimposition indices
+    sol_suplist    = [ 0, 1, 2 ]                                       # ------//------ (for solvent)
     
     ### input/output file handling
     read_file      = ''                                                # read parameters
@@ -260,7 +264,7 @@ def Main(argv):
     ## --------------------------- ##
     
     try:
-        opts, args = getopt.getopt(argv, "hi:a:s:cF:n:gx:fM:ot:m:T:OC:ydu:b:pW:A:B:kQj:l:e:D:w:PN:SR:GEV:z:Z:XU:H:L:" ,
+        opts, args = getopt.getopt(argv, "hi:a:s:cF:n:gx:fM:ot:m:T:OC:ydu:b:pW:A:B:kQj:l:e:D:w:PN:SR:GEV:z:Z:XU:H:L:T:T" ,
                                         ["help"      ,
                                          "inputs="   ,
                                          "anh="      ,
@@ -305,7 +309,9 @@ def Main(argv):
                                          "correction-terms",
                                          "md-package=",
                                          "ncpus="     ,
-                                         "suplist="]    )
+                                         "suplist="   ,
+                                         "sol-supl"   ,
+                                         "hessian"]    )
     except getopt.GetoptError, error:  
         print "\n   SLV: Error in command line! Quitting...\n"
         exit()
@@ -410,6 +416,8 @@ def Main(argv):
            fderiv_j   = arg
         if opt in ("-X", "--correction-terms" ):
            corrections   = True
+        if opt in ("-T", "--hessian" ):
+           Hessian   = True
         if opt in ("-V", "--make-sol" ):
            N,typ = arg.split(',')
            N = int(N)
@@ -421,6 +429,12 @@ def Main(argv):
               suplist = map(int,arg.split(','))
               suplist = map(m1 ,suplist)
            else: suplist = [x for x in range(int(arg))]
+        if opt in ("-T", "--sol-supl" ):
+           if ',' in arg: 
+              m1 = lambda i: i-1
+              sol_suplist = map(int,arg.split(','))
+              sol_suplist = map(m1 ,sol_suplist)
+           else: sol_suplist = [x for x in range(int(arg))]
                     
     ### --- choose the task --------------------------------------------------
     
@@ -508,7 +522,7 @@ def Main(argv):
                         L=ANH.L,
                         camm=SolCAMM,
                         eds=eds)
-
+              fderiv = CALC.Fder
               fdip=0;sdip=0;dipole=0
 
               ### print the derivatives of distributed multipole moments
@@ -694,6 +708,7 @@ def Main(argv):
           ##          * MOLECULAR SOLVATOCHROMIC MULTIPOLES        ##
           ##          * DISTRIBUTED SOLVATOCHROMIC MULTIPOLES      ##
           ## ----------------------------------------------------- ##
+          hessian = None
           if Gaussian:
             out = open('shifts.dat','w') 
             print  >> out, " SLV FREQUENCY SHIFT REPORT. ALL VALUES IN [cm-1]"
@@ -704,11 +719,14 @@ def Main(argv):
             else:
                print  >> out, " %9s %13s %13s %13s %13s %13s"% ('SYSTEM','R-1','R-2','R-3','R-4','R-5')
             
+            typ_no  = 0
             for typ in open(types).read().split('\n')[:-1]:
+             typ_no += 1
              solute  = ParseDMA( target_dir+'/solute_%s'%typ,file_type)
              solvent = ParseDMA( target_dir+'/solvent_%s'%typ,file_type)
              try:
-                if not fderiv_j: fderiv = CALC.Fder[mode_id]
+                if (not fderiv_j and not Hessian): fderiv = CALC.Fder[mode_id]
+                else: fderiv = CALC.Fder
              except UnboundLocalError:
                 fderiv = []
                 
@@ -739,11 +757,12 @@ def Main(argv):
                 print Emtp.log
                 
              if SolCAMM:
-                
+                import copy as COPY
                 f = SLV(pkg="gaussian",
                              nsatoms=solvent_atno,
                              nstatoms=solute_atno,
                              L=ANH.L,
+                             L_=ANH.L_,
                              mode_id=mode_id,
                              solute=parameters,
                              solute_structure=solute.get_pos(),
@@ -754,30 +773,57 @@ def Main(argv):
                              camm=parameters,
                              bsm_file=bsm_file,
                              structural_change=structural_change,
-                             fderiv=fderiv,
+                             fderiv=COPY.deepcopy(fderiv),
                              redmass=ANH.redmass,
                              freq=ANH.freq,
                              ref_structure=parameters.get_pos(),
                              solpol=SolPOL,
                              gijj=ANH.K3,
-                             suplist=suplist)
+                             suplist=suplist,
+                             sol_suplist=sol_suplist)
                 
+                ### evaluate mean Hessian
+                if Hessian:
+                   mol = Read_xyz_file('CH3N3.xyz',mol=True)
+                   #mol = Read_xyz_file('nma-opt-b3lyp-6-311++Ggg.xyz',mol=True)
+                   if make_ua:
+                      hess = f.eval_hessian(mol,ua_list)
+                   else: hess = f.eval_hessian(mol)
+                   #print hess.diag().round()
+                   #print PUPA(hess.get())
+                   print typ
+                   print hess#.approx()
+                   ### plot hessians
+                   fig = pylab.plt.figure()
+                   ax = fig.add_subplot(111)
+                   cmap = pylab.cm.jet
+                   cmap.set_bad('w',0.0)
+                   cmap=pylab.plt.get_cmap('Blues')
+                   cax = ax.matshow(abs(hess.get()),cmap=cmap,interpolation='nearest')
+                   fig.colorbar(cax)
+                   pylab.savefig('hess-%s.png'%typ) 
+                   ### accumulate Hessian
+                   if hessian is not None: hessian += abs(hess.get())
+                   else: hessian = abs(hess.get())
+
                 ### evaluate corrections to the frequency shifts
-                if corrections:
+                else:
+                 f.eval()
+                 if corrections:
                    if fderiv_j: f.eval_shiftcorr(zero_camm)
                    else:        f.eval_shiftcorr(zero_camm,ua_list)
 
-                ### nice report
-                print " ===== ",typ," ===== "
-                if corrections:
-                   print  >> out, "%10s"%typ,
-                   print  >> out,"%13.2f "*5%tuple( f.shift[0] ),
-                   print  >> out,"%13.2f "*5%tuple( f.shift_corr )
-                else:
-                   print  >> out, "%10s"%typ,
-                   print  >> out,"%13.2f "*5%tuple( f.shift[0] )
+                 ### nice report
+                 print " ===== ",typ," ===== "
+                 if corrections:
+                    print  >> out, "%10s"%typ,
+                    print  >> out,"%13.2f "*5%tuple( f.shift[0] ),
+                    print  >> out,"%13.2f "*5%tuple( f.shift_corr )
+                 else:
+                    print  >> out, "%10s"%typ,
+                    print  >> out,"%13.2f "*5%tuple( f.shift[0] )
                                       
-                print f
+                 print f
                 #f.get_ShiftCorr('CH3N3_A000_D00_.camm')
                 #rrr= f.get_StructuralChange(CALC.Fder,f.SOLVENT,f.solute_structure,ANH.L,PARAM.fragments)\
                 #* UNITS.BohrToAngstrom
@@ -832,7 +878,18 @@ def Main(argv):
                 #print f.SOLUTE
              
             out.close()
-              
+            
+            ### print the Hessian
+            if Hessian:
+               hessian /= float64(typ_no)
+               fig = pylab.plt.figure()
+               ax = fig.add_subplot(111)
+               cmap=pylab.plt.get_cmap('Blues')
+               cax = ax.matshow(hessian,cmap=cmap)
+               fig.colorbar(cax)
+               pylab.show()
+               pylab.savefig('foo.png')
+               
        ## ------------------------------------------- ##
        ##             MOLECULAR DYNAMICS              ##
        ## ------------------------------------------- ##

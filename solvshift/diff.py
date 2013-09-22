@@ -466,7 +466,8 @@ where X=5,9"""
         return array(set)
     
     def CalcIrInt(self):
-        """calculate IR Harmonic intensities in [kM/mole]"""
+        """calculate IR Harmonic intensities in [kM/mole] 
+using L matrix from Gaussfreq and numerical FDip"""
         FDip = zeros((self.nModes,3),dtype=float64)
         #print self.FDip[7]
         for mode in range(self.nModes): FDip[mode] = self.FDip[mode].DMA[1]
@@ -476,7 +477,7 @@ where X=5,9"""
     
     def ReadStep(self,dir):
         """reads the differentiation step, pointity and package
-           from a setup file slv.step"""
+from a setup file slv.step"""
         
         step_file = open('%s/slv.step' % dir,'r')
         # step
@@ -719,7 +720,17 @@ using COULOMB.py routines"""
        basis_size = len(bfs)
        #print " - basis size= ", basis_size
        dmat = utilities.ParseDmatFromFchk(file_fchk,basis_size)
-       
+       def check_sim(l):
+           """check the sim list"""
+           for x,y in l:
+               i=0;j=0
+               for a,b in l:
+                   if a==x: i+=1
+                   if b==y: j+=1
+               if (i>1 or j>1): 
+                   print " --- !ERROR! --- "
+                   break
+
        ### parse vectors and make Pipek-Mezey transformation
        if vec is not None:
           natoms= len(molecule.atoms)
@@ -736,6 +747,7 @@ using COULOMB.py routines"""
                                            freeze=None)
           vec, sim = utilities.order(vec_ref,vec,start=0)
           print sim
+          check_sim(sim)
        ### calculate CAMMs
        print " - multipole integrals in AO basis evaluation..."
        camm = coulomb.multip.MULTIP(molecule=molecule,
@@ -784,7 +796,7 @@ using COULOMB.py routines"""
           t, vec_ref = utilities.get_pmloca(natoms,mapi=bfs_ref.LIST1,
                                             sao=sao_ref,
                                             vecin=vec_ref,nae=nae,
-                                            maxit=1000,conv=1.0E-10,
+                                            maxit=100000,conv=1.0E-19,
                                             lprint=False,
                                             freeze=None)
        # submit the jobs!
@@ -808,7 +820,7 @@ using COULOMB.py routines"""
    from sys  import argv
    #bonds = [map(int,(x.split(','))) for x in argv[-1].split('-')]
    bonds=None
-   vec = 20
+   vec = 5
    #for i in range(len(bonds)): bonds[i]=tuple(bonds[i])
    #print bonds
    #os.environ['__IMPORT__COULOMB__']=1

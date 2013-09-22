@@ -6,7 +6,7 @@
 from numpy  import *
 from sys    import argv, exit
 from string import Template
-import re, os, getopt, sys
+import re, os, getopt, sys, pylab
 reflags = re.DOTALL
 
 # ---- import BBG library
