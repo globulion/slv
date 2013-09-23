@@ -6,7 +6,7 @@ from numpy     import *
 from units     import *
 from dma       import *
 from utilities import *
-import sys, copy
+import sys, copy, pylab
 sys.stdout.flush()
 
 
@@ -84,6 +84,53 @@ in cm-1 and other quantities in AU."""
             M[3*i+1,3*i+1] = m
             M[3*i+2,3*i+2] = m
         return M
+    def _m(self):
+        """M_iw_i^2 diagonal matrix"""
+        return diag(self.__redmass*self.__freq_mcho**2)
+    def dq_iter(self,zero=False,threshold=1.0E-4,max_iter=10000):
+        """iterative algorithm for structural distortions (23.09.2013/14:46-7)"""
+        # properties
+        M = self._m()
+        M1= linalg.inv(M)
+        G = self.__gijj.copy()/2.
+        #G.fill(0)
+        F = self.fi()
+        I = identity(self.__nModes,float64)
+        # starting guess vector and utilities
+        if zero: dq_old = zeros(self.__nModes,dtype=float64)
+        else:    dq_old = self.dq()
+        conv = lambda dq_new,dq_old: sqrt(dot(dq_new-dq_old,dq_new-dq_old))
+        GdQ  = lambda G,dq : tensordot(G,dq,(0,0))
+        # first iteration
+        #print shape(G),shape(dq_old)#,shape(dq_new)
+        gdq = GdQ(G,dq_old)
+        #C   = dot(M1,dot(gdq,M))
+        C = dot(linalg.inv((I + dot(M1,gdq))),M1)
+        #dq_new = dot(linalg.inv(M+C),F)
+        dq_new = dot(C,F)
+        # start iterations
+        #fig = pylab.plt.figure()
+        #ax = fig.add_subplot(111)
+        #ax.plot(dq_new,'r')
+        #fig.show()
+        
+        iter = 0
+        while conv(dq_new,dq_old) > threshold:
+              dq_old = dq_new.copy()
+              gdq = GdQ(G,dq_new)
+              #C   = dot(M1,dot(gdq,M))
+              C = dot(linalg.inv((I + dot(M1,gdq))),M1)
+              dq_new = dot(C,F)
+              #dq_new = dot(linalg.inv(M+C),F)
+              #print      conv(dq_new,dq_old)
+              iter+=1
+              if iter == max_iter: break
+              #print dq_new
+              #ax.plot(dq_new,'r')
+        #fig.show()    
+        print iter
+        return dq_new
+        
     def diag(self):
         """diagonalize Hessian. Returns new frequencies in [cm-1]"""
         if self.__hess is None: return 0
@@ -115,25 +162,26 @@ in cm-1 and other quantities in AU."""
             freq[i] =  f
         self.__freq_approx = freq
         return freq
-    def eval(self):
+    def eval(self,iter=False):
         """evaluate the Hessian matrix"""
         self.__hess = zeros((self.__nModes,self.__nModes),dtype=float64)
         self.__fi = self.fi()
+        self.__dq_iter = self.dq_iter()
+        self.__dq = self.dq()
+        if iter: dq = self.__dq_iter
+        else: dq = self.__dq
+        #self.__fi = where(abs(self.__dq)<0.1,self.__fi,0.0)
         for j in xrange(self.__nModes):
             for k in xrange(j+1):
                 SUM = 0.0
                 for i in xrange(self.__nModes):
-                    SUM += self.__gijj[i,j,k] * self.__fi[i]/\
-                    (self.__redmass[i]*self.__freq_mcho[i]**2)
+                    #SUM += self.__gijj[i,j,k] * self.__fi[i]/\
                     #(self.__redmass[i]*self.__freq_mcho[i]**2)
+                    SUM += self.__gijj[i,j,k] * dq[i]
                 self.__hess[j,k]-= SUM/sqrt(self.__redmass[j]*self.__redmass[k]) 
                 if j==k:
-                   #self.__hess[j,k]+= self.__redmass[j]*self.__freq_mcho[j]**2
                    self.__hess[j,k]+= self.__freq_mcho[j]**2
-                   #self.__hess[j,k] /= sqrt(self.__redmass[j]*self.__redmass[k])
-                   #print sqrt(self.__freq_mcho[j]**2 ) *self.HartreePerHbarToCmRec
                 else:
-                   #self.__hess[j,k] /= sqrt(self.__redmass[j]*self.__redmass[k]) 
                    self.__hess[k,j] = self.__hess[j,k]
         
         self.__freq_new  = self.diag()
@@ -164,11 +212,12 @@ in cm-1 and other quantities in AU."""
     
     def __repr__(self):
         """print the correction terms to the frequency shift"""
+        #dq = self.dq_iter()
         log = '\n'
         log+= ' NORMAL MODE DISPLACEMENTS DUE TO SOLVATION\n'
-        log+= ' %s %s\n'%('Mode'.rjust(4),'dQ [A.U.]'.rjust(10))
+        log+= ' %s %s %s\n'%('Mode'.rjust(4),'dQ [A.U.]'.rjust(10),'dQ [A.U.]'.rjust(10))
         for i in range(self.__nModes):
-            log+= ' %4i %10.6f\n' % ((i+1),self.__dq[i])
+            log+= ' %4i %10.6f %10.6f\n' % ((i+1),self.__dq[i],self.__dq_iter[i])
         log+= ' NEW HARMONIC FREQUENCIES\n'
         log+= ' %s %s\n'%('Mode'.rjust(4),'Freq [cm-1]'.rjust(10))
         for i in xrange(len(self.__freq_new)):
@@ -177,7 +226,7 @@ in cm-1 and other quantities in AU."""
         
     def get(self):
         """return the Hessian in MWC"""
-        return self.__hess_mwc
+        return self.__hess#_mwc
         
     def __weight(self):
         """weights L-matrix and derivative tensor elements
@@ -188,50 +237,6 @@ using reduced masses"""
         # fderiv
         for i in xrange(self.__nModes):
             self.__fderiv[i] *= sqrt(self.__redmass[i]*self.AmuToElectronMass)
-        self.__fderiv[-1].DMA[0].fill(0)
-        self.__fderiv[-1].DMA[1].fill(0)
-        self.__fderiv[-1].DMA[2].fill(0)
-        self.__fderiv[-1].DMA[3].fill(0)
-        
-        self.__fderiv[-2].DMA[0].fill(0)
-        self.__fderiv[-2].DMA[1].fill(0)
-        self.__fderiv[-2].DMA[2].fill(0)
-        self.__fderiv[-2].DMA[3].fill(0)
-        
-        #self.__fderiv[-3].DMA[0].fill(0)
-        #self.__fderiv[-3].DMA[1].fill(0)
-        #self.__fderiv[-3].DMA[2].fill(0)
-        #self.__fderiv[-3].DMA[3].fill(0)
-
-        #self.__fderiv[-4].DMA[0].fill(0)
-        #self.__fderiv[-4].DMA[1].fill(0)
-        #self.__fderiv[-4].DMA[2].fill(0)
-        #self.__fderiv[-4].DMA[3].fill(0)
-        
-        #self.__fderiv[-5].DMA[0].fill(0)
-        #self.__fderiv[-5].DMA[1].fill(0)
-        #self.__fderiv[-5].DMA[2].fill(0)
-        #self.__fderiv[-5].DMA[3].fill(0)
-        
-        #self.__fderiv[-6].DMA[0].fill(0)
-        #self.__fderiv[-6].DMA[1].fill(0)
-        #self.__fderiv[-6].DMA[2].fill(0)
-        #self.__fderiv[-6].DMA[3].fill(0)
-        
-        #self.__fderiv[-7].DMA[0].fill(0)
-        #self.__fderiv[-7].DMA[1].fill(0)
-        #self.__fderiv[-7].DMA[2].fill(0)
-        #self.__fderiv[-7].DMA[3].fill(0)
-
-        #self.__fderiv[-8].DMA[0].fill(0)
-        #self.__fderiv[-8].DMA[1].fill(0)
-        #self.__fderiv[-8].DMA[2].fill(0)
-        #self.__fderiv[-8].DMA[3].fill(0)
-
-        #self.__fderiv[-9].DMA[0].fill(0)
-        #self.__fderiv[-9].DMA[1].fill(0)
-        #self.__fderiv[-9].DMA[2].fill(0)
-        #self.__fderiv[-9].DMA[3].fill(0)
         # cubic anharmonic constants
         temp = sqrt(self.__redmass)[:,newaxis,newaxis,]
         self.__gijj = temp * self.__gijj

@@ -801,7 +801,7 @@ def Main(argv):
                    cmap=pylab.plt.get_cmap('Blues')
                    cax = ax.matshow(abs(hess.get()),cmap=cmap,interpolation='nearest')
                    fig.colorbar(cax)
-                   pylab.savefig('hess-%s.png'%typ) 
+                   pylab.savefig('hess-%s.eps'%typ) 
                    ### accumulate Hessian
                    if hessian is not None: hessian += abs(hess.get())
                    else: hessian = abs(hess.get())
@@ -888,7 +888,7 @@ def Main(argv):
                cax = ax.matshow(hessian,cmap=cmap)
                fig.colorbar(cax)
                pylab.show()
-               pylab.savefig('foo.png')
+               pylab.savefig('average.eps')
                
        ## ------------------------------------------- ##
        ##             MOLECULAR DYNAMICS              ##
