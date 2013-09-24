@@ -799,12 +799,12 @@ def Main(argv):
                    cmap = pylab.cm.jet
                    cmap.set_bad('w',0.0)
                    cmap=pylab.plt.get_cmap('Blues')
-                   cax = ax.matshow(abs(hess.get()),cmap=cmap,interpolation='nearest')
+                   cax = ax.matshow(abs(hess.get_hess()),cmap=cmap,interpolation='nearest')
                    fig.colorbar(cax)
                    pylab.savefig('hess-%s.eps'%typ) 
                    ### accumulate Hessian
-                   if hessian is not None: hessian += abs(hess.get())
-                   else: hessian = abs(hess.get())
+                   if hessian is not None: hessian += abs(hess.get_hess())
+                   else: hessian = abs(hess.get_hess())
 
                 ### evaluate corrections to the frequency shifts
                 else:
