@@ -6,9 +6,35 @@ from numpy     import *
 from units     import *
 from dma       import *
 from utilities import *
-import sys, copy, pylab
+import sys, copy, pylab, solscf
 sys.stdout.flush()
 
+def get_dq_scf(B1,G,f,dQ,maxit=10000000,threshold=1E-06):
+    """
+Calculate dQ vector using iterative SOLSCF theory
+
+Description:
+
+Evaluates dQ from quadratic tensor equation 
+
+F + B·dQ + G:dQ² = 0
+
+using iterative scheme.
+
+Usage:
+
+dQ, niters = get_dq_scf(B1,G,f,maxit,threshold)
+
+Notes:
+
+B1    = inverse ov B matrix; B = M + K
+G     = gijk/2 tensor
+f     = fi vectors
+maxit = maximum number ov iterations
+threshold = thershold of iteration convergence
+"""
+    dq, niters = solscf.solscf(B1,G,f,maxit,threshold,dQ)
+    return dq, niters
 
 class HESSIAN(UNITS):
     """
@@ -193,36 +219,43 @@ Notes:
            I = identity(self.__nModes,float64)
            # starting guess vector and utilities
            if zero: dq_old = zeros(self.__nModes,dtype=float64)
-           else:    dq_old = self.dq()
-           conv = lambda dq_new,dq_old: sqrt(dot(dq_new-dq_old,dq_new-dq_old))
-           GdQ  = lambda G,dq : tensordot(G,dq,(0,0))
-           # first iteration
-           #print shape(G),shape(dq_old)#,shape(dq_new)
-           gdq = GdQ(G,dq_old)
-           #C   = dot(M1,dot(gdq,M))
-           C = dot(linalg.inv((I + dot(M1,gdq))),M1)
-           #dq_new = dot(linalg.inv(M+C),F)
-           dq_new = dot(C,F)
-           # start iterations
-           #fig = pylab.plt.figure()
-           #ax = fig.add_subplot(111)
-           #ax.plot(dq_new,'r')
-           #fig.show()
-           iter = 0
-           while conv(dq_new,dq_old) > threshold:
+           else:    dq_old = self.dq(theory=2)
+           #dQ, iter = get_dq_scf(M1,G,F,dq_old,threshold=threshold,maxit=max_iter)
+           #print dQ
+           #print iter
+           if 1:
+              conv = lambda dq_new,dq_old: sqrt(dot(dq_new-dq_old,dq_new-dq_old))
+              GdQ  = lambda G,dq : tensordot(G,dq,(0,0))
+              #GdQ  = lambda G,dq : tensordot(tensordot(G,dq,(0,0)),dq,(0,0))
+              #### first iteration
+              ####print shape(G),shape(dq_old)#,shape(dq_new)
+              gdq = GdQ(G,dq_old)
+              ####C   = dot(M1,dot(gdq,M))
+              C = dot(linalg.inv((I + dot(M1,gdq))),M1)
+              #####dq_new = dot(linalg.inv(M+C),F)
+              dq_new = dot(C,F)
+              #dq_new  = dot(M1,F+gdq)
+              ##### start iterations
+              ####fig = pylab.plt.figure()
+              ####ax = fig.add_subplot(111)
+              ####ax.plot(dq_new,'r')
+              ####fig.show()
+              iter = 0
+              while conv(dq_new,dq_old) > threshold:
                  dq_old = dq_new.copy()
                  gdq = GdQ(G,dq_new)
-                 #C   = dot(M1,dot(gdq,M))
+                 ####C   = dot(M1,dot(gdq,M))
                  C = dot(linalg.inv((I + dot(M1,gdq))),M1)
                  dq_new = dot(C,F)
-                 #dq_new = dot(linalg.inv(M+C),F)
-                 #print      conv(dq_new,dq_old)
+                 #dq_new  = dot(M1,F+gdq)
+                 ####dq_new = dot(linalg.inv(M+C),F)
+                 ####print      conv(dq_new,dq_old)
                  if iter == max_iter: break
                  iter+=1
-                 #print dq_new
-                 #ax.plot(dq_new,'r')
-           #fig.show()
-           dQ = dq_new
+                 ####print dq_new
+                 ####ax.plot(dq_new,'r')
+              ####fig.show()
+              dQ = dq_new
            self.__iter = iter
         return dQ
 
@@ -234,7 +267,7 @@ Notes:
            if self.__theory:
               log+= ' %s %s %s\n'%('Mode'.rjust(4),'dQ [A.U.]'.rjust(10),'dQ [A.U.]'.rjust(10))
               if self.__iter is not None:
-                 log+= ' Iterations: %10d'%self.__iter
+                 log+= ' Iterations: %10d\n'%self.__iter
               for i in range(self.__nModes):
                   log+= ' %4i %10.6f %10.6f\n' % ((i+1),self.__dq[i],self.__dq_th[i])
            else:

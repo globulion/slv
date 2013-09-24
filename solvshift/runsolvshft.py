@@ -784,8 +784,9 @@ def Main(argv):
                 
                 ### evaluate mean Hessian
                 if Hessian:
-                   #mol = Read_xyz_file('CH3N3.xyz',mol=True)
-                   mol = Read_xyz_file('nma-opt-b3lyp-6-311++Ggg.xyz',mol=True)
+                  if typ=='52_n3':
+                   mol = Read_xyz_file('CH3N3.xyz',mol=True)
+                   #mol = Read_xyz_file('nma-opt-b3lyp-6-311++Ggg.xyz',mol=True)
                    if make_ua:
                       hess = f.eval_hessian(mol,ua_list)
                    else: hess = f.eval_hessian(mol)
@@ -805,7 +806,8 @@ def Main(argv):
                    ### accumulate Hessian
                    if hessian is not None: hessian += abs(hess.get_hess())
                    else: hessian = abs(hess.get_hess())
-
+                   break
+                  else: continue
                 ### evaluate corrections to the frequency shifts
                 else:
                  f.eval()
@@ -880,7 +882,7 @@ def Main(argv):
             out.close()
             
             ### print the Hessian
-            if Hessian:
+            if not Hessian:
                hessian /= float64(typ_no)
                fig = pylab.plt.figure()
                ax = fig.add_subplot(111)
