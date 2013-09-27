@@ -9,8 +9,21 @@ from units      import *
 from dma        import *
 from utilities  import *
 from gaussfreq  import *
-import os, glob
+import os, glob, PyQuante.Ints, coulomb.multip
 
+__all__ = ['DIFF',]
+
+def check_sim(l):
+    """check the sim list"""
+    for x,y in l:
+        i=0;j=0
+        for a,b in l:
+            if a==x: i+=1
+            if b==y: j+=1
+        if (i>1 or j>1): 
+            print " --- !ERROR! --- "
+            break
+                
 class DIFF(UNITS,FREQ):
     """contains usefull procedures for differentiation
 of DMA and molecular multipole moments in FFXpt-diag scheme
@@ -18,7 +31,8 @@ where X=5,9"""
        
     def __init__(self,freq=0,step=0,
                  dir="",cartesian=False,L=0,
-                 camm=False,pol=False,eds=False):
+                 camm=False,pol=False,eds=False,
+                 solefp=False,nae=0,basis='6-311++G**'):
 
         self.camm = camm
         # number of normal modes
@@ -39,7 +53,7 @@ where X=5,9"""
         if self.mode_id>0: self.calculate_sder=True
         else:              self.calculate_sder=False
         
-        if not eds:
+        if (not eds and not solefp):
           # DMA set from FFxpt input files
           if camm:
              self.DMA_set, smiec1 = self.ParseDMA_set(dir,'coulomb')
@@ -61,8 +75,6 @@ where X=5,9"""
           self.fpol = 0#self.get_pol_fder()
           self.spol = 0#self.get_pol_sder()
         
-
-        
           # --- [!] Calculate the derivatives!
           self.Fder, self.Sder ,self.FDip, self.SDip = self._CalcDerCartesian()
         
@@ -82,7 +94,14 @@ where X=5,9"""
                 
           # --- [!] Calculate IR Harmonic intensities
           self.IR_Harm_Int = self.CalcIrInt()
-          
+        
+        # solvatochromic EFP
+        elif solefp:
+           fdir = solefp
+           self.tran_set_1, self.lmoc_set_1, self.vecl_set_1 = self.Parse_tran(dir+fdir,nae,basis)
+           self.U = self.vecl_set_1[0]
+           self.fock_set_1 = self.Parse_fock(dir+fdir,self.vecl_set_1)
+           self.fock1, self.lmoc1 ,self.vecl1 = self.get_efp_fder()
         # EDS
         else:
            fdir,sdir = eds.split(':')
@@ -95,7 +114,132 @@ where X=5,9"""
            self.fEDS = self.get_EDS_fder()
            self.sEDS = self.get_EDS_sder()
 
+    def Parse_tran(self,dir,nae,basis):
+        """parses CMO transformation matrices from fchk files and transforms
+them to LMO space"""
+        files = glob.glob('%s/*_.fchk' % dir)
+        files.sort()
+        Tran = []
+        Lmoc = []
+        VecL = []
+        vec_ref = None
+        
+        # evaluate transformation matrices and LMO centroids
+        for file in files:
+            mol  = Read_xyz_file(file,mol=True,
+                                 mult=1,charge=0,
+                                 name='happy dummy molecule')
+            bfs        = PyQuante.Ints.getbasis(mol,basis)
+            basis_size = len(bfs)
+            natoms= len(mol.atoms)
+            SAO   = PyQuante.Ints.getS(bfs)
+            dmat = ParseDmatFromFchk(file,basis_size)
+            veccmo= ParseVecFromFchk(file)[:nae,:]
+            tran, veclmo = get_pmloca(natoms,mapi=bfs.LIST1,sao=SAO,
+                                      vecin=veccmo,nae=nae,
+                                      maxit=100000,conv=1.0E-10,
+                                      lprint=True,
+                                      freeze=None)
+            if vec_ref is None: vec_ref = veclmo.copy()
+            veclmo, sim = order(vec_ref,veclmo,start=0)
+            print sim
+            check_sim(sim)
+            # calculate LMTPs
+            camm = coulomb.multip.MULTIP(molecule=mol,
+                                         basis=basis,
+                                         method='b3lyp',
+                                         matrix=dmat,
+                                         transition=False,
+                                         bonds=None,vec=veclmo)
+            camm.camms()
+            dma = camm.get()[0]
+            lmoc= dma.get_origin()[natoms:]
+            #
+            Tran.append(tran)
+            Lmoc.append(lmoc)
+            VecL.append(veclmo)
+            #
+        Tran = array(Tran,float64)
+        Lmoc = array(Lmoc,float64)
+        VecL = array(VecL,float64)
+        return Tran, Lmoc, VecL
+    
+    def Parse_fock(self,dir,Tran):
+        """parse directory to look for Fock matrices for ff procedure"""
+        files = glob.glob('%s/*_.log' % dir)
+        files.sort()
+        Fock = []
+        for file in files:
+            Fock.append(ParseFockFromGamessLog(file,interpol=False))
+        Fock = array(Fock,float64)
+        # transform from AO to LMO space
+        Fock = tensordot(Tran,Fock,(2,1))
+        return Fock
+    
+    def get_efp_fder(self):
+        """calculate first derivatives wrt normal coordinates
+of Fock matrix elements given in LMO space. 
+Returns ndarray of dimension (nmodes,nmos,nmos)
 
+calculate first derivatives wrt normal coordinates
+of LMO centroids. 
+Returns ndarray of dimension (nmodes,nmos,3)
+
+calculate first derivatives wrt normal coordinates
+of LMO centroids. 
+Returns ndarray of dimension (nmodes,nmos,3)"""
+        
+        first_der_fock_cart = []
+        first_der_lmoc_cart = []
+        first_der_vecl_cart = []
+        for i in xrange(self.nAtoms*3):
+            K = 1 + 4*i
+            fd1  = (1./12.) *  (\
+                       (self.fock_set_1[K+3] - self.fock_set_1[K+0] ) \
+                 + 8*  (self.fock_set_1[K+1] - self.fock_set_1[K+2] ))\
+                 /(self.step* self.AngstromToBohr)
+                 
+            fd2  = (1./12.) *  (\
+                       (self.lmoc_set_1[K+3] - self.lmoc_set_1[K+0] ) \
+                 + 8*  (self.lmoc_set_1[K+1] - self.lmoc_set_1[K+2] ))\
+                 /(self.step* self.AngstromToBohr)
+                 
+            fd3  = (1./12.) *  (\
+                       (self.vecl_set_1[K+3] - self.vecl_set_1[K+0] ) \
+                 + 8*  (self.vecl_set_1[K+1] - self.vecl_set_1[K+2] ))\
+                 /(self.step* self.AngstromToBohr)
+            #
+            first_der_fock_cart.append( fd1 )
+            first_der_lmoc_cart.append( fd2 )
+            first_der_vecl_cart.append( fd3 )
+            #
+        first_der_fock_cart = array(first_der_fock_cart,float64)
+        first_der_lmoc_cart = array(first_der_lmoc_cart,float64)
+        first_der_vecl_cart = array(first_der_vecl_cart,float64)
+
+        ### TRANSFORM FIRST DERIVATIVES TO NORMAL MODE SPACE
+        first_der_fock_mode = tensordot(self.L,first_der_fock_cart,(0,0))
+        first_der_lmoc_mode = tensordot(self.L,first_der_lmoc_cart,(0,0))
+        first_der_vecl_mode = tensordot(self.L,first_der_vecl_cart,(0,0))
+
+        return first_der_fock_mode, first_der_lmoc_mode, first_der_vecl_mode
+    
+    def get(self,type=0):
+        """Get the resulting derivatives according to the type:
+type 10: first cartesian derivatives of DMTP
+type 20: second normal mode derivatives of DMTP
+type 11: first derivatives of EDS interaction energies
+type 21: second derivatives of EDS interaction energies
+type 12: first mode derivatives of Fock matrix
+type 13: first mode derivatives of LMO centroids
+type 14: first mode derivatives of AO to LMO transformation matrix
+type -1: transformation matrix from AO to LMO
+"""
+        if   type == 12: return self.fock1
+        elif type == 13: return self.lmoc1
+        elif type == 14: return self.vecl1
+        elif type == -1: return self.U
+    
     def get_EDS_fder(self):
         """calculate first derivatives wrt normal coordinates
         of interaction energy components from EDS"""
@@ -109,13 +253,13 @@ where X=5,9"""
                  /(self.step* self.AngstromToBohr)
                  
             first_der_EDS_cart.append( fd )
-        first_der_EDS_cart = array(first_der_EDS_cart)
+        first_der_EDS_cart = array(first_der_EDS_cart,float64)
 
         ### TRANSFORM FIRST DERIVATIVES TO NORMAL MODE SPACE
         first_der_EDS_mode = tensordot(self.L,first_der_EDS_cart,(0,0))
 
         return first_der_EDS_mode
-
+    
     def get_EDS_sder(self):
         """calculate second diagonal derivatives wrt normal coordinates 
         of polarizability tensor. Returned in AU unit"""
@@ -141,7 +285,7 @@ where X=5,9"""
                  /(self.step* self.AngstromToBohr)
                  
             first_der_pol_cart.append( fd )
-        first_der_pol_cart = array(first_der_pol_cart)
+        first_der_pol_cart = array(first_der_pol_cart,float64)
 
         ### TRANSFORM FIRST DERIVATIVES TO NORMAL MODE SPACE
         first_der_pol_mode = tensordot(self.L,first_der_pol_cart,(0,0))
@@ -320,7 +464,7 @@ where X=5,9"""
         Sder_DMA = [ DMA(nfrag=self.nfrags) for x in range(self.nModes) ]  
         #FDip = dot( transpose(self.L) ,array( FDip ) )
         Fder_MMM = DMAMadrixMultiply(transpose(self.L),Fmmm)
-        Sder_MMM = zeros((self.nModes,3))
+        Sder_MMM = zeros((self.nModes,3),float64)
         
         return Fder_DMA, Sder_DMA, Fder_MMM, Sder_MMM
 
@@ -742,7 +886,7 @@ using COULOMB.py routines"""
           print " - Pipek-Mezey localization of %i orbitals..." %nae
           tran, vec = utilities.get_pmloca(natoms,mapi=bfs.LIST1,sao=SAO,
                                            vecin=vec,nae=nae,
-                                           maxit=1000,conv=1.0E-10,
+                                           maxit=100000,conv=1.0E-10,
                                            lprint=False,
                                            freeze=None)
           vec, sim = utilities.order(vec_ref,vec,start=0)
