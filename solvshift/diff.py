@@ -98,9 +98,14 @@ where X=5,9"""
         # solvatochromic EFP
         elif solefp:
            fdir = solefp
+           print " PIPEK-MEZEY LOCALIZATION AND LMTP EVALUATION..."
            self.tran_set_1, self.lmoc_set_1, self.vecl_set_1 = self.Parse_tran(dir+fdir,nae,basis)
            self.U = self.vecl_set_1[0]
+           self.rLMO = self.lmoc_set_1[0]
+           print " PARSING FOCK MATRICES..."
            self.fock_set_1 = self.Parse_fock(dir+fdir,self.vecl_set_1)
+           self.Fock = self.fock_set_1[0]
+           print " CALCULATION OF FIRST DERIVATIVES..."
            self.fock1, self.lmoc1 ,self.vecl1 = self.get_efp_fder()
         # EDS
         else:
@@ -173,8 +178,14 @@ them to LMO space"""
             Fock.append(ParseFockFromGamessLog(file,interpol=False))
         Fock = array(Fock,float64)
         # transform from AO to LMO space
-        Fock = tensordot(Tran,Fock,(2,1))
-        return Fock
+        I = Fock.shape[ 0]
+        N = Tran.shape[-2]
+        Fock_t = zeros((I,N,N),float64)
+        for i in xrange(I):
+            T = Tran[i]
+            F = Fock[i]
+            Fock_t[i] = tensordot(T,tensordot(T,F,(1,0)),(1,1))
+        return Fock_t
     
     def get_efp_fder(self):
         """calculate first derivatives wrt normal coordinates
@@ -186,8 +197,8 @@ of LMO centroids.
 Returns ndarray of dimension (nmodes,nmos,3)
 
 calculate first derivatives wrt normal coordinates
-of LMO centroids. 
-Returns ndarray of dimension (nmodes,nmos,3)"""
+of AO to LMO transformation matrix. 
+Returns ndarray of dimension (nmodes,nmos,nbasis)"""
         
         first_der_fock_cart = []
         first_der_lmoc_cart = []
@@ -233,12 +244,16 @@ type 21: second derivatives of EDS interaction energies
 type 12: first mode derivatives of Fock matrix
 type 13: first mode derivatives of LMO centroids
 type 14: first mode derivatives of AO to LMO transformation matrix
-type -1: transformation matrix from AO to LMO
+type -1: Fock matrix in LMO (nmos,nmos)
+type -2: LMO centroids (nmos)
+type -3: transformation matrix from AO to LMO (nmos, nbasis)
 """
         if   type == 12: return self.fock1
         elif type == 13: return self.lmoc1
         elif type == 14: return self.vecl1
-        elif type == -1: return self.U
+        elif type == -1: return self.Fock
+        elif type == -2: return self.rLMO
+        elif type == -3: return self.U
     
     def get_EDS_fder(self):
         """calculate first derivatives wrt normal coordinates
