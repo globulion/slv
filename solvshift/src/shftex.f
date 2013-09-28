@@ -153,7 +153,7 @@ C
                RNJM1 = RNAJB1 * LVEC(MM,N,1) + RNAJB2 * LVEC(MM,N,2) +
      &                 RNAJB3 * LVEC(MM,N,3)
                RNJM1 = RNJM1 / RNJ
-               SUM10(MM) = SUM10(MM) + RNJM1 * ZA(M) / (RNJ**2)
+               SUM10(MM) = SUM10(MM) + RNJM1 * ZA(N) / (RNJ**2)
  1039       CONTINUE
  1030    CONTINUE
 C
