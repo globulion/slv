@@ -31,3 +31,5 @@ from mcho       import *
 from slv        import *
 from dipderiv   import *
 from md         import *
+from hessian    import HESSIAN
+from slvpar     import SLVPAR
