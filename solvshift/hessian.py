@@ -131,13 +131,10 @@ Notes:
         if theory: dq = self.__dq_th
         else:      dq = self.__dq
         #self.__fi = where(abs(self.__dq)<0.1,self.__fi,0.0)
-        self.__fi[-1] = 0.0
+        #self.__fi[-1] = 0.0
         SUM = tensordot(self.__gijj,dq,(0,0))
         for j in xrange(self.__nModes):
             for k in xrange(j+1):
-                #SUM = 0.0
-                #for i in xrange(self.__nModes):
-                #    SUM += self.__gijj[i,j,k] * dq[i]
                 self.__hess[j,k]-= SUM[j,k]/sqrt(self.__redmass[j]*self.__redmass[k])
                 if j==k:
                    self.__hess[j,k]+= self.__freq_mcho[j]**2
@@ -145,6 +142,7 @@ Notes:
                    self.__hess[k,j] = self.__hess[j,k]
         
         self.__freq_new  = self.diag()
+        self.__freq_approx = self.approx()
         return
 
     def diag(self):
@@ -162,12 +160,16 @@ Notes:
         return self.__freq_new
     
     def approx(self):
-        """evaluate approximate frequencies without Hessian diagonalization"""
-        freq = zeros(self.__nModes,dtype=float64)
-        for i in xrange(self.__nModes):
-            f = sqrt(self.__hess[i,i]/self.__redmass[i])*self.HartreePerHbarToCmRec
-            freq[i] =  f
+        """
+Evaluate approximate frequencies without Hessian diagonalization, 
+using appropriate level of SOL-X theory"""
+        diag_hess = diag(self.__hess)
+        diag_hess = where(diag_hess>0,diag_hess,0)
+        #freq = where(diag_hess>0,sqrt(diag_hess),sqrt(-diag_hess) )
+        freq = sqrt(diag_hess)
+        freq*= self.HartreePerHbarToCmRec
         self.__freq_approx = freq
+        print freq
         return freq
 
     def fi(self):
@@ -204,10 +206,12 @@ Notes:
            M = self._m()
            F = self.fi()
            M1= linalg.inv(M)
+           I = identity(self.__nModes,float64)
            A = tensordot(M1,G,(1,1))
            B = tensordot(A,M1,(1,0))
            a = tensordot(B,F,(2,0))
-           dQ = dot(linalg.inv(M+dot(M,a)),F)
+           #dQ = dot(linalg.inv(M-dot(M,a)),F)
+           dQ = dot(dot(linalg.inv(I-a),M1),F)
         ### --- iterative scheme
         elif theory ==-1:
            # properties
@@ -278,6 +282,8 @@ Notes:
            log+= ' %s %s\n'%('Mode'.rjust(4),'Freq [cm-1]'.rjust(10))
            for i in xrange(len(self.__freq_new)):
                log+= ' %4i %10.2f\n' % ((i+1),self.__freq_new[i])
+           log+= ' APPROXIMATED FREQUENCIES\n'
+           log+= str(self.__freq_approx)
         else:
            log+= 'NO EVALUATION PERFORMED\n\n'
         return str(log)
