@@ -94,7 +94,18 @@ eters:
         self.__fock = fock; self.__lmoc = lmoc; self.__vecl = vecl
         self.__fock1 = fock1; self.__lmoc1 = lmoc1; self.__vecl1 = vecl1
         return
-    
+
+    def get(self):
+        """returns dictionary with parameters"""
+        par = {}
+        if self.__lmoc  is not None: par['lmoc' ] = self.__lmoc
+        if self.__lmoc1 is not None: par['lmoc1'] = self.__lmoc1
+        if self.__fock  is not None: par['fock' ] = self.__fock
+        if self.__fock1 is not None: par['fock1'] = self.__fock1
+        if self.__vecl  is not None: par['vecl' ] = self.__vecl
+        if self.__vecl1 is not None: par['vecl1'] = self.__vecl1
+        return par
+        
     def write(self,file='slv.par'):
         """writes the parameters into a file"""
         f = open(file,'w')
@@ -129,7 +140,7 @@ eters:
         self.__mol_names = mol_names
         self.__sec_names = sec_names
         return
-    
+        
     def _read(self,section):
         """read the appropriate field from section and save it in SLVPAR instance"""
         section = section.split('\n')
@@ -228,7 +239,7 @@ eters:
     def _write_lmoc(self,file):
         nmos = self.__lmoc.shape[0]
         N = nmos * 3
-        log = ' %s %s= %d\n' % (self.__names['lmoc'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['lmoc'].ljust(40),'N'.rjust(10),N)
         n = 1
         for i in xrange(nmos):
             for j in xrange(3):
@@ -242,7 +253,7 @@ eters:
     def _write_lmoc1(self,file):
         nmodes, nmos, n = self.__lmoc1.shape
         N = nmodes * nmos * 3
-        log = ' %s %s= %d\n' % (self.__names['lmoc1'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['lmoc1'].ljust(40),'N'.rjust(10),N)
         n = 1
         for i in xrange(nmodes):
             for j in xrange(nmos):
@@ -257,7 +268,7 @@ eters:
     def _write_fock(self,file):
         nmos = self.__fock.shape[0]
         N = (nmos**2 - nmos) / 2 + nmos
-        log = ' %s %s= %d\n' % (self.__names['fock'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['fock'].ljust(40),'N'.rjust(10),N)
         n = 1
         for i in xrange(nmos):
             for j in xrange(i+1):
@@ -272,7 +283,7 @@ eters:
         nmodes = self.__fock1.shape[0]
         nmos = self.__fock1.shape[1]
         N = nmodes * ( (nmos**2 - nmos) / 2 + nmos )
-        log = ' %s %s= %d\n' % (self.__names['fock1'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['fock1'].ljust(40),'N'.rjust(10),N)
         n = 1
         for i in xrange(nmodes):
             for j in xrange(nmos):
@@ -287,7 +298,7 @@ eters:
     def _write_vecl(self,file):
         nmos, nbasis = self.__vecl.shape
         N = nmos * nbasis
-        log = ' %s %s= %d\n' % (self.__names['vecl'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['vecl'].ljust(40),'N'.rjust(10),N)
         n = 1
         for i in xrange(nmos):
             for j in xrange(nbasis):
@@ -301,7 +312,7 @@ eters:
     def _write_vecl1(self,file):
         nmodes, nmos, nbasis = self.__vecl1.shape
         N = nmodes * nmos * nbasis
-        log = ' %s %s= %d\n' % (self.__names['vecl1'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['vecl1'].ljust(40),'N'.rjust(10),N)
         n = 1
         for i in xrange(nmodes):
             for j in xrange(nmos):
