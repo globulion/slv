@@ -22,11 +22,11 @@ C -----------------------------------------------------------------------------
       IMPLICIT DOUBLE PRECISION(A-H,O-Z)
       DIMENSION REDMSS(NMODES), FREQ(NMODES), GIJJ(NMODES), 
      &          RIA(NMOSA,3),RIB(NMOSB,3),RNA(NATA,3),RNB(NATB,3),
-     &          RIA1(NMOSA,NMODES,3),CIKA(NMOSA,NBSA),CIKB(NMOSB,NBSB),
-     &          CIKA1(NMOSA,NBSA,NMODES),SKM(NBSA,NBSB),TKM(NBSA,NBSB),
+     &          RIA1(NMODES,NMOSA,3),CIKA(NMOSA,NBSA),CIKB(NMOSB,NBSB),
+     &          CIKA1(NMODES,NMOSA,NBSA),SKM(NBSA,NBSB),TKM(NBSA,NBSB),
      &          SK1M(NBSA,NBSB,3),TK1M(NBSA,NBSB,3),MLIST(NBSA),
      &          FAIJ(NMOSA,NMOSA),FBIJ(NMOSB,NMOSB),
-     &          FAIJ1(NMOSA,NMOSA,NMODES),ZA(NATA),ZB(NATB)
+     &          FAIJ1(NMODES,NMOSA,NMOSA),ZA(NATA),ZB(NATB)
       DOUBLE PRECISION LVEC(NMODES,NATA,3)
       COMMON /FEX   / FIEX(40), FJEX
       COMMON /INTIJ / SIJ(40,40), TIJ(40,40),
@@ -69,10 +69,10 @@ C
 C          Calculate first derivatives of exchange-repulsion enegy
 C
       IMPLICIT DOUBLE PRECISION(A-H,O-Z)
-      DIMENSION RIA(NMOSA,3),RIB(NMOSB,3),RIA1(NMOSA,NMODES,3),
+      DIMENSION RIA(NMOSA,3),RIB(NMOSB,3),RIA1(NMODES,NMOSA,3),
      &          RNA(NATA,3),RNB(NATB,3),ZA(NATA),ZB(NATB),
      &          FAIJ(NMOSA,NMOSA),FBIJ(NMOSB,NMOSB),
-     &          FAIJ1(NMOSA,NMOSA,NMODES)
+     &          FAIJ1(NMODES,NMOSA,NMOSA)
       DOUBLE PRECISION LVEC(NMODES,NATA,3)
       COMMON /FEX   / FIEX(40), FJEX
       COMMON /INTIJ / SIJ(40,40), TIJ(40,40),
@@ -111,10 +111,10 @@ C
 C
             SUM3 = SUM3 + (ONE / RKJ)
             DO 1019 MM=1,NMODES
-               SUM7(MM) = SUM7(MM) + FAIJ1(I,K,MM) * SIJ(K,J) + 
-     &                               FAIJ(I,K) * SIJM1(K,J,MM)
-               RKJM1 = RIAKB1 * RIA1(K,MM,1) + RIAKB2 * RIA1(K,MM,2) + 
-     &                 RIAKB3 * RIA1(K,MM,3)
+               SUM7(MM) = SUM7(MM) + FAIJ1(MM,I,K) * SIJ(K,J) + 
+     &                               FAIJ(I,K) * SIJM1(MM,K,J)
+               RKJM1 = RIAKB1 * RIA1(MM,K,1) + RIAKB2 * RIA1(MM,K,2) + 
+     &                 RIAKB3 * RIA1(MM,K,3)
                RKJM1 = RKJM1 / RKJ
 C
                SUM12(MM) = SUM12(MM) + RKJM1 / (RKJ**2)
@@ -131,10 +131,10 @@ C
 C
             SUM4 = SUM4 + (ONE / RIL)
             DO 1029 MM=1,NMODES
-               SUM8(MM) = SUM8(MM) + FBIJ(J,L) * SIJM1(I,L,MM)
+               SUM8(MM) = SUM8(MM) + FBIJ(J,L) * SIJM1(MM,I,L)
 C
-               RILM1 = RIALB1 * RIA1(I,MM,1) + RIALB2 * RIA1(I,MM,2) + 
-     &                 RIALB3 * RIA1(I,MM,3)
+               RILM1 = RIALB1 * RIA1(MM,I,1) + RIALB2 * RIA1(MM,I,2) + 
+     &                 RIALB3 * RIA1(MM,I,3)
                RILM1 = RILM1 / RIL
 C
                SUM11(MM) = SUM11(MM) + RILM1 / (RIL**2)
@@ -165,8 +165,8 @@ C
             SUM6 = SUM6 + (ZB(M) / RIM)
 C
             DO 1049 MM=1,NMODES
-               RIMM1 = RIAMB1 * RIA1(I,MM,1) + RIAMB2 * RIA1(I,MM,2) +
-     &                 RIAMB3 * RIA1(I,MM,3)
+               RIMM1 = RIAMB1 * RIA1(MM,I,1) + RIAMB2 * RIA1(MM,I,2) +
+     &                 RIAMB3 * RIA1(MM,I,3)
                RIMM1 = RIMM1 / RIM
                SUM9(MM) = SUM9(MM) + RIMM1 * ZB(M) / (RIM**2)
  1049       CONTINUE
@@ -178,10 +178,10 @@ C
          DO 2000  MM=1,NMODES
             FIEXMM = FIEX(MM)
 C
-            SIJM1V = SIJM1(I,J,MM)
-            TIJM1V = TIJM1(I,J,MM)
-            RIJM1 = RIAIB1 * RIA1(I,MM,1) + RIAIB2 * RIA1(I,MM,2) + 
-     &              RIAIB3 * RIA1(I,MM,3)
+            SIJM1V = SIJM1(MM,I,J)
+            TIJM1V = TIJM1(MM,I,J)
+            RIJM1 = RIAIB1 * RIA1(MM,I,1) + RIAIB2 * RIA1(MM,I,2) + 
+     &              RIAIB3 * RIA1(MM,I,3)
             RIJM1 = RIJM1 / RIJ
 C
             TERM3 = SUM7(MM) + SUM8(MM) - TWO * TIJM1V
@@ -214,7 +214,7 @@ C          overlap and kinetic integrals along with their derivatives
 C
       IMPLICIT DOUBLE PRECISION(A-H,O-Z)
       DIMENSION CIKA(NMOSA,NBSA),CIKB(NMOSB,NBSB),
-     &          CIKA1(NMOSA,NBSA,NMODES),SKM(NBSA,NBSB),TKM(NBSA,NBSB),
+     &          CIKA1(NMODES,NMOSA,NBSA),SKM(NBSA,NBSB),TKM(NBSA,NBSB),
      &          SK1M(NBSA,NBSB,3),TK1M(NBSA,NBSB,3),MLIST(NBSA)
       DOUBLE PRECISION LVEC(NMODES,NATA,3)
       COMMON /INTIJ / SIJ(40,40), TIJ(40,40),
@@ -253,10 +253,11 @@ C
             SUM1 = RL1*SK1MKL1 + RL2*SK1MKL2 + RL3*SK1MKL3
             SUM2 = RL1*TK1MKL1 + RL2*TK1MKL2 + RL3*TK1MKL3
 C
-C...........the following two lines are VEEERY inefficient!!!
-            SIJM1(I,J,MM) = SIJM1(I,J,MM) + CIKA1(I,K,MM) * 
+C...........the following two lines are VEEERY inefficient!!! 
+            CIKA1M = CIKA1(MM,I,K)
+            SIJM1(MM,I,J) = SIJM1(MM,I,J) + CIKA1M * 
      &                      CIKBJL * SKMKL + COEFS * SUM1
-            TIJM1(I,J,MM) = TIJM1(I,J,MM) + CIKA1(I,K,MM) * 
+            TIJM1(MM,I,J) = TIJM1(MM,I,J) + CIKA1M * 
      &                      CIKBJL * TKMKL + COEFS * SUM2
  3000    CONTINUE
       SIJ(I,J) = SIJV
