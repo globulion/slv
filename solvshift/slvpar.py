@@ -9,6 +9,9 @@ from utilities import order
 import sys, copy, os, re, math
 sys.stdout.flush()
 
+__all__ = ['SLVPAR',]
+__version__ = '1.0.1'
+
 class SLVPAR(object,UNITS):
     """
 Represents Solvshift Solvatochromic Parameter Format System
@@ -60,6 +63,7 @@ eters:
         
     def __call__(self,file):
         """parse the parameters from a file"""
+        self.__file = file
         filef = open(file,'r')
         text = filef.read()
         filef.close()
@@ -77,12 +81,12 @@ eters:
         log+= ' SLV SOLVATOCHROMIC EFP PARAMETERS \n'
         log+= ' ================================= \n\n'
         log+= ' MOLECULE SPECIFICATION \n'
-        log+= ' name   %s \n' % self.__name
-        log+= ' method %s \n' % self.__basis
-        log+= ' natoms %s \n' % self.__natoms
-        log+= ' nbasis %s \n' % self.__nbasis
-        log+= ' nmos   %s \n' % self.__nmos
-        log+= ' nmodes %s \n' % self.__nmodes
+        log+= ' name     %s \n' % self.__name
+        log+= ' method   %s \n' % self.__basis
+        log+= ' natoms   %s \n' % self.__natoms
+        log+= ' nbasis   %s \n' % self.__nbasis
+        log+= ' nmos     %s \n' % self.__nmos
+        log+= ' nmodes   %s \n' % self.__nmodes
         log+= '\n'
         return str(log)
     
@@ -135,7 +139,7 @@ eters:
                      'fock' : '[ Fock matrix ]',
                      'fock1': '[ Fock matrix - first derivatives ]',
                      'vecl' : '[ AO->LMO matrix ]',
-                     'vecl1': '[ LMO centroids - first derivatives ]',
+                     'vecl1': '[ AO->LMO matrix - first derivatives ]',
                      'mol'  : '[ molecule ]',}
         self.__mol_names = mol_names
         self.__sec_names = sec_names
