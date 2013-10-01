@@ -33,3 +33,4 @@ from dipderiv   import *
 from md         import *
 from hessian    import HESSIAN
 from slvpar     import SLVPAR
+from solefp     import SOLEFP

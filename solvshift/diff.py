@@ -13,17 +13,6 @@ import os, glob, PyQuante.Ints, coulomb.multip
 
 __all__ = ['DIFF',]
 __version__ = '5.2.1'
-
-def check_sim(l):
-    """check the sim list"""
-    for x,y in l:
-        i=0;j=0
-        for a,b in l:
-            if a==x: i+=1
-            if b==y: j+=1
-        if (i>1 or j>1): 
-            print " --- !ERROR! --- "
-            break
                 
 class DIFF(UNITS,FREQ):
     """contains usefull procedures for differentiation

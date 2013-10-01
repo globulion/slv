@@ -110,9 +110,11 @@ eters:
         if self.__vecl1 is not None: par['vecl1'] = self.__vecl1
         return par
         
-    def write(self,file='slv.par'):
+    def write(self,file='slv.par',par=None):
         """writes the parameters into a file"""
         f = open(file,'w')
+        if par is not None:
+            pass
         if self.__lmoc  is not None: self._write_lmoc(f)
         if self.__lmoc1 is not None: self._write_lmoc1(f)
         if self.__fock  is not None: self._write_fock(f)
