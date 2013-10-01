@@ -9,7 +9,8 @@ from utilities import *
 import sys, copy
 sys.stdout.flush()
 
-__all__ = ["SLVCOR" ]
+__all__ = ['SLVCOR',]
+__version__ = '1.2.2'
 
 class SLVCOR(UNITS):
     """\

@@ -11,6 +11,10 @@ from hessian   import HESSIAN
 import sys, copy
 sys.stdout.flush()
 
+
+__all__ = ['SLV',]
+__version__ = '7.1.1'
+
 class SLV(UNITS):
     """\
 Frequency shift calculator

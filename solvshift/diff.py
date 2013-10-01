@@ -12,6 +12,7 @@ from gaussfreq  import *
 import os, glob, PyQuante.Ints, coulomb.multip
 
 __all__ = ['DIFF',]
+__version__ = '5.2.1'
 
 def check_sim(l):
     """check the sim list"""

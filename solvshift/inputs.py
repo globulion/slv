@@ -16,6 +16,9 @@ from ff import *
 from math import ceil
 from units import *
 
+__all__ = ['GAUSSIAN_INPUTS','GAMESS_INPUTS',]
+__version__ = '3.3.4'
+
 class INPUT_TEMPLATE(Template):
       """for easy handling input files from 
          template file stored on disk. 

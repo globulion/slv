@@ -9,6 +9,9 @@ from utilities import *
 import sys, copy, pylab, solscf
 sys.stdout.flush()
 
+__all__ = ['HESSIAN',]
+__version__ = '1.0.2'
+
 def get_dq_scf(B1,G,f,dQ,maxit=10000000,threshold=1E-06):
     """
 Calculate dQ vector using iterative SOLSCF theory

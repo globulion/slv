@@ -14,6 +14,7 @@ from MDAnalysis.coordinates.xdrfile.libxdrfile import xdrfile_open, xdrfile_clos
                                                       read_xtc_natoms, read_xtc  ,\
                                                       read_xtc, DIM, exdrOK
 __all__ = ['SLV_MD',]
+__version__ = '2.0.3'
 
 sys.stdout.flush()
 

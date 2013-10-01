@@ -4,6 +4,9 @@
 
 from head import *
 
+__all__ = ['DipDeriv',]
+__version__ = '2.0.0'
+
 class DipDeriv(UNITS,FREQ):
     """dipole derivatives wrt normal mode class in helico representation"""
     

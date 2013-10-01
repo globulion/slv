@@ -8,6 +8,9 @@ from dma      import *
 from dipderiv import *
 from onsager  import *
 
+__all__ = ['MCHO',]
+__version__ = '3.0.0'
+
 class Stark(UNITS):
     """represents Stark tunning rate"""
     

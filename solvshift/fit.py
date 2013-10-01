@@ -8,6 +8,9 @@ from dma   import *
 from diff  import *
 import os
 
+__all__ = ['FIT',]
+__version__ = '2.0.4'
+
 class FIT(UNITS,DIFF):
     """contains usefull procedures for fitting
        of DMA and molecular multipole moments in

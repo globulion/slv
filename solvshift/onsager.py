@@ -6,6 +6,9 @@ from units import *
 from numpy import *
 from dma   import *
 
+__all__ = ['ONSAGER','BlasiakIterator',]
+__version__ = '2.0.1'
+
 class BlasiakIterator(object,UNITS):
     """represents iterator for converging
     solvation free energy, Onsager field and dipole moment

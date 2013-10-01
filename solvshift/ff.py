@@ -8,6 +8,9 @@ from dma   import *
 from utilities  import *
 import os
 
+__all__ = ['FF',]
+__version = '2.0.0'
+
 class FF:
    """contains finite field variables for 
       differentiation over normal modes"""
