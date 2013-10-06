@@ -154,6 +154,18 @@ them to LMO space"""
             Lmoc.append(lmoc)
             VecL.append(veclmo)
             #
+            out = open(file[:-4]+'vecl','w')
+            log = '\n'
+            n=1
+            for i in range(len(veclmo)):
+                log+= ' ***** LMO NO %d ***** \n\n' % (i+1)
+                for j in xrange(len(veclmo[0])):
+                    log += "%20.10E"  % veclmo[i,j]
+                    if not n%5: log+= '\n'
+                    n+=1
+            log += '\n'
+            out.write(log)
+            out.close()
         Tran = array(Tran,float64)
         Lmoc = array(Lmoc,float64)
         VecL = array(VecL,float64)

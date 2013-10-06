@@ -73,7 +73,7 @@ overlap integrals and parses density matrix."""
         veccmo= ParseVecFromFchk(self.__fchk)[:self.__nae,:]
         tran, veclmo = get_pmloca(self.__natoms,mapi=self.__bfs.LIST1,sao=SAO,
                                   vecin=veccmo,nae=self.__nae,
-                                  maxit=100000,conv=1.0E-10,
+                                  maxit=100000,conv=1.0E-14,
                                   lprint=True,
                                   freeze=None)
         # calculate LMTPs
