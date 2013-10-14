@@ -15,6 +15,7 @@ reflags = re.DOTALL
 from ff import *
 from math import ceil
 from units import *
+from utilities import Periodic
 
 __all__ = ['GAUSSIAN_INPUTS','GAMESS_INPUTS',]
 __version__ = '3.3.4'
