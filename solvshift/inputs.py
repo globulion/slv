@@ -8,7 +8,7 @@ autor wzorował się skryptem
 Roberta W. Góry (dodaj źródła)
 """
 
-from numpy  import array, float64
+from numpy  import array, float64, zeros
 from string import Template
 import re, os
 reflags = re.DOTALL
