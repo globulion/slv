@@ -802,7 +802,7 @@ def Main(argv):
                    cmap=pylab.plt.get_cmap('Blues')
                    cax = ax.matshow(abs(hess.get_hess()),cmap=cmap,interpolation='nearest')
                    fig.colorbar(cax)
-                   pylab.savefig('hess-%s.eps'%typ) 
+                   pylab.savefig('hess-%s.eps'%typ)
                    ### accumulate Hessian
                    if hessian is not None: hessian += abs(hess.get_hess())
                    else: hessian = abs(hess.get_hess())
@@ -882,7 +882,7 @@ def Main(argv):
             out.close()
             
             ### print the Hessian
-            if not Hessian:
+            if Hessian:
                hessian /= float64(typ_no)
                fig = pylab.plt.figure()
                ax = fig.add_subplot(111)

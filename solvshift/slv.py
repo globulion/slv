@@ -150,7 +150,7 @@ Eg. : O1H1H1 O2H2H2 O3H3H3 ...
                       gijj=self.gijj,
                       ua_list=ua_list,
                       mol=mol)
-        hess.eval(theory=2,max_iter=500000000,threshold=1e-6)
+        hess.eval(theory=0,max_iter=500000000,threshold=1e-6)
         return hess
     
     def get_fder_rotated(self,fderiv, L, solute_structure, ref_structure):

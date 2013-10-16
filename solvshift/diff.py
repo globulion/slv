@@ -981,7 +981,7 @@ using COULOMB.py routines"""
    from sys  import argv
    #bonds = [map(int,(x.split(','))) for x in argv[-1].split('-')]
    bonds=None
-   vec = 5
+   vec = 20
    #for i in range(len(bonds)): bonds[i]=tuple(bonds[i])
    #print bonds
    #os.environ['__IMPORT__COULOMB__']=1
