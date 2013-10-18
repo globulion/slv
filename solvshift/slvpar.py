@@ -28,13 +28,13 @@ ups of parameters are:
 1) electrostatics - distributed multipole approximation
    a) first-order Coulomb forces
    b) second-order polarization forces
-2) non-electrostatics:
+2) frequency analysis data
+3) non-electrostatics:
    a) exchange-repulsion
    b) charge-transfer
 Part 1a) is a part of Coulomb file format.
 
-Beneath I list the various sections of both groups of param
-eters:
+Beneath I list the various sections of both groups of parameters:
 
  - GROUP (0) -
  [ molecule ] - basic specifications of the molecule
@@ -47,6 +47,12 @@ eters:
  [ SolDMTP ] - solvatochromic  moments
  [ origins ] - origins of distributed moments
  
+ - GROUP (3) -
+ [ Harmonic frequencies ]
+ [ Reduced masses ]
+ [ Mass-weighted eigenvectors ]
+ [ Cubic anharmonic constants ]
+ 
  - GROUP (2) -
  [ AO to LMO transformation matrix ] = [ AO->LMO matrix ]
  [ LMO centroids ]
@@ -54,6 +60,10 @@ eters:
  [ AO to LMO transformation matrix - first derivatives ] = [ AO->LMO matrix - first derivatives ]
  [ LMO centroids - first derivatives ]
  [ Fock matrix - first derivatives ]
+ 
+Usage:
+
+Notes:
 """
     def __init__(self,file=None):
         self.__file = file
@@ -92,16 +102,29 @@ eters:
     
     # public
     
-    def set(self,fock=None,lmoc=None,vecl=None,
-                 fock1=None,lmoc1=None,vecl1=None):
-        """set the parameters"""
+    def set(self,redmass=None,freq=None,lvec=None,gijk=None,
+                 fock=None,lmoc=None,vecl=None,
+                 fock1=None,lmoc1=None,vecl1=None,
+                 pos=None,origin=None,):
+        """set the parameters (in future change the arguments to different data objects!"""
+        self.__redmass = redmass; self.__freq = freq; self.__lvec = lvec; self.__gijk = gijk
         self.__fock = fock; self.__lmoc = lmoc; self.__vecl = vecl
         self.__fock1 = fock1; self.__lmoc1 = lmoc1; self.__vecl1 = vecl1
+        self.__pos = pos, self.__origin = origin
         return
 
     def get(self):
         """returns dictionary with parameters"""
         par = {}
+        # basic molecular data
+        if self.__pos    is not None: par['pos'   ] = self.__pos
+        if self.__origin is not None: par['origin'] = self.__origin
+        # frequency analysis
+        if self.__redmass  is not None: par['redmass'] = self.__redmass
+        if self.__freq     is not None: par['freq'   ] = self.__freq
+        if self.__lvec     is not None: par['lvec'   ] = self.__lvec
+        if self.__gijk     is not None: par['gijk'   ] = self.__gijk
+        # EFP parameters
         if self.__lmoc  is not None: par['lmoc' ] = self.__lmoc
         if self.__lmoc1 is not None: par['lmoc1'] = self.__lmoc1
         if self.__fock  is not None: par['fock' ] = self.__fock
@@ -115,6 +138,15 @@ eters:
         f = open(file,'w')
         if par is not None:
             pass
+        # basic molecular data
+        if self.__pos    is not None: self._write_pos(f)
+        if self.__origin is not None: self._write_origin(f)
+        # frequency analysis
+        if self.__redmass  is not None: self._write_redmass(f)
+        if self.__freq     is not None: self._write_freq(f)
+        if self.__lvec     is not None: self._write_lvec(f)
+        if self.__gijk     is not None: self._write_gijk(f)
+        # EFP parameters
         if self.__lmoc  is not None: self._write_lmoc(f)
         if self.__lmoc1 is not None: self._write_lmoc1(f)
         if self.__fock  is not None: self._write_fock(f)
@@ -130,23 +162,38 @@ eters:
         """creates the namespace of parameter variables"""
         self.__name, self.__natoms, self.__nbasis = None, None, None
         self.__nmos, self.__nmodes, self.__basis  = None, None, None
+        self.__atoms,self.__shortname = None, None
+        self.__pos, self.__origin, self.__nsites = None, None, None
+        #
+        self.__redmass, self.__freq, self.__lvec = None, None, None
+        self.__gijk = None
         #
         self.__fock, self.__lmoc, self.__vecl = None, None, None
         self.__fock1,self.__lmoc1,self.__vecl1= None, None, None
         #
         mol_names = ('name','basis','method','natoms','nbasis',
-                     'nmos','nmodes',)
+                     'nmos','nmodes','atoms','shortname','nsites',)
         sec_names = {'lmoc' : '[ LMO centroids ]',
                      'lmoc1': '[ LMO centroids - first derivatives ]',
                      'fock' : '[ Fock matrix ]',
                      'fock1': '[ Fock matrix - first derivatives ]',
                      'vecl' : '[ AO->LMO matrix ]',
                      'vecl1': '[ AO->LMO matrix - first derivatives ]',
-                     'mol'  : '[ molecule ]',}
+                     'mol'  : '[ molecule ]',
+                     'freq' : '[ Harmonic frequencies ]',
+                   'redmass': '[ Reduced masses ]',
+                     'lvec' : '[ Mass-weighted eigenvectors ]',
+                     'gijk' : '[ Cubic anharmonic constants ]',
+                     'pos'  : '[ Atomic coordinates ]',
+                  'origin'  : '[ DMTP origins ]',}
         self.__mol_names = mol_names
         self.__sec_names = sec_names
         return
-        
+    
+    # --------------------------------------------------------- #
+    #            R E A D I N G    P R O C E D U R E S           #
+    # --------------------------------------------------------- #
+    
     def _read(self,section):
         """read the appropriate field from section and save it in SLVPAR instance"""
         section = section.split('\n')
@@ -162,10 +209,16 @@ eters:
                     name = name.strip(); arg = arg.strip()
                     if name == 'name':
                         self.__name = arg
-                    if name == 'basis':
-                        self.__basis = arg
+                    if name == 'shortname':
+                        self.__shortname = arg
+                    if name == 'atoms':
+                        self.__atoms = arg.split(',')
                     if name == 'natoms':
                         self.__natoms = int(arg)
+                    if name == 'nsites':
+                        self.__nsites = int(arg)
+                    if name == 'basis':
+                        self.__basis = arg
                     if name == 'nbasis':
                         self.__nbasis = int(arg)
                     if name == 'nmos':
@@ -179,70 +232,220 @@ eters:
             n = self._nlines(N)
             for i in xrange(n): data += section[i+1].split()
             data = array(data,dtype=float64)
+            # ------------------------------------ MOL --------------------------------------------
+            # Atomic coordinates
+            if   key == 'pos':
+                 merror = 'natoms in section [ molecule ] '
+                 merror+= 'is not consistent with section [ Atomic coordinates ]!'
+                 assert self.__natoms == N/3, merror
+                 data = data.reshape(self.__natoms,3)
+                 self.__pos = data
+            # DMTP origins
+            elif key == 'origin':
+                 merror = 'natoms in section [ molecule ] '
+                 merror+= 'is not consistent with section [ DMTP origins ]!'
+                 assert 1==1, merror
+                 data = data.reshape(N/3,3)
+                 self.__origin = data
+            # ------------------------------------ FREQ -------------------------------------------
+            # Harmonic frequencies
+            if   key == 'freq':
+                 merror = 'nmodes in section [ molecule ] '
+                 merror+= 'is not consistent with section [ Harmonic frequencies ]!'
+                 assert self.__nmodes == N, merror
+                 self.__freq = data
+            # Reduced masses
+            elif  key == 'redmass':
+                  merror = 'nmodes in section [ molecule ] '
+                  merror+= 'is not consistent with section [ Reduced masses ]!'
+                  assert self.__nmodes == N, merror
+                  self.__redmass = data
+            # Mass-weighted eigenvectors
+            elif  key == 'lvec':
+                  merror = 'nmodes in section [ molecule ] '
+                  merror+= 'is not consistent with section [ Mass-weighted eigenvectors ]!'
+                  assert self.__nmodes == N, merror
+                  self.__lvec = data.reshape(self.__nmodes,self.__natoms,3)
+            # Cubic anharmonic constants
+            elif  key == 'gijk':
+                  merror = 'nmodes in section [ molecule ] '
+                  merror+= 'is not consistent with section [ Cubic anharmonic constants ]!'
+                  assert 1==1, merror
+                  gijk = zeros((self.__nmodes,self.__nmodes,self.__nmodes),dtype=float64)
+                  K = 0
+                  for i in xrange(self.__nmodes):
+                      for j in xrange(i+1):
+                          for k in xrange(j+1):
+                              d = data[K]
+                              gijk[i,j,k] = d
+                              gijk[i,k,j] = d
+                              gijk[j,i,k] = d
+                              gijk[j,k,i] = d
+                              gijk[k,i,j] = d
+                              gijk[k,j,i] = d
+                              K += 1                
+                  self.__gijk = gijk
+            # ------------------------------------ EFP --------------------------------------------
             # LMO centroids
-            if   key == 'lmoc':
-                merror = 'nmos in section [ molecule ] '
-                merror+= 'is not consistent with section [ LMO centroids ]!'
-                assert self.__nmos == N/3, merror
-                data = data.reshape(self.__nmos,3)
-                self.__lmoc = data
+            elif  key == 'lmoc':
+                  merror = 'nmos in section [ molecule ] '
+                  merror+= 'is not consistent with section [ LMO centroids ]!'
+                  assert self.__nmos == N/3, merror
+                  data = data.reshape(self.__nmos,3)
+                  self.__lmoc = data
             # LMO centroids first derivatives
-            elif key == 'lmoc1':
-                merror = 'nmos and nmodes in section [ molecule ] '
-                merror+= 'is not consistent with section [ LMO centroids - first derivatives ]!'
-                assert self.__nmos == N/(3*self.__nmodes), merror
-                data = data.reshape(self.__nmodes,self.__nmos,3)
-                self.__lmoc1 = data
+            elif  key == 'lmoc1':
+                  merror = 'nmos and nmodes in section [ molecule ] '
+                  merror+= 'is not consistent with section [ LMO centroids - first derivatives ]!'
+                  assert self.__nmos == N/(3*self.__nmodes), merror
+                  data = data.reshape(self.__nmodes,self.__nmos,3)
+                  self.__lmoc1 = data
             # Fock matrix
-            elif key == 'fock':
-                merror = 'nmos in section [ molecule ] '
-                merror+= 'is not consistent with section [ Fock matrix ]!'
-                assert self.__nmos == (math.sqrt(1+8*N)-1)/2, merror
-                fock = zeros((self.__nmos,self.__nmos),dtype=float64)
-                K = 0
-                for i in xrange(self.__nmos):
-                    for j in xrange(i+1):
-                        d = data[K]
-                        fock[i,j] = d
-                        fock[j,i] = d
-                        K += 1
-                self.__fock = fock
+            elif  key == 'fock':
+                  merror = 'nmos in section [ molecule ] '
+                  merror+= 'is not consistent with section [ Fock matrix ]!'
+                  assert self.__nmos == (math.sqrt(1+8*N)-1)/2, merror
+                  fock = zeros((self.__nmos,self.__nmos),dtype=float64)
+                  K = 0
+                  for i in xrange(self.__nmos):
+                      for j in xrange(i+1):
+                          d = data[K]
+                          fock[i,j] = d
+                          fock[j,i] = d
+                          K += 1
+                  self.__fock = fock
             # Fock matrix first derivatives
-            elif key == 'fock1':
-                merror = 'nbasis and nmos in section [ molecule ] '
-                merror+= 'is not consistent with section [ Fock matrix - first derivatives ]!'
-                assert self.__nmos == (math.sqrt(1+8*(N/self.__nmodes))-1)/2, merror
-                fock1 = zeros((self.__nmodes,self.__nmos,self.__nmos),dtype=float64)
-                data = data.reshape(self.__nmodes,N/self.__nmodes)
-                for i in xrange(self.__nmodes):
-                    K = 0
-                    for j in xrange(self.__nmos):
-                        for k in xrange(j+1):
-                            d = data[i,K]
-                            fock1[i,j,k] = d
-                            fock1[i,k,j] = d
-                            K += 1
-                self.__fock1 = fock1
+            elif  key == 'fock1':
+                  merror = 'nbasis and nmos in section [ molecule ] '
+                  merror+= 'is not consistent with section [ Fock matrix - first derivatives ]!'
+                  assert self.__nmos == (math.sqrt(1+8*(N/self.__nmodes))-1)/2, merror
+                  fock1 = zeros((self.__nmodes,self.__nmos,self.__nmos),dtype=float64)
+                  data = data.reshape(self.__nmodes,N/self.__nmodes)
+                  for i in xrange(self.__nmodes):
+                      K = 0
+                      for j in xrange(self.__nmos):
+                          for k in xrange(j+1):
+                              d = data[i,K]
+                              fock1[i,j,k] = d
+                              fock1[i,k,j] = d
+                              K += 1
+                  self.__fock1 = fock1
             # AO to LMO transformation matrix
-            elif key == 'vecl':
-                merror = 'nmos and nbasis in section [ molecule ] '
-                merror+= 'is not consistent with section [ AO->LMO matrix ]!'
-                assert self.__nmos == N/self.__nbasis, merror
-                data = data.reshape(self.__nmos,self.__nbasis)
-                self.__vecl = data
+            elif  key == 'vecl':
+                  merror = 'nmos and nbasis in section [ molecule ] '
+                  merror+= 'is not consistent with section [ AO->LMO matrix ]!'
+                  assert self.__nmos == N/self.__nbasis, merror
+                  data = data.reshape(self.__nmos,self.__nbasis)
+                  self.__vecl = data
             # AO to LMO transformation matrix first derivatives
-            elif key == 'vecl1':
-                merror = 'nmodes, nmos and nbasis in section [ molecule ] '
-                merror+= 'is not consistent with section [ AO->LMO matrix - first derivatives ]!'
-                assert self.__nmos == N/(self.__nbasis*self.__nmodes)
-                data = data.reshape(self.__nmodes,self.__nmos,self.__nbasis)
-                self.__vecl1 = data
+            elif  key == 'vecl1':
+                  merror = 'nmodes, nmos and nbasis in section [ molecule ] '
+                  merror+= 'is not consistent with section [ AO->LMO matrix - first derivatives ]!'
+                  assert self.__nmos == N/(self.__nbasis*self.__nmodes)
+                  data = data.reshape(self.__nmodes,self.__nmos,self.__nbasis)
+                  self.__vecl1 = data
             # other not-programmed section
             else:
                 raise Exception('Non-standard section name detected! Check the format of your file!')
         return
+
+    # --------------------------------------------------------- #
+    #            W R I T I N G    P R O C E D U R E S           #
+    # --------------------------------------------------------- #
+    
+    def _write_pos(self,file):
+        """write atomic coordinates"""
+        natoms = self.__pos.shape[0]
+        N = natoms * 3
+        log = ' %s %s= %d\n' % (self.__sec_names['pos'].ljust(40),'N'.rjust(10),N)
+        n = 1
+        for i in xrange(natoms):
+            for j in xrange(3):
+                log+= "%20.10E" % self.__pos[i,j]
+                if not n%5: log+= '\n'
+                n+=1
+        log+= '\n'
+        file.write(log)
+        return
+
+    def _write_origin(self,file):
+        """write DMTP origin coordinates"""
+        nsites = self.__origin.shape[0]
+        N = nsites * 3
+        log = ' %s %s= %d\n' % (self.__sec_names['origin'].ljust(40),'N'.rjust(10),N)
+        n = 1
+        for i in xrange(nsites):
+            for j in xrange(3):
+                log+= "%20.10E" % self.__origin[i,j]
+                if not n%5: log+= '\n'
+                n+=1
+        log+= '\n'
+        file.write(log)
+        return
+
+    def _write_freq(self,file):
+        """write harmonic frequencies"""
+        nmodes = self.__freq.shape[0]
+        N = nmodes
+        log = ' %s %s= %d\n' % (self.__sec_names['freq'].ljust(40),'N'.rjust(10),N)
+        n = 1
+        for i in xrange(nmodes):
+            log+= "%20.10E" % self.__freq[i]
+            if not n%5: log+= '\n'
+            n+=1
+        log+= '\n'
+        file.write(log)
+        return
+
+    def _write_redmass(self,file):
+        """write reduced masses"""
+        nmodes = self.__redmass.shape[0]
+        N = nmodes
+        log = ' %s %s= %d\n' % (self.__sec_names['redmass'].ljust(40),'N'.rjust(10),N)
+        n = 1
+        for i in xrange(nmodes):
+            log+= "%20.10E" % self.__redmass[i]
+            if not n%5: log+= '\n'
+            n+=1
+        log+= '\n'
+        file.write(log)
+        return
+
+    def _write_lvec(self,file):
+        """write mass-weighted eigenvectors"""
+        nmodes, natoms, x = self.__lvec.shape
+        natoms/=3 
+        N = nmodes * natoms * 3
+        log = ' %s %s= %d\n' % (self.__sec_names['lvec'].ljust(40),'N'.rjust(10),N)
+        n = 1
+        for i in xrange(nmodes):
+            for j in xrange(natoms):
+                for k in [0,1,2]:
+                    log+= "%20.10E" % self.__lvec[i,j,k]
+                    if not n%5: log+= '\n'
+                    n+=1
+        log+= '\n'
+        file.write(log)
+        return
+
+    def _write_gijk(self,file):
+        """write cubic anharmonic constants"""
+        nmodes = self.__gijk.shape[0]
+        N = nmodes*(nmodes+1)*(nmodes+2)/6
+        log = ' %s %s= %d\n' % (self.__sec_names['gijk'].ljust(40),'N'.rjust(10),N)
+        n = 1
+        for i in xrange(nmodes):
+            for j in xrange(i+1):
+                for k in xrange(j+1):
+                    log+= "%20.10E" % self.__gijk[i,j,k]
+                    if not n%5: log+= '\n'
+                    n+=1
+        log+= '\n'
+        file.write(log)
+        return
     
     def _write_lmoc(self,file):
+        """write LMO centroid coordinates"""
         nmos = self.__lmoc.shape[0]
         N = nmos * 3
         log = ' %s %s= %d\n' % (self.__sec_names['lmoc'].ljust(40),'N'.rjust(10),N)
@@ -255,8 +458,9 @@ eters:
         log+= '\n'
         file.write(log)
         return
-    
+        
     def _write_lmoc1(self,file):
+        """write LMO centroid first derivatives wrt nmodes"""
         nmodes, nmos, n = self.__lmoc1.shape
         N = nmodes * nmos * 3
         log = ' %s %s= %d\n' % (self.__sec_names['lmoc1'].ljust(40),'N'.rjust(10),N)
@@ -272,6 +476,7 @@ eters:
         return
         
     def _write_fock(self,file):
+        """write Fock matrix elements"""
         nmos = self.__fock.shape[0]
         N = (nmos**2 - nmos) / 2 + nmos
         log = ' %s %s= %d\n' % (self.__sec_names['fock'].ljust(40),'N'.rjust(10),N)
@@ -286,6 +491,7 @@ eters:
         return
     
     def _write_fock1(self,file):
+        """write Fock matrix element first derivatives wrt nmodes"""
         nmodes = self.__fock1.shape[0]
         nmos = self.__fock1.shape[1]
         N = nmodes * ( (nmos**2 - nmos) / 2 + nmos )
@@ -302,6 +508,7 @@ eters:
         return
     
     def _write_vecl(self,file):
+        """write AO-LMO transformation matrix elements"""
         nmos, nbasis = self.__vecl.shape
         N = nmos * nbasis
         log = ' %s %s= %d\n' % (self.__sec_names['vecl'].ljust(40),'N'.rjust(10),N)
@@ -316,6 +523,7 @@ eters:
         return
     
     def _write_vecl1(self,file):
+        """write AO-LMO transformation matrix element first derivatives wrt nmodes"""
         nmodes, nmos, nbasis = self.__vecl1.shape
         N = nmodes * nmos * nbasis
         log = ' %s %s= %d\n' % (self.__sec_names['vecl1'].ljust(40),'N'.rjust(10),N)
