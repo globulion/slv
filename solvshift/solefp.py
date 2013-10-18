@@ -10,14 +10,52 @@ from diff      import DIFF
 import sys, copy, os, re, math, glob, PyQuante.Ints, coulomb.multip
 sys.stdout.flush()
 
-__all__ = ['SOLEFP',]
+__all__ = ['Frag','EFP',]
 __version__ = '1.0.1'
 
-class SOLEFP(object,DIFF):
+class EFP(object,UNITS):
     """
-Represents Solvatochromic Effective Fragment Potential Method
--------------------------------------------------------------
+===================================
+EFFECTIVE FRAGMENT POTENTIAL METHOD
+===================================
 
+Usage:
+A = EFP(a,b)
+result = A(shift=True)
+
+Notes:
+1) a and b are SLVPAR instances. If
+   shift=True, a denotes IR-active
+   molecule and should contain all 
+   necessary parameters for it
+"""
+    def __init__(self,a,b):
+        self.__molA = a
+        self.__molB = b
+        # extract the dictionaries of variables
+        self.__varA = a.get()
+        self.__varB = b.get()
+    
+    def __call__(self,shift=True):
+        """perform all the calculation"""
+        return
+    
+    # protected
+    
+    def _reweight(self,ria1,faij1,cika1,redmss):
+        """reweight derivatives"""
+        temp = sqrt(redmss)[:,newaxis,newaxis]
+        ria1 = temp * ria1
+        faij1= temp * faij1
+        cika1= temp * cika1
+        return ria1, faij1, cika1
+
+class Frag(object,DIFF):
+    """
+Solvatochromic Effective Fragment Potential Fragment
+----------------------------------------------------
+
+Usage:
 """
     def __init__(self,anh=None,basis=None,nae=None,
                       fchk=None,gmslog=None,):
