@@ -113,7 +113,7 @@ Notes:
            #self.__atoms = mol.get_atoms() # dopisz do Molecule class!
            self.__natoms = len(self.__pos)
            self.__nmodes = 3 * self.__natoms - 6
-           self.__nmos = sum(mol.get_atno())/2
+           self.__nmos = int(sum(mol.get_atno())/2)
            self.__method = mol.get_method()
            self.__basis = mol.get_basis()
            self.__nbasis = len(mol.get_bfs())
@@ -230,7 +230,7 @@ Notes:
         
     def _tr_lvec(self,lvec,nmodes,natoms):
         """transpose axis and reshape"""
-        return transpose(anh.L).reshape(nmodes,natoms,3)
+        return anh.L.transpose().reshape(nmodes,natoms,3)
     
     # --------------------------------------------------------- #
     #            R E A D I N G    P R O C E D U R E S           #
@@ -398,13 +398,13 @@ Notes:
     def _write_preambule(self,file):
         """write the preambule of the parameter file"""
         log = ' %s\n' % self.__sec_names['mol'].ljust(40)
-        log+= ' name= %s\n' % self.__name
-        log+= ' basis= %s/%s\n' % (self.__method, self.__basis)
-        log+= ' natoms= %s\n' % self.__natoms
-        log+= ' nbasis= %s\n' % self.__nbasis
-        log+= ' nmodes= %s\n' % self.__nmodes
-        log+= ' nmos= %s\n' % self.__nmos
-        log+= '\n'
+        log+= '   name       = %s\n'    % self.__name
+        log+= '   basis      = %s/%s\n' % (self.__method, self.__basis)
+        log+= '   natoms     = %s\n'    % self.__natoms
+        log+= '   nbasis     = %s\n'    % self.__nbasis
+        log+= '   nmodes     = %s\n'    % self.__nmodes
+        log+= '   nmos       = %s\n'    % self.__nmos
+        log+= ' \n'
         file.write(log)
         return
     
@@ -420,6 +420,7 @@ Notes:
                 if not n%5: log+= '\n'
                 n+=1
         log+= '\n'
+        if N%5: log+= '\n'
         file.write(log)
         return
 
@@ -435,6 +436,7 @@ Notes:
                 if not n%5: log+= '\n'
                 n+=1
         log+= '\n'
+        if N%5: log+= '\n'
         file.write(log)
         return
 
@@ -449,6 +451,7 @@ Notes:
             if not n%5: log+= '\n'
             n+=1
         log+= '\n'
+        if N%5: log+= '\n'
         file.write(log)
         return
 
@@ -463,6 +466,7 @@ Notes:
             if not n%5: log+= '\n'
             n+=1
         log+= '\n'
+        if N%5: log+= '\n'
         file.write(log)
         return
 
@@ -480,6 +484,7 @@ Notes:
                     if not n%5: log+= '\n'
                     n+=1
         log+= '\n'
+        if N%5: log+= '\n'
         file.write(log)
         return
 
@@ -496,6 +501,7 @@ Notes:
                     if not n%5: log+= '\n'
                     n+=1
         log+= '\n'
+        if N%5: log+= '\n'
         file.write(log)
         return
     
@@ -511,6 +517,7 @@ Notes:
                 if not n%5: log+= '\n'
                 n+=1
         log+= '\n'
+        if N%5: log+= '\n'
         file.write(log)
         return
         
@@ -527,6 +534,7 @@ Notes:
                     if not n%5: log+= '\n'
                     n+=1
         log+= '\n'
+        if N%5: log+= '\n'
         file.write(log)
         return
         
@@ -542,6 +550,7 @@ Notes:
                 if not n%5: log+= '\n'
                 n+=1
         log+= '\n'
+        if N%5: log+= '\n'
         file.write(log)
         return
     
@@ -559,6 +568,7 @@ Notes:
                     if not n%5: log+= '\n'
                     n+=1
         log+= '\n'
+        if N%5: log+= '\n'
         file.write(log)
         return
     
@@ -574,6 +584,7 @@ Notes:
                 if not n%5: log+= '\n'
                 n+=1
         log+= '\n'
+        if N%5: log+= '\n'
         file.write(log)
         return
     
@@ -590,6 +601,7 @@ Notes:
                     if not n%5: log+= '\n'
                     n+=1
         log+= '\n'
+        if N%5: log+= '\n'
         file.write(log)
         return
     
