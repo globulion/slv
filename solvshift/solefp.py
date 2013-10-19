@@ -17,23 +17,19 @@ __version__ = '1.0.1'
 
 class EFP(object,UNITS):
     """
-===================================
-EFFECTIVE FRAGMENT POTENTIAL METHOD
-===================================
+=============================================================================
+                     EFFECTIVE FRAGMENT POTENTIAL METHOD                     
+=============================================================================
 
 Usage:
 A = EFP(a,b)
 result = A(shift=True)
 
 Notes:
-1) a and b are SLVPAR instances. If
-   shift=True, a denotes IR-active
-   molecule and should contain all 
-   necessary parameters for it
-2) the a and b objects are assumed
-   to be appropriately transformed
-   in space by rotations and trans
-   lations
+1) a and b are SLVPAR instances. If shift=True, a denotes IR-active molecule
+   and should contain all necessary parameters for it
+2) the a and b objects are assumed to be appropriately transformed in space 
+   by rotations and translations
 """
     def __init__(self,a,b):
         self.__molA = a
@@ -46,9 +42,14 @@ Notes:
         """perform all the calculation"""
         return
     
-    def sup(self,str_a,str_b):
+    def sup(self,str_a=None,str_b=None):
         """superimpose the a and b objects to given structures"""
-        return
+        rms_a, rms_b = None, None
+        if str_a is not None: 
+           rms_a = self.__molA.sup(str_a)
+        if str_b is not None:
+           rms_b = self.__molB.sup(str_b)
+        return rms_a, rms_b
     
     # protected
     
@@ -58,27 +59,29 @@ Notes:
         bfs1 = self.__varA['bfs']
         bfs2 = self.__varB['bfs']
         # instantaneous integrals
-        skm = getSAB(bfs1,bfs2)
-        tkm = getTAB(bfs1,bfs2)
+        skm  = getSAB(bfs1,bfs2)
+        tkm  = getTAB(bfs1,bfs2)
         sk1m = getSA1B(bfs1,bfs2)
         tk1m = getTA1B(bfs1,bfs2)
         # parameters
         ### molecule A
-        faij = self.__varA['fock']
-        faij1= self.__varA['fock1']
-        cika = self.__varA['vecl']
-        cika1= self.__varA['vecl1']
-        rna  = self.__varA['pos']
-        ria  = self.__varA['lmoc']
-        ria1 = self.__varA['lmoc1']
+        faij   = self.__varA['fock']
+        faij1  = self.__varA['fock1']
+        cika   = self.__varA['vecl']
+        cika1  = self.__varA['vecl1']
+        za     = self.__varA['atno']
+        rna    = self.__varA['pos']
+        ria    = self.__varA['lmoc']
+        ria1   = self.__varA['lmoc1']
         redmss = self.__varA['redmass']
         freq   = self.__varA['freq']
         gijj   = self.__varA['gijk'][nmode,nmode,:]
         lvec   = self.__varA['lvec']
-        mlist = array(bfs1.LIST1,int) + 1
+        mlist  = array(bfs1.LIST1,int) + 1
         ### molecule B
         fbij = self.__varB['fock']
         cikb = self.__varB['vecl']
+        zb   = self.__varB['atno']
         rnb  = self.__varB['pos']
         rib  = self.__varB['lmoc']
         # transform the integrals
