@@ -124,8 +124,10 @@ Notes:
         # anharmonic file object (FREQ)
         if anh is not None:
            assert anh.if_w(), 'Anharmonic object is in wrong units! Supply anh.w() object'
-           self.__redmass = anh.redmass; self.__freq = anh.freq
-           self.__lvec    = anh.L      ; self.__gijk = anh.K3
+           self.__redmass = anh.redmass
+           self.__freq = anh.freq
+           self.__lvec    = self._tr_lvec(anh.L,self.__nmodes,self.__natoms)
+           self.__gijk = anh.K3
         # EFP fragment parameters
         if frag is not None:
            self._parse_dict( frag.get() )
@@ -226,6 +228,10 @@ Notes:
         if self.__vecl1 is not None: par['vecl1'] = self.__vecl1
         return par
         
+    def _tr_lvec(self,lvec,nmodes,natoms):
+        """transpose axis and reshape"""
+        return transpose(anh.L).reshape(nmodes,natoms,3)
+    
     # --------------------------------------------------------- #
     #            R E A D I N G    P R O C E D U R E S           #
     # --------------------------------------------------------- #
