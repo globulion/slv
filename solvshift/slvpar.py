@@ -108,7 +108,15 @@ Notes:
         """set the parameters providing appropriate objects"""
         # molecular structure
         if mol is not None:
+           self.__name = mol.get_name()
            self.__pos = mol.get_pos()
+           #self.__atoms = mol.get_atoms() # dopisz do Molecule class!
+           self.__natoms = len(self.__pos)
+           self.__nmodes = 3 * self.__natoms - 6
+           self.__nmos = sum(mol.get_atno())/2
+           self.__method = mol.get_method()
+           self.__basis = mol.get_basis()
+           self.__nbasis = len(mol.get_bfs())
         # electrostatic data
         if dma is not None:
            self.__pos = dma.get_pos()
@@ -133,6 +141,7 @@ Notes:
         if par is not None:
             pass
         # basic molecular data
+        if self.__name   is not None: self._write_preambule(f)
         if self.__pos    is not None: self._write_pos(f)
         if self.__origin is not None: self._write_origin(f)
         # frequency analysis
@@ -379,6 +388,19 @@ Notes:
     # --------------------------------------------------------- #
     #            W R I T I N G    P R O C E D U R E S           #
     # --------------------------------------------------------- #
+    
+    def _write_preambule(self,file):
+        """write the preambule of the parameter file"""
+        log = ' %s\n' % self.__sec_names['mol'].ljust(40)
+        log+= ' name= %s\n' % self.__name
+        log+= ' basis= %s/%s\n' % (self.__method, self.__basis)
+        log+= ' natoms= %s\n' % self.__natoms
+        log+= ' nbasis= %s\n' % self.__nbasis
+        log+= ' nmodes= %s\n' % self.__nmodes
+        log+= ' nmos= %s\n' % self.__nmos
+        log+= '\n'
+        file.write(log)
+        return
     
     def _write_pos(self,file):
         """write atomic coordinates"""
