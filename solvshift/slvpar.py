@@ -109,14 +109,16 @@ Notes:
         # molecular structure
         if mol is not None:
            self.__name = mol.get_name()
-           self.__pos = mol.get_pos()
+           self.__pos  = mol.get_pos()
            #self.__atoms = mol.get_atoms() # dopisz do Molecule class!
            self.__natoms = len(self.__pos)
            self.__nmodes = 3 * self.__natoms - 6
-           self.__nmos = int(sum(mol.get_atno())/2)
+           self.__nmos   = int(sum(mol.get_atno())/2)
            self.__method = mol.get_method()
-           self.__basis = mol.get_basis()
+           self.__basis  = mol.get_basis()
            self.__nbasis = len(mol.get_bfs())
+           self.__atno   = mol.get_atno()
+           self.__atms   = mol.get_atms() * self.AmuToElectronMass
         # electrostatic data
         if dma is not None:
            self.__pos = dma.get_pos()
@@ -146,6 +148,8 @@ Notes:
         if self.__name   is not None: self._write_preambule(f)
         if self.__pos    is not None: self._write_pos(f)
         if self.__origin is not None: self._write_origin(f)
+        if self.__atno   is not None: self._write_atno(f)
+        if self.__atms   is not None: self._write_atms(f)
         # frequency analysis
         if self.__redmass  is not None: self._write_redmass(f)
         if self.__freq     is not None: self._write_freq(f)
@@ -180,10 +184,11 @@ Notes:
         s.run()
         rms = s.get_rms()
         rot, transl = s.get_rotran()
-        self.__pos  = s.get_transformed()
-        self.__lmoc = dot(self.__lmoc, rot) + transl
+        # perform transformations
+        self.__pos    = s.get_transformed()
+        self.__lmoc   = dot(self.__lmoc , rot) + transl
         self.__lmoc1  = dot(self.__lmoc1, rot)
-        self.__lvec   = dot(self.__lvec, rot)
+        self.__lvec   = dot(self.__lvec , rot)
         return rms
     
     # protected
@@ -194,6 +199,7 @@ Notes:
         self.__nmos, self.__nmodes, self.__basis  = None, None, None
         self.__atoms,self.__shortname = None, None
         self.__pos, self.__origin, self.__nsites = None, None, None
+        self.__atno, self.__atms = None, None
         #
         self.__redmass, self.__freq, self.__lvec = None, None, None
         self.__gijk = None
@@ -214,8 +220,10 @@ Notes:
                    'redmass': '[ Reduced masses ]',
                      'lvec' : '[ Mass-weighted eigenvectors ]',
                      'gijk' : '[ Cubic anharmonic constants ]',
-                     'pos'  : '[ Atomic coordinates ]',
-                  'origin'  : '[ DMTP origins ]',}
+                      'pos' : '[ Atomic coordinates ]',
+                   'origin' : '[ DMTP origins ]',
+                     'atno' : '[ Atomic numbers ]',
+                     'atms' : '[ Atomic masses ]',}
         self.__mol_names = mol_names
         self.__sec_names = sec_names
         return
@@ -239,6 +247,8 @@ Notes:
         # basic molecular data
         if self.__pos    is not None: par['pos'   ] = self.__pos
         if self.__origin is not None: par['origin'] = self.__origin
+        if self.__atno   is not None: par['atno'  ] = self.__atno
+        if self.__atms   is not None: par['atms'  ] = self.__atms
         # frequency analysis
         if self.__redmass  is not None: par['redmass'] = self.__redmass
         if self.__freq     is not None: par['freq'   ] = self.__freq
@@ -314,6 +324,20 @@ Notes:
                  assert 1==1, merror
                  data = data.reshape(N/3,3)
                  self.__origin = data
+            # Atomic numbers
+            elif key == 'atno':
+                 merror = 'natoms in section [ molecule ] '
+                 merror+= 'is not consistent with section [ Atomic numbers ]!'
+                 assert self.__natoms == N, merror
+                 data = data
+                 self.__atno = int(data)
+            # Atomic masses
+            elif key == 'atms':
+                 merror = 'natoms in section [ molecule ] '
+                 merror+= 'is not consistent with section [ Atomic masses ]!'
+                 assert self.__natoms == N, merror
+                 data = data
+                 self.__atms = data
             # ------------------------------------ FREQ -------------------------------------------
             # Harmonic frequencies
             elif key == 'freq':
@@ -456,6 +480,36 @@ Notes:
                 log+= "%20.10E" % self.__pos[i,j]
                 if not n%5: log+= '\n'
                 n+=1
+        log+= '\n'
+        if N%5: log+= '\n'
+        file.write(log)
+        return
+
+    def _write_atno(self,file):
+        """write atomic numbers"""
+        natoms = self.__atno.shape[0]
+        N = natoms
+        log = ' %s %s= %d\n' % (self.__sec_names['atno'].ljust(40),'N'.rjust(10),N)
+        n = 1
+        for i in xrange(natoms):
+            log+= "%20d" % self.__atno[i]
+            if not n%5: log+= '\n'
+            n+=1
+        log+= '\n'
+        if N%5: log+= '\n'
+        file.write(log)
+        return
+
+    def _write_atms(self,file):
+        """write atomic masses"""
+        natoms = self.__atms.shape[0]
+        N = natoms
+        log = ' %s %s= %d\n' % (self.__sec_names['atms'].ljust(40),'N'.rjust(10),N)
+        n = 1
+        for i in xrange(natoms):
+            log+= "%20.10E" % self.__atms[i]
+            if not n%5: log+= '\n'
+            n+=1
         log+= '\n'
         if N%5: log+= '\n'
         file.write(log)

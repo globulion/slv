@@ -2,11 +2,13 @@
 #            SOLVATOCHROMIC EFFECTIVE FRAGMENT POTENTIAL MODULE              #
 # -------------------------------------------------------------------------- #
 
-from numpy     import tensordot
+from numpy     import tensordot, dot, transpose, array, float64
 from units     import *
 from utilities import Read_xyz_file, get_pmloca, ParseFockFromGamessLog, \
                       ParseDmatFromFchk, ParseVecFromFchk
 from diff      import DIFF
+from PyQuante.Ints import getS, getT, getSAB, getTAB
+from shftex import shftex
 import sys, copy, os, re, math, glob, PyQuante.Ints, coulomb.multip
 sys.stdout.flush()
 
@@ -28,6 +30,10 @@ Notes:
    shift=True, a denotes IR-active
    molecule and should contain all 
    necessary parameters for it
+2) the a and b objects are assumed
+   to be appropriately transformed
+   in space by rotations and trans
+   lations
 """
     def __init__(self,a,b):
         self.__molA = a
@@ -40,16 +46,56 @@ Notes:
         """perform all the calculation"""
         return
     
+    def sup(self,str_a,str_b):
+        """superimpose the a and b objects to given structures"""
+        return
+    
     # protected
     
-    def _reweight(self,ria1,faij1,cika1,redmss):
-        """reweight derivatives"""
-        temp = sqrt(redmss)[:,newaxis,newaxis]
-        ria1 = temp * ria1
-        faij1= temp * faij1
-        cika1= temp * cika1
-        return ria1, faij1, cika1
+    def _ex(self,shift=True,nmode=8):
+        """calculate exchange-repulsion property"""
+        # basis sets
+        bfs1 = self.__varA['bfs']
+        bfs2 = self.__varB['bfs']
+        # instantaneous integrals
+        skm = getSAB(bfs1,bfs2)
+        tkm = getTAB(bfs1,bfs2)
+        sk1m = getSA1B(bfs1,bfs2)
+        tk1m = getTA1B(bfs1,bfs2)
+        # parameters
+        ### molecule A
+        faij = self.__varA['fock']
+        faij1= self.__varA['fock1']
+        cika = self.__varA['vecl']
+        cika1= self.__varA['vecl1']
+        rna  = self.__varA['pos']
+        ria  = self.__varA['lmoc']
+        ria1 = self.__varA['lmoc1']
+        redmss = self.__varA['redmass']
+        freq   = self.__varA['freq']
+        gijj   = self.__varA['gijk'][nmode,nmode,:]
+        lvec   = self.__varA['lvec']
+        mlist = array(bfs1.LIST1,int) + 1
+        ### molecule B
+        fbij = self.__varB['fock']
+        cikb = self.__varB['vecl']
+        rnb  = self.__varB['pos']
+        rib  = self.__varB['lmoc']
+        # transform the integrals
+        sij = dot(dot(cika,skm),transpose(cikb))
+        tij = dot(dot(cika,tkm),transpose(cikb))
+        # calculate the properties!
+        shftma,shftea = shftex(redmss,freq,gijj,lvec,
+                               ria,rib,rna,rnb,ria1,
+                               cika,cikb,cika1,
+                               skm,tkm,sk1m,tk1m,
+                               za,zb,mlist,
+                               faij,fbij,faij1,nmode)
+        shftma *= self.HartreePerHbarToCmRec
+        shftea *= self.HartreePerHbarToCmRec
 
+        return shftma, shftea
+    
 class Frag(object,DIFF):
     """
 Solvatochromic Effective Fragment Potential Fragment
