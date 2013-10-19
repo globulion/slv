@@ -64,6 +64,8 @@ Beneath I list the various sections of both groups of parameters:
 Usage:
 
 Notes:
+1) all the data in the instance of SLVPAR are stored
+   in atomic units!!!
 """
     def __init__(self,file=None):
         self.__file = file
@@ -86,7 +88,7 @@ Notes:
     
     def __repr__(self):
         """print the information about the status"""
-        log = '\n'
+        log = ' \n'
         log+= ' ================================= \n'
         log+= ' SLV SOLVATOCHROMIC EFP PARAMETERS \n'
         log+= ' ================================= \n\n'
@@ -97,41 +99,33 @@ Notes:
         log+= ' nbasis   %s \n' % self.__nbasis
         log+= ' nmos     %s \n' % self.__nmos
         log+= ' nmodes   %s \n' % self.__nmodes
-        log+= '\n'
+        log+= ' \n'
         return str(log)
     
     # public
     
-    def set(self,redmass=None,freq=None,lvec=None,gijk=None,
-                 fock=None,lmoc=None,vecl=None,
-                 fock1=None,lmoc1=None,vecl1=None,
-                 pos=None,origin=None,):
-        """set the parameters (in future change the arguments to different data objects!"""
-        self.__redmass = redmass; self.__freq = freq; self.__lvec = lvec; self.__gijk = gijk
-        self.__fock = fock; self.__lmoc = lmoc; self.__vecl = vecl
-        self.__fock1 = fock1; self.__lmoc1 = lmoc1; self.__vecl1 = vecl1
-        self.__pos = pos, self.__origin = origin
+    def set(self,mol=None,anh=None,dma=None,frag=None):
+        """set the parameters providing appropriate objects"""
+        # molecular structure
+        if mol is not None:
+           self.__pos = mol.get_pos()
+        # electrostatic data
+        if dma is not None:
+           self.__pos = dma.get_pos()
+           self.__origin = dma.get_origin()
+        # anharmonic file object (FREQ)
+        if anh is not None:
+           assert anh.if_w(), 'Anharmonic object is in wrong units! Supply anh.w() object'
+           self.__redmass = anh.redmass; self.__freq = anh.freq
+           self.__lvec    = anh.L      ; self.__gijk = anh.K3
+        # EFP fragment parameters
+        if frag is not None:
+           self._parse_dict( frag.get() )
         return
-
+        
     def get(self):
         """returns dictionary with parameters"""
-        par = {}
-        # basic molecular data
-        if self.__pos    is not None: par['pos'   ] = self.__pos
-        if self.__origin is not None: par['origin'] = self.__origin
-        # frequency analysis
-        if self.__redmass  is not None: par['redmass'] = self.__redmass
-        if self.__freq     is not None: par['freq'   ] = self.__freq
-        if self.__lvec     is not None: par['lvec'   ] = self.__lvec
-        if self.__gijk     is not None: par['gijk'   ] = self.__gijk
-        # EFP parameters
-        if self.__lmoc  is not None: par['lmoc' ] = self.__lmoc
-        if self.__lmoc1 is not None: par['lmoc1'] = self.__lmoc1
-        if self.__fock  is not None: par['fock' ] = self.__fock
-        if self.__fock1 is not None: par['fock1'] = self.__fock1
-        if self.__vecl  is not None: par['vecl' ] = self.__vecl
-        if self.__vecl1 is not None: par['vecl1'] = self.__vecl1
-        return par
+        return self._make_dict()
         
     def write(self,file='slv.par',par=None):
         """writes the parameters into a file"""
@@ -189,7 +183,40 @@ Notes:
         self.__mol_names = mol_names
         self.__sec_names = sec_names
         return
-    
+
+    def _parse_dict(self,par):
+        """save the memorials from par dictionary"""
+        for key, val in par.items():
+            if   key == 'fock' : self.__fock  = val
+            elif key == 'fock1': self.__fock1 = val
+            elif key == 'lmoc' : self.__lmoc  = val
+            elif key == 'lmoc1': self.__lmoc1 = val
+            elif key == 'vecl' : self.__vecl  = val
+            elif key == 'vecl1': self.__vecl1 = val
+            elif key == 'vecc' : self.__vecc  = val
+            elif key == 'vecc1': self.__vecc1 = val
+        return
+
+    def _make_dict(self):
+        """returns dictionary with parameters"""
+        par = {}
+        # basic molecular data
+        if self.__pos    is not None: par['pos'   ] = self.__pos
+        if self.__origin is not None: par['origin'] = self.__origin
+        # frequency analysis
+        if self.__redmass  is not None: par['redmass'] = self.__redmass
+        if self.__freq     is not None: par['freq'   ] = self.__freq
+        if self.__lvec     is not None: par['lvec'   ] = self.__lvec
+        if self.__gijk     is not None: par['gijk'   ] = self.__gijk
+        # EFP parameters
+        if self.__lmoc  is not None: par['lmoc' ] = self.__lmoc
+        if self.__lmoc1 is not None: par['lmoc1'] = self.__lmoc1
+        if self.__fock  is not None: par['fock' ] = self.__fock
+        if self.__fock1 is not None: par['fock1'] = self.__fock1
+        if self.__vecl  is not None: par['vecl' ] = self.__vecl
+        if self.__vecl1 is not None: par['vecl1'] = self.__vecl1
+        return par
+        
     # --------------------------------------------------------- #
     #            R E A D I N G    P R O C E D U R E S           #
     # --------------------------------------------------------- #

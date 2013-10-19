@@ -80,7 +80,7 @@ Usage:
         return
 
     def reset(self,anh=None,basis=None,nae=None,
-                 fchk=None,gmslog=None,):
+                   fchk=None,gmslog=None,):
         """reset the properties"""
         self.__anh    = anh
         self.__fchk   = fchk
