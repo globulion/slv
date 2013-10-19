@@ -2,10 +2,10 @@
 #             SOLVATOCHROMIC PARAMETER FORMAT MODULE                    #
 # --------------------------------------------------------------------- #
 
-from numpy     import array, float64, zeros
+from numpy     import array, float64, zeros, newaxis, sqrt, dot
 from units     import *
 from dma       import DMA
-from utilities import order
+from utilities import order, SVDSuperimposer as svd_sup
 import sys, copy, os, re, math
 sys.stdout.flush()
 
@@ -161,6 +161,31 @@ Notes:
         f.close()
         return
     
+    def rotate(self,rot):
+        """rotate the tensors by <rot> unitary matrix"""
+        if self.__pos   is not None:
+           self.__pos    = dot(self.__pos, rot)
+        if self.__lmoc  is not None:
+           self.__lmoc   = dot(self.__lmoc, rot)
+        if self.__lmoc1 is not None:
+           self.__lmoc1  = dot(self.__lmoc1, rot)
+        if self.__lvec  is not None:
+           self.__lvec   = dot(self.__lvec, rot)
+        return
+    
+    def sup(self,str):
+        """superimpose structures <str> and <self.__pos>"""
+        s = svd_sup()
+        s.set(str,self.__pos)
+        s.run()
+        rms = s.get_rms()
+        rot, transl = s.get_rotran()
+        self.__pos  = s.get_transformed()
+        self.__lmoc = dot(self.__lmoc, rot) + transl
+        self.__lmoc1  = dot(self.__lmoc1, rot)
+        self.__lvec   = dot(self.__lvec, rot)
+        return rms
+    
     # protected
     
     def _create(self):
@@ -230,7 +255,7 @@ Notes:
         
     def _tr_lvec(self,lvec,nmodes,natoms):
         """transpose axis and reshape"""
-        return anh.L.transpose().reshape(nmodes,natoms,3)
+        return lvec.transpose().reshape(nmodes,natoms,3)
     
     # --------------------------------------------------------- #
     #            R E A D I N G    P R O C E D U R E S           #
@@ -291,7 +316,7 @@ Notes:
                  self.__origin = data
             # ------------------------------------ FREQ -------------------------------------------
             # Harmonic frequencies
-            if   key == 'freq':
+            elif key == 'freq':
                  merror = 'nmodes in section [ molecule ] '
                  merror+= 'is not consistent with section [ Harmonic frequencies ]!'
                  assert self.__nmodes == N, merror
@@ -306,7 +331,7 @@ Notes:
             elif  key == 'lvec':
                   merror = 'nmodes in section [ molecule ] '
                   merror+= 'is not consistent with section [ Mass-weighted eigenvectors ]!'
-                  assert self.__nmodes == N, merror
+                  assert self.__nmodes == N/(self.__natoms*3), merror
                   self.__lvec = data.reshape(self.__nmodes,self.__natoms,3)
             # Cubic anharmonic constants
             elif  key == 'gijk':
@@ -341,6 +366,10 @@ Notes:
                   merror+= 'is not consistent with section [ LMO centroids - first derivatives ]!'
                   assert self.__nmos == N/(3*self.__nmodes), merror
                   data = data.reshape(self.__nmodes,self.__nmos,3)
+                  # multiply by sqrt(redmass)
+                  assert self.__redmass is not None, 'No reduced masses supplied!'
+                  temp = sqrt(self.__redmass)[:,newaxis,newaxis]
+                  data = temp * data
                   self.__lmoc1 = data
             # Fock matrix
             elif  key == 'fock':
@@ -371,6 +400,10 @@ Notes:
                               fock1[i,j,k] = d
                               fock1[i,k,j] = d
                               K += 1
+                  # multiply by sqrt(redmass)
+                  assert self.__redmass is not None, 'No reduced masses supplied!'
+                  temp = sqrt(self.__redmass)[:,newaxis,newaxis]
+                  fock1= temp * fock1
                   self.__fock1 = fock1
             # AO to LMO transformation matrix
             elif  key == 'vecl':
@@ -385,10 +418,14 @@ Notes:
                   merror+= 'is not consistent with section [ AO->LMO matrix - first derivatives ]!'
                   assert self.__nmos == N/(self.__nbasis*self.__nmodes)
                   data = data.reshape(self.__nmodes,self.__nmos,self.__nbasis)
+                  # multiply by sqrt(redmass)
+                  assert self.__redmass is not None, 'No reduced masses supplied!'
+                  temp = sqrt(self.__redmass)[:,newaxis,newaxis]
+                  data = temp * data
                   self.__vecl1 = data
             # other not-programmed section
             else:
-                raise Exception('Non-standard section name detected! Check the format of your file!')
+                raise Exception("Non-standard section name '%s' detected! Check the format of your file!"%key)
         return
 
     # --------------------------------------------------------- #
@@ -472,8 +509,7 @@ Notes:
 
     def _write_lvec(self,file):
         """write mass-weighted eigenvectors"""
-        nmodes, natoms, x = self.__lvec.shape
-        natoms/=3 
+        nmodes, natoms, x = self.__lvec.shape 
         N = nmodes * natoms * 3
         log = ' %s %s= %d\n' % (self.__sec_names['lvec'].ljust(40),'N'.rjust(10),N)
         n = 1
