@@ -95,7 +95,7 @@ Notes:
         log+= ' ================================= \n\n'
         log+= ' MOLECULE SPECIFICATION \n'
         log+= ' name     %s \n'    %  self.__name
-        log+= ' method   %s/%s \n' % (self.method, self.__basis)
+        log+= ' method   %s/%s \n' % (self.__method, self.__basis)
         log+= ' natoms   %s \n'    %  self.__natoms
         log+= ' nbasis   %s \n'    %  self.__nbasis
         log+= ' nmos     %s \n'    %  self.__nmos
