@@ -138,7 +138,11 @@ Notes:
     def get(self):
         """returns dictionary with parameters"""
         return self._make_dict()
-        
+    
+    def get_bfs(self):
+        """return basis set object"""
+        return
+    
     def write(self,file='slv.par',par=None):
         """writes the parameters into a file"""
         f = open(file,'w')
@@ -330,7 +334,7 @@ Notes:
                  merror+= 'is not consistent with section [ Atomic numbers ]!'
                  assert self.__natoms == N, merror
                  data = data
-                 self.__atno = int(data)
+                 self.__atno = array(data,int)
             # Atomic masses
             elif key == 'atms':
                  merror = 'natoms in section [ molecule ] '
