@@ -5,7 +5,8 @@
 from numpy     import array, float64, zeros, newaxis, sqrt, dot
 from units     import *
 from dma       import DMA
-from utilities import order, SVDSuperimposer as svd_sup
+from utilities import order, SVDSuperimposer as svd_sup, MakeMol
+from PyQuante.Ints import getbasis
 import sys, copy, os, re, math
 sys.stdout.flush()
 
@@ -93,12 +94,12 @@ Notes:
         log+= ' SLV SOLVATOCHROMIC EFP PARAMETERS \n'
         log+= ' ================================= \n\n'
         log+= ' MOLECULE SPECIFICATION \n'
-        log+= ' name     %s \n' % self.__name
-        log+= ' method   %s \n' % self.__basis
-        log+= ' natoms   %s \n' % self.__natoms
-        log+= ' nbasis   %s \n' % self.__nbasis
-        log+= ' nmos     %s \n' % self.__nmos
-        log+= ' nmodes   %s \n' % self.__nmodes
+        log+= ' name     %s \n'    %  self.__name
+        log+= ' method   %s/%s \n' % (self.method, self.__basis)
+        log+= ' natoms   %s \n'    %  self.__natoms
+        log+= ' nbasis   %s \n'    %  self.__nbasis
+        log+= ' nmos     %s \n'    %  self.__nmos
+        log+= ' nmodes   %s \n'    %  self.__nmodes
         log+= ' \n'
         return str(log)
     
@@ -141,7 +142,9 @@ Notes:
     
     def get_bfs(self):
         """return basis set object"""
-        return
+        mol = MakeMol(self.__atno,self.__pos,name=self.__name)
+        bfs = getbasis(mol,self.__basis)
+        return bfs
     
     def write(self,file='slv.par',par=None):
         """writes the parameters into a file"""
@@ -299,7 +302,7 @@ Notes:
                     if name == 'nsites':
                         self.__nsites = int(arg)
                     if name == 'basis':
-                        self.__basis = arg
+                        self.__method, self.__basis = arg.split('/')
                     if name == 'nbasis':
                         self.__nbasis = int(arg)
                     if name == 'nmos':
