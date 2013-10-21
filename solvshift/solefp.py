@@ -7,7 +7,7 @@ from units     import *
 from utilities import Read_xyz_file, get_pmloca, ParseFockFromGamessLog, \
                       ParseDmatFromFchk, ParseVecFromFchk
 from diff      import DIFF
-from PyQuante.Ints import getS, getT, getSAB, getTAB
+from PyQuante.Ints import getSAB, getTAB, getSA1B, getTA1B
 from shftex import shftex
 import sys, copy, os, re, math, glob, PyQuante.Ints, coulomb.multip
 sys.stdout.flush()
@@ -23,29 +23,42 @@ class EFP(object,UNITS):
 
 Usage:
 A = EFP(a,b)
-result = A(shift=True)
+result = A(shift=False,nmode=None,cunit=False)
+rms_a, rms_b = A.sup(str_a=None,str_b=None)
 
 Notes:
 1) a and b are SLVPAR instances. If shift=True, a denotes IR-active molecule
    and should contain all necessary parameters for it
 2) the a and b objects are assumed to be appropriately transformed in space 
    by rotations and translations
+3) a and b in sup argument list are ndarray structures of dimension (natoms,3)
+   The coordinates are assumed to be in A.U.
+4) cunit - change units. If <True> then energies are returned in [kcal/mole]
+   and frequency shifts in [cm-1]. Otherwise all is returned in A.U. units
 """
     def __init__(self,a,b):
         self.__molA = a
         self.__molB = b
-        # extract the dictionaries of variables
-        self.__varA = a.get()
-        self.__varB = b.get()
-    
-    def __call__(self,shift=True):
-        """perform all the calculation"""
         return
+    
+    def __call__(self,shift=False,nmode=None,cunit=False):
+        """perform all the calculation"""
+        ma, ea = self._ex(shift,nmode,cunit)
+        return ma, ea
+    
+    def __repr__(self):
+        """print the two fragments"""
+        log = '\n'
+        log+= str(self.__molA.get_pos()*self.BohrToAngstrom)
+        log+= '\n'
+        log+= str(self.__molB.get_pos()*self.BohrToAngstrom)
+        log+= '\n'
+        return str(log)
     
     def sup(self,str_a=None,str_b=None):
         """superimpose the a and b objects to given structures"""
         rms_a, rms_b = None, None
-        if str_a is not None: 
+        if str_a is not None:
            rms_a = self.__molA.sup(str_a)
         if str_b is not None:
            rms_b = self.__molB.sup(str_b)
@@ -53,37 +66,40 @@ Notes:
     
     # protected
     
-    def _ex(self,shift=True,nmode=8):
+    def _ex(self,shift,nmode,cunit):
         """calculate exchange-repulsion property"""
+        # variables
+        varA = self.__molA.get()
+        varB = self.__molB.get()
         # basis sets
-        bfs1 = self.__varA['bfs']
-        bfs2 = self.__varB['bfs']
+        bfsA = self.__molA.get_bfs()
+        bfsB = self.__molB.get_bfs()
         # instantaneous integrals
-        skm  = getSAB(bfs1,bfs2)
-        tkm  = getTAB(bfs1,bfs2)
-        sk1m = getSA1B(bfs1,bfs2)
-        tk1m = getTA1B(bfs1,bfs2)
+        skm  = getSAB(bfsA,bfsB)
+        tkm  = getTAB(bfsA,bfsB)
+        sk1m = getSA1B(bfsA,bfsB)
+        tk1m = getTA1B(bfsA,bfsB)
         # parameters
         ### molecule A
-        faij   = self.__varA['fock']
-        faij1  = self.__varA['fock1']
-        cika   = self.__varA['vecl']
-        cika1  = self.__varA['vecl1']
-        za     = self.__varA['atno']
-        rna    = self.__varA['pos']
-        ria    = self.__varA['lmoc']
-        ria1   = self.__varA['lmoc1']
-        redmss = self.__varA['redmass']
-        freq   = self.__varA['freq']
-        gijj   = self.__varA['gijk'][nmode,nmode,:]
-        lvec   = self.__varA['lvec']
-        mlist  = array(bfs1.LIST1,int) + 1
+        faij   = varA['fock']
+        faij1  = varA['fock1']
+        cika   = varA['vecl']
+        cika1  = varA['vecl1']
+        za     = varA['atno']
+        rna    = varA['pos']
+        ria    = varA['lmoc']
+        ria1   = varA['lmoc1']
+        redmss = varA['redmass']
+        freq   = varA['freq']
+        gijj   = varA['gijk'][nmode-1,nmode-1,:]
+        lvec   = varA['lvec']
+        mlist  = bfsA.get_bfsl() + 1
         ### molecule B
-        fbij = self.__varB['fock']
-        cikb = self.__varB['vecl']
-        zb   = self.__varB['atno']
-        rnb  = self.__varB['pos']
-        rib  = self.__varB['lmoc']
+        fbij = varB['fock']
+        cikb = varB['vecl']
+        zb   = varB['atno']
+        rnb  = varB['pos']
+        rib  = varB['lmoc']
         # transform the integrals
         sij = dot(dot(cika,skm),transpose(cikb))
         tij = dot(dot(cika,tkm),transpose(cikb))
@@ -94,8 +110,9 @@ Notes:
                                skm,tkm,sk1m,tk1m,
                                za,zb,mlist,
                                faij,fbij,faij1,nmode)
-        shftma *= self.HartreePerHbarToCmRec
-        shftea *= self.HartreePerHbarToCmRec
+        if cunit:
+           shftma *= self.HartreePerHbarToCmRec
+           shftea *= self.HartreePerHbarToCmRec
 
         return shftma, shftea
     

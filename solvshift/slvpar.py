@@ -94,12 +94,12 @@ Notes:
         log+= ' SLV SOLVATOCHROMIC EFP PARAMETERS \n'
         log+= ' ================================= \n\n'
         log+= ' MOLECULE SPECIFICATION \n'
-        log+= ' name     %s \n'    %  self.__name
+        log+= ' name     %s    \n' %  self.__name
         log+= ' method   %s/%s \n' % (self.__method, self.__basis)
-        log+= ' natoms   %s \n'    %  self.__natoms
-        log+= ' nbasis   %s \n'    %  self.__nbasis
-        log+= ' nmos     %s \n'    %  self.__nmos
-        log+= ' nmodes   %s \n'    %  self.__nmodes
+        log+= ' natoms   %s    \n' %  self.__natoms
+        log+= ' nbasis   %s    \n' %  self.__nbasis
+        log+= ' nmos     %s    \n' %  self.__nmos
+        log+= ' nmodes   %s    \n' %  self.__nmodes
         log+= ' \n'
         return str(log)
     
@@ -117,7 +117,7 @@ Notes:
            self.__nmos   = int(sum(mol.get_atno())/2)
            self.__method = mol.get_method()
            self.__basis  = mol.get_basis()
-           self.__nbasis = len(mol.get_bfs())
+           self.__nbasis = len( mol.get_bfs() )
            self.__atno   = mol.get_atno()
            self.__atms   = mol.get_atms() * self.AmuToElectronMass
         # electrostatic data
@@ -129,7 +129,7 @@ Notes:
            assert anh.if_w(), 'Anharmonic object is in wrong units! Supply anh.w() object'
            self.__redmass = anh.redmass
            self.__freq = anh.freq
-           self.__lvec    = self._tr_lvec(anh.L,self.__nmodes,self.__natoms)
+           self.__lvec = self._tr_lvec(anh.L,self.__nmodes,self.__natoms)
            self.__gijk = anh.K3
         # EFP fragment parameters
         if frag is not None:
@@ -145,6 +145,10 @@ Notes:
         mol = MakeMol(self.__atno,self.__pos,name=self.__name)
         bfs = getbasis(mol,self.__basis)
         return bfs
+    
+    def get_pos(self):
+        """return position of a fragment"""
+        return self.__pos
     
     def write(self,file='slv.par',par=None):
         """writes the parameters into a file"""
@@ -193,10 +197,14 @@ Notes:
         rot, transl = s.get_rotran()
         # perform transformations
         self.__pos    = s.get_transformed()
-        self.__lmoc   = dot(self.__lmoc , rot) + transl
-        self.__lmoc1  = dot(self.__lmoc1, rot)
-        self.__lvec   = dot(self.__lvec , rot)
+        if self.__lmoc  is not None: self.__lmoc   = dot(self.__lmoc , rot) + transl
+        if self.__lmoc1 is not None: self.__lmoc1  = dot(self.__lmoc1, rot)
+        if self.__lvec  is not None: self.__lvec   = dot(self.__lvec , rot)
         return rms
+    
+    def copy(self):
+        """return a deepcopy of me!"""
+        return copy.deepcopy(self)
     
     # protected
     
