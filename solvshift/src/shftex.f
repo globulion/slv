@@ -305,10 +305,10 @@ C
  2000    CONTINUE
          CALL ZROSUM(NMODES)
  1000 CONTINUE
-      WRITE(*,*) " --- FI [A.U.] --- "
-      DO I=1,30
-         WRITE(*,*) I,FIEX(I)
-      ENDDO
+C      WRITE(*,*) " --- FI [A.U.] --- "
+C      DO I=1,30
+C         WRITE(*,*) I,FIEX(I)
+C      ENDDO
 C
       RETURN
       END
@@ -331,6 +331,7 @@ C
       PARAMETER (ZERO=0.0D+00,ONE=1.0D+00,TWO=2.0D+00,THREE=3.0D+00,
      &           FOUR=4.0D+00,FIVE=5.0D+00)
 C
+      CALL ZROSIJ(NMODES,NMOSA,NMOSB)
       DO 1000 I=1,NMOSA
       DO 1000 J=1,NMOSB
 C
@@ -363,8 +364,6 @@ C
 C
 C...........the following two lines are VEEERY inefficient!!! 
             CIKA1M = CIKA1(MM,I,K)
-C            SIJM1(MM,I,J) = SIJM1(MM,I,J) + COEFS * SUM1
-C            TIJM1(MM,I,J) = TIJM1(MM,I,J) + COEFS * SUM2
             SIJM1(MM,I,J) = SIJM1(MM,I,J) + CIKA1M * 
      &                      CIKBJL * SKMKL + COEFS * SUM1
             TIJM1(MM,I,J) = TIJM1(MM,I,J) + CIKA1M * 
@@ -405,6 +404,29 @@ C
 C
       RETURN
       END
+C-----|--|---------|---------|---------|---------|---------|---------|--|------|
+
+      SUBROUTINE ZROSIJ(NMODES,NMOSA,NMOSB)
+C
+C          ZERO-OUT ALL TIJM1 AND SIJM1 DERIVATIVES
+C
+      IMPLICIT DOUBLE PRECISION(A-H,O-Z)
+      COMMON /FEX   / FIEX(40), FJEX
+      COMMON /INTIJ / SIJ(40,40), TIJ(40,40),
+     &                SIJM1(40,40,40),
+     &                TIJM1(40,40,40)
+      PARAMETER (ZERO=0.0D+00)
+      FJEX = ZERO
+      DO 1937 M=1,NMODES
+         FIEX(M) = ZERO
+      DO 1937 I=1,NMOSA
+      DO 1937 J=1,NMOSB
+         SIJM1(M,I,J) = ZERO
+         TIJM1(M,I,J) = ZERO
+ 1937 CONTINUE
+      RETURN
+      END
+
 C-----|--|---------|---------|---------|---------|---------|---------|--|------|
 
       BLOCK DATA
