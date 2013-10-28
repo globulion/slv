@@ -2,11 +2,12 @@
 #             SOLVATOCHROMIC PARAMETER FORMAT MODULE                    #
 # --------------------------------------------------------------------- #
 
-from numpy     import array, float64, zeros, newaxis, sqrt, dot
+from numpy     import array, float64, zeros, newaxis, sqrt, dot,asfortranarray, transpose
 from units     import *
 from dma       import DMA
 from utilities import order, SVDSuperimposer as svd_sup, MakeMol
 from PyQuante.Ints import getbasis
+from efprot    import vecrot#, vc1rot
 import sys, copy, os, re, math
 sys.stdout.flush()
 
@@ -178,6 +179,7 @@ Notes:
     
     def rotate(self,rot):
         """rotate the tensors by <rot> unitary matrix"""
+        # transform the atomic position static and dynamic information
         if self.__pos   is not None:
            self.__pos    = dot(self.__pos, rot)
         if self.__lmoc  is not None:
@@ -186,6 +188,14 @@ Notes:
            self.__lmoc1  = dot(self.__lmoc1, rot)
         if self.__lvec  is not None:
            self.__lvec   = dot(self.__lvec, rot)
+        # transform the wave function!
+        if self.__vecl  is not None:
+           bfs = self.get_bfs()
+           typs= bfs.get_bfst().sum(axis=1)
+           vecrot(self.__nmos,self.__nbasis,self.__vecl,rot,typs)
+           if self.__vecl1 is not None:
+              #vc1rot(self.__nmodes,self.__nmos,self.__nbasis,self.__vecl1,rot,typs)
+              pass
         return
     
     def sup(self,str):
@@ -200,6 +210,14 @@ Notes:
         if self.__lmoc  is not None: self.__lmoc   = dot(self.__lmoc , rot) + transl
         if self.__lmoc1 is not None: self.__lmoc1  = dot(self.__lmoc1, rot)
         if self.__lvec  is not None: self.__lvec   = dot(self.__lvec , rot)
+        #
+        if self.__vecl  is not None:
+           bfs = self.get_bfs()
+           typs= bfs.get_bfst().sum(axis=1)
+           self.__vecl = vecrot(self.__vecl,transpose(rot),typs)
+           if self.__vecl1 is not None:
+              #vc1rot(self.__nmodes,self.__nmos,self.__nbasis,self.__vecl1,rot,typs)
+              pass        
         return rms
     
     def copy(self):
