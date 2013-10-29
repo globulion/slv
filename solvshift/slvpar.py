@@ -192,13 +192,13 @@ Notes:
         if self.__vecl  is not None:
            bfs = self.get_bfs()
            typs= bfs.get_bfst().sum(axis=1)
-           vecrot(self.__nmos,self.__nbasis,self.__vecl,rot,typs)
+           self.__vecl = vecrot(self.__vecl,rot,typs)
            if self.__vecl1 is not None:
               self.__vecl1 = vc1rot(self.__vecl1,rot,typs)
         return
     
     def sup(self,str):
-        """superimpose structures <str> and <self.__pos>"""
+        """superimpose structures <str> and <self.__pos>. Return rms in A.U."""
         s = svd_sup()
         s.set(str,self.__pos)
         s.run()
