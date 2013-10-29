@@ -119,6 +119,7 @@ Notes:
            self.__method = mol.get_method()
            self.__basis  = mol.get_basis()
            self.__nbasis = len( mol.get_bfs() )
+           self.__ncmos  = self.__nbasis
            self.__atno   = mol.get_atno()
            self.__atms   = mol.get_atms() * self.AmuToElectronMass
         # electrostatic data
@@ -174,6 +175,8 @@ Notes:
         if self.__fock1 is not None: self._write_fock1(f)
         if self.__vecl  is not None: self._write_vecl(f)
         if self.__vecl1 is not None: self._write_vecl1(f)
+        if self.__vecc  is not None: self._write_vecc(f)
+        if self.__vecc1 is not None: self._write_vecc1(f)
         f.close()
         return
     
@@ -193,8 +196,12 @@ Notes:
            bfs = self.get_bfs()
            typs= bfs.get_bfst().sum(axis=1)
            self.__vecl = vecrot(self.__vecl,rot,typs)
+           if self.__vecc  is not None:
+              self.__vecc  = vecrot(self.__vecc,rot,typs)
            if self.__vecl1 is not None:
               self.__vecl1 = vc1rot(self.__vecl1,rot,typs)
+           if self.__vecc1 is not None:
+              self.__vecc1 = vc1rot(self.__vecc1,rot,typs)
         return
     
     def sup(self,str):
@@ -209,13 +216,17 @@ Notes:
         if self.__lmoc  is not None: self.__lmoc   = dot(self.__lmoc , rot) + transl
         if self.__lmoc1 is not None: self.__lmoc1  = dot(self.__lmoc1, rot)
         if self.__lvec  is not None: self.__lvec   = dot(self.__lvec , rot)
-        #
+        # - wave function
         if self.__vecl  is not None:
            bfs = self.get_bfs()
            typs= bfs.get_bfst().sum(axis=1)
            self.__vecl = vecrot(self.__vecl,rot,typs)
+           if self.__vecc  is not None:
+              self.__vecc  = vecrot(self.__vecc,rot,typs)
            if self.__vecl1 is not None:
-              self.__vecl1 = vc1rot(self.__vecl1,rot,typs)     
+              self.__vecl1 = vc1rot(self.__vecl1,rot,typs)
+           if self.__vecc1 is not None:
+              self.__vecc1 = vc1rot(self.__vecc1,rot,typs)
         return rms
     
     def copy(self):
@@ -237,15 +248,19 @@ Notes:
         #
         self.__fock, self.__lmoc, self.__vecl = None, None, None
         self.__fock1,self.__lmoc1,self.__vecl1= None, None, None
+        self.__ncmos,self.__vecc ,self.__vecc1= None, None, None
         #
         mol_names = ('name','basis','method','natoms','nbasis',
-                     'nmos','nmodes','atoms','shortname','nsites',)
+                     'nmos','nmodes','atoms','shortname','nsites',
+                     'ncmos',)
         sec_names = {'lmoc' : '[ LMO centroids ]',
                      'lmoc1': '[ LMO centroids - first derivatives ]',
                      'fock' : '[ Fock matrix ]',
                      'fock1': '[ Fock matrix - first derivatives ]',
                      'vecl' : '[ AO->LMO matrix ]',
                      'vecl1': '[ AO->LMO matrix - first derivatives ]',
+                     'vecc' : '[ AO->CMO matrix ]',
+                     'vecc1': '[ AO->CMO matrix - first derivatives ]',
                      'mol'  : '[ molecule ]',
                      'freq' : '[ Harmonic frequencies ]',
                    'redmass': '[ Reduced masses ]',
@@ -292,10 +307,12 @@ Notes:
         if self.__fock1 is not None: par['fock1'] = self.__fock1
         if self.__vecl  is not None: par['vecl' ] = self.__vecl
         if self.__vecl1 is not None: par['vecl1'] = self.__vecl1
+        if self.__vecc  is not None: par['vecc' ] = self.__vecc
+        if self.__vecc1 is not None: par['vecc1'] = self.__vecc1
         return par
         
     def _tr_lvec(self,lvec,nmodes,natoms):
-        """transpose axis and reshape"""
+        """Transpose axes and reshape the L-matrix from FREQ instance"""
         return lvec.transpose().reshape(nmodes,natoms,3)
     
     # --------------------------------------------------------- #
@@ -331,6 +348,8 @@ Notes:
                         self.__nbasis = int(arg)
                     if name == 'nmos':
                         self.__nmos = int(arg)
+                    if name == 'ncmos':
+                        self.__ncmos = int(arg)
                     if name == 'nmodes':
                         self.__nmodes = int(arg)
                 
@@ -467,6 +486,13 @@ Notes:
                   assert self.__nmos == N/self.__nbasis, merror
                   data = data.reshape(self.__nmos,self.__nbasis)
                   self.__vecl = data
+            # AO to CMO transformation matrix
+            elif  key == 'vecc':
+                  merror = 'ncmos and nbasis in section [ molecule ] '
+                  merror+= 'is not consistent with section [ AO->CMO matrix ]!'
+                  assert self.__ncmos == N/self.__nbasis, merror
+                  data = data.reshape(self.__ncmos,self.__nbasis)
+                  self.__vecc = data
             # AO to LMO transformation matrix first derivatives
             elif  key == 'vecl1':
                   merror = 'nmodes, nmos and nbasis in section [ molecule ] '
@@ -478,6 +504,17 @@ Notes:
                   temp = sqrt(self.__redmass)[:,newaxis,newaxis]
                   data = temp * data
                   self.__vecl1 = data
+            # AO to CMO transformation matrix first derivatives
+            elif  key == 'vecc1':
+                  merror = 'nmodes, ncmos and nbasis in section [ molecule ] '
+                  merror+= 'is not consistent with section [ AO->CMO matrix - first derivatives ]!'
+                  assert self.__ncmos == N/(self.__nbasis*self.__nmodes)
+                  data = data.reshape(self.__nmodes,self.__ncmos,self.__nbasis)
+                  # multiply by sqrt(redmass)
+                  assert self.__redmass is not None, 'No reduced masses supplied!'
+                  temp = sqrt(self.__redmass)[:,newaxis,newaxis]
+                  data = temp * data
+                  self.__vecc1 = data
             # other not-programmed section
             else:
                 raise Exception("Non-standard section name '%s' detected! Check the format of your file!"%key)
@@ -496,6 +533,7 @@ Notes:
         log+= '   nbasis     = %s\n'    % self.__nbasis
         log+= '   nmodes     = %s\n'    % self.__nmodes
         log+= '   nmos       = %s\n'    % self.__nmos
+        log+= '   ncmos      + %s\n'    % self.__ncmos
         log+= ' \n'
         file.write(log)
         return
@@ -708,6 +746,22 @@ Notes:
         if N%5: log+= '\n'
         file.write(log)
         return
+
+    def _write_vecc(self,file):
+        """write AO-CMO transformation matrix elements"""
+        ncmos, nbasis = self.__vecc.shape
+        N = ncmos * nbasis
+        log = ' %s %s= %d\n' % (self.__sec_names['vecc'].ljust(40),'N'.rjust(10),N)
+        n = 1
+        for i in xrange(ncmos):
+            for j in xrange(nbasis):
+                log+= "%20.10E" % self.__vecc[i,j]
+                if not n%5: log+= '\n'
+                n+=1
+        log+= '\n'
+        if N%5: log+= '\n'
+        file.write(log)
+        return
     
     def _write_vecl1(self,file):
         """write AO-LMO transformation matrix element first derivatives wrt nmodes"""
@@ -719,6 +773,23 @@ Notes:
             for j in xrange(nmos):
                 for k in xrange(nbasis):
                     log+= "%20.10E" % self.__vecl1[i,j,k]
+                    if not n%5: log+= '\n'
+                    n+=1
+        log+= '\n'
+        if N%5: log+= '\n'
+        file.write(log)
+        return
+
+    def _write_vecc1(self,file):
+        """write AO-CMO transformation matrix element first derivatives wrt nmodes"""
+        nmodes, ncmos, nbasis = self.__vecc1.shape
+        N = nmodes * ncmos * nbasis
+        log = ' %s %s= %d\n' % (self.__sec_names['vecc1'].ljust(40),'N'.rjust(10),N)
+        n = 1
+        for i in xrange(nmodes):
+            for j in xrange(ncmos):
+                for k in xrange(nbasis):
+                    log+= "%20.10E" % self.__vecc1[i,j,k]
                     if not n%5: log+= '\n'
                     n+=1
         log+= '\n'
