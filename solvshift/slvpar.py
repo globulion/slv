@@ -7,7 +7,7 @@ from units     import *
 from dma       import DMA
 from utilities import order, SVDSuperimposer as svd_sup, MakeMol
 from PyQuante.Ints import getbasis
-from efprot    import vecrot#, vc1rot
+from efprot    import vecrot, vc1rot
 import sys, copy, os, re, math
 sys.stdout.flush()
 
@@ -194,8 +194,7 @@ Notes:
            typs= bfs.get_bfst().sum(axis=1)
            vecrot(self.__nmos,self.__nbasis,self.__vecl,rot,typs)
            if self.__vecl1 is not None:
-              #vc1rot(self.__nmodes,self.__nmos,self.__nbasis,self.__vecl1,rot,typs)
-              pass
+              self.__vecl1 = vc1rot(self.__vecl1,rot,typs)
         return
     
     def sup(self,str):
@@ -214,10 +213,9 @@ Notes:
         if self.__vecl  is not None:
            bfs = self.get_bfs()
            typs= bfs.get_bfst().sum(axis=1)
-           self.__vecl = vecrot(self.__vecl,transpose(rot),typs)
+           self.__vecl = vecrot(self.__vecl,rot,typs)
            if self.__vecl1 is not None:
-              #vc1rot(self.__nmodes,self.__nmos,self.__nbasis,self.__vecl1,rot,typs)
-              pass        
+              self.__vecl1 = vc1rot(self.__vecl1,rot,typs)     
         return rms
     
     def copy(self):
