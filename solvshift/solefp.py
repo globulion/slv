@@ -164,9 +164,13 @@ Usage:
         if self.__fock1 is not None: par['fock1'] = self.__fock1
         if self.__vecl  is not None: par['vecl' ] = self.__vecl
         if self.__vecl1 is not None: par['vecl1'] = self.__vecl1
+        if self.__vecc  is not None: par['vecc' ] = self.__vecc
+        if self.__vecc1 is not None: par['vecc1'] = self.__vecc1
+        if self.__fckc  is not None: par['fckc' ] = self.__fckc
+        if self.__fckc1 is not None: par['fckc1'] = self.__fckc1
         return par
     
-    def eval(self):
+    def eval(self,ct=False):
         """Parses AO-LMO transformation matrix and Fock matrix.
 Transforms the latter from AO to LMO space. Computes also 
 overlap integrals and parses density matrix."""
@@ -174,9 +178,10 @@ overlap integrals and parses density matrix."""
         # evaluate transformation matrices and LMO centroids
         SAO   = PyQuante.Ints.getS(self.__bfs)
         dmat = ParseDmatFromFchk(self.__fchk,self.__basis_size)
-        veccmo= ParseVecFromFchk(self.__fchk)[:self.__nae,:]
+        vecc = ParseVecFromFchk(self.__fchk)
+        veccocc= vecc[:self.__nae,:]
         tran, veclmo = get_pmloca(self.__natoms,mapi=self.__bfs.LIST1,sao=SAO,
-                                  vecin=veccmo,nae=self.__nae,
+                                  vecin=veccocc,nae=self.__nae,
                                   maxit=100000,conv=1.0E-14,
                                   lprint=True,
                                   freeze=None)
@@ -190,13 +195,16 @@ overlap integrals and parses density matrix."""
         camm.camms()
         dma = camm.get()[0]
         # parse Fock matrix
-        fock = ParseFockFromGamessLog(self.__gmslog,interpol=False)
-        fock = tensordot(veclmo,tensordot(veclmo,fock,(1,0)),(1,1))
+        Fock = ParseFockFromGamessLog(self.__gmslog,interpol=False)
+        fock = tensordot(veclmo,tensordot(veclmo,Fock,(1,0)),(1,1))
+        if ct: fckc = tensordot(vecc  ,tensordot(vecc  ,Fock,(1,0)),(1,1))
         # save
         self.__lmoc = dma.get_origin()[self.__natoms:]
         self.__tran = tran
         self.__vecl = veclmo
+        if ct: self.__vecc = vecc
         self.__fock = fock
+        if ct: self.__fckc = fckc
         self.__sao  = SAO
         self.__dmat = dmat
         self.__dma  = dma
@@ -209,7 +217,8 @@ overlap integrals and parses density matrix."""
         self.__mol    = None; self.__basis_size = None
         self.__lmoc   = None; self.__lmoc1  = None; self.__natoms=None
         self.__fock   = None; self.__fock1  = None; self.__bfs  = None
-        self.__vecl   = None; self.__vecl1  = None
+        self.__vecl   = None; self.__vecl1  = None; self.__vecc = None
+        self.__vecc1  = None; self.__fckc   = None; self.__fckc1= None
         return
     
     def _create(self):

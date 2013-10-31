@@ -175,6 +175,8 @@ Notes:
         if self.__fock1 is not None: self._write_fock1(f)
         if self.__vecl  is not None: self._write_vecl(f)
         if self.__vecl1 is not None: self._write_vecl1(f)
+        if self.__fckc  is not None: self._write_fckc(f)
+        if self.__fckc1 is not None: self._write_fckc1(f)
         if self.__vecc  is not None: self._write_vecc(f)
         if self.__vecc1 is not None: self._write_vecc1(f)
         f.close()
@@ -237,18 +239,19 @@ Notes:
     
     def _create(self):
         """creates the namespace of parameter variables"""
-        self.__name, self.__natoms, self.__nbasis = None, None, None
-        self.__nmos, self.__nmodes, self.__basis  = None, None, None
-        self.__atoms,self.__shortname = None, None
-        self.__pos, self.__origin, self.__nsites = None, None, None
-        self.__atno, self.__atms = None, None
+        self.__name ,self.__natoms, self.__nbasis = None, None, None
+        self.__nmos ,self.__nmodes, self.__basis  = None, None, None
+        self.__atoms,self.__shortname             = None, None
+        self.__pos  ,self.__origin, self.__nsites = None, None, None
+        self.__atno ,self.__atms                  = None, None
         #
         self.__redmass, self.__freq, self.__lvec = None, None, None
-        self.__gijk = None
+        self.__gijk                              = None
         #
-        self.__fock, self.__lmoc, self.__vecl = None, None, None
+        self.__fock ,self.__lmoc ,self.__vecl = None, None, None
         self.__fock1,self.__lmoc1,self.__vecl1= None, None, None
         self.__ncmos,self.__vecc ,self.__vecc1= None, None, None
+        self.__fckc ,self.__fckc1             = None, None
         #
         mol_names = ('name','basis','method','natoms','nbasis',
                      'nmos','nmodes','atoms','shortname','nsites',
@@ -257,6 +260,8 @@ Notes:
                      'lmoc1': '[ LMO centroids - first derivatives ]',
                      'fock' : '[ Fock matrix ]',
                      'fock1': '[ Fock matrix - first derivatives ]',
+                     'fckc' : '[ Canonical Fock matrix ]',
+                     'fckc1': '[ Canonical Fock matrix - first derivatives ]',
                      'vecl' : '[ AO->LMO matrix ]',
                      'vecl1': '[ AO->LMO matrix - first derivatives ]',
                      'vecc' : '[ AO->CMO matrix ]',
@@ -285,6 +290,8 @@ Notes:
             elif key == 'vecl1': self.__vecl1 = val
             elif key == 'vecc' : self.__vecc  = val
             elif key == 'vecc1': self.__vecc1 = val
+            elif key == 'fckc' : self.__fckc  = val
+            elif key == 'fckc1': self.__fckc1 = val
         return
 
     def _make_dict(self):
@@ -309,6 +316,8 @@ Notes:
         if self.__vecl1 is not None: par['vecl1'] = self.__vecl1
         if self.__vecc  is not None: par['vecc' ] = self.__vecc
         if self.__vecc1 is not None: par['vecc1'] = self.__vecc1
+        if self.__fckc  is not None: par['fckc' ] = self.__fckc
+        if self.__fckc1 is not None: par['fckc1'] = self.__fckc1
         return par
         
     def _tr_lvec(self,lvec,nmodes,natoms):
@@ -459,6 +468,20 @@ Notes:
                           fock[j,i] = d
                           K += 1
                   self.__fock = fock
+            # Canonical Fock matrix
+            elif  key == 'fckc':
+                  merror = 'ncmos in section [ molecule ] '
+                  merror+= 'is not consistent with section [ Canonical Fock matrix ]!'
+                  assert self.__ncmos == (math.sqrt(1+8*N)-1)/2, merror
+                  fckc = zeros((self.__ncmos,self.__ncmos),dtype=float64)
+                  K = 0
+                  for i in xrange(self.__ncmos):
+                      for j in xrange(i+1):
+                          d = data[K]
+                          fckc[i,j] = d
+                          fckc[j,i] = d
+                          K += 1
+                  self.__fckc = fckc
             # Fock matrix first derivatives
             elif  key == 'fock1':
                   merror = 'nbasis and nmos in section [ molecule ] '
@@ -479,6 +502,26 @@ Notes:
                   temp = sqrt(self.__redmass)[:,newaxis,newaxis]
                   fock1= temp * fock1
                   self.__fock1 = fock1
+            # Canonical Fock matrix first derivatives
+            elif  key == 'fckc1':
+                  merror = 'nbasis and ncmos in section [ molecule ] '
+                  merror+= 'is not consistent with section [ Canonical Fock matrix - first derivatives ]!'
+                  assert self.__ncmos == (math.sqrt(1+8*(N/self.__nmodes))-1)/2, merror
+                  fckc1 = zeros((self.__nmodes,self.__ncmos,self.__ncmos),dtype=float64)
+                  data = data.reshape(self.__nmodes,N/self.__nmodes)
+                  for i in xrange(self.__nmodes):
+                      K = 0
+                      for j in xrange(self.__ncmos):
+                          for k in xrange(j+1):
+                              d = data[i,K]
+                              fckc1[i,j,k] = d
+                              fckc1[i,k,j] = d
+                              K += 1
+                  # multiply by sqrt(redmass)
+                  assert self.__redmass is not None, 'No reduced masses supplied!'
+                  temp = sqrt(self.__redmass)[:,newaxis,newaxis]
+                  fckc1= temp * fckc1
+                  self.__fckc1 = fckc1
             # AO to LMO transformation matrix
             elif  key == 'vecl':
                   merror = 'nmos and nbasis in section [ molecule ] '
@@ -533,7 +576,7 @@ Notes:
         log+= '   nbasis     = %s\n'    % self.__nbasis
         log+= '   nmodes     = %s\n'    % self.__nmodes
         log+= '   nmos       = %s\n'    % self.__nmos
-        log+= '   ncmos      + %s\n'    % self.__ncmos
+        log+= '   ncmos      = %s\n'    % self.__ncmos
         log+= ' \n'
         file.write(log)
         return
@@ -712,6 +755,22 @@ Notes:
         if N%5: log+= '\n'
         file.write(log)
         return
+
+    def _write_fckc(self,file):
+        """write canonical Fock matrix elements"""
+        ncmos = self.__fckc.shape[0]
+        N = (ncmos**2 - ncmos) / 2 + ncmos
+        log = ' %s %s= %d\n' % (self.__sec_names['fckc'].ljust(40),'N'.rjust(10),N)
+        n = 1
+        for i in xrange(ncmos):
+            for j in xrange(i+1):
+                log+= "%20.10E" % self.__fckc[i,j]
+                if not n%5: log+= '\n'
+                n+=1
+        log+= '\n'
+        if N%5: log+= '\n'
+        file.write(log)
+        return
     
     def _write_fock1(self,file):
         """write Fock matrix element first derivatives wrt nmodes"""
@@ -730,7 +789,25 @@ Notes:
         if N%5: log+= '\n'
         file.write(log)
         return
-    
+
+    def _write_fckc1(self,file):
+        """write canonical Fock matrix element first derivatives wrt nmodes"""
+        nmodes = self.__fckc1.shape[0]
+        ncmos = self.__fckc1.shape[1]
+        N = nmodes * ( (ncmos**2 - ncmos) / 2 + ncmos )
+        log = ' %s %s= %d\n' % (self.__sec_names['fckc1'].ljust(40),'N'.rjust(10),N)
+        n = 1
+        for i in xrange(nmodes):
+            for j in xrange(ncmos):
+                for k in xrange(j+1):
+                    log+= "%20.10E" % self.__fckc1[i,j,k]
+                    if not n%5: log+= '\n'
+                    n+=1
+        log+= '\n'
+        if N%5: log+= '\n'
+        file.write(log)
+        return
+        
     def _write_vecl(self,file):
         """write AO-LMO transformation matrix elements"""
         nmos, nbasis = self.__vecl.shape
