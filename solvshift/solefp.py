@@ -173,7 +173,8 @@ Usage:
     def eval(self,ct=False):
         """Parses AO-LMO transformation matrix and Fock matrix.
 Transforms the latter from AO to LMO space. Computes also 
-overlap integrals and parses density matrix."""
+overlap integrals and parses density matrix. If ct is True
+the canonical Fock matrix and vectors will be saved."""
         assert self.__mol is not None, 'molecule not specified! (no fchk file)'
         # evaluate transformation matrices and LMO centroids
         SAO   = PyQuante.Ints.getS(self.__bfs)
