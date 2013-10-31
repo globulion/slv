@@ -106,7 +106,8 @@ Notes:
     
     # public
     
-    def set(self,mol=None,anh=None,dma=None,frag=None):
+    def set(self,mol=None,anh=None,frag=None,
+            dma=None,chelpg=None,esp=None):
         """set the parameters providing appropriate objects"""
         # molecular structure
         if mol is not None:
@@ -136,6 +137,9 @@ Notes:
         # EFP fragment parameters
         if frag is not None:
            self._parse_dict( frag.get() )
+        # other
+        self.__chlpg  = None
+        self.__esp    = None
         return
         
     def get(self):
@@ -179,6 +183,9 @@ Notes:
         if self.__fckc1 is not None: self._write_fckc1(f)
         if self.__vecc  is not None: self._write_vecc(f)
         if self.__vecc1 is not None: self._write_vecc1(f)
+        # population analysis
+        if self.__esp   is not None: self._write_esp(f)
+        if self.__chlpg is not None: self._write_chlpg(f)
         f.close()
         return
     
@@ -253,6 +260,8 @@ Notes:
         self.__ncmos,self.__vecc ,self.__vecc1= None, None, None
         self.__fckc ,self.__fckc1             = None, None
         #
+        self.__esp  ,self.__chlpg             = None, None
+        #
         mol_names = ('name','basis','method','natoms','nbasis',
                      'nmos','nmodes','atoms','shortname','nsites',
                      'ncmos',)
@@ -274,7 +283,9 @@ Notes:
                       'pos' : '[ Atomic coordinates ]',
                    'origin' : '[ DMTP origins ]',
                      'atno' : '[ Atomic numbers ]',
-                     'atms' : '[ Atomic masses ]',}
+                     'atms' : '[ Atomic masses ]',
+                     'esp'  : '[ ESP charges ]',
+                     'chlpg': '[ ChelpG charges ]',}
         self.__mol_names = mol_names
         self.__sec_names = sec_names
         return
@@ -318,6 +329,9 @@ Notes:
         if self.__vecc1 is not None: par['vecc1'] = self.__vecc1
         if self.__fckc  is not None: par['fckc' ] = self.__fckc
         if self.__fckc1 is not None: par['fckc1'] = self.__fckc1
+        # Population analysis
+        if self.__esp   is not None: par['esp'  ] = self.__esp
+        if self.__chlpg is not None: par['chlpg'] = self.__chlpg
         return par
         
     def _tr_lvec(self,lvec,nmodes,natoms):
@@ -388,15 +402,35 @@ Notes:
                  merror = 'natoms in section [ molecule ] '
                  merror+= 'is not consistent with section [ Atomic numbers ]!'
                  assert self.__natoms == N, merror
-                 data = data
                  self.__atno = array(data,int)
             # Atomic masses
             elif key == 'atms':
                  merror = 'natoms in section [ molecule ] '
                  merror+= 'is not consistent with section [ Atomic masses ]!'
                  assert self.__natoms == N, merror
-                 data = data
                  self.__atms = data
+            # ------------------------------------ DMTP -------------------------------------------
+            # ESP charges
+            elif key == 'esp':
+                 merror = 'natoms in section [ molecule ] '
+                 merror+= 'is not consistent with section [ ESP charges ]!'
+                 assert self.__natoms == N, merror
+                 self.__esp = data
+            # ChelpG charges
+            elif key == 'chlpg':
+                 merror = 'natoms in section [ molecule ] '
+                 merror+= 'is not consistent with section [ ChelpG charges ]!'
+                 assert self.__natoms == N, merror
+                 self.__chlpg = data
+            # DMA/CAMM
+            elif key == 'dma':
+                 pass
+            # CABMM
+            elif key == 'cabmm':
+                 pass
+            # LMTP
+            elif key == 'lmtp':
+                 pass
             # ------------------------------------ FREQ -------------------------------------------
             # Harmonic frequencies
             elif key == 'freq':
@@ -643,6 +677,36 @@ Notes:
         file.write(log)
         return
 
+    def _write_esp(self,file):
+        """write ESP charges"""
+        natoms = self.__atms.shape[0]
+        N = natoms
+        log = ' %s %s= %d\n' % (self.__sec_names['esp'].ljust(40),'N'.rjust(10),N)
+        n = 1
+        for i in xrange(natoms):
+            log+= "%20.10E" % self.__esp[i]
+            if not n%5: log+= '\n'
+            n+=1
+        log+= '\n'
+        if N%5: log+= '\n'
+        file.write(log)
+        return
+
+    def _write_chlpg(self,file):
+        """write ESP charges"""
+        natoms = self.__atms.shape[0]
+        N = natoms
+        log = ' %s %s= %d\n' % (self.__sec_names['chlpg'].ljust(40),'N'.rjust(10),N)
+        n = 1
+        for i in xrange(natoms):
+            log+= "%20.10E" % self.__chlpg[i]
+            if not n%5: log+= '\n'
+            n+=1
+        log+= '\n'
+        if N%5: log+= '\n'
+        file.write(log)
+        return
+        
     def _write_freq(self,file):
         """write harmonic frequencies"""
         nmodes = self.__freq.shape[0]

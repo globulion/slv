@@ -124,35 +124,44 @@ Solvatochromic Effective Fragment Potential Fragment
 Usage:
 """
     def __init__(self,anh=None,basis=None,nae=None,
-                      fchk=None,gmslog=None,):
+                      fchk=None,gmslog=None,
+                      chelpg=None,esp=None,):
         self.__anh    = anh
         self.__fchk   = fchk
         self.__gmslog = gmslog
         self.__basis  = basis
         self.__nae    = nae
+        self.__chlpg  = chelpg
+        self.__esp    = esp
         self._init()
         self._create()
 
     # public
     
     def set(self,anh=None,basis=None,nae=None,
-                 fchk=None,gmslog=None,):
+                 fchk=None,gmslog=None,
+                 chelpg=None,esp=None,):
         """set the properties to the object"""
         if self.__anh    is not None: self.__anh    = anh
         if self.__fchk   is not None: self.__fchk   = fchk
         if self.__gmslog is not None: self.__gmslog = gmslog
         if self.__basis  is not None: self.__basis  = basis
         if self.__nae    is not None: self.__nae    = nae
+        if self.__chlpg  is not None: self.__chlpg  = chelpg
+        if self.__esp    is not None: self.__esp    = esp
         return
 
     def reset(self,anh=None,basis=None,nae=None,
-                   fchk=None,gmslog=None,):
+                   fchk=None,gmslog=None,
+                   chelpg=None,esp=None,):
         """reset the properties"""
         self.__anh    = anh
         self.__fchk   = fchk
         self.__gmslog = gmslog
         self.__basis  = basis
         self.__nae    = nae
+        self.__chlpg  = chelpg
+        self.__esp    = esp
         return
 
     def get(self):
@@ -168,6 +177,8 @@ Usage:
         if self.__vecc1 is not None: par['vecc1'] = self.__vecc1
         if self.__fckc  is not None: par['fckc' ] = self.__fckc
         if self.__fckc1 is not None: par['fckc1'] = self.__fckc1
+        if self.__esp   is not None: par['esp'  ] = self.__esp
+        if self.__chlpg is not None: par['chlpg'] = self.__chlpg
         return par
     
     def eval(self,ct=False):
@@ -220,6 +231,7 @@ the canonical Fock matrix and vectors will be saved."""
         self.__fock   = None; self.__fock1  = None; self.__bfs  = None
         self.__vecl   = None; self.__vecl1  = None; self.__vecc = None
         self.__vecc1  = None; self.__fckc   = None; self.__fckc1= None
+        self.__chlpg  = None; self.__esp    = None
         return
     
     def _create(self):
