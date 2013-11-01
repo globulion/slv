@@ -47,7 +47,7 @@ C
 C     calculate <I|O|J> integrals and their derivatives dMM
 C     Operator O is 1 for overlap and -HALF*LAPLACIAN for kinetic
 C
-      CALL CALCIJ(EIGLVC,CIKA,CIKB,CIKCA,CIKCB,CIKA1,
+      CALL QALCIJ(EIGLVC,CIKA,CIKB,CIKCA,CIKCB,CIKA1,
      &       SKM,TKM,TKK,TLL,VKM,VKL,VLK,VLN,SK1M,TK1M,
      &       MLIST,NMOSA,NMOSB,NMODES,NATA,NBSA,NBSB)
 C
@@ -419,7 +419,7 @@ C
       END
 C-----|--|---------|---------|---------|---------|---------|---------|--|------|
 
-      SUBROUTINE CALCIJ(EIGLVC,CIKA,CIKB,CIKCA,CIKCB,CIKA1,
+      SUBROUTINE QALCIJ(EIGLVC,CIKA,CIKB,CIKCA,CIKCB,CIKA1,
      &             SKM,TKM,TKK,TLL,VKM,VKL,VLK,VLN,SK1M,TK1M,
      &             MLIST,NMOSA,NMOSB,NMODES,NATA,NBSA,NBSB)
 C
