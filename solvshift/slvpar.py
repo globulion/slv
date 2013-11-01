@@ -138,8 +138,8 @@ Notes:
         if frag is not None:
            self._parse_dict( frag.get() )
         # other
-        self.__chlpg  = None
-        self.__esp    = None
+        self.__chlpg  = chelpg
+        self.__esp    = esp
         return
         
     def get(self):
@@ -167,6 +167,9 @@ Notes:
         if self.__origin is not None: self._write_origin(f)
         if self.__atno   is not None: self._write_atno(f)
         if self.__atms   is not None: self._write_atms(f)
+        # population analysis
+        if self.__esp   is not None: self._write_esp(f)
+        if self.__chlpg is not None: self._write_chlpg(f)
         # frequency analysis
         if self.__redmass  is not None: self._write_redmass(f)
         if self.__freq     is not None: self._write_freq(f)
@@ -183,9 +186,6 @@ Notes:
         if self.__fckc1 is not None: self._write_fckc1(f)
         if self.__vecc  is not None: self._write_vecc(f)
         if self.__vecc1 is not None: self._write_vecc1(f)
-        # population analysis
-        if self.__esp   is not None: self._write_esp(f)
-        if self.__chlpg is not None: self._write_chlpg(f)
         f.close()
         return
     

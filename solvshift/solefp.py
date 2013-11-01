@@ -7,8 +7,9 @@ from units     import *
 from utilities import Read_xyz_file, get_pmloca, ParseFockFromGamessLog, \
                       ParseDmatFromFchk, ParseVecFromFchk
 from diff      import DIFF
-from PyQuante.Ints import getSAB, getTAB, getSA1B, getTA1B
+from PyQuante.Ints import getT, getSAB, getTAB, getSA1B, getTA1B, getVEFP
 from shftex import shftex
+from shftce import shftce
 import sys, copy, os, re, math, glob, PyQuante.Ints, coulomb.multip
 sys.stdout.flush()
 
@@ -23,7 +24,7 @@ class EFP(object,UNITS):
 
 Usage:
 A = EFP(a,b)
-result = A(shift=False,nmode=None,cunit=False)
+result = A(ct=True,nlo=False,shift=False,nmode=None,cunit=False)
 rms_a, rms_b = A.sup(str_a=None,str_b=None)
 
 Notes:
@@ -41,9 +42,12 @@ Notes:
         self.__molB = b
         return
     
-    def __call__(self,shift=False,nmode=None,cunit=False):
+    def __call__(self,ct=True,nlo=False,shift=False,nmode=None,cunit=False):
         """perform all the calculation"""
-        ma, ea = self._ex(shift,nmode,cunit)
+        if ct: 
+             ma, ea = self._ex_rep_ct(nlo,shift,nmode,cunit)
+        else:
+             ma, ea = self._ex_rep(nlo,shift,nmode,cunit)
         return ma, ea
     
     def __repr__(self):
@@ -58,15 +62,71 @@ Notes:
     def sup(self,str_a=None,str_b=None):
         """superimpose the a and b objects to given structures"""
         rms_a, rms_b = None, None
-        if str_a is not None:
-           rms_a = self.__molA.sup(str_a)
-        if str_b is not None:
-           rms_b = self.__molB.sup(str_b)
+        if str_a is not None: rms_a = self.__molA.sup(str_a)
+        if str_b is not None: rms_b = self.__molB.sup(str_b)
         return rms_a, rms_b
     
     # protected
-    
-    def _ex(self,shift,nmode,cunit):
+    def _ex_rep_ct(self,nlo,shift,nmode,cunit):
+        """calculate exchange-repulsion and charge-transfer properties"""
+        # variables
+        varA = self.__molA.get()
+        varB = self.__molB.get()
+        # basis sets
+        bfsA = self.__molA.get_bfs()
+        bfsB = self.__molB.get_bfs()
+        # parameters
+        ### molecule A
+        faij   = varA['fock']
+        faij1  = varA['fock1']
+        cika   = varA['vecl']
+        cika1  = varA['vecl1']
+        za     = varA['atno']
+        rna    = varA['pos']
+        ria    = varA['lmoc']
+        ria1   = varA['lmoc1']
+        faijc  = varA['fckc'].diagonal()
+        cikca  = varA['vecc']
+        qa     = varA['chlpg']
+        redmss = varA['redmass']
+        freq   = varA['freq']
+        gijj   = varA['gijk'][nmode-1,nmode-1,:]
+        eiglvc = varA['lvec']
+        mlist  = bfsA.get_bfsl() + 1
+        ### molecule B
+        fbij = varB['fock']
+        cikb = varB['vecl']
+        zb   = varB['atno']
+        rnb  = varB['pos']
+        rib  = varB['lmoc']
+        fbijc= varB['fckc'].diagonal()
+        cikcb= varB['vecc']
+        qb   = varB['chlpg']
+        # instantaneous integrals
+        skm  = getSAB(bfsA,bfsB)
+        tkm  = getTAB(bfsA,bfsB)
+        sk1m = getSA1B(bfsA,bfsB)
+        tk1m = getTA1B(bfsA,bfsB)
+        tkk =  getT(bfsA)
+        tll =  getT(bfsB)
+        vkl =  getVEFP(bfsA,bfsB,qb,rnb)
+        vlk =  getVEFP(bfsB,bfsA,qa,rna)
+        vkm =  getVEFP(bfsA,bfsA,qb,rnb)
+        vln =  getVEFP(bfsB,bfsB,qa,rna)
+        # calculate the properties!
+        shftma,shftea = shftce(redmss,freq,gijj,eiglvc,
+                               rna,rnb,ria,rib,ria1,
+                               cika,cikb,cikca,cikcb,cika1,
+                               skm,tkm,tkk,tll,vkm,vkl,vlk,vln,sk1m,tk1m,
+                               faij,fbij,faijc,fbijc,faij1,
+                               za,zb,mlist,nmode)
+        if cunit:
+           shftma *= self.HartreePerHbarToCmRec
+           shftea *= self.HartreePerHbarToCmRec
+           
+        return shftma, shftea
+
+    def _ex_rep(self,nlo,shift,nmode,cunit):
         """calculate exchange-repulsion property"""
         # variables
         varA = self.__molA.get()
@@ -100,9 +160,6 @@ Notes:
         zb   = varB['atno']
         rnb  = varB['pos']
         rib  = varB['lmoc']
-        # transform the integrals
-        sij = dot(dot(cika,skm),transpose(cikb))
-        tij = dot(dot(cika,tkm),transpose(cikb))
         # calculate the properties!
         shftma,shftea = shftex(redmss,freq,gijj,lvec,
                                ria,rib,rna,rnb,ria1,
