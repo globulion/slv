@@ -34,12 +34,16 @@ C -----------------------------------------------------------------------------
      & FAIJ(NMOSA,NMOSA),FBIJ(NMOSB,NMOSB),FAIJC(NBSA),
      & FBIJC(NBSB),FAIJ1(NMODES,NMOSA,NMOSA),
      & ZA(NATA),ZB(NATB),MLIST(NBSA)
-      COMMON /FEX   / FIEX(40), FJEX
+      COMMON /FEX   / FIEX(40), FICT(40), FJEX
       COMMON /INTIJ1/ SIJ(40,40),TIJ(40,40)
       COMMON /INTIJ2/ SIJC(164,164),TIJC(164,164),TIKC(164,164),
      &                TJLC(164,164),VIJC(164,164),VIKC(164,164),
      &                VJLC(164,164),VJIC(164,164)
       COMMON /INTIJ3/ SIJM1(40,40,40),TIJM1(40,40,40)
+      COMMON /INTIJ4/ SIJC1(40,164,164),TIJC1(40,164,164),
+     &                VIJC1(40,164,164),VIKC1(40,164,164),
+     &                TIKC1(40,164,164),VJIC1(40,164,164),
+     &                VJLC1(40,164,164)
       PARAMETER (ZERO=0.0D+00,ONE=1.0D+00,TWO=2.0D+00,THREE=3.0D+00,
      &           FOUR=4.0D+00,FIVE=5.0D+00)
 Cf2py INTENT(OUT) SHFTMA,SHFTEA
@@ -81,6 +85,124 @@ C
       SHFTMA = SHFTMA / (-ONE*DENOM)
       SHFTEA = SHFTEA / DENOM
 C      
+      RETURN
+      END
+C-----|--|---------|---------|---------|---------|---------|---------|--|------|
+
+      SUBROUTINE CTFX(FAIJC1,FAIJC,FBIJC,CTAB,CTBA,
+     *                NMOSA,NMOSB,NBSA,NBSB,NMODES)
+C
+C          EVALUATE FX FOR CHARGE TRANSFER FREQUENCY SHIFTS
+C
+      IMPLICIT DOUBLE PRECISION(A-H,O-Z)
+      COMMON /FEX   / FIEX(40), FICT(40), FJEX
+      COMMON /INTIJ2/ SIJC(164,164),TIJC(164,164),TIKC(164,164),
+     &                TJLC(164,164),VIJC(164,164),VIKC(164,164),
+     &                VJLC(164,164),VJIC(164,164)
+      COMMON /INTIJ4/ SIJC1(40,164,164),TIJC1(40,164,164),
+     &                VIJC1(40,164,164),VIKC1(40,164,164),
+     &                TIKC1(40,164,164),VJIC1(40,164,164),
+     &                VJLC1(40,164,164)
+      DIMENSION FAIJC1(NMODES,NBSA),FAIJC(NBSA),FBIJC(NBSB)
+      PARAMETER (ZERO=0.0D+00,ONE=1.0D+00,TWO=2.0D+00)
+C
+      CTAB = ZERO
+      CTBA = ZERO
+      DNBSA= ONE / DFLOAT(NBSA)
+      DNBSB= ONE / DFLOAT(NBSB)
+C
+C     A(B) PROPERTY
+C
+      DO 11 I=1,NMOSA
+      DO 11 N=1,NMOSB+1,NBSB
+         UIN = ZERO
+         AIN = ZERO
+         BIN = ZERO
+C
+         VINV = VIJC(I,N)
+         FIIV = FAIJC(I)
+         TNNV = TJLC(I,N)
+         UNORM = ONE
+         UTERM = ZERO
+C
+         DO 211 M=1,NBSA
+            SNMV = SIJC(M,N)
+            VIMV = VIJC(I,M)
+            UTERM = UTERM - SNMV * VIMV
+            UNORM = UNORM - SNMV * SNMV
+C
+            DO 311 J=1,NMOSB
+               SIJV = SIJC(I,J)
+               TNJV = TJLC(N,J)
+               TMJV = TIJC(M,J)
+               BIN  = BIN + (SIJV * TNJV * DNBSA) - SIJV * SNMV * TNJV
+ 311        CONTINUE
+ 211     CONTINUE
+         UIN = UNORM * (FIIV - TNNV)
+         UINSQ= UIN * UIN
+         AIN = VINV - UTERM
+C
+C        LOOP OVER NORMAL COORDINATES
+C
+         DO 9999 MM=1,NMODES
+            FICTVM = FICT(MM)
+            UIN1 = UNORM * FAIJC1(MM,I)
+            BIN1 = ZERO
+            AIN1 = VIJC1(MM,I,N)
+C
+            TSUM1 = ZERO
+            TSUM2 = ZERO
+            TSUM3 = ZERO
+            TSUM4 = ZERO
+            DO M=1,NBSA
+               SNMV = SIJC(M,N)
+               TMJV = TIJC(M,J)
+               SMMMN= SIJC1(MM,M,N)
+               TSUM1 = TSUM1 + SNMV * SMMMN
+               TSUM2 = TSUM2 + SMMMN* VIKC(I,M) + 
+     *                         VIKC1(MM,I,M) * SNMV
+               DO J=1,NMOSB
+                  TSUM3 = TSUM3 - SIJC(I,J) * ( TMJV * SMMMN + 
+     *                            SNMV * TIJC1(MM,M,J))
+                  TSUM4 = TSUM4 + SIJC1(MM,I,J) * ( TJLC(N,J) * DNBSA -
+     *                            SNMV * TMJV )
+               ENDDO
+            ENDDO
+            UIN1 = UIN1 - TWO * (FIIV - TNNV) * TSUM1
+            AIN1 = AIN1 - TSUM2
+            BIN1 = TSUM3 + TSUM4
+C
+C           ACCUMULATE DERIVATIVES
+C
+            FICTVM = (AIN + BIN) * (AIN1 / UIN - AIN * UIN1 / UINSQ) +
+     *               (AIN1 + BIN1) * AIN / UIN + FICTVM
+            FICT(MM) = FICTVM
+ 9999    CONTINUE
+C
+C        ACCUMULATE CHARGE-TRANSFER ENERGY
+C
+         CTAB = CTAB + AIN * (AIN + BIN) / UIN
+C
+ 11   CONTINUE
+C
+C     B(A) PROPERTY
+C
+      DO 12 J=1,NMOSB
+      DO 12 M=1,NMOSA+1,NBSA
+         UIN = ZERO
+         AIN = ZERO
+         BIN = ZERO
+C        ..........
+C
+C        ACCUMULATE CHARGE-TRANSFER ENERGY
+C
+         CTBA = CTBA + AIN * (AIN + BIN) / UIN
+ 12   CONTINUE
+
+C
+      CTAB = CTAB * TWO
+      CTBA = CTBA * TWO
+C
       RETURN
       END
 C-----|--|---------|---------|---------|---------|---------|---------|--|------|
@@ -181,7 +303,7 @@ C
       DIMENSION FAIJ(NMOSA,NMOSA),FBIJ(NMOSB,NMOSB),
      & RNA(NATA,3),RNB(NATB,3),RIA(NMOSA,3),RIB(NMOSB,3),
      & ZA(NATA),ZB(NATB)
-      COMMON /FEX   / FIEX(40), FJEX
+      COMMON /FEX   / FIEX(40), FICT(40), FJEX
       COMMON /INTIJ1/ SIJ(40,40),TIJ(40,40)
       COMMON /INTIJ2/ SIJC(164,164),TIJC(164,164),TIKC(164,164),
      &                TJLC(164,164),VIJC(164,164),VIKC(164,164),
@@ -280,7 +402,7 @@ C
      & FBIJ(NMOSB,NMOSB),FAIJ1(NMODES,NMOSA,NMOSA),
      & RNA(NATA,3),RNB(NATB,3),RIA(NMOSA,3),RIB(NMOSB,3),
      & RIA1(NMODES,NMOSA,3),ZA(NATA),ZB(NATB)
-      COMMON /FEX   / FIEX(40), FJEX
+      COMMON /FEX   / FIEX(40), FICT(40), FJEX
       COMMON /INTIJ1/ SIJ(40,40),TIJ(40,40)
       COMMON /INTIJ2/ SIJC(164,164),TIJC(164,164),TIKC(164,164),
      &                TJLC(164,164),VIJC(164,164),VIKC(164,164),
@@ -592,7 +714,7 @@ C
 C          ZERO-OUT ALL TIJM1 AND SIJM1 DERIVATIVES
 C
       IMPLICIT DOUBLE PRECISION(A-H,O-Z)
-      COMMON /FEX   / FIEX(40), FJEX
+      COMMON /FEX   / FIEX(40), FICT(40), FJEX
       COMMON /INTIJ1/ SIJ(40,40),TIJ(40,40)
       COMMON /INTIJ2/ SIJC(164,164),TIJC(164,164),TIKC(164,164),
      &                TJLC(164,164),VIJC(164,164),VIKC(164,164),
@@ -613,17 +735,22 @@ C-----|--|---------|---------|---------|---------|---------|---------|--|------|
 
       BLOCK DATA
       IMPLICIT DOUBLE PRECISION(A-H,O-Z)
-      COMMON /FEX   / FIEX(40), FJEX
+      COMMON /FEX   / FIEX(40), FICT(40), FJEX
       COMMON /INTIJ1/ SIJ(40,40),TIJ(40,40)
       COMMON /INTIJ2/ SIJC(164,164),TIJC(164,164),TIKC(164,164),
      &                TJLC(164,164),VIJC(164,164),VIKC(164,164),
      &                VJLC(164,164),VJIC(164,164)
       COMMON /INTIJ3/ SIJM1(40,40,40),TIJM1(40,40,40)
+      COMMON /INTIJ4/ SIJC1(40,164,164),TIJC1(40,164,164),
+     &                VIJC1(40,164,164),VIKC1(40,164,164),
+     &                TIKC1(40,164,164),VJIC1(40,164,164),
+     &                VJLC1(40,164,164)
       COMMON /SUMS  / SUM1,SUM2,SUM3,SUM4,SUM5,SUM6,
      &                SUM7(40),SUM8(40),SUM9(40),
      &                SUM10(40),SUM11(40),SUM12(40)
       DATA FJEX/0.D0/
       DATA FIEX/40*0.D0/
+      DATA FICT/40*0.D0/
       DATA SUM1,SUM2,SUM3,SUM4,SUM5,SUM6/0.D0,0.D0,0.D0,0.D0,0.D0,0.D0/
       DATA SUM7,SUM8,SUM9,SUM10,SUM11,SUM12/40*0.D0,40*0.D0,
      &                                      40*0.D0,40*0.D0,
@@ -640,5 +767,12 @@ C-----|--|---------|---------|---------|---------|---------|---------|--|------|
       DATA VJIC/26896*0.D0/
       DATA SIJM1/64000*0.D0/
       DATA TIJM1/64000*0.D0/
+      DATA SIJC1/1075840*0.D0/
+      DATA TIJC1/1075840*0.D0/
+      DATA VIJC1/1075840*0.D0/
+      DATA VIKC1/1075840*0.D0/
+      DATA TIKC1/1075840*0.D0/
+      DATA VJIC1/1075840*0.D0/
+      DATA VJLC1/1075840*0.D0/
       END
 C-----|--|---------|---------|---------|---------|---------|---------|--|------|
