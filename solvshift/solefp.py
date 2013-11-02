@@ -7,7 +7,7 @@ from units     import *
 from utilities import Read_xyz_file, get_pmloca, ParseFockFromGamessLog, \
                       ParseDmatFromFchk, ParseVecFromFchk
 from diff      import DIFF
-from PyQuante.Ints import getT, getSAB, getTAB, getSA1B, getTA1B, getVEFP
+from PyQuante.Ints import getT, getSAB, getTAB, getSA1B, getTA1B, getVEFP, getV
 from shftex import shftex
 from shftce import shftce
 import sys, copy, os, re, math, glob, PyQuante.Ints, coulomb.multip
@@ -103,16 +103,28 @@ Notes:
         cikcb= varB['vecc']
         qb   = varB['chlpg']
         # instantaneous integrals
+        #import time
+        #t0 = time.time()
         skm  = getSAB(bfsA,bfsB)
         tkm  = getTAB(bfsA,bfsB)
+        #t1 = time.time()
         sk1m = getSA1B(bfsA,bfsB)
         tk1m = getTA1B(bfsA,bfsB)
         tkk =  getT(bfsA)
         tll =  getT(bfsB)
+        #t2 = time.time()
         vkl =  getVEFP(bfsA,bfsB,qb,rnb)
         vlk =  getVEFP(bfsB,bfsA,qa,rna)
         vkm =  getVEFP(bfsA,bfsA,qb,rnb)
         vln =  getVEFP(bfsB,bfsB,qa,rna)
+        #t3 = time.time()
+        #vvv = getV(bfsA,self.__molA.atoms)
+        #t4 = time.time()
+        #print "STAB %.2f" % (t1-t0)
+        #print "XA1B %.2f" % (t2-t1)
+        #print "VXLN %.2f" % (t3-t2)
+        #print "TOTL %.2f" % (t3-t0)
+        #print "DUPA %.2f" % (t4-t3)
         # calculate the properties!
         shftma,shftea = shftce(redmss,freq,gijj,eiglvc,
                                rna,rnb,ria,rib,ria1,
