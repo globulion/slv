@@ -123,6 +123,7 @@ Notes:
            self.__ncmos  = self.__nbasis
            self.__atno   = mol.get_atno()
            self.__atms   = mol.get_atms() * self.AmuToElectronMass
+           self.__npol   = self.__nmos
         # electrostatic data
         if dma is not None:
            self.__pos = dma.get_pos()
@@ -170,6 +171,9 @@ Notes:
         # population analysis
         if self.__esp   is not None: self._write_esp(f)
         if self.__chlpg is not None: self._write_chlpg(f)
+        if self.__rpol  is not None: self._write_rpol(f)
+        if self.__dpol  is not None: self._write_dpol(f)
+        if self.__dpol1 is not None: self._write_dpol1(f)
         # frequency analysis
         if self.__redmass  is not None: self._write_redmass(f)
         if self.__freq     is not None: self._write_freq(f)
@@ -200,6 +204,15 @@ Notes:
            self.__lmoc1  = dot(self.__lmoc1, rot)
         if self.__lvec  is not None:
            self.__lvec   = dot(self.__lvec, rot)
+        if self.__rpol  is not None:
+           self.__rpol   = dot(self.__rpol, rot)
+        # transform dipoles, quadrupoles and octupoles!
+        if 0: pass
+        # transform distributed polarizabilities!
+        if self.__dpol   is not None:
+           self.__dpol    = dot(transpose(rot),dot(self.__dpol,rot))
+        if self.__dpol1  is not None:
+           self.__dpol1   = dot(transpose(rot),dot(self.__dpol1,rot))
         # transform the wave function!
         if self.__vecl  is not None:
            bfs = self.get_bfs()
@@ -223,8 +236,16 @@ Notes:
         # perform transformations
         self.__pos    = s.get_transformed()
         if self.__lmoc  is not None: self.__lmoc   = dot(self.__lmoc , rot) + transl
+        if self.__rpol  is not None: self.__rdpol  = dot(self.__rpol , rot) + transl
         if self.__lmoc1 is not None: self.__lmoc1  = dot(self.__lmoc1, rot)
         if self.__lvec  is not None: self.__lvec   = dot(self.__lvec , rot)
+        # transform dipoles, quadrupoles and octupoles!
+        if 0: pass
+        # transform distributed polarizabilities!
+        if self.__dpol   is not None:
+           self.__dpol   = dot(transpose(rot),dot(self.__dpol,rot))
+        if self.__dpol1  is not None:
+           self.__dpol1  = dot(transpose(rot),dot(self.__dpol1,rot))
         # - wave function
         if self.__vecl  is not None:
            bfs = self.get_bfs()
@@ -261,10 +282,11 @@ Notes:
         self.__fckc ,self.__fckc1             = None, None
         #
         self.__esp  ,self.__chlpg             = None, None
+        self.__dpol ,self.__dpol1,self.__rpol = None, None, None
         #
         mol_names = ('name','basis','method','natoms','nbasis',
                      'nmos','nmodes','atoms','shortname','nsites',
-                     'ncmos',)
+                     'ncmos','npol',)
         sec_names = {'lmoc' : '[ LMO centroids ]',
                      'lmoc1': '[ LMO centroids - first derivatives ]',
                      'fock' : '[ Fock matrix ]',
@@ -285,7 +307,10 @@ Notes:
                      'atno' : '[ Atomic numbers ]',
                      'atms' : '[ Atomic masses ]',
                      'esp'  : '[ ESP charges ]',
-                     'chlpg': '[ ChelpG charges ]',}
+                     'chlpg': '[ ChelpG charges ]',
+                      'dpol': '[ Distributed polarizabilities ]',
+                     'dpol1': '[ Distributed polarizabilities - first derivatives ]',
+                      'rpol': '[ Polarizable centers ]',}
         self.__mol_names = mol_names
         self.__sec_names = sec_names
         return
@@ -332,6 +357,10 @@ Notes:
         # Population analysis
         if self.__esp   is not None: par['esp'  ] = self.__esp
         if self.__chlpg is not None: par['chlpg'] = self.__chlpg
+        if self.__rpol  is not None: par['rpol' ] = self.__rpol
+        if self.__dpol  is not None: par['dpol' ] = self.__dpol
+        if self.__dpol1 is not None: par['dpol1'] = self.__dpol1
+        #
         return par
         
     def _tr_lvec(self,lvec,nmodes,natoms):
@@ -375,6 +404,8 @@ Notes:
                         self.__ncmos = int(arg)
                     if name == 'nmodes':
                         self.__nmodes = int(arg)
+                    if name == 'npol':
+                        self.__npol = int(arg)
                 
         ### more advanced information
         else:
@@ -431,6 +462,20 @@ Notes:
             # LMTP
             elif key == 'lmtp':
                  pass
+            # ------------------------------------ DPOL -------------------------------------------
+            elif key == 'rpol':
+                 merror = None
+                 self.__rpol = data.reshape(self.__npol,3)
+            elif key == 'dpol':
+                 merror = 'npol in section [ molecule ] '
+                 merror+= 'is not consistent with section [ Distributed polarizabilities ]!'
+                 assert self.__npol == (N/9), merror
+                 self.__dpol = data.reshape(self.__npol,3,3)
+            elif key == 'dpol1':
+                 merror = 'npol and nmodes in section [ molecule ] '
+                 merror+= 'is not consistent with section [ Distributed polarizabilities ]!'
+                 assert self.__npol == (N/(9*self.__nmodes)), merror
+                 self.__dpol1 = data.reshape(self.__nmodes,self.__npol,3,3)
             # ------------------------------------ FREQ -------------------------------------------
             # Harmonic frequencies
             elif key == 'freq':
@@ -706,7 +751,59 @@ Notes:
         if N%5: log+= '\n'
         file.write(log)
         return
+
+    def _write_rpol(self,file):
+        """write polarizable center coordinates"""
+        npol = self.__rpol.shape[0]
+        N = npol * 3
+        log = ' %s %s= %d\n' % (self.__sec_names['rpol'].ljust(40),'N'.rjust(10),N)
+        n = 1
+        for i in xrange(npol):
+            for j in xrange(3):
+                log+= "%20.10E" % self.__rpol[i,j]
+                if not n%5: log+= '\n'
+                n+=1
+        log+= '\n'
+        if N%5: log+= '\n'
+        file.write(log)
+        return
         
+    def _write_dpol(self,file):
+        """write distributed polarizabilities"""
+        nmos = self.__dpol.shape[0]
+        N = nmos*9
+        log = ' %s %s= %d\n' % (self.__sec_names['dpol'].ljust(40),'N'.rjust(10),N)
+        n = 1
+        for i in xrange(nmos):
+            for j in [0,1,2]:
+                for k in [0,1,2]:
+                    log+= "%20.10E" % self.__dpol[i,j,k]
+                    if not n%5: log+= '\n'
+                    n+=1
+        log+= '\n'
+        if N%5: log+= '\n'
+        file.write(log)
+        return
+        
+    def _write_dpol1(self,file):
+        """write distributed polarizabilities first derivatives wrt modes"""
+        nmodes = self.__dpol1.shape[0]
+        nmos   = self.__dpol1.shape[1]
+        N = nmodes*nmos*9
+        log = ' %s %s= %d\n' % (self.__sec_names['dpol1'].ljust(40),'N'.rjust(10),N)
+        n = 1
+        for i in xrange(nmodes):
+            for j in xrange(nmos):
+                for k in [0,1,2]:
+                    for l in [0,1,2]:
+                        log+= "%20.10E" % self.__dpol1[i,j,k,l]
+                        if not n%5: log+= '\n'
+                        n+=1
+        log+= '\n'
+        if N%5: log+= '\n'
+        file.write(log)
+        return
+    
     def _write_freq(self,file):
         """write harmonic frequencies"""
         nmodes = self.__freq.shape[0]

@@ -209,7 +209,8 @@ Usage:
     
     def set(self,anh=None,basis=None,nae=None,
                  fchk=None,gmslog=None,
-                 chelpg=None,esp=None,):
+                 chelpg=None,esp=None,
+                 dpol=None,dpol1=None,):
         """set the properties to the object"""
         if self.__anh    is not None: self.__anh    = anh
         if self.__fchk   is not None: self.__fchk   = fchk
@@ -218,11 +219,14 @@ Usage:
         if self.__nae    is not None: self.__nae    = nae
         if self.__chlpg  is not None: self.__chlpg  = chelpg
         if self.__esp    is not None: self.__esp    = esp
+        if self.__dpol   is not None: self.__dpol   = dpol
+        if self.__dpol1  is not None: self.__dpol1  = dpol1
         return
 
     def reset(self,anh=None,basis=None,nae=None,
                    fchk=None,gmslog=None,
-                   chelpg=None,esp=None,):
+                   chelpg=None,esp=None,
+                   dpol=None,dpol1=None,):
         """reset the properties"""
         self.__anh    = anh
         self.__fchk   = fchk
@@ -231,6 +235,8 @@ Usage:
         self.__nae    = nae
         self.__chlpg  = chelpg
         self.__esp    = esp
+        self.__dpol   = dpol
+        self.__dpol1  = dpol1
         return
 
     def get(self):
@@ -248,6 +254,8 @@ Usage:
         if self.__fckc1 is not None: par['fckc1'] = self.__fckc1
         if self.__esp   is not None: par['esp'  ] = self.__esp
         if self.__chlpg is not None: par['chlpg'] = self.__chlpg
+        if self.__dpol  is not None: par['dpol' ] = self.__dpol
+        if self.__dpol1 is not None: par['dpol1'] = self.__dpol1
         return par
     
     def eval(self,ct=False):
@@ -300,7 +308,8 @@ the canonical Fock matrix and vectors will be saved."""
         self.__fock   = None; self.__fock1  = None; self.__bfs  = None
         self.__vecl   = None; self.__vecl1  = None; self.__vecc = None
         self.__vecc1  = None; self.__fckc   = None; self.__fckc1= None
-        self.__chlpg  = None; self.__esp    = None
+        self.__chlpg  = None; self.__esp    = None; self.__dpol = None
+        self.__dpol1  = None
         return
     
     def _create(self):
