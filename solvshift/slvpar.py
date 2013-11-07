@@ -126,8 +126,14 @@ Notes:
            self.__npol   = self.__nmos
         # electrostatic data
         if dma is not None:
+           assert dma.if_traceless(), "DMA object is NOT traceless!!!"
            self.__pos = dma.get_pos()
            self.__origin = dma.get_origin()
+           self.__ndma   = len(self.__pos)
+           self.__dmac   = dma[0]
+           self.__dmad   = dma[1]
+           self.__dmaq   = dma[2]
+           self.__dmao   = dma[3]
         # anharmonic file object (FREQ)
         if anh is not None:
            assert anh.if_w(), 'Anharmonic object is in wrong units! Supply anh.w() object'
@@ -171,6 +177,11 @@ Notes:
         # population analysis
         if self.__esp   is not None: self._write_esp(f)
         if self.__chlpg is not None: self._write_chlpg(f)
+        if self.__rdma  is not None: self._write_rdma(f)
+        if self.__dmac  is not None: self._write_dmac(f)
+        if self.__dmad  is not None: self._write_dmad(f)
+        if self.__dmaq  is not None: self._write_dmaq(f)
+        if self.__dmao  is not None: self._write_dmao(f)
         if self.__rpol  is not None: self._write_rpol(f)
         if self.__dpol  is not None: self._write_dpol(f)
         if self.__dpol1 is not None: self._write_dpol1(f)
@@ -197,22 +208,27 @@ Notes:
         """rotate the tensors by <rot> unitary matrix"""
         # transform the atomic position static and dynamic information
         if self.__pos   is not None:
-           self.__pos    = dot(self.__pos, rot)
+           self.__pos    = dot(self.__pos , rot)
         if self.__lmoc  is not None:
            self.__lmoc   = dot(self.__lmoc, rot)
         if self.__lmoc1 is not None:
-           self.__lmoc1  = dot(self.__lmoc1, rot)
+           self.__lmoc1  = dot(self.__lmoc1,rot)
         if self.__lvec  is not None:
            self.__lvec   = dot(self.__lvec, rot)
         if self.__rpol  is not None:
            self.__rpol   = dot(self.__rpol, rot)
+        if self.__rdma  is not None:
+           self.__rdma   = dot(self.__rdma, rot)
         # transform dipoles, quadrupoles and octupoles!
         if 0: pass
         # transform distributed polarizabilities!
         if self.__dpol   is not None:
-           self.__dpol    = dot(transpose(rot),dot(self.__dpol,rot))
+           for i in xrange(self.__npol):
+               self.__dpol[i] = dot(transpose(rot),dot(self.__dpol[i],rot))
         if self.__dpol1  is not None:
-           self.__dpol1   = dot(transpose(rot),dot(self.__dpol1,rot))
+           for i in xrange(self.__nmodes):
+               for j in xrange(self.__npol):
+                   self.__dpol1[i,j]  = dot(transpose(rot),dot(self.__dpol1[i,j],rot))
         # transform the wave function!
         if self.__vecl  is not None:
            bfs = self.get_bfs()
@@ -237,15 +253,19 @@ Notes:
         self.__pos    = s.get_transformed()
         if self.__lmoc  is not None: self.__lmoc   = dot(self.__lmoc , rot) + transl
         if self.__rpol  is not None: self.__rdpol  = dot(self.__rpol , rot) + transl
+        if self.__rdma  is not None: self.__rdma   = dot(self.__rdma , rot) + transl
         if self.__lmoc1 is not None: self.__lmoc1  = dot(self.__lmoc1, rot)
         if self.__lvec  is not None: self.__lvec   = dot(self.__lvec , rot)
         # transform dipoles, quadrupoles and octupoles!
         if 0: pass
         # transform distributed polarizabilities!
         if self.__dpol   is not None:
-           self.__dpol   = dot(transpose(rot),dot(self.__dpol,rot))
+           for i in xrange(self.__npol):
+               self.__dpol[i] = dot(transpose(rot),dot(self.__dpol[i],rot))
         if self.__dpol1  is not None:
-           self.__dpol1  = dot(transpose(rot),dot(self.__dpol1,rot))
+           for i in xrange(self.__nmodes):
+               for j in xrange(self.__npol):
+                   self.__dpol1[i,j]  = dot(transpose(rot),dot(self.__dpol1[i,j],rot))
         # - wave function
         if self.__vecl  is not None:
            bfs = self.get_bfs()
@@ -284,9 +304,12 @@ Notes:
         self.__esp  ,self.__chlpg             = None, None
         self.__dpol ,self.__dpol1,self.__rpol = None, None, None
         #
+        self.__rdma, self.__dmac, self.__dmad = None, None, None
+        self.__dmaq, self.__dmao              = None, None
+        #
         mol_names = ('name','basis','method','natoms','nbasis',
                      'nmos','nmodes','atoms','shortname','nsites',
-                     'ncmos','npol',)
+                     'ncmos','npol','ndma',)
         sec_names = {'lmoc' : '[ LMO centroids ]',
                      'lmoc1': '[ LMO centroids - first derivatives ]',
                      'fock' : '[ Fock matrix ]',
@@ -310,7 +333,12 @@ Notes:
                      'chlpg': '[ ChelpG charges ]',
                       'dpol': '[ Distributed polarizabilities ]',
                      'dpol1': '[ Distributed polarizabilities - first derivatives ]',
-                      'rpol': '[ Polarizable centers ]',}
+                      'rpol': '[ Polarizable centers ]',
+                      'rdma': '[ DMTP centers ]',
+                      'dmac': '[ DMTP charges ]',
+                      'dmad': '[ DMTP dipoles ]',
+                      'dmaq': '[ DMTP quadrupoles ]',
+                      'dmao': '[ DMTP octupoles ]',}
         self.__mol_names = mol_names
         self.__sec_names = sec_names
         return
@@ -357,6 +385,11 @@ Notes:
         # Population analysis
         if self.__esp   is not None: par['esp'  ] = self.__esp
         if self.__chlpg is not None: par['chlpg'] = self.__chlpg
+        if self.__rdma  is not None: par['rdma' ] = self.__rdma
+        if self.__dmac  is not None: par['dmac' ] = self.__dmac
+        if self.__dmad  is not None: par['dmad' ] = self.__dmad
+        if self.__dmaq  is not None: par['dmaq' ] = self.__dmaq
+        if self.__dmao  is not None: par['dmao' ] = self.__dmao
         if self.__rpol  is not None: par['rpol' ] = self.__rpol
         if self.__dpol  is not None: par['dpol' ] = self.__dpol
         if self.__dpol1 is not None: par['dpol1'] = self.__dpol1
@@ -406,6 +439,8 @@ Notes:
                         self.__nmodes = int(arg)
                     if name == 'npol':
                         self.__npol = int(arg)
+                    if name == 'ndma':
+                        self.__ndma = int(arg)
                 
         ### more advanced information
         else:
@@ -454,8 +489,40 @@ Notes:
                  assert self.__natoms == N, merror
                  self.__chlpg = data
             # DMA/CAMM
-            elif key == 'dma':
-                 pass
+            # distributed center coordinates
+            elif key == 'rdma':
+                 merror = 'ndma in section [ molecule ] '
+                 merror+= 'is not consistent with section [ DMTP centers ]!'
+                 assert self.__ndma == N/3, merror
+                 data = data.reshape(self.__ndma,3)
+                 self.__rdma = data
+            # distributed charges
+            elif key == 'dmac':
+                 merror = 'ndma in section [ molecule ] '
+                 merror+= 'is not consistent with section [ DMTP charges ]!'
+                 assert self.__ndma == N, merror
+                 self.__dmac = data
+            # distributed dipoles
+            elif key == 'dmad':
+                 merror = 'ndma in section [ molecule ] '
+                 merror+= 'is not consistent with section [ DMTP dipoles ]!'
+                 assert self.__ndma == N/3, merror
+                 data = data.reshape(self.__ndma,3)
+                 self.__dmad = data
+            # distributed quadrupoles
+            elif key == 'dmaq':
+                 merror = 'ndma in section [ molecule ] '
+                 merror+= 'is not consistent with section [ DMTP quadrupoles ]!'
+                 assert self.__ndma == N/6, merror
+                 data = data.reshape(self.__ndma,6)
+                 self.__dmaq = data
+            # distributed octupoles
+            elif key == 'dmao':
+                 merror = 'ndma in section [ molecule ] '
+                 merror+= 'is not consistent with section [ DMTP octupoles ]!'
+                 assert self.__ndma == N/10, merror
+                 data = data.reshape(self.__ndma,10)
+                 self.__dmao = data
             # CABMM
             elif key == 'cabmm':
                  pass
@@ -752,6 +819,85 @@ Notes:
         file.write(log)
         return
 
+    def _write_rdma(self,file):
+        """write DMTP center coordinates"""
+        ndma = self.__rdma.shape[0]
+        N = ndma * 3
+        log = ' %s %s= %d\n' % (self.__sec_names['rdma'].ljust(40),'N'.rjust(10),N)
+        n = 1
+        for i in xrange(ndma):
+            for j in xrange(3):
+                log+= "%20.10E" % self.__rdma[i,j]
+                if not n%5: log+= '\n'
+                n+=1
+        log+= '\n'
+        if N%5: log+= '\n'
+        file.write(log)
+        return
+
+    def _write_dmac(self,file):
+        """write DMTP charges"""
+        ndma = self.__dmac.shape[0]
+        N = ndma
+        log = ' %s %s= %d\n' % (self.__sec_names['dmac'].ljust(40),'N'.rjust(10),N)
+        n = 1
+        for i in xrange(ndma):
+            log+= "%20.10E" % self.__dmac[i]
+            if not n%5: log+= '\n'
+            n+=1
+        log+= '\n'
+        if N%5: log+= '\n'
+        file.write(log)
+        return
+    
+    def _write_dmad(self,file):
+        """write DMTP dipoles"""
+        ndma = self.__dmad.shape[0]
+        N = ndma * 3
+        log = ' %s %s= %d\n' % (self.__sec_names['dmad'].ljust(40),'N'.rjust(10),N)
+        n = 1
+        for i in xrange(ndma):
+            for j in xrange(3):
+                log+= "%20.10E" % self.__dmad[i,j]
+                if not n%5: log+= '\n'
+                n+=1
+        log+= '\n'
+        if N%5: log+= '\n'
+        file.write(log)
+        return
+
+    def _write_dmaq(self,file):
+        """write DMTP quadrupoles"""
+        ndma = self.__dmaq.shape[0]
+        N = ndma * 6
+        log = ' %s %s= %d\n' % (self.__sec_names['dmaq'].ljust(40),'N'.rjust(10),N)
+        n = 1
+        for i in xrange(ndma):
+            for j in xrange(6):
+                log+= "%20.10E" % self.__dmaq[i,j]
+                if not n%5: log+= '\n'
+                n+=1
+        log+= '\n'
+        if N%5: log+= '\n'
+        file.write(log)
+        return
+        
+    def _write_dmao(self,file):
+        """write DMTP octupoles"""
+        ndma = self.__dmao.shape[0]
+        N = ndma * 10
+        log = ' %s %s= %d\n' % (self.__sec_names['dmao'].ljust(40),'N'.rjust(10),N)
+        n = 1
+        for i in xrange(ndma):
+            for j in xrange(10):
+                log+= "%20.10E" % self.__dmao[i,j]
+                if not n%5: log+= '\n'
+                n+=1
+        log+= '\n'
+        if N%5: log+= '\n'
+        file.write(log)
+        return
+    
     def _write_rpol(self,file):
         """write polarizable center coordinates"""
         npol = self.__rpol.shape[0]
