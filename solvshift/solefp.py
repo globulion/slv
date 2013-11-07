@@ -66,6 +66,10 @@ Notes:
         if str_b is not None: rms_b = self.__molB.sup(str_b)
         return rms_a, rms_b
     
+    def get_mol(self):
+        """returns molecular fragments"""
+        return self.__molA, self.__molB
+    
     # protected
     def _ex_rep_ct(self,nlo,shift,nmode,cunit):
         """calculate exchange-repulsion and charge-transfer properties"""
