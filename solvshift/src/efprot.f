@@ -307,7 +307,7 @@ C     QAD,OCT - non-scalar distributed multipoles
 C     ROT     - unitary rotation matrix
 C     
 C   Returns:
-C     EPOL    - polarization energy
+C     DIP,QAD,OCT - rotated moments
 C
 C   Notes:
 C     The reduced format of tensor storage is used:
@@ -734,6 +734,121 @@ C
          OCT(N,8) = rOXZZ
          OCT(N,9) = rOYZZ
          OCT(N,10)= rOXYZ
+C
+ 11   CONTINUE
+C
+      RETURN
+      END
+C-----|--|---------|---------|---------|---------|---------|---------|--|------|
+
+      SUBROUTINE TRACLS(QAD,OCT,NDMA)
+C
+C -----------------------------------------------------------------------------
+C
+C               FORM TRACELESS QUADRUPOLES AND OCTUPOLE MOMENTS
+C                     ACCORDING TO BUCKINGHAM CONVENTION
+C 
+C              Bartosz Blasiak                        08.11.2013
+C
+C -----------------------------------------------------------------------------
+C
+C   Description:
+C     Performs the transformations:
+C
+C       Q_ab  = Q_a'b'   * R_a'a * R_b'b
+C       O_abc = O_a'b'c' * R_a'a * R_b'b * R_c'c
+C
+C   Input variables:
+C     NDMA    - array of numbers of distributed electrostatic sites
+C     QAD,OCT - distributed quadrupoles and octupoles
+C     
+C   Returns:
+C     QAD,OCT - tensors in traceless forms
+C
+C   Notes:
+C     The reduced format of tensor storage is used:
+C
+C     QAD(i) XX  YY  ZZ  XY  XZ  YZ
+C            1   2   3   4   5   6
+C     OCT(i) XXX YYY ZZZ XXY XXZ XYY YYZ XZZ YZZ XYZ
+C            1   2   3   4   5   6   7   8   9   10
+C -----------------------------------------------------------------------------
+C
+      IMPLICIT DOUBLE PRECISION(A-H,O-Z)
+      DIMENSION QAD(NDMA,6),OCT(NDMA,10)
+      PARAMETER (POLTRA=1.500000000D+00,HALF=0.50000000000D+00,
+     &           ONEHLF=2.50000D+00,THREE=3.00000D+00)
+Cf2py INTENT(IN,OUT) QAD,OCT
+C
+      DO 11 N=1,NDMA
+C
+C       UNPACK
+C
+         QXX  = QAD(N,1)
+         QYY  = QAD(N,2)
+         QZZ  = QAD(N,3)
+         QXY  = QAD(N,4)
+         QXZ  = QAD(N,5)
+         QYZ  = QAD(N,6)
+C
+         OXXX = OCT(N,1)
+         OYYY = OCT(N,2)
+         OZZZ = OCT(N,3)
+         OXXY = OCT(N,4)
+         OXXZ = OCT(N,5)
+         OXYY = OCT(N,6)
+         OYYZ = OCT(N,7)
+         OXZZ = OCT(N,8)
+         OYZZ = OCT(N,9)
+         OXYZ = OCT(N,10)
+C
+C        TRACELESS QUADRUPOLES
+C
+         TRACE =(QXX+QYY+QZZ)*HALF
+C
+         tQXX  = QXX * POLTRA - TRACE
+         tQYY  = QYY * POLTRA - TRACE
+         tQZZ  = QZZ * POLTRA - TRACE
+         tQXY  = QXY * POLTRA
+         tQXZ  = QXZ * POLTRA
+         tQYZ  = QYZ * POLTRA
+C
+C        TRACELESS OCTUPOLES
+C
+         TX =(OXXX+OXYY+OXZZ)*HALF
+         TY =(OXXY+OYYY+OYZZ)*HALF
+         TZ =(OXXZ+OYYZ+OZZZ)*HALF
+C
+         tOXXX = OXXX * ONEHLF - TX * THREE
+         tOYYY = OYYY * ONEHLF - TY * THREE
+         tOZZZ = OZZZ * ONEHLF - TZ * THREE
+         tOXXY = OXXY * ONEHLF - TY
+         tOXXZ = OXXZ * ONEHLF - TZ
+         tOXYY = OXYY * ONEHLF - TX
+         tOYYZ = OYYZ * ONEHLF - TZ
+         tOXZZ = OXZZ * ONEHLF - TX
+         tOYZZ = OYZZ * ONEHLF - TY
+         tOXYZ = OXYZ * ONEHLF
+C
+C        SAVE
+C
+         QAD(N,1) = tQXX
+         QAD(N,2) = tQYY
+         QAD(N,3) = tQZZ
+         QAD(N,4) = tQXY
+         QAD(N,5) = tQXZ
+         QAD(N,6) = tQYZ
+C
+         OCT(N,1) = tOXXX
+         OCT(N,2) = tOYYY
+         OCT(N,3) = tOZZZ
+         OCT(N,4) = tOXXY
+         OCT(N,5) = tOXXZ
+         OCT(N,6) = tOXYY
+         OCT(N,7) = tOYYZ
+         OCT(N,8) = tOXZZ
+         OCT(N,9) = tOYZZ
+         OCT(N,10)= tOXYZ
 C
  11   CONTINUE
 C
