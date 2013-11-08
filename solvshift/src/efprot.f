@@ -745,7 +745,7 @@ C-----|--|---------|---------|---------|---------|---------|---------|--|------|
 C
 C -----------------------------------------------------------------------------
 C
-C               FORM TRACELESS QUADRUPOLES AND OCTUPOLE MOMENTS
+C               FORM TRACELESS QUADRUPOLE AND OCTUPOLE MOMENTS
 C                     ACCORDING TO BUCKINGHAM CONVENTION
 C 
 C              Bartosz Blasiak                        08.11.2013
