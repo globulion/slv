@@ -127,8 +127,8 @@ Notes:
         # electrostatic data
         if dma is not None:
            assert dma.if_traceless(), "DMA object is NOT traceless!!!"
-           self.__pos = dma.get_pos()
-           self.__origin = dma.get_origin()
+           self.__pos    = dma.get_pos()
+           self.__rdma   = dma.get_origin()
            self.__ndma   = len(self.__pos)
            self.__dmac   = dma[0]
            self.__dmad   = dma[1]
@@ -310,7 +310,26 @@ Notes:
         mol_names = ('name','basis','method','natoms','nbasis',
                      'nmos','nmodes','atoms','shortname','nsites',
                      'ncmos','npol','ndma',)
-        sec_names = {'lmoc' : '[ LMO centroids ]',
+        sec_names = {  'mol': '[ molecule ]',
+                      'atno': '[ Atomic numbers ]',
+                      'atms': '[ Atomic masses ]',
+                       'pos': '[ Atomic coordinates ]',
+                      'freq': '[ Harmonic frequencies ]',
+                   'redmass': '[ Reduced masses ]',
+                      'lvec': '[ Mass-weighted eigenvectors ]',
+                      'gijk': '[ Cubic anharmonic constants ]',
+                    'origin': '[ DMTP origins ]',
+                       'esp': '[ ESP charges ]',
+                     'chlpg': '[ ChelpG charges ]',
+                      'rdma': '[ DMTP centers ]',
+                      'dmac': '[ DMTP charges ]',
+                      'dmad': '[ DMTP dipoles ]',
+                      'dmaq': '[ DMTP quadrupoles ]',
+                      'dmao': '[ DMTP octupoles ]',
+                      'rpol': '[ Polarizable centers ]',
+                      'dpol': '[ Distributed polarizabilities ]',
+                     'dpol1': '[ Distributed polarizabilities - first derivatives ]',
+                     'lmoc' : '[ LMO centroids ]',
                      'lmoc1': '[ LMO centroids - first derivatives ]',
                      'fock' : '[ Fock matrix ]',
                      'fock1': '[ Fock matrix - first derivatives ]',
@@ -319,26 +338,7 @@ Notes:
                      'vecl' : '[ AO->LMO matrix ]',
                      'vecl1': '[ AO->LMO matrix - first derivatives ]',
                      'vecc' : '[ AO->CMO matrix ]',
-                     'vecc1': '[ AO->CMO matrix - first derivatives ]',
-                     'mol'  : '[ molecule ]',
-                     'freq' : '[ Harmonic frequencies ]',
-                   'redmass': '[ Reduced masses ]',
-                     'lvec' : '[ Mass-weighted eigenvectors ]',
-                     'gijk' : '[ Cubic anharmonic constants ]',
-                      'pos' : '[ Atomic coordinates ]',
-                   'origin' : '[ DMTP origins ]',
-                     'atno' : '[ Atomic numbers ]',
-                     'atms' : '[ Atomic masses ]',
-                     'esp'  : '[ ESP charges ]',
-                     'chlpg': '[ ChelpG charges ]',
-                      'dpol': '[ Distributed polarizabilities ]',
-                     'dpol1': '[ Distributed polarizabilities - first derivatives ]',
-                      'rpol': '[ Polarizable centers ]',
-                      'rdma': '[ DMTP centers ]',
-                      'dmac': '[ DMTP charges ]',
-                      'dmad': '[ DMTP dipoles ]',
-                      'dmaq': '[ DMTP quadrupoles ]',
-                      'dmao': '[ DMTP octupoles ]',}
+                     'vecc1': '[ AO->CMO matrix - first derivatives ]',}
         self.__mol_names = mol_names
         self.__sec_names = sec_names
         return
