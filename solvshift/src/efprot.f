@@ -20,6 +20,9 @@ C            P - shell:       X  Y  Z
 C            D - shell:       XX YY ZZ XY XZ YZ
 C -----------------------------------------------------------------------------
       SUBROUTINE VECROT(NMOS,NBASIS,VEC,ROT,ITYP)
+C
+C        ROTATE THE WAVE FUNCTION PARAMETERS
+C
 C -----------------------------------------------------------------------------
       IMPLICIT DOUBLE PRECISION(A-H,O-Z)
       DIMENSION VEC(NMOS,NBASIS),ROT(3,3),ITYP(NBASIS)
@@ -275,6 +278,464 @@ C
          ENDIF
 C
  1010 CONTINUE
+C
+      RETURN
+      END
+C-----|--|---------|---------|---------|---------|---------|---------|--|------|
+
+      SUBROUTINE ROTDMA(DIP,QAD,OCT,ROT,NDMA)
+C
+C -----------------------------------------------------------------------------
+C
+C               ROTATE THE DISTRIBUTED MULTIPOLE MOMENT TENSORS
+C 
+C              Bartosz Blasiak                        08.11.2013
+C
+C -----------------------------------------------------------------------------
+C
+C   Description:
+C     Performs the unitary transformations:
+C
+C       D_a   = D_a'     * R_a'a
+C       Q_ab  = Q_a'b'   * R_a'a * R_b'b
+C       O_abc = O_a'b'c' * R_a'a * R_b'b * R_c'c
+C
+C   Input variables:
+C     NDMA    - array of numbers of distributed electrostatic sites
+C     DIP,
+C     QAD,OCT - non-scalar distributed multipoles
+C     ROT     - unitary rotation matrix
+C     
+C   Returns:
+C     EPOL    - polarization energy
+C
+C   Notes:
+C     The reduced format of tensor storage is used:
+C
+C     DIP(i) X   Y   Z
+C            1   2   3
+C     QAD(i) XX  YY  ZZ  XY  XZ  YZ
+C            1   2   3   4   5   6
+C     OCT(i) XXX YYY ZZZ XXY XXZ XYY YYZ XZZ YZZ XYZ
+C            1   2   3   4   5   6   7   8   9   10
+C -----------------------------------------------------------------------------
+C
+      IMPLICIT DOUBLE PRECISION(A-H,O-Z)
+      DIMENSION DIP(NDMA,3),QAD(NDMA,6),OCT(NDMA,10),ROT(3,3)
+      PARAMETER (ZERO=0.0D+00)
+Cf2py INTENT(IN,OUT) DIP, QAD, OCT
+C
+      RXX = ROT(1,1)
+      RYY = ROT(2,2)
+      RZZ = ROT(3,3)
+      RXY = ROT(1,2)
+      RYX = ROT(2,1)
+      RXZ = ROT(1,3)
+      RZX = ROT(3,1)
+      RYZ = ROT(2,3)
+      RZY = ROT(3,2)
+C
+      DO 11 N=1,NDMA
+C
+C       UNPACK
+C
+         DX   = DIP(N,1)
+         DY   = DIP(N,2)
+         DZ   = DIP(N,3)
+C
+         QXX  = QAD(N,1)
+         QYY  = QAD(N,2)
+         QZZ  = QAD(N,3)
+         QXY  = QAD(N,4)
+         QXZ  = QAD(N,5)
+         QYZ  = QAD(N,6)
+C
+         OXXX = OCT(N,1)
+         OYYY = OCT(N,2)
+         OZZZ = OCT(N,3)
+         OXXY = OCT(N,4)
+         OXXZ = OCT(N,5)
+         OXYY = OCT(N,6)
+         OYYZ = OCT(N,7)
+         OXZZ = OCT(N,8)
+         OYZZ = OCT(N,9)
+         OXYZ = OCT(N,10)
+C
+C        ROTATE DIPOLES
+C
+         rDX = RXX * DX + RYX * DY + RZX * DZ
+         rDY = RXY * DX + RYY * DY + RZY * DZ
+         rDZ = RXZ * DX + RYZ * DY + RZZ * DZ
+C
+C        ROTATE QUADRUPOLES
+C
+         rQXX = RXX * RXX * QXX +
+     &          RXX * RYX * QXY +
+     &          RXX * RZX * QXZ +
+     &          RYX * RXX * QXY +
+     &          RYX * RYX * QYY +
+     &          RYX * RZX * QYZ +
+     &          RZX * RXX * QXZ +
+     &          RZX * RYX * QYZ +
+     &          RZX * RZX * QZZ
+C
+         rQYY = RXY * RXY * QXX +
+     &          RXY * RYY * QXY +
+     &          RXY * RZY * QXZ +
+     &          RYY * RXY * QXY +
+     &          RYY * RYY * QYY +
+     &          RYY * RZY * QYZ +
+     &          RZY * RXY * QXZ +
+     &          RZY * RYY * QYZ +
+     &          RZY * RZY * QZZ
+C
+         rQZZ = RXZ * RXZ * QXX +
+     &          RXZ * RYZ * QXY +
+     &          RXZ * RZZ * QXZ +
+     &          RYZ * RXZ * QXY +
+     &          RYZ * RYZ * QYY +
+     &          RYZ * RZZ * QYZ +
+     &          RZZ * RXZ * QXZ +
+     &          RZZ * RYZ * QYZ +
+     &          RZZ * RZZ * QZZ
+C
+         rQXY = RXX * RXY * QXX +
+     &          RXX * RYY * QXY +
+     &          RXX * RZY * QXZ +
+     &          RYX * RXY * QXY +
+     &          RYX * RYY * QYY +
+     &          RYX * RZY * QYZ +
+     &          RZX * RXY * QXZ +
+     &          RZX * RYY * QYZ +
+     &          RZX * RZY * QZZ
+C
+         rQXZ = RXX * RXZ * QXX +
+     &          RXX * RYZ * QXY +
+     &          RXX * RZZ * QXZ +
+     &          RYX * RXZ * QXY +
+     &          RYX * RYZ * QYY +
+     &          RYX * RZZ * QYZ +
+     &          RZX * RXZ * QXZ +
+     &          RZX * RYZ * QYZ +
+     &          RZX * RZZ * QZZ
+C
+         rQYZ = RXY * RXZ * QXX + 
+     &          RXY * RYZ * QXY + 
+     &          RXY * RZZ * QXZ +
+     &          RYY * RXZ * QXY +
+     &          RYY * RYZ * QYY +
+     &          RYY * RZZ * QYZ +
+     &          RZY * RXZ * QXZ +
+     &          RZY * RYZ * QYZ +
+     &          RZY * RZZ * QZZ
+C
+C        ROTATE OCTUPOLES
+C
+         rOXXX = RXX * RXX * RXX * OXXX +
+     &           RXX * RXX * RYX * OXXY +
+     &           RXX * RXX * RZX * OXXZ +
+     &           RXX * RYX * RXX * OXXY +
+     &           RXX * RYX * RYX * OXYY +
+     &           RXX * RYX * RZX * OXYZ +
+     &           RXX * RZX * RXX * OXXZ +
+     &           RXX * RZX * RYX * OXYZ +
+     &           RXX * RZX * RZX * OXZZ +
+     &           RYX * RXX * RXX * OXXY +
+     &           RYX * RXX * RYX * OXYY +
+     &           RYX * RXX * RZX * OXYZ +
+     &           RYX * RYX * RXX * OXYY +
+     &           RYX * RYX * RYX * OYYY +
+     &           RYX * RYX * RZX * OYYZ +
+     &           RYX * RZX * RXX * OXYZ +
+     &           RYX * RZX * RYX * OYYZ +
+     &           RYX * RZX * RZX * OYZZ +
+     &           RZX * RXX * RXX * OXXZ +
+     &           RZX * RXX * RYX * OXYZ +
+     &           RZX * RXX * RZX * OXZZ +
+     &           RZX * RYX * RXX * OXYZ +
+     &           RZX * RYX * RYX * OYYZ +
+     &           RZX * RYX * RZX * OYZZ +
+     &           RZX * RZX * RXX * OXZZ +
+     &           RZX * RZX * RYX * OYZZ +
+     &           RZX * RZX * RZX * OZZZ
+C
+         rOYYY = RXY * RXY * RXY * OXXX +
+     &           RXY * RXY * RYY * OXXY +
+     &           RXY * RXY * RZY * OXXZ +
+     &           RXY * RYY * RXY * OXXY +
+     &           RXY * RYY * RYY * OXYY +
+     &           RXY * RYY * RZY * OXYZ +
+     &           RXY * RZY * RXY * OXXZ +
+     &           RXY * RZY * RYY * OXYZ +
+     &           RXY * RZY * RZY * OXZZ +
+     &           RYY * RXY * RXY * OXXY +
+     &           RYY * RXY * RYY * OXYY +
+     &           RYY * RXY * RZY * OXYZ +
+     &           RYY * RYY * RXY * OXYY +
+     &           RYY * RYY * RYY * OYYY +
+     &           RYY * RYY * RZY * OYYZ +
+     &           RYY * RZY * RXY * OXYZ +
+     &           RYY * RZY * RYY * OYYZ +
+     &           RYY * RZY * RZY * OYZZ +
+     &           RZY * RXY * RXY * OXXZ +
+     &           RZY * RXY * RYY * OXYZ +
+     &           RZY * RXY * RZY * OXZZ +
+     &           RZY * RYY * RXY * OXYZ +
+     &           RZY * RYY * RYY * OYYZ +
+     &           RZY * RYY * RZY * OYZZ +
+     &           RZY * RZY * RXY * OXZZ +
+     &           RZY * RZY * RYY * OYZZ +
+     &           RZY * RZY * RZY * OZZZ
+C
+         rOZZZ = RXZ * RXZ * RXZ * OXXX +
+     &           RXZ * RXZ * RYZ * OXXY +
+     &           RXZ * RXZ * RZZ * OXXZ +
+     &           RXZ * RYZ * RXZ * OXXY +
+     &           RXZ * RYZ * RYZ * OXYY +
+     &           RXZ * RYZ * RZZ * OXYZ +
+     &           RXZ * RZZ * RXZ * OXXZ +
+     &           RXZ * RZZ * RYZ * OXYZ +
+     &           RXZ * RZZ * RZZ * OXZZ +
+     &           RYZ * RXZ * RXZ * OXXY +
+     &           RYZ * RXZ * RYZ * OXYY +
+     &           RYZ * RXZ * RZZ * OXYZ +
+     &           RYZ * RYZ * RXZ * OXYY +
+     &           RYZ * RYZ * RYZ * OYYY +
+     &           RYZ * RYZ * RZZ * OYYZ +
+     &           RYZ * RZZ * RXZ * OXYZ +
+     &           RYZ * RZZ * RYZ * OYYZ +
+     &           RYZ * RZZ * RZZ * OYZZ +
+     &           RZZ * RXZ * RXZ * OXXZ +
+     &           RZZ * RXZ * RYZ * OXYZ +
+     &           RZZ * RXZ * RZZ * OXZZ +
+     &           RZZ * RYZ * RXZ * OXYZ +
+     &           RZZ * RYZ * RYZ * OYYZ +
+     &           RZZ * RYZ * RZZ * OYZZ +
+     &           RZZ * RZZ * RXZ * OXZZ +
+     &           RZZ * RZZ * RYZ * OYZZ +
+     &           RZZ * RZZ * RZZ * OZZZ
+C
+         rOXXY = RXX * RXX * RXY * OXXX +
+     &           RXX * RXX * RYY * OXXY +
+     &           RXX * RXX * RZY * OXXZ +
+     &           RXX * RYX * RXY * OXXY +
+     &           RXX * RYX * RYY * OXYY +
+     &           RXX * RYX * RZY * OXYZ +
+     &           RXX * RZX * RXY * OXXZ +
+     &           RXX * RZX * RYY * OXYZ +
+     &           RXX * RZX * RZY * OXZZ +
+     &           RYX * RXX * RXY * OXXY +
+     &           RYX * RXX * RYY * OXYY +
+     &           RYX * RXX * RZY * OXYZ +
+     &           RYX * RYX * RXY * OXYY +
+     &           RYX * RYX * RYY * OYYY +
+     &           RYX * RYX * RZY * OYYZ +
+     &           RYX * RZX * RXY * OXYZ +
+     &           RYX * RZX * RYY * OYYZ +
+     &           RYX * RZX * RZY * OYZZ +
+     &           RZX * RXX * RXY * OXXZ +
+     &           RZX * RXX * RYY * OXYZ +
+     &           RZX * RXX * RZY * OXZZ +
+     &           RZX * RYX * RXY * OXYZ +
+     &           RZX * RYX * RYY * OYYZ +
+     &           RZX * RYX * RZY * OYZZ +
+     &           RZX * RZX * RXY * OXZZ +
+     &           RZX * RZX * RYY * OYZZ +
+     &           RZX * RZX * RZY * OZZZ
+C
+         rOXXZ = RXX * RXX * RXZ * OXXX +
+     &           RXX * RXX * RYZ * OXXY +
+     &           RXX * RXX * RZZ * OXXZ +
+     &           RXX * RYX * RXZ * OXXY +
+     &           RXX * RYX * RYZ * OXYY +
+     &           RXX * RYX * RZZ * OXYZ +
+     &           RXX * RZX * RXZ * OXXZ +
+     &           RXX * RZX * RYZ * OXYZ +
+     &           RXX * RZX * RZZ * OXZZ +
+     &           RYX * RXX * RXZ * OXXY +
+     &           RYX * RXX * RYZ * OXYY +
+     &           RYX * RXX * RZZ * OXYZ +
+     &           RYX * RYX * RXZ * OXYY +
+     &           RYX * RYX * RYZ * OYYY +
+     &           RYX * RYX * RZZ * OYYZ +
+     &           RYX * RZX * RXZ * OXYZ +
+     &           RYX * RZX * RYZ * OYYZ +
+     &           RYX * RZX * RZZ * OYZZ +
+     &           RZX * RXX * RXZ * OXXZ +
+     &           RZX * RXX * RYZ * OXYZ +
+     &           RZX * RXX * RZZ * OXZZ +
+     &           RZX * RYX * RXZ * OXYZ +
+     &           RZX * RYX * RYZ * OYYZ +
+     &           RZX * RYX * RZZ * OYZZ +
+     &           RZX * RZX * RXZ * OXZZ +
+     &           RZX * RZX * RYZ * OYZZ +
+     &           RZX * RZX * RZZ * OZZZ
+C
+         rOXYY = RXX * RXY * RXY * OXXX +
+     &           RXX * RXY * RYY * OXXY +
+     &           RXX * RXY * RZY * OXXZ +
+     &           RXX * RYY * RXY * OXXY +
+     &           RXX * RYY * RYY * OXYY +
+     &           RXX * RYY * RZY * OXYZ +
+     &           RXX * RZY * RXY * OXXZ +
+     &           RXX * RZY * RYY * OXYZ +
+     &           RXX * RZY * RZY * OXZZ +
+     &           RYX * RXY * RXY * OXXY +
+     &           RYX * RXY * RYY * OXYY +
+     &           RYX * RXY * RZY * OXYZ +
+     &           RYX * RYY * RXY * OXYY +
+     &           RYX * RYY * RYY * OYYY +
+     &           RYX * RYY * RZY * OYYZ +
+     &           RYX * RZY * RXY * OXYZ +
+     &           RYX * RZY * RYY * OYYZ +
+     &           RYX * RZY * RZY * OYZZ +
+     &           RZX * RXY * RXY * OXXZ +
+     &           RZX * RXY * RYY * OXYZ +
+     &           RZX * RXY * RZY * OXZZ +
+     &           RZX * RYY * RXY * OXYZ +
+     &           RZX * RYY * RYY * OYYZ +
+     &           RZX * RYY * RZY * OYZZ +
+     &           RZX * RZY * RXY * OXZZ +
+     &           RZX * RZY * RYY * OYZZ +
+     &           RZX * RZY * RZY * OZZZ
+C
+         rOYYZ = RXY * RXY * RXZ * OXXX +
+     &           RXY * RXY * RYZ * OXXY +
+     &           RXY * RXY * RZZ * OXXZ +
+     &           RXY * RYY * RXZ * OXXY +
+     &           RXY * RYY * RYZ * OXYY +
+     &           RXY * RYY * RZZ * OXYZ +
+     &           RXY * RZY * RXZ * OXXZ +
+     &           RXY * RZY * RYZ * OXYZ +
+     &           RXY * RZY * RZZ * OXZZ +
+     &           RYY * RXY * RXZ * OXXY +
+     &           RYY * RXY * RYZ * OXYY +
+     &           RYY * RXY * RZZ * OXYZ +
+     &           RYY * RYY * RXZ * OXYY +
+     &           RYY * RYY * RYZ * OYYY +
+     &           RYY * RYY * RZZ * OYYZ +
+     &           RYY * RZY * RXZ * OXYZ +
+     &           RYY * RZY * RYZ * OYYZ +
+     &           RYY * RZY * RZZ * OYZZ +
+     &           RZY * RXY * RXZ * OXXZ +
+     &           RZY * RXY * RYZ * OXYZ +
+     &           RZY * RXY * RZZ * OXZZ +
+     &           RZY * RYY * RXZ * OXYZ +
+     &           RZY * RYY * RYZ * OYYZ +
+     &           RZY * RYY * RZZ * OYZZ +
+     &           RZY * RZY * RXZ * OXZZ +
+     &           RZY * RZY * RYZ * OYZZ +
+     &           RZY * RZY * RZZ * OZZZ
+C
+         rOXZZ = RXX * RXZ * RXZ * OXXX +
+     &           RXX * RXZ * RYZ * OXXY +
+     &           RXX * RXZ * RZZ * OXXZ +
+     &           RXX * RYZ * RXZ * OXXY +
+     &           RXX * RYZ * RYZ * OXYY +
+     &           RXX * RYZ * RZZ * OXYZ +
+     &           RXX * RZZ * RXZ * OXXZ +
+     &           RXX * RZZ * RYZ * OXYZ +
+     &           RXX * RZZ * RZZ * OXZZ +
+     &           RYX * RXZ * RXZ * OXXY +
+     &           RYX * RXZ * RYZ * OXYY +
+     &           RYX * RXZ * RZZ * OXYZ +
+     &           RYX * RYZ * RXZ * OXYY +
+     &           RYX * RYZ * RYZ * OYYY +
+     &           RYX * RYZ * RZZ * OYYZ +
+     &           RYX * RZZ * RXZ * OXYZ +
+     &           RYX * RZZ * RYZ * OYYZ +
+     &           RYX * RZZ * RZZ * OYZZ +
+     &           RZX * RXZ * RXZ * OXXZ +
+     &           RZX * RXZ * RYZ * OXYZ +
+     &           RZX * RXZ * RZZ * OXZZ +
+     &           RZX * RYZ * RXZ * OXYZ +
+     &           RZX * RYZ * RYZ * OYYZ +
+     &           RZX * RYZ * RZZ * OYZZ +
+     &           RZX * RZZ * RXZ * OXZZ +
+     &           RZX * RZZ * RYZ * OYZZ +
+     &           RZX * RZZ * RZZ * OZZZ
+C
+         rOYZZ = RXY * RXZ * RXZ * OXXX +
+     &           RXY * RXZ * RYZ * OXXY +
+     &           RXY * RXZ * RZZ * OXXZ +
+     &           RXY * RYZ * RXZ * OXXY +
+     &           RXY * RYZ * RYZ * OXYY +
+     &           RXY * RYZ * RZZ * OXYZ +
+     &           RXY * RZZ * RXZ * OXXZ +
+     &           RXY * RZZ * RYZ * OXYZ +
+     &           RXY * RZZ * RZZ * OXZZ +
+     &           RYY * RXZ * RXZ * OXXY +
+     &           RYY * RXZ * RYZ * OXYY +
+     &           RYY * RXZ * RZZ * OXYZ +
+     &           RYY * RYZ * RXZ * OXYY +
+     &           RYY * RYZ * RYZ * OYYY +
+     &           RYY * RYZ * RZZ * OYYZ +
+     &           RYY * RZZ * RXZ * OXYZ +
+     &           RYY * RZZ * RYZ * OYYZ +
+     &           RYY * RZZ * RZZ * OYZZ +
+     &           RZY * RXZ * RXZ * OXXZ +
+     &           RZY * RXZ * RYZ * OXYZ +
+     &           RZY * RXZ * RZZ * OXZZ +
+     &           RZY * RYZ * RXZ * OXYZ +
+     &           RZY * RYZ * RYZ * OYYZ +
+     &           RZY * RYZ * RZZ * OYZZ +
+     &           RZY * RZZ * RXZ * OXZZ +
+     &           RZY * RZZ * RYZ * OYZZ +
+     &           RZY * RZZ * RZZ * OZZZ
+C
+         rOXYZ = RXX * RXY * RXZ * OXXX +
+     &           RXX * RXY * RYZ * OXXY +
+     &           RXX * RXY * RZZ * OXXZ +
+     &           RXX * RYY * RXZ * OXXY +
+     &           RXX * RYY * RYZ * OXYY +
+     &           RXX * RYY * RZZ * OXYZ +
+     &           RXX * RZY * RXZ * OXXZ +
+     &           RXX * RZY * RYZ * OXYZ +
+     &           RXX * RZY * RZZ * OXZZ +
+     &           RYX * RXY * RXZ * OXXY +
+     &           RYX * RXY * RYZ * OXYY +
+     &           RYX * RXY * RZZ * OXYZ +
+     &           RYX * RYY * RXZ * OXYY +
+     &           RYX * RYY * RYZ * OYYY +
+     &           RYX * RYY * RZZ * OYYZ +
+     &           RYX * RZY * RXZ * OXYZ +
+     &           RYX * RZY * RYZ * OYYZ +
+     &           RYX * RZY * RZZ * OYZZ +
+     &           RZX * RXY * RXZ * OXXZ +
+     &           RZX * RXY * RYZ * OXYZ +
+     &           RZX * RXY * RZZ * OXZZ +
+     &           RZX * RYY * RXZ * OXYZ +
+     &           RZX * RYY * RYZ * OYYZ +
+     &           RZX * RYY * RZZ * OYZZ +
+     &           RZX * RZY * RXZ * OXZZ +
+     &           RZX * RZY * RYZ * OYZZ +
+     &           RZX * RZY * RZZ * OZZZ
+C
+C        SAVE
+C
+         DIP(N,1) = rDX
+         DIP(N,2) = rDY
+         DIP(N,3) = rDZ
+C
+         QAD(N,1) = rQXX
+         QAD(N,2) = rQYY
+         QAD(N,3) = rQZZ
+         QAD(N,4) = rQXY
+         QAD(N,5) = rQXZ
+         QAD(N,6) = rQYZ
+C
+         OCT(N,1) = rOXXX
+         OCT(N,2) = rOYYY
+         OCT(N,3) = rOZZZ
+         OCT(N,4) = rOXXY
+         OCT(N,5) = rOXXZ
+         OCT(N,6) = rOXYY
+         OCT(N,7) = rOYYZ
+         OCT(N,8) = rOXZZ
+         OCT(N,9) = rOYZZ
+         OCT(N,10)= rOXYZ
+C
+ 11   CONTINUE
 C
       RETURN
       END
