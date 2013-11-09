@@ -72,7 +72,7 @@ class SLVPAR(object,UNITS):
     * Information about storage dimensions of Frag memorials                  
  
  =============================================================================
-  [1] USAGE (if '=' the argument is default)                     
+  [1] USAGE (if '=': the argument is default)                     
  =============================================================================
  
   1) create the object (initialize)                                           
@@ -191,18 +191,18 @@ class SLVPAR(object,UNITS):
              POL(i) XX  XY  XZ  YX  YY  YZ  ZX  ZY  ZZ 
                     1   2   3   4   5   6   7   8   9
 
-   * Turn of indices in the case of DMA distributions is identical as GAMESS
-   * Turn of indices in distributed polarizabilities is different as in GAMESS 
+   * Turn of indices in the case of DMA distributions is identical as GAMESS  
+   * Turn of indices in distributed polarizabilities is different as in GAMESS
  =============================================================================
  Notes:                                                                       
-   1) -ALL- the data in the instance of Frag are stored in ATOMIC UNITS!!!
+   1) -ALL- the data in the instance of Frag are stored in ATOMIC UNITS!!!   
 
-       [ Angstrom, kcal/mole, cm-1, C, amu, ... ] ----> [a.u.]
+       [ Angstrom, kcal/mole, cm-1, C, amu, ... ] ----> [a.u.]                
                                                                               
  References:                                                                  
   * add Gordon's papers, M.Cho's papers, R.W.Góra's papers and your papers    
-  * add PyQuante reference and MDAnalysis reference                           
-  * add LibBBG and Coulomb.py references                                      
+  * add MDAnalysis reference                                                  
+  * add LibBBG, Coulomb.py, PyQuante, Gaussian09 and GAMESS references        
  =============================================================================
   Globulion@                                                                  
 """
@@ -263,7 +263,7 @@ class SLVPAR(object,UNITS):
            self.__npol   = self.__nmos
         # electrostatic data
         if dma is not None:
-           assert dma.if_traceless(), "DMA object is NOT traceless!!!"
+           assert not dma.if_traceless(), "DMA object is ALREADY traceless!!!"
            self.__pos    = dma.get_pos()
            self.__rdma   = dma.get_origin()
            self.__ndma   = len(self.__pos)
@@ -371,8 +371,8 @@ class SLVPAR(object,UNITS):
            self.__rdma   = dot(self.__rdma, rot)
         # transform dipoles, quadrupoles and octupoles!
         if self.__dmac  is not None:
-           seld.__dmad, self.__dmaq, self.__dmao = \
-           rotdma(seld.__dmad,self.__dmaq,self.__dmao,rot)
+           self.__dmad, self.__dmaq, self.__dmao = \
+           rotdma(self.__dmad,self.__dmaq,self.__dmao,rot)
         # transform distributed polarizabilities!
         if self.__dpol   is not None:
            for i in xrange(self.__npol):
@@ -404,14 +404,14 @@ class SLVPAR(object,UNITS):
         # perform transformations
         self.__pos       = s.get_transformed()
         if self.__lmoc  is not None: self.__lmoc   = dot(self.__lmoc , rot) + transl
-        if self.__rpol  is not None: self.__rdpol  = dot(self.__rpol , rot) + transl
+        if self.__rpol  is not None: self.__rpol   = dot(self.__rpol , rot) + transl
         if self.__rdma  is not None: self.__rdma   = dot(self.__rdma , rot) + transl
         if self.__lmoc1 is not None: self.__lmoc1  = dot(self.__lmoc1, rot)
         if self.__lvec  is not None: self.__lvec   = dot(self.__lvec , rot)
         # transform dipoles, quadrupoles and octupoles!
         if self.__dmac  is not None:
-           seld.__dmad, self.__dmaq, self.__dmao = \
-           rotdma(seld.__dmad,self.__dmaq,self.__dmao,rot)
+           self.__dmad, self.__dmaq, self.__dmao = \
+           rotdma(self.__dmad,self.__dmaq,self.__dmao,rot)
         # transform distributed polarizabilities!
         if self.__dpol   is not None:
            for i in xrange(self.__npol):
