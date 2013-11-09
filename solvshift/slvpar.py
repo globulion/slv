@@ -1,13 +1,16 @@
+﻿#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # --------------------------------------------------------------------- #
-#             SOLVATOCHROMIC PARAMETER FORMAT MODULE                    #
+#             EFFECTIVE FRAGMENT PARAMETER FORMAT MODULE                #
 # --------------------------------------------------------------------- #
 
-from numpy     import array, float64, zeros, newaxis, sqrt, dot,asfortranarray, transpose
+from numpy     import array, float64, zeros, newaxis, sqrt, \
+                      dot, asfortranarray, transpose
 from units     import *
 from dma       import DMA
 from utilities import order, SVDSuperimposer as svd_sup, MakeMol
-from PyQuante.Ints import getbasis
 from efprot    import vecrot, vc1rot, tracls, rotdma
+from PyQuante.Ints import getbasis
 import sys, copy, os, re, math
 sys.stdout.flush()
 
@@ -16,58 +19,192 @@ __version__ = '1.0.1'
 
 class SLVPAR(object,UNITS):
     """
-Represents Solvshift Solvatochromic Parameter Format System
------------------------------------------------------------
-
-It contains various sections necessary for evaluation of
-frequency shifts using coarse-grained models. The major gro
-ups of parameters are:
-
-0) basic molecule specification
-   a) the structure - atomic coordinates
-   b) atomic numbers
-   c) atomic masses
-1) electrostatics - distributed multipole approximation
-   a) first-order Coulomb forces
-   b) second-order polarization forces
-2) frequency analysis data
-3) non-electrostatics:
-   a) exchange-repulsion
-   b) charge-transfer
-Part 1a) is a part of Coulomb file format.
-
-Beneath I list the various sections of both groups of parameters:
-
- - GROUP (0) -
- [ molecule ] - basic specifications of the molecule
- [ structure ]
- [ atomic numbers ]
- [ atomic masses ]
+ =============================================================================
+                    Effective Fragment Parameter Format System                
+                                                                              
+            Bartosz Błasiak                last revision: 9 Nov 2013          
+ =============================================================================
+                                                                              
+ Represents Efective Fragment Potential (EFP) fragment. Designed to unify func
+ tionality of the QM molecular object that contains information about all inte
+ rmolecular interactions based on gas-phase molecular properties, mainly first
+ order Coulomb electrostatics, second-order polarization forces, first-order c
+ orrection due to overlap and Pauli repulsion, charge-transfer and dispersion.
+ Supports the following functionalities for condensed physics modeling:       
  
- - GROUP (1) -
- [ DMTP ] - distributed multipole moments
- [ SolDMTP ] - solvatochromic  moments
- [ origins ] - origins of distributed moments
+   a) intermolecular interaction energies                                     
+   b) nonlinear electrooptical properties                                     
+   c) infra-red solvatochromism                                               
  
- - GROUP (3) -
- [ Harmonic frequencies ]
- [ Reduced masses ]
- [ Mass-weighted eigenvectors ]
- [ Cubic anharmonic constants ]
+ It contains various memory sections necessary for evaluation of molecular agg
+ regate property using coarse-grained models. The major groups of molecular pa
+ rameters are:                                                                
  
- - GROUP (2) -
- [ AO to LMO transformation matrix ] = [ AO->LMO matrix ]
- [ LMO centroids ]
- [ Fock matrix ] - written in LMO basis
- [ AO to LMO transformation matrix - first derivatives ] = [ AO->LMO matrix - first derivatives ]
- [ LMO centroids - first derivatives ]
- [ Fock matrix - first derivatives ]
+   I  ) Basic molecular specification                                         
+        a) atomic coordinates, numbers and masses                             
  
-Usage:
+   II ) Electrostatic population parameters                                   
+        a) distributed multipole moments                                      
+        b) distributed dipole-dipole polarizabilities                         
+ 
+   III) Nonlinear electrooptical properties                                   
+        a) molecular charge and dipole moment                                 
+        b) molecular polarizability                                           
+        c) molecular first- and second-order hyperpolarizabilities            
+ 
+   IV ) Frequency analysis data                                               
+        a) harmonic frequencies, reduced masses and mass-weighted eigenvectors
+        b) cubic anharmonic force constants                                   
+ 
+   V  ) Wave function and QM energetics (CMO and LMO space)                   
+        a) wave-function coefficients                                         
+        b) LMO centroids                                                      
+        c) Fock matrix                                                        
+        d) derivatives of the above wrt electric field and normal coordinates 
+ 
+ -----------------------------------------------------------------------------
+ All of the above mentioned quantities are stored in ATOMIC UNITS!!!          
+ -----------------------------------------------------------------------------
+ 
+ Beneath, I list the further contents of this documentation box:              
+    * How to use Frag class                                                   
+    * Listing of memorials stored in the Frag instance                        
+    * Information about storage dimensions of Frag memorials                  
+ 
+ =============================================================================
+  [1] USAGE (if '=' the argument is default)                     
+ =============================================================================
+ 
+  1) create the object (initialize)                                           
+                                                                             
+     frag = Frag()     # or...                                                
+     frag = Frag(file) # where file is the Frag format file (*.frg) with parame
+                       # ters; see <doc> for examplary files for water and NMA
+                       # or...
+     frag(file)        # after initialization of Frag instance read the *.frg file
+                                                                              
+  2) set the data to frag from other source than Frag format file (*.frg)     
+                                                                              
+     frag.set(mol=None, anh=None, frag=None, dma=None, chelpg=None, esp=None) 
+                       # mol  - Molecule    class object                     
+                       # anh  - FREQ        class object                      
+                       # frag - FragFactory class object                      
+                       # dma  - DMA         class object                      
+                       # chelpg - array of ChelpG charges                     
+                       # esp    - array of ESP    charges                     
+                                                                              
+  3) write the parameters to a file                                           
+                                                                              
+     frag.write(file='slv.frg')                                               
+                                                                              
+  4) actions on Frag object
+                                                                              
+     frag.translate(transl)     # translate all tensors by cartesian vector   
+     frag.rotate(rot)           # rotate all tensors by unitary 3x3 matrix    
+     frag.sup(xyz)              # superimpose (translate + rotate) to the pos
+                                # indicated by xyz Cartesian coordinates
+     copy = frag.copy()         # create a deep copy of frag objects
+     print frag                 # print the status of frag object
 
-Notes:
-1) all the data in the instance of SLVPAR are stored
-   in atomic units!!!
+  5) return objects from frag object
+
+     par = frag.get()           # get parameter dictionary. The keys are the
+                                # 'Shortcut' names in section [1] of this docu
+                                # mentation, e.g.:
+     vecl1 = par['vecl1']       # gets LMO wave function first derivatives wrt
+                                # all normal coordinates
+     pos = frag.get_pos()       # get position Cartesian coordinates of atoms
+     bfs = frag.get_bfs()       # get BasisSet object                        
+     qad, oct = frag.get_traceless() # get traceless quadrupoles and octupoles
+
+ =============================================================================
+  [2] LISTING OF MEMORIAL NAMES                            
+      The *.frg file has two parts:
+      * preambule (molecule section)
+      * parameters sections
+ =============================================================================
+  GR : Section name                      Shortcut       Dimension
+ - - : - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+     : molecule                    · · · mol                          
+     :                             ·      name                      
+     :                             P      shortname                 
+     :                             R      basis                    
+     :                             E      nbasis                   
+     :                             A      method                   
+     :                             M      atoms                    
+     :                             B      natoms                   
+  I  :                             U      ndma                     
+     :                             L      npol                     
+     :                             E      nmos                     
+     :                             ·      ncmos                    
+     :                             · · ·  nmodes                   
+     : Atomic numbers                    atno            natoms   
+     : Atomic masses                     atms            natoms           
+     : Atomic coordinates                pos             natoms, 3        
+ - - : - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     : ESP charges                       esp             natoms           
+     : ChelpG charges                    chlpg           natoms           
+     : DMTP centers                      rdma            ndma  , 3        
+     : DMTP charges                      dmac            ndma             
+     : DMTP dipoles                      dmad            ndma  , 3        
+ II  : DMTP quadrupoles                  dmaq            ndma  , 6        
+     : DMTP octupoles                    dmao            ndma  , 10       
+     : Polarizable centers               rpol            npol  , 3        
+     : Distributed polarizabilities      dpol            npol  , 9        
+     : Distributed polarizabilities      dpol1           nmodes, npol, 9
+     : - first derivatives                                                
+ - - : - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+     : Harmonic frequencies              freq            nmodes           
+     : Reduced masses                    redmass         nmodes           
+ III : Mass-weighted eigenvectors        lvec            nmodes, natoms, 3
+     : Cubic anharmonic constants        gijk            nmodes, nmodes, nmodes
+ - - : - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     : LMO centroids                     lmoc            nmos  , 3        
+     : LMO centroids                     lmoc1           nmodes, nmos  , 3
+     : - first derivatives                                                
+     : Fock matrix                       fock            nmos  , nmos     
+     : Fock matrix                       fock1           nmodes, nmos  , nmos
+     : - first derivatives                                                
+     : Canonical Fock matrix             fckc            ncmos , ncmos    
+  V  : Canonical Fock matrix             fckc1           nmodes, ncmos , ncmos
+     : - first derivatives                                                
+     : AO->LMO matrix                    vecl            nmos  , nbasis   
+     : AO->LMO matrix                    vecl1           nmodes, nmos  , nbasis
+     : - first derivatives                                                
+     : AO->CMO matrix                    vecc            ncmos , nbasis   
+     : AO->CMO matrix                    vecc1           nmodes, ncmos , nbasis
+     : - first derivatives                                                
+ =============================================================================
+  [3] TENSOR DIMENSIONS AND STORAGE CONVENTIONS            
+ =============================================================================
+   All of the tensors exept for DMA and DPOL analyses are in full format.
+   DMA and DPOL are stored in reduced formats.
+          
+             CHG(i) .
+                    1
+             DIP(i) X   Y   Z
+                    1   2   3
+             QAD(i) XX  YY  ZZ  XY  XZ  YZ
+                    1   2   3   4   5   6
+             OCT(i) XXX YYY ZZZ XXY XXZ XYY YYZ XZZ YZZ XYZ
+                    1   2   3   4   5   6   7   8   9   10
+             POL(i) XX  XY  XZ  YX  YY  YZ  ZX  ZY  ZZ 
+                    1   2   3   4   5   6   7   8   9
+
+   * Turn of indices in the case of DMA distributions is identical as GAMESS
+   * Turn of indices in distributed polarizabilities is different as in GAMESS 
+ =============================================================================
+ Notes:                                                                       
+   1) -ALL- the data in the instance of Frag are stored in ATOMIC UNITS!!!
+
+       [ Angstrom, kcal/mole, cm-1, C, amu, ... ] ----> [a.u.]
+                                                                              
+ References:                                                                  
+  * add Gordon's papers, M.Cho's papers, R.W.Góra's papers and your papers    
+  * add PyQuante reference and MDAnalysis reference                           
+  * add LibBBG and Coulomb.py references                                      
+ =============================================================================
+  Globulion@                                                                  
 """
     def __init__(self,file=None):
         self.__file = file
@@ -168,7 +305,7 @@ Notes:
         dmaq, dmao = tracls(self.__dmaq, self.__dmao)
         return dmaq, dmao
     
-    def write(self,file='slv.par',par=None):
+    def write(self,file='slv.frg',par=None):
         """writes the parameters into a file"""
         f = open(file,'w')
         if par is not None:
@@ -257,10 +394,10 @@ Notes:
               self.__vecc1 = vc1rot(self.__vecc1,rot,typs)
         return
     
-    def sup(self,str):
+    def sup(self,xyz):
         """superimpose structures <str> and <self.__pos>. Return rms in A.U."""
         s = svd_sup()
-        s.set(str,self.__pos)
+        s.set(xyz,self.__pos)
         s.run()
         rms = s.get_rms()
         rot, transl = s.get_rotran()
@@ -882,7 +1019,7 @@ Notes:
         if N%5: log+= '\n'
         file.write(log)
         return
-
+    
     def _write_dmaq(self,file):
         """write DMTP quadrupoles"""
         ndma = self.__dmaq.shape[0]
@@ -898,7 +1035,7 @@ Notes:
         if N%5: log+= '\n'
         file.write(log)
         return
-        
+    
     def _write_dmao(self,file):
         """write DMTP octupoles"""
         ndma = self.__dmao.shape[0]
