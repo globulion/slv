@@ -7,7 +7,7 @@ from units     import *
 from dma       import DMA
 from utilities import order, SVDSuperimposer as svd_sup, MakeMol
 from PyQuante.Ints import getbasis
-from efprot    import vecrot, vc1rot
+from efprot    import vecrot, vc1rot, tracls, rotdma
 import sys, copy, os, re, math
 sys.stdout.flush()
 
@@ -163,11 +163,16 @@ Notes:
         """return position of a fragment"""
         return self.__pos
     
+    def get_traceless(self):
+        """return traceless quadrupoles and octupoles"""
+        dmaq, dmao = tracls(self.__dmaq, self.__dmao)
+        return dmaq, dmao
+    
     def write(self,file='slv.par',par=None):
         """writes the parameters into a file"""
         f = open(file,'w')
         if par is not None:
-            pass
+           pass
         # basic molecular data
         if self.__name   is not None: self._write_preambule(f)
         if self.__pos    is not None: self._write_pos(f)
@@ -204,6 +209,14 @@ Notes:
         f.close()
         return
     
+    def translate(self,transl):
+        """translate tensors by <transl> cartesian displacement vector"""
+        if self.__pos   is not None: self.__pos   += transl
+        if self.__lmoc  is not None: self.__lmoc  += transl
+        if self.__rpol  is not None: self.__rpol  += transl
+        if self.__rdma  is not None: self.__rdma  += transl
+        return
+    
     def rotate(self,rot):
         """rotate the tensors by <rot> unitary matrix"""
         # transform the atomic position static and dynamic information
@@ -220,7 +233,9 @@ Notes:
         if self.__rdma  is not None:
            self.__rdma   = dot(self.__rdma, rot)
         # transform dipoles, quadrupoles and octupoles!
-        if 0: pass
+        if self.__dmac  is not None:
+           seld.__dmad, self.__dmaq, self.__dmao = \
+           rotdma(seld.__dmad,self.__dmaq,self.__dmao,rot)
         # transform distributed polarizabilities!
         if self.__dpol   is not None:
            for i in xrange(self.__npol):
@@ -250,14 +265,16 @@ Notes:
         rms = s.get_rms()
         rot, transl = s.get_rotran()
         # perform transformations
-        self.__pos    = s.get_transformed()
+        self.__pos       = s.get_transformed()
         if self.__lmoc  is not None: self.__lmoc   = dot(self.__lmoc , rot) + transl
         if self.__rpol  is not None: self.__rdpol  = dot(self.__rpol , rot) + transl
         if self.__rdma  is not None: self.__rdma   = dot(self.__rdma , rot) + transl
         if self.__lmoc1 is not None: self.__lmoc1  = dot(self.__lmoc1, rot)
         if self.__lvec  is not None: self.__lvec   = dot(self.__lvec , rot)
         # transform dipoles, quadrupoles and octupoles!
-        if 0: pass
+        if self.__dmac  is not None:
+           seld.__dmad, self.__dmaq, self.__dmao = \
+           rotdma(seld.__dmad,self.__dmaq,self.__dmao,rot)
         # transform distributed polarizabilities!
         if self.__dpol   is not None:
            for i in xrange(self.__npol):
