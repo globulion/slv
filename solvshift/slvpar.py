@@ -399,7 +399,7 @@ class SLVPAR(object,UNITS):
         s = svd_sup()
         s.set(xyz,self.__pos)
         s.run()
-        rms = s.get_rms()
+        rms         = s.get_rms()
         rot, transl = s.get_rotran()
         # perform transformations
         self.__pos       = s.get_transformed()
