@@ -14,13 +14,13 @@ from PyQuante.Ints import getbasis
 import sys, copy, os, re, math
 sys.stdout.flush()
 
-__all__ = ['Frag',]
+__all__     = ['Frag',]
 __version__ = '1.0.1'
 
 class Frag(object,UNITS):
     """
  =============================================================================
-                    Effective Fragment Parameter Format System                
+                 Effective Fragment Parameter Format System                   
                                                                               
             Bartosz Błasiak                last revision: 9 Nov 2013          
  =============================================================================
@@ -289,6 +289,10 @@ class Frag(object,UNITS):
     def get(self):
         """returns dictionary with parameters"""
         return self._make_dict()
+    
+    def get_name(self):
+        """return the name of the fragment"""
+        return self.__name
     
     def get_bfs(self):
         """return basis set object"""
