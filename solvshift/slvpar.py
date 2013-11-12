@@ -14,10 +14,10 @@ from PyQuante.Ints import getbasis
 import sys, copy, os, re, math
 sys.stdout.flush()
 
-__all__ = ['SLVPAR',]
+__all__ = ['Frag',]
 __version__ = '1.0.1'
 
-class SLVPAR(object,UNITS):
+class Frag(object,UNITS):
     """
  =============================================================================
                     Effective Fragment Parameter Format System                
@@ -520,6 +520,8 @@ class SLVPAR(object,UNITS):
         if self.__origin is not None: par['origin'] = self.__origin
         if self.__atno   is not None: par['atno'  ] = self.__atno
         if self.__atms   is not None: par['atms'  ] = self.__atms
+        if self.__ndma   is not None: par['ndma'  ] = self.__ndma
+        if self.__npol   is not None: par['npol'  ] = self.__npol
         # frequency analysis
         if self.__redmass  is not None: par['redmass'] = self.__redmass
         if self.__freq     is not None: par['freq'   ] = self.__freq

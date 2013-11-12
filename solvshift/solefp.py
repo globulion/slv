@@ -13,7 +13,7 @@ from shftce import shftce
 import sys, copy, os, re, math, glob, PyQuante.Ints, coulomb.multip
 sys.stdout.flush()
 
-__all__ = ['Frag','EFP',]
+__all__ = ['FragFactory','EFP',]
 __version__ = '1.0.1'
 
 class EFP(object,UNITS):
@@ -66,6 +66,10 @@ Notes:
         if str_b is not None: rms_b = self.__molB.sup(str_b)
         return rms_a, rms_b
     
+    def get(self):
+        """return a tuple of parameters for two fragments"""
+        return self.__molA.get(), self.__molB.get()
+        
     def get_mol(self):
         """returns molecular fragments"""
         return self.__molA, self.__molB
@@ -189,7 +193,7 @@ Notes:
 
         return shftma, shftea
     
-class Frag(object,DIFF):
+class FragFactory(object,DIFF):
     """
 Solvatochromic Effective Fragment Potential Fragment
 ----------------------------------------------------
