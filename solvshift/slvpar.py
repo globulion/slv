@@ -527,6 +527,8 @@ class Frag(object,UNITS):
         if self.__atms   is not None: par['atms'  ] = self.__atms
         if self.__ndma   is not None: par['ndma'  ] = self.__ndma
         if self.__npol   is not None: par['npol'  ] = self.__npol
+        if self.__name   is not None: par['name'  ] = self.__name
+        if self.__basis  is not None: par['basis' ] = self.__basis
         # frequency analysis
         if self.__redmass  is not None: par['redmass'] = self.__redmass
         if self.__freq     is not None: par['freq'   ] = self.__freq

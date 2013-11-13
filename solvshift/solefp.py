@@ -6,13 +6,15 @@ from numpy     import tensordot, dot, transpose, array, float64, zeros, \
                       concatenate as con
 from units     import *
 from utilities import Read_xyz_file, get_pmloca, ParseFockFromGamessLog, \
-                      ParseDmatFromFchk, ParseVecFromFchk
+                      ParseDmatFromFchk, ParseVecFromFchk, MakeMol
 from diff      import DIFF
-from PyQuante.Ints import getT, getSAB, getTAB, getSA1B, getTA1B, getVEFP, getV
+from PyQuante.Ints import getT, getSAB, getTAB, getSA1B, getTA1B, getVEFP, \
+                          getV, getbasis
 from shftex import shftex
 from shftce import shftce
 from cosik  import solpol, mollst
 from efprot import tracls
+from exrep  import exrep
 import sys, copy, os, re, math, glob, PyQuante.Ints, coulomb.multip
 sys.stdout.flush()
 
@@ -70,24 +72,24 @@ all          - evaluate all these interactions"""
         """evaluate the properties"""
         if self.__pairwise_all:
            N = len(self.__nmol)
+           PAR = []
+           QO  = []
+           for i in range(N):
+               nm = self.__nmol[i]
+               im = self.__ind[i]
+               #
+               STR = self.__rcoordc[nm*i:nm*(i+1)]
+               frg = self.__bsm[im].copy()
+               rms = frg.sup( STR )
+               par = frg.get()
+               PAR.append( par )
+               #
+               qad, oct = tracls( par['dmaq'], par['dmao'] )
+               QO.append( (qad,oct) )
+               
            # polarization contribution
            if self.__eval_pol:
               ### POLARIZATION ENERGY
-              PAR = []
-              QO  = []
-              for i in range(N):
-                  nm = self.__nmol[i]
-                  im = self.__ind[i]
-                  #
-                  STR = self.__rcoordc[nm*i:nm*(i+1)]
-                  frg = self.__bsm[im].copy()
-                  rms = frg.sup( STR )
-                  par = frg.get()
-                  PAR.append( par )
-                  #
-                  qad, oct = tracls( par['dmaq'], par['dmao'] )
-                  QO.append( (qad,oct) )
-                  
               ndma = [ x['ndma'] for x in PAR ]
               npol = [ x['npol'] for x in PAR ]
               ndmas= sum(ndma)
@@ -106,13 +108,12 @@ all          - evaluate all these interactions"""
               dmat = zeros((DIM,DIM),float64)
               flds = zeros( DIM,float64)
               dipind=zeros( DIM,float64)
-              del PAR, QO
               #
-              E = solpol(rdma,chg,dip,qad,oct,
-                         rpol,pol,dmat,
-                         flds,dipind,
-                         ndma,npol,lwrite)
-              print E
+              e_pol = solpol(rdma,chg,dip,qad,oct,
+                             rpol,pol,dmat,
+                             flds,dipind,
+                             ndma,npol,lwrite)
+              if lwrite: print " Polarization       energy: %10.6f"%e_pol
               ### POLARIZATION FREQUENCY SHIFTS
               if self.__eval_freq:
                   pass
@@ -120,9 +121,47 @@ all          - evaluate all these interactions"""
               ### POLARIZATION NLO PROPERTY CONTRIBUTION
               if self.__eval_nlo:
                   pass
+              
+           # exchange-repulsion contribution
+           if self.__eval_rep:
+              e_rep = 0.0
+              for i in xrange(N):
+                  for j in xrange(i):
+                      varA = PAR[i]
+                      varB = PAR[j]
+                      e_rep += self._pair_rep(varA,varB)
+                      #print e_rep
+              if lwrite: print " Exchange-repulsion energy: %10.6f"%e_rep
         else:
            print " NOT IMPLEMENTED YET. QUITTING..."
         return
+    
+    def _pair_rep(self,varA,varB):
+        """exchange-repulsion pair energy"""
+        # basis sets
+        molA = MakeMol(varA['atno'],varA['pos'])
+        molB = MakeMol(varB['atno'],varB['pos'])
+        bfsA = getbasis(molA,varA['basis'])
+        bfsB = getbasis(molB,varB['basis'])
+        # instantaneous integrals
+        skm  = getSAB(bfsA,bfsB)
+        tkm  = getTAB(bfsA,bfsB)
+        # parameters
+        ### molecule A
+        faij   = varA['fock']
+        cika   = varA['vecl']
+        za     = varA['atno']
+        rna    = varA['pos']
+        ria    = varA['lmoc']
+        ### molecule B
+        fbij = varB['fock']
+        cikb = varB['vecl']
+        zb   = varB['atno']
+        rnb  = varB['pos']
+        rib  = varB['lmoc']
+        # calculate the properties!
+        eint = exrep(ria,rib,rna,rnb,faij,fbij,cika,cikb,skm,tkm,za,zb)
+        return eint
     
     def set(self,pos,ind,nmol,bsm=None):
         """Set the initial molecular coordinates and the moltype index list. 
