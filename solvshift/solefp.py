@@ -2,7 +2,8 @@
 #            SOLVATOCHROMIC EFFECTIVE FRAGMENT POTENTIAL MODULE              #
 # -------------------------------------------------------------------------- #
 
-from numpy     import tensordot, dot, transpose, array, float64
+from numpy     import tensordot, dot, transpose, array, float64, zeros, \
+                      concatenate as con
 from units     import *
 from utilities import Read_xyz_file, get_pmloca, ParseFockFromGamessLog, \
                       ParseDmatFromFchk, ParseVecFromFchk
@@ -10,16 +11,213 @@ from diff      import DIFF
 from PyQuante.Ints import getT, getSAB, getTAB, getSA1B, getTA1B, getVEFP, getV
 from shftex import shftex
 from shftce import shftce
+from cosik  import solpol, mollst
+from efprot import tracls
 import sys, copy, os, re, math, glob, PyQuante.Ints, coulomb.multip
 sys.stdout.flush()
 
-__all__ = ['FragFactory','EFP',]
+__all__ = ['EFP','FragFactory',]
 __version__ = '1.0.1'
 
 class EFP(object,UNITS):
+    """"""
+    def __init__(self,ccut=None,pcut=None,pairwise_all=False,
+                      elect=True,pol=False,rep=False,ct=False,disp=False,all=False,
+                      nlo=False,freq=False,mode=None):
+        """The global settings for a computation:
+ccut         - Coulomb cutoff
+pcut         - Polarization cutoff
+pairwise_all - count all pairwise interactions (otherwise count
+               only these that include central molecule, False 
+               when frequency shift mode is switched on in freq and mode)
+elect        - evaluate electrostatics
+pol          - evaluate polarization
+rep          - evaluate exchange-repulsion
+ct           - evaluate charge-transfer
+disp         - evaluate dispersion
+all          - evaluate all these interactions"""
+        self._create()
+        self.__ccut = ccut
+        self.__pcut = pcut
+        #
+        if all:
+           self.__eval_elect = True
+           self.__eval_pol   = True
+           self.__eval_rep   = True
+           self.__eval_ct    = True
+           self.__eval_disp  = True
+        else:
+           self.__eval_elect = elect
+           self.__eval_pol   = pol
+           self.__eval_rep   = rep
+           self.__eval_ct    = ct
+           self.__eval_disp  = disp
+        #
+        if freq: 
+           self.__pairwise_all = False
+           self.__eval_freq = True
+           self.__mode = mode
+        else: self.__pairwise_all = pairwise_all
+        #
+        if nlo: 
+           self.__eval_nlo = True
+        #
+        return
+    
+    # P U B L I C
+    
+    def eval(self,lwrite=False):
+        """evaluate the properties"""
+        if self.__pairwise_all:
+           N = len(self.__nmol)
+           # polarization contribution
+           if self.__eval_pol:
+              ### POLARIZATION ENERGY
+              PAR = []
+              QO  = []
+              for i in range(N):
+                  nm = self.__nmol[i]
+                  im = self.__ind[i]
+                  #
+                  STR = self.__rcoordc[nm*i:nm*(i+1)]
+                  frg = self.__bsm[im].copy()
+                  rms = frg.sup( STR )
+                  par = frg.get()
+                  PAR.append( par )
+                  #
+                  qad, oct = tracls( par['dmaq'], par['dmao'] )
+                  QO.append( (qad,oct) )
+                  
+              ndma = [ x['ndma'] for x in PAR ]
+              npol = [ x['npol'] for x in PAR ]
+              ndmas= sum(ndma)
+              npols= sum(npol)
+
+              rdma = con  ([ x['rdma'] for x in PAR ]).reshape(ndmas*3)
+              chg  = con  ([ x['dmac'] for x in PAR ]).reshape(ndmas)
+              dip  = con  ([ x['dmad'] for x in PAR ]).reshape(ndmas*3)
+              qad  = con  ([ QO[x][0]  for x in range(N)   ]).reshape(ndmas*6)
+              oct  = con  ([ QO[x][1]  for x in range(N)   ]).reshape(ndmas*10)
+              rpol = con  ([ x['rpol'] for x in PAR ]).reshape(npols*3)
+              pol  = con  ([ x['dpol'] for x in PAR ]).reshape(npols*9)
+
+              #
+              DIM = ndmas*3
+              dmat = zeros((DIM,DIM),float64)
+              flds = zeros( DIM,float64)
+              dipind=zeros( DIM,float64)
+              del PAR, QO
+              #
+              E = solpol(rdma,chg,dip,qad,oct,
+                         rpol,pol,dmat,
+                         flds,dipind,
+                         ndma,npol,lwrite)
+              print E
+              ### POLARIZATION FREQUENCY SHIFTS
+              if self.__eval_freq:
+                  pass
+              
+              ### POLARIZATION NLO PROPERTY CONTRIBUTION
+              if self.__eval_nlo:
+                  pass
+        else:
+           print " NOT IMPLEMENTED YET. QUITTING..."
+        return
+    
+    def set(self,pos,ind,nmol,bsm=None):
+        """Set the initial molecular coordinates and the moltype index list. 
+Also set the BSM parameters if not done in set_bsm. 
+<pos>     -  an 2D array of atomic coordinates of dimension natoms, 3
+<ind>     -  a list of moltype ids in bsm list. Has length equal to the 
+          -  total number of molecules
+<nmol>    - a list of number of atoms (integers) in each molecule
+<bsm>     - a list of a form: bsm = list(<Frag object>)"""
+        self.__ind = array(ind,int)
+        self.__nmol= array(nmol,int)
+        if bsm is not None: self.__bsm = bsm
+        self._update(pos)
+        return    
+    
+    def set_cut(self,ccut,pcut):
+        """Set the cutoff radii for Coulomb and polarization forces"""
+        self.__ccut = ccut
+        self.__pcut = pcut
+        return
+    
+    def set_bsm(self,bsm):
+        """Set the BSM parameters. <bsm> is a list of a form:
+  bsm = list(<Frag object>)"""
+        self.__bsm = bsm
+        return
+        
+    def set_pos(self,pos):
+        """update position array"""
+        self._update(pos)
+        return
+
+    def __repr__(self):
+        """print the status"""
+        log = '\n'
+        log+= " STORED MOLECULES\n"
+        if self.__bsm is None:
+           log+= " --- no molecules added ---"
+        else:
+           for i,bsm in enumerate(self.__bsm):
+               log+= " %5i %15s\n" % (i,bsm.get_name())
+        return str(log)
+    
+    # P R O T E C T E D
+    
+    def _create(self):
+        """namespace of objects"""
+        self.__bsm = None
+        self.__eval_freq = False
+        self.__eval_nlo  = None
+        return
+    
+    def _update(self,pos):
+        """update the neighbour/in-sphere lists based on actual <pos> coordinate array"""
+        if not self.__pairwise_all:
+           nm = len(self.__nmol)-1
+           nac= self.__nmol[0]
+           natoms = len(pos)
+           rc = pos[:nac ]
+           rm = pos[ nac:].reshape((natoms-nac)*3)
+           #
+           ic = zeros(natoms-nac,dtype=bool)
+           ip = zeros(natoms-nac,dtype=bool)
+           icm = zeros(nm,dtype=bool)
+           icp = zeros(nm,dtype=bool)
+           #
+           nccut, npcut, mccut, mpcut = mollst(rc,rm,ic,ip,icm,icp,
+                                               self.__nmol[1:],
+                                               self.__ccut,self.__pcut)
+                                               #
+           # molecule coordinate lists
+           rcoordc = pos[nac:][array(nccut,dtype=bool)]
+           rcoordp = pos[nac:][array(npcut,dtype=bool)]
+           # molecule type lists
+           mtc= self.__ind[1:][array(mccut,dtype=bool)]
+           mtp= self.__ind[1:][array(mpcut,dtype=bool)]
+           # moleculear atom number lists
+           ntc= self.__nmol[1:][array(mccut,dtype=bool)]
+           ntp= self.__nmol[1:][array(mpcut,dtype=bool)]
+           #
+           self.__rc = rc
+           self.__rcoordc = rcoordc
+           self.__rcoordp = rcoordp
+           self.__mtc = mtc
+           self.__mtp = mtp
+           self.__ntc = ntc
+           self.__ntp = ntp
+        else:
+           self.__rcoordc = pos
+        return
+    
+class EFP_pair(object,UNITS):
     """
 =============================================================================
-                     EFFECTIVE FRAGMENT POTENTIAL METHOD                     
+              EFFECTIVE FRAGMENT POTENTIAL METHOD FOR A DIMER                
 =============================================================================
 
 Usage:

@@ -113,6 +113,7 @@ class Frag(object,UNITS):
                                 # mentation, e.g.:
      vecl1 = par['vecl1']       # gets LMO wave function first derivatives wrt
                                 # all normal coordinates
+     name= frag.get_name()      # return the name of fragment 
      pos = frag.get_pos()       # get position Cartesian coordinates of atoms
      bfs = frag.get_bfs()       # get BasisSet object                        
      qad, oct = frag.get_traceless() # get traceless quadrupoles and octupoles
