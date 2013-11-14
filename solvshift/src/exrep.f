@@ -35,7 +35,7 @@ C
 C
 C     calculate exchange-repulsion interaction energy
 C
-      CALL CALCEN(NMOSA,NMOSB,NATA,NATB,ZA,ZB,
+      CALL XALCEN(NMOSA,NMOSB,NATA,NATB,ZA,ZB,
      &            RIA,RIB,RNA,RNB,FAIJ,FBIJ,EINT)
 C      EINT = EINT * 627.509469D+00
 C      WRITE(*,*) "INTERACTION ENERGY IN KCAL/MOL: ", EINT
@@ -44,7 +44,7 @@ C
       END
 C-----|--|---------|---------|---------|---------|---------|---------|--|------|
 
-      SUBROUTINE CALCEN(NMOSA,NMOSB,NATA,NATB,ZA,ZB,
+      SUBROUTINE XALCEN(NMOSA,NMOSB,NATA,NATB,ZA,ZB,
      &                  RIA,RIB,RNA,RNB,FAIJ,FBIJ,EINT)
 C
 C          Calculate exchange-repulsion interaction energy
@@ -66,7 +66,6 @@ C
       DO 1000 J=1,NMOSB
          TT11 = ZERO
          TT22 = ZERO
-C        WRITE(*,*) I,J,SIJ(I,J),TIJ(I,J)
          SIJV = SIJ(I,J)
          TIJV = TIJ(I,J)
 C
@@ -130,8 +129,8 @@ C
       TT1 = - TT1 * TWO 
       TT2 =   TT2 * TWO 
       EINT = TTT + TT1 + TT2
-      WRITE(*,*) TTT* 627.509469D+00,TT1* 627.509469D+00,
-     &                      TT2* 627.509469D+00
+C      WRITE(*,*) TTT* 627.509469D+00,TT1* 627.509469D+00,
+C     &                      TT2* 627.509469D+00
 C
       RETURN
       END
