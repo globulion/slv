@@ -15,7 +15,7 @@ from shftce import shftce
 from cosik  import solpol, mollst
 from efprot import tracls
 from exrep  import exrep
-import sys, copy, os, re, math, glob, PyQuante.Ints, coulomb.multip
+import sys, copy, os, re, math, glob, PyQuante.Ints, coulomb.multip, clemtp
 sys.stdout.flush()
 
 __all__ = ['EFP','FragFactory',]
@@ -39,6 +39,7 @@ ct           - evaluate charge-transfer
 disp         - evaluate dispersion
 all          - evaluate all these interactions"""
         self._create()
+        #
         self.__ccut = ccut
         self.__pcut = pcut
         #
@@ -66,103 +67,13 @@ all          - evaluate all these interactions"""
         #
         return
     
-    # P U B L I C
-    
-    def eval(self,lwrite=False):
-        """evaluate the properties"""
-        if self.__pairwise_all:
-           N = len(self.__nmol)
-           PAR = []
-           QO  = []
-           for i in range(N):
-               nm = self.__nmol[i]
-               im = self.__ind[i]
-               #
-               STR = self.__rcoordc[nm*i:nm*(i+1)]
-               frg = self.__bsm[im].copy()
-               rms = frg.sup( STR )
-               par = frg.get()
-               PAR.append( par )
-               #
-               qad, oct = tracls( par['dmaq'], par['dmao'] )
-               QO.append( (qad,oct) )
-               
-           # polarization contribution
-           if self.__eval_pol:
-              ### POLARIZATION ENERGY
-              ndma = [ x['ndma'] for x in PAR ]
-              npol = [ x['npol'] for x in PAR ]
-              ndmas= sum(ndma)
-              npols= sum(npol)
-
-              rdma = con  ([ x['rdma'] for x in PAR ]).reshape(ndmas*3)
-              chg  = con  ([ x['dmac'] for x in PAR ]).reshape(ndmas)
-              dip  = con  ([ x['dmad'] for x in PAR ]).reshape(ndmas*3)
-              qad  = con  ([ QO[x][0]  for x in range(N)   ]).reshape(ndmas*6)
-              oct  = con  ([ QO[x][1]  for x in range(N)   ]).reshape(ndmas*10)
-              rpol = con  ([ x['rpol'] for x in PAR ]).reshape(npols*3)
-              pol  = con  ([ x['dpol'] for x in PAR ]).reshape(npols*9)
-
-              #
-              DIM = ndmas*3
-              dmat = zeros((DIM,DIM),float64)
-              flds = zeros( DIM,float64)
-              dipind=zeros( DIM,float64)
-              #
-              e_pol = solpol(rdma,chg,dip,qad,oct,
-                             rpol,pol,dmat,
-                             flds,dipind,
-                             ndma,npol,lwrite)
-              if lwrite: print " Polarization       energy: %10.6f"%e_pol
-              ### POLARIZATION FREQUENCY SHIFTS
-              if self.__eval_freq:
-                  pass
-              
-              ### POLARIZATION NLO PROPERTY CONTRIBUTION
-              if self.__eval_nlo:
-                  pass
-              
-           # exchange-repulsion contribution
-           if self.__eval_rep:
-              e_rep = 0.0
-              for i in xrange(N):
-                  for j in xrange(i):
-                      varA = PAR[i]
-                      varB = PAR[j]
-                      e_rep += self._pair_rep(varA,varB)
-                      #print e_rep
-              if lwrite: print " Exchange-repulsion energy: %10.6f"%e_rep
-        else:
-           print " NOT IMPLEMENTED YET. QUITTING..."
+    def __call__(self,lwrite=False):
+        """evaluate the property"""
+        self.eval(lwrite)
         return
     
-    def _pair_rep(self,varA,varB):
-        """exchange-repulsion pair energy"""
-        # basis sets
-        molA = MakeMol(varA['atno'],varA['pos'])
-        molB = MakeMol(varB['atno'],varB['pos'])
-        bfsA = getbasis(molA,varA['basis'])
-        bfsB = getbasis(molB,varB['basis'])
-        # instantaneous integrals
-        skm  = getSAB(bfsA,bfsB)
-        tkm  = getTAB(bfsA,bfsB)
-        # parameters
-        ### molecule A
-        faij   = varA['fock']
-        cika   = varA['vecl']
-        za     = varA['atno']
-        rna    = varA['pos']
-        ria    = varA['lmoc']
-        ### molecule B
-        fbij = varB['fock']
-        cikb = varB['vecl']
-        zb   = varB['atno']
-        rnb  = varB['pos']
-        rib  = varB['lmoc']
-        # calculate the properties!
-        eint = exrep(ria,rib,rna,rnb,faij,fbij,cika,cikb,skm,tkm,za,zb)
-        return eint
-    
+    # P U B L I C
+
     def set(self,pos,ind,nmol,bsm=None):
         """Set the initial molecular coordinates and the moltype index list. 
 Also set the BSM parameters if not done in set_bsm. 
@@ -193,7 +104,89 @@ Also set the BSM parameters if not done in set_bsm.
         """update position array"""
         self._update(pos)
         return
-
+    
+    def eval(self,lwrite=False):
+        """evaluate the properties"""
+        #                                        #
+        #           PAIRWISE ALL MODE            #
+        #   (interatction energy, NLO property   #
+        if self.__pairwise_all:
+           N = len(self.__nmol)
+           PAR = []
+           QO  = []
+           for i in range(N):
+               nm = self.__nmol[i]
+               im = self.__ind[i]
+               #
+               STR = self.__rcoordc[nm*i:nm*(i+1)]
+               frg = self.__bsm[im].copy()
+               rms = frg.sup( STR )
+               par = frg.get()
+               PAR.append( par )
+               #
+               qad, oct = tracls( par['dmaq'], par['dmao'] )
+               QO.append( (qad,oct) )
+           
+           # ----------------------------------- ELECT --------------------------------- #
+           if self.__eval_elect:
+              ndma = [ x['ndma'] for x in PAR ]
+              ndmas= sum(ndma)
+              
+              rdma = con  ([ x['rdma'] for x in PAR ]).reshape(ndmas*3)
+              chg  = con  ([ x['dmac'] for x in PAR ]).reshape(ndmas)
+              dip  = con  ([ x['dmad'] for x in PAR ]).reshape(ndmas*3)
+              qad  = con  ([ QO[x][0]  for x in range(N)   ]).reshape(ndmas*6)
+              oct  = con  ([ QO[x][1]  for x in range(N)   ]).reshape(ndmas*10)
+              
+              e_el = clemtp.edmtpa(rdma,chg,dip,qad,oct,ndma,lwrite)
+              if lwrite: print " Electrostatic      energy: %10.6f"%e_el
+          # ------------------------------------- POL --------------------------------- #
+              if self.__eval_pol:
+                 ### ENERGY
+              
+                 npol = [ x['npol'] for x in PAR ]
+                 npols= sum(npol)
+                 #
+                 rpol = con  ([ x['rpol'] for x in PAR ]).reshape(npols*3)
+                 pol  = con  ([ x['dpol'] for x in PAR ]).reshape(npols*9)
+                 #
+                 DIM  = npols*3
+                 dmat = zeros((DIM,DIM),float64)
+                 flds = zeros( DIM,float64)
+                 dipind=zeros( DIM,float64)
+                 #
+                 e_pol = solpol(rdma,chg,dip,qad,oct,
+                                rpol,pol,dmat,
+                                flds,dipind,
+                                ndma,npol,lwrite=False)
+                 if lwrite: print " Polarization       energy: %10.6f"%e_pol
+              
+              ### FREQUENCY SHIFTS
+              if self.__eval_freq:
+                  pass
+              
+              ### NLO PROPERTY
+              if self.__eval_nlo:
+                  pass
+           # ---------------------------------- EX-REP --------------------------------- #
+           if  self.__eval_rep:
+               e_rep = 0.0
+               for i in xrange(N):
+                   for j in xrange(i):
+                       varA = PAR[i]
+                       varB = PAR[j]
+                       e_rep += self._pair_rep(varA,varB)
+                       #print e_rep
+               if lwrite: print " Exchange-repulsion energy: %10.6f"%e_rep
+                              
+        else:
+        #                                            #
+        #           CENTRAL MOLECULE MODE            #
+        #    (interaction energy,frequency shift)    #
+           print " NOT IMPLEMENTED YET. QUITTING..."
+        #
+        return
+    
     def __repr__(self):
         """print the status"""
         log = '\n'
@@ -252,7 +245,70 @@ Also set the BSM parameters if not done in set_bsm.
         else:
            self.__rcoordc = pos
         return
+
+    # PAIR ENERGIES
     
+    def _pair_elect(self,varA,varB):
+        """MTP electrostatic pair energy"""
+        return
+    
+    def _pair_rep(self,varA,varB):
+        """exchange-repulsion pair energy"""
+        # basis sets
+        molA = MakeMol(varA['atno'],varA['pos'])
+        molB = MakeMol(varB['atno'],varB['pos'])
+        bfsA = getbasis(molA,varA['basis'])
+        bfsB = getbasis(molB,varB['basis'])
+        # instantaneous integrals
+        skm  = getSAB(bfsA,bfsB)
+        tkm  = getTAB(bfsA,bfsB)
+        # parameters
+        ### molecule A
+        faij = varA['fock']
+        cika = varA['vecl']
+        za   = varA['atno']
+        rna  = varA['pos']
+        ria  = varA['lmoc']
+        ### molecule B
+        fbij = varB['fock']
+        cikb = varB['vecl']
+        zb   = varB['atno']
+        rnb  = varB['pos']
+        rib  = varB['lmoc']
+        # calculate the properties!
+        eint = exrep(ria,rib,rna,rnb,faij,fbij,cika,cikb,skm,tkm,za,zb)
+        return eint
+    
+    def _pair_hl(self,varA,varB):
+        """Heitler-London pair energy"""
+        # basis sets
+        molA = MakeMol(varA['atno'],varA['pos'])
+        molB = MakeMol(varB['atno'],varB['pos'])
+        bfsA = getbasis(molA,varA['basis'])
+        bfsB = getbasis(molB,varB['basis'])
+        # instantaneous integrals
+        skm  = getSAB(bfsA,bfsB)
+        tkm  = getTAB(bfsA,bfsB)
+        # parameters
+        ### molecule A
+        faij = varA['fock']
+        cika = varA['vecl']
+        za   = varA['atno']
+        rna  = varA['pos']
+        ria  = varA['lmoc']
+        ### molecule B
+        fbij = varB['fock']
+        cikb = varB['vecl']
+        zb   = varB['atno']
+        rnb  = varB['pos']
+        rib  = varB['lmoc']
+        # calculate the properties!
+        e_rep = exrep(ria,rib,rna,rnb,faij,fbij,cika,cikb,skm,tkm,za,zb)
+        e_el = 0.0
+        return array([e_el, e_rep],dtype=float64)
+        
+
+
 class EFP_pair(object,UNITS):
     """
 =============================================================================
