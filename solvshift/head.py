@@ -32,5 +32,5 @@ from slv        import *
 from dipderiv   import *
 from md         import *
 from hessian    import HESSIAN
-from slvpar     import SLVPAR
+from slvpar     import Frag
 from solefp     import *
