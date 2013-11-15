@@ -110,6 +110,7 @@ Also set the BSM parameters if not done in set_bsm.
         #                                        #
         #           PAIRWISE ALL MODE            #
         #   (interatction energy, NLO property   #
+        #                                        #
         if self.__pairwise_all:
            N = len(self.__nmol)
            PAR = []
@@ -183,6 +184,7 @@ Also set the BSM parameters if not done in set_bsm.
         #                                            #
         #           CENTRAL MOLECULE MODE            #
         #    (interaction energy,frequency shift)    #
+        #                                            #
            print " NOT IMPLEMENTED YET. QUITTING..."
         #
         return
@@ -278,34 +280,6 @@ Also set the BSM parameters if not done in set_bsm.
         # calculate the properties!
         eint = exrep(ria,rib,rna,rnb,faij,fbij,cika,cikb,skm,tkm,za,zb)
         return eint
-    
-    def _pair_hl(self,varA,varB):
-        """Heitler-London pair energy"""
-        # basis sets
-        molA = MakeMol(varA['atno'],varA['pos'])
-        molB = MakeMol(varB['atno'],varB['pos'])
-        bfsA = getbasis(molA,varA['basis'])
-        bfsB = getbasis(molB,varB['basis'])
-        # instantaneous integrals
-        skm  = getSAB(bfsA,bfsB)
-        tkm  = getTAB(bfsA,bfsB)
-        # parameters
-        ### molecule A
-        faij = varA['fock']
-        cika = varA['vecl']
-        za   = varA['atno']
-        rna  = varA['pos']
-        ria  = varA['lmoc']
-        ### molecule B
-        fbij = varB['fock']
-        cikb = varB['vecl']
-        zb   = varB['atno']
-        rnb  = varB['pos']
-        rib  = varB['lmoc']
-        # calculate the properties!
-        e_rep = exrep(ria,rib,rna,rnb,faij,fbij,cika,cikb,skm,tkm,za,zb)
-        e_el = 0.0
-        return array([e_el, e_rep],dtype=float64)
         
 
 
