@@ -22,7 +22,8 @@ where X=5,9"""
     def __init__(self,freq=0,step=0,
                  dir="",cartesian=False,L=0,
                  camm=False,pol=False,eds=False,
-                 solefp=False,nae=0,basis='6-311++G**'):
+                 solefp=False,nae=0,basis='6-311++G**',
+                 dpol=False):
 
         self.camm = camm
         # number of normal modes
@@ -43,7 +44,7 @@ where X=5,9"""
         if self.mode_id>0: self.calculate_sder=True
         else:              self.calculate_sder=False
         
-        if (not eds and not solefp):
+        if (not eds and not solefp and not dpol):
           # DMA set from FFxpt input files
           if camm:
              self.DMA_set, smiec1 = self.ParseDMA_set(dir,'coulomb')
@@ -97,18 +98,58 @@ where X=5,9"""
            self.Fock = self.fock_set_1[0]
            print " CALCULATION OF FIRST DERIVATIVES..."
            self.fock1, self.lmoc1 ,self.vecl1 = self.get_efp_fder()
+        # Distributed polarizabilities
+        elif dpol:
+           self.dpos_set_1, self.dpol_set_1 = self.Parse_dpol(dir+dpol)
+           self.dpol1 = self.get_dpol_fder()
         # EDS
         else:
            fdir,sdir = eds.split(':')
-           #self.EDS_set_1 = self.Parse_EDS(dir+"w1c_nl/")
-           #self.EDS_set_2 = self.Parse_EDS(dir+"w1c_nl/sder/20/")
            self.EDS_set_1 = self.Parse_EDS(dir+fdir)
            self.EDS_set_2 = self.Parse_EDS(dir+sdir)
-           #self.EDS_set_1 = self.Parse_EDS(dir+"el40/")
-           #self.EDS_set_2 = self.Parse_EDS(dir+"el40/sder/20/")
            self.fEDS = self.get_EDS_fder()
            self.sEDS = self.get_EDS_sder()
 
+    def Parse_dpol(self,dir):
+        """"""
+        files = glob.glob('%s/*_.efp' % dir)
+        files.sort()
+        dPos = []
+        dPol = []
+        r_ref = None
+        for file in files:
+            r,a=ParseDistributedPolarizabilitiesFromGamessEfpFile(file)
+            if r_ref is None: r_ref = r
+            #
+            r, sim = order(r_ref,r,start=0)
+            print sim
+            a = reorder(a,sim)
+            dPos.append(r)
+            dPol.append(a)
+        dPos = array(dPos,float64)
+        dPol = array(dPol,float64)
+        return dPos, dPol
+    
+    def get_dpol_fder(self):
+        """calculate first derivatives wrt normal coordinates 
+        of polarizability tensor. Returned in AU unit"""
+        first_der_dpol_cart = []
+        N = self.dpol_set_1.shape[1]
+        for i in range(self.nAtoms*3):
+            K = 1 + 4*i
+            fd   = (1./12.) *  (\
+                       (self.dpol_set_1[K+3] - self.dpol_set_1[K+0] ) \
+                 + 8*  (self.dpol_set_1[K+1] - self.dpol_set_1[K+2] ))\
+                 /(self.step* self.AngstromToBohr)
+                 
+            first_der_dpol_cart.append( fd )
+        first_der_dpol_cart = array(first_der_dpol_cart,float64).reshape(self.nAtoms*3,N*3*3)
+
+        ### TRANSFORM FIRST DERIVATIVES TO NORMAL MODE SPACE
+        first_der_dpol_mode = tensordot(self.L,first_der_dpol_cart,(0,0))
+
+        return first_der_dpol_mode.reshape(self.nAtoms*3-6,N,3,3)
+    
     def Parse_tran(self,dir,nae,basis):
         """parses CMO transformation matrices from fchk files and transforms
 them to LMO space"""
@@ -496,9 +537,7 @@ type -3: transformation matrix from AO to LMO (nmos, nbasis)
         # change origin in the case of CAMM
         if self.camm:
            for i,dma in enumerate(self.sder_DMA_set):
-               #print i, "sder"
                dma.MAKE_FULL()
-               ###dma.ChangeOrigin(new_origin_set=self.reference_str)
                dma.ChangeOrigin(new_origin_set=self.reference_origin)
                
         ### 5-point formulae
@@ -556,16 +595,13 @@ type -3: transformation matrix from AO to LMO (nmos, nbasis)
         del files2
         # sort the input files (necessary!)
         files.sort()  
-        #print files
-        #print len(files)
         
         # construct DMA_set, Fragments_set and Overall_MM_set
         ###Fragments_set = []
         DMA_set = []
         Overall_MM_set = []
         for file in files:
-            #dma, Fragment = ParseDMA ( file, type ) # zmieniono z ( dir+file, type )
-            dma = ParseDMA ( file, type ) # zmieniono z ( dir+file, type )
+            dma = ParseDMA ( file, type )
             Fragment = dma.get_pos()
             DMA_set.append( dma )
             ###Fragments_set.append( Fragment )
@@ -576,9 +612,9 @@ type -3: transformation matrix from AO to LMO (nmos, nbasis)
                ### aby umożliwić sczytywanie momentów z plików GAMESS lub innych.
                ### Wtedy usuń warunek if w tej funkcji!
                # construct overall multipoles set DMA object
-               dipole     = self.Dipole(file)# zmieniono z ( dir+file)
-               quadrupole = self.Quadrupole(file)# zmieniono z ( dir+file )
-               octupole   = self.Octupole(file)# zmieniono z ( dir+file )
+               dipole     = self.Dipole(file)
+               quadrupole = self.Quadrupole(file)
+               octupole   = self.Octupole(file)
             
                MM = DMA(nfrag=1)
                MM.pos = zeros(3,dtype=float64)
@@ -981,7 +1017,7 @@ using COULOMB.py routines"""
    from sys  import argv
    #bonds = [map(int,(x.split(','))) for x in argv[-1].split('-')]
    bonds=None
-   vec = 20
+   vec = None
    #for i in range(len(bonds)): bonds[i]=tuple(bonds[i])
    #print bonds
    #os.environ['__IMPORT__COULOMB__']=1
