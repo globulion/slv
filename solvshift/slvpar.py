@@ -460,11 +460,11 @@ class Frag(object,UNITS):
         self.__ncmos,self.__vecc ,self.__vecc1= None, None, None
         self.__fckc ,self.__fckc1             = None, None
         #
-        self.__esp  ,self.__chlpg             = None, None
+        self.__esp  ,self.__chlpg,self.__npol = None, None, None
         self.__dpol ,self.__dpol1,self.__rpol = None, None, None
         #
         self.__rdma, self.__dmac, self.__dmad = None, None, None
-        self.__dmaq, self.__dmao              = None, None
+        self.__dmaq, self.__dmao, self.__ndma = None, None, None
         #
         mol_names = ('name','basis','method','natoms','nbasis',
                      'nmos','nmodes','atoms','shortname','nsites',
@@ -706,6 +706,8 @@ class Frag(object,UNITS):
                  merror+= 'is not consistent with section [ Distributed polarizabilities ]!'
                  assert self.__npol == (N/(9*self.__nmodes)), merror
                  self.__dpol1 = data.reshape(self.__nmodes,self.__npol,3,3)
+                 temp = sqrt(self.__redmass)[:,newaxis,newaxis,newaxis]
+                 self.__dpol1 = temp * self.__dpol1
             # ------------------------------------ FREQ -------------------------------------------
             # Harmonic frequencies
             elif key == 'freq':
