@@ -244,6 +244,17 @@ class Frag(object,UNITS):
     
     # public
     
+    def set_par(self,**kwargs):
+        """set the particular parameters parameters"""
+        for key, arg in kwargs.items():
+            if key == 'fock' : self.__fock  = arg
+            if key == 'fock1': self.__fock1 = arg
+            if key == 'vecl' : self.__vecl  = arg
+            if key == 'vecl1': self.__vecl1 = arg
+            if key == 'lmoc' : self.__lmoc  = arg
+            if key == 'lmoc1': self.__lmoc1 = arg
+        return
+    
     def set(self,mol=None,anh=None,frag=None,
             dma=None,chelpg=None,esp=None):
         """set the parameters providing appropriate objects"""
@@ -527,6 +538,8 @@ class Frag(object,UNITS):
         if self.__atms   is not None: par['atms'  ] = self.__atms
         if self.__ndma   is not None: par['ndma'  ] = self.__ndma
         if self.__npol   is not None: par['npol'  ] = self.__npol
+        if self.__nmodes is not None: par['nmodes'] = self.__nmodes
+        if self.__natoms is not None: par['natoms'] = self.__natoms
         if self.__name   is not None: par['name'  ] = self.__name
         if self.__basis  is not None: par['basis' ] = self.__basis
         # frequency analysis

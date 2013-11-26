@@ -12,7 +12,7 @@ from PyQuante.Ints import getT, getSAB, getTAB, getSA1B, getTA1B, getVEFP, \
                           getV, getbasis
 from shftex import shftex
 from shftce import shftce
-from cosik  import solpol, mollst
+from cosik1 import solpol, mollst, sftpol
 from efprot import tracls
 from exrep  import exrep
 import sys, copy, os, re, math, glob, PyQuante.Ints, coulomb.multip, clemtp
@@ -57,7 +57,7 @@ all          - evaluate all these interactions"""
            self.__eval_ct    = ct
            self.__eval_disp  = disp
         #
-        if freq: 
+        if (freq or mode): 
            self.__pairwise_all = False
            self.__eval_freq = True
            self.__mode = mode
@@ -167,10 +167,6 @@ Also set the BSM parameters if not done in set_bsm.
                  if self.__cunit: e_pol  *= self.HartreeToKcalPerMole
                  if lwrite: print " Polarization       energy: %10.6f"%e_pol
               
-              ### FREQUENCY SHIFTS
-              if self.__eval_freq:
-                  pass
-              
               ### NLO PROPERTY
               if self.__eval_nlo:
                   pass
@@ -200,8 +196,12 @@ Also set the BSM parameters if not done in set_bsm.
            ### central molecule
            frg = self.__bsm[0].copy()
            rms = frg.sup( self.__rc )
+           if lwrite: print "rms: ",rms
            parc= frg.get()
            PAR.append( parc )
+           #
+           qadc, octc = tracls( parc['dmaq'], parc['dmao'] )
+           QO.append( (qadc,octc) )
            #
            gijj = parc['gijk'][:,self.__mode-1,self.__mode-1]
            freq = parc['freq']
@@ -214,8 +214,9 @@ Also set the BSM parameters if not done in set_bsm.
                im = self.__mtc[i]
                #
                STR = self.__rcoordc[nm*i:nm*(i+1)]
-               frg = self.__bsm[im+1].copy()
+               frg = self.__bsm[im].copy()
                rms = frg.sup( STR )
+               if lwrite: print "rms E: ",rms
                par = frg.get()
                PAR.append( par )
                #
@@ -229,27 +230,31 @@ Also set the BSM parameters if not done in set_bsm.
               rdma = con  ([ x['rdma'] for x in PAR ]).reshape(ndmas*3)
               chg  = con  ([ x['dmac'] for x in PAR ]).reshape(ndmas)
               dip  = con  ([ x['dmad'] for x in PAR ]).reshape(ndmas*3)
-              qad  = con  ([ QO[x][0]  for x in range(N)   ]).reshape(ndmas*6)
-              oct  = con  ([ QO[x][1]  for x in range(N)   ]).reshape(ndmas*10)
+
+              qad  = con  ([ QO[x][0]  for x in range(N+1)   ]).reshape(ndmas*6)
+              oct  = con  ([ QO[x][1]  for x in range(N+1)   ]).reshape(ndmas*10)
               
-              shift = clemtp.edmtpa(rdma,chg,dip,qad,oct,ndma,lwrite)
-              if lwrite: print " Electrostatic frequency shift: %10.6f"%shift
+              #shift = clemtp.edmtpa(rdma,chg,dip,qad,oct,ndma,lwrite)
+              #if lwrite: print " Electrostatic frequency shift: %10.6f"%shift
               del PAR, QO
            # ------------------------------------- POL --------------------------------- #
               if self.__eval_pol:
+                 npolc = parc['npol']
                  ### central molecule
                  N = len(self.__ntp)
                  PAR = []
                  QO  = []
                  PAR.append( parc )
+                 QO.append( (qadc,octc) )
                  ### other molecules
                  for i in range(N):
                      nm = self.__ntp[i]
                      im = self.__mtp[i]
                      #
-                     STR = self.__rcoordc[nm*i:nm*(i+1)]
-                     frg = self.__bsm[im+1].copy()
+                     STR = self.__rcoordp[nm*i:nm*(i+1)]
+                     frg = self.__bsm[im].copy()
                      rms = frg.sup( STR )
+                     if lwrite: print "rms P: ",rms
                      par = frg.get()
                      PAR.append( par )
                      #
@@ -262,8 +267,8 @@ Also set the BSM parameters if not done in set_bsm.
                  rdma = con  ([ x['rdma'] for x in PAR ]).reshape(ndmas*3)
                  chg  = con  ([ x['dmac'] for x in PAR ]).reshape(ndmas)
                  dip  = con  ([ x['dmad'] for x in PAR ]).reshape(ndmas*3)
-                 qad  = con  ([ QO[x][0]  for x in range(N)   ]).reshape(ndmas*6)
-                 oct  = con  ([ QO[x][1]  for x in range(N)   ]).reshape(ndmas*10)
+                 qad  = con  ([ QO[x][0]  for x in range(N+1)   ]).reshape(ndmas*6)
+                 oct  = con  ([ QO[x][1]  for x in range(N+1)   ]).reshape(ndmas*10)
                  #
                  npol = [ x['npol'] for x in PAR ]
                  npols= sum(npol)
@@ -271,10 +276,11 @@ Also set the BSM parameters if not done in set_bsm.
                  rpol = con  ([ x['rpol'] for x in PAR ]).reshape(npols*3)
                  pol  = con  ([ x['dpol'] for x in PAR ]).reshape(npols*9)
                  #
-                 rpol1= parc['lmoc1'].reshape(nmodes*npols*3)
-                 pol1 = parc['dpol1'].reshape(nmodes*npols*9)
+                 rpol1= parc['lmoc1'].reshape(nmodes*npolc*3)
+                 pol1 = parc['dpol1'].reshape(nmodes*npolc*9)
                  #
                  DIM  = npols*3
+                 #rpol1.fill(0.0)
                  #
                  dmat = zeros((DIM,DIM),float64)
                  dimat= zeros((DIM,DIM),float64)
@@ -287,13 +293,17 @@ Also set the BSM parameters if not done in set_bsm.
                  fivec =zeros( DIM,float64)
                  avec  =zeros( DIM,float64)
                  #
+                 #pol1.fill(0.0)
                  epol, shift = sftpol(rdma,chg,dip,qad,oct,rpol,pol,
                                       dmat,flds,dipind,dimat,fivec,sdipnd,avec,vec1,mat1,
-                                      redmss,freq,gijj,rpol1,pol1,ndma,npol,mode,lwrite=False)
+                                      redmss,freq,gijj,rpol1,pol1,ndma,npol,
+                                      self.__mode,npolc,lwrite=False)
                  if self.__cunit:
                     epol  *= self.HartreeToKcalPerMole
                     shift *= self.HartreePerHbarToCmRec
-                 if lwrite: print " Polarization frequency shift: %10.6f"%shift
+                 if lwrite: 
+                    print " Polarization frequency shift: %10.6f"%shift
+                    #print " Polarization energy         : %10.6f"%epol
                  del PAR, QO
            # ---------------------------------- EX-REP --------------------------------- #
            if  self.__eval_rep:
@@ -433,6 +443,10 @@ Also set the BSM parameters if not done in set_bsm.
         ria  = varA['lmoc']
         ria1 = varA['lmoc1']
         mlist= bfsA.get_bfsl() + 1
+        redmss= varA['redmass']
+        gijj = varA['gijk'][:,self.__mode-1,self.__mode-1]
+        freq = varA['freq']
+        lvec = varA['lvec']
         ### molecule B
         fbij = varB['fock']
         cikb = varB['vecl']
@@ -445,7 +459,7 @@ Also set the BSM parameters if not done in set_bsm.
                                cika,cikb,cika1,
                                skm,tkm,sk1m,tk1m,
                                za,zb,mlist,
-                               faij,fbij,faij1,nmode)
+                               faij,fbij,faij1,self.__mode)
         return shift
         
 
