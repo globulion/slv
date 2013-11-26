@@ -191,8 +191,9 @@ class MCHO(UNITS):
     def EDS_FrequencyShifts(self,mode_id,fEDS,sEDS):
         """calculate frequency shifts from interaction energy derivatives"""
         j = mode_id
-        a_MA = zeros(7,dtype=float64)
-        a_EA = zeros(7,dtype=float64)
+        n = fEDS.shape[1]
+        a_MA = zeros(n,dtype=float64)
+        a_EA = zeros(n,dtype=float64)
         ### calculate mechanical anharmonicity component, C_MA
         for i in range(self.nModes):
           #if i==j:

@@ -21,9 +21,9 @@ where X=5,9"""
        
     def __init__(self,freq=0,step=0,
                  dir="",cartesian=False,L=0,
-                 camm=False,pol=False,eds=False,
+                 camm=False,pol=False,eds=False,efp=False,
                  solefp=False,nae=0,basis='6-311++G**',
-                 dpol=False):
+                 dpol=False,lprint=True):
 
         self.camm = camm
         # number of normal modes
@@ -35,6 +35,7 @@ where X=5,9"""
         self.frag_names = self.ReadAtoms(dir)
         self.fEDS  = None
         self.sEDS  = None
+        self.__lprint = lprint
         
         if not dir.endswith("/"): dir+="/"
         
@@ -44,7 +45,7 @@ where X=5,9"""
         if self.mode_id>0: self.calculate_sder=True
         else:              self.calculate_sder=False
         
-        if (not eds and not solefp and not dpol):
+        if (not eds  and not efp and not solefp and not dpol):
           # DMA set from FFxpt input files
           if camm:
              self.DMA_set, smiec1 = self.ParseDMA_set(dir,'coulomb')
@@ -63,7 +64,7 @@ where X=5,9"""
           self.polarizability_set_1 = self.Parse_Polarizability(dir)
           self.polarizability_set_2 = self.Parse_Polarizability(self.sderiv_wrk)
           #if pol:
-          self.fpol = 0#self.get_pol_fder()
+          self.fpol = self.get_pol_fder()
           self.spol = 0#self.get_pol_sder()
         
           # --- [!] Calculate the derivatives!
@@ -103,12 +104,20 @@ where X=5,9"""
            self.dpos_set_1, self.dpol_set_1 = self.Parse_dpol(dir+dpol)
            self.dpol1 = self.get_dpol_fder()
         # EDS
-        else:
+        elif eds:
            fdir,sdir = eds.split(':')
            self.EDS_set_1 = self.Parse_EDS(dir+fdir)
            self.EDS_set_2 = self.Parse_EDS(dir+sdir)
            self.fEDS = self.get_EDS_fder()
            self.sEDS = self.get_EDS_sder()
+        # EFP
+        elif efp:
+           fdir,sdir = efp.split(':')
+           self.EFP_set_1 = self.Parse_EFP(dir+fdir)
+           self.EFP_set_2 = self.Parse_EFP(dir+sdir)
+           self.fEFP = self.get_EFP_fder()
+           self.sEFP = self.get_EFP_sder()
+           
 
     def Parse_dpol(self,dir):
         """"""
@@ -121,8 +130,8 @@ where X=5,9"""
             r,a=ParseDistributedPolarizabilitiesFromGamessEfpFile(file)
             if r_ref is None: r_ref = r
             #
-            r, sim = order(r_ref,r,start=0)
-            print sim
+            r, sim = order(r_ref,r,start=0,lprint=self.__lprint)
+            if self.__lprint: print sim
             a = reorder(a,sim)
             dPos.append(r)
             dPol.append(a)
@@ -149,6 +158,7 @@ where X=5,9"""
         first_der_dpol_mode = tensordot(self.L,first_der_dpol_cart,(0,0))
 
         return first_der_dpol_mode.reshape(self.nAtoms*3-6,N,3,3)
+        #return first_der_dpol_cart.reshape(self.nAtoms*3,N,3,3)
     
     def Parse_tran(self,dir,nae,basis):
         """parses CMO transformation matrices from fchk files and transforms
@@ -318,6 +328,26 @@ type -3: transformation matrix from AO to LMO (nmos, nbasis)
 
         return first_der_EDS_mode
     
+    def get_EFP_fder(self):
+        """calculate first derivatives wrt normal coordinates
+        of interaction energy components from EFP"""
+        
+        first_der_EFP_cart = []
+        for i in range(self.nAtoms*3):
+            K = 1 + 4*i
+            fd   = (1./12.) *  (\
+                       (self.EFP_set_1[K+3] - self.EFP_set_1[K+0] ) \
+                 + 8*  (self.EFP_set_1[K+1] - self.EFP_set_1[K+2] ))\
+                 /(self.step* self.AngstromToBohr)
+                 
+            first_der_EFP_cart.append( fd )
+        first_der_EFP_cart = array(first_der_EFP_cart,float64)
+
+        ### TRANSFORM FIRST DERIVATIVES TO NORMAL MODE SPACE
+        first_der_EFP_mode = tensordot(self.L,first_der_EFP_cart,(0,0))
+
+        return first_der_EFP_mode
+    
     def get_EDS_sder(self):
         """calculate second diagonal derivatives wrt normal coordinates 
         of polarizability tensor. Returned in AU unit"""
@@ -329,6 +359,18 @@ type -3: transformation matrix from AO to LMO (nmos, nbasis)
             /self.sderiv_step**2
 
         return second_der_EDS_mode
+
+    def get_EFP_sder(self):
+        """calculate second diagonal derivatives wrt normal coordinates 
+        of polarizability tensor. Returned in AU unit"""
+        
+        second_der_EFP_mode = (1./12.) *  (\
+            -     (self.EFP_set_2[1+3] + self.EFP_set_2[1+0] ) \
+            +16*  (self.EFP_set_2[1+1] + self.EFP_set_2[1+2] ) \
+            -30*   self.EFP_set_2[0  ] )                \
+            /self.sderiv_step**2
+
+        return second_der_EFP_mode
                 
     def get_pol_fder(self):
         """calculate first derivatives wrt normal coordinates 
@@ -641,6 +683,23 @@ type -3: transformation matrix from AO to LMO (nmos, nbasis)
         set = []
         for file in files:
             set.append(Parse_EDS_InteractionEnergies(dir+file))
+            
+        return array(set)
+
+    def Parse_EFP(self,dir):
+        """parses EFP energies"""
+        
+        files2= os.listdir(dir)
+        files = [ ]
+        for i in files2:
+            if i.endswith('_.log'):
+               files.append(i)
+        del files2
+        # sort the input files (necessary!)
+        files.sort()  
+        set = []
+        for file in files:
+            set.append(ParseEFPInteractionEnergies(dir+file))
             
         return array(set)
 
