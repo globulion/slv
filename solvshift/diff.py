@@ -10,6 +10,7 @@ from dma        import *
 from utilities  import *
 from gaussfreq  import *
 import os, glob, PyQuante.Ints, coulomb.multip
+os.environ['__IMPORT__COULOMB__']='1'
 
 __all__ = ['DIFF',]
 __version__ = '5.2.1'
