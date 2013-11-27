@@ -30,7 +30,7 @@ class Frag(object,UNITS):
  rmolecular interactions based on gas-phase molecular properties, mainly first
  order Coulomb electrostatics, second-order polarization forces, first-order c
  orrection due to overlap and Pauli repulsion, charge-transfer and dispersion.
- Supports the following functionalities for condensed physics modeling:       
+ Supports the following functionalities for condensed phase physics modeling: 
  
    a) intermolecular interaction energies                                     
    b) nonlinear electrooptical properties                                     
@@ -86,12 +86,14 @@ class Frag(object,UNITS):
   2) set the data to frag from other source than Frag format file (*.frg)     
                                                                               
      frag.set(mol=None, anh=None, frag=None, dma=None, chelpg=None, esp=None) 
-                       # mol  - Molecule    class object                     
+                       # mol  - Molecule    class object                      
                        # anh  - FREQ        class object                      
                        # frag - FragFactory class object                      
                        # dma  - DMA         class object                      
-                       # chelpg - array of ChelpG charges                     
-                       # esp    - array of ESP    charges                     
+                       # and other:                                           
+                       # * elpg - array of ChelpG charges                     
+                       # * esp    - array of ESP    charges                   
+                       # * other keywors that match list of memorials (see [2])
                                                                               
   3) write the parameters to a file                                           
                                                                               
@@ -103,7 +105,7 @@ class Frag(object,UNITS):
      frag.rotate(rot)           # rotate all tensors by unitary 3x3 matrix    
      frag.sup(xyz)              # superimpose (translate + rotate) to the pos
                                 # indicated by xyz Cartesian coordinates
-     copy = frag.copy()         # create a deep copy of frag objects
+     f_copy = frag.copy()       # create a deep copy of frag objects
      print frag                 # print the status of frag object
 
   5) return objects from frag object
@@ -117,70 +119,70 @@ class Frag(object,UNITS):
      pos = frag.get_pos()       # get position Cartesian coordinates of atoms
      bfs = frag.get_bfs()       # get BasisSet object                        
      qad, oct = frag.get_traceless() # get traceless quadrupoles and octupoles
-
+                                                                              
  =============================================================================
-  [2] LISTING OF MEMORIAL NAMES                            
-      The *.frg file has two parts:
-      * preambule (molecule section)
-      * parameters sections
+  [2] LISTING OF MEMORIAL NAMES                                               
+      The *.frg file has two parts:                                           
+      * preambule (molecule section)                                          
+      * parameters sections                                                   
  =============================================================================
-  GR : Section name                      Shortcut       Dimension
- - - : - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-     : molecule                    · · · mol                          
-     :                             ·      name                      
-     :                             P      shortname                 
-     :                             R      basis                    
-     :                             E      nbasis                   
-     :                             A      method                   
-     :                             M      atoms                    
-     :                             B      natoms                   
-  I  :                             U      ndma                     
-     :                             L      npol                     
-     :                             E      nmos                     
-     :                             ·      ncmos                    
-     :                             · · ·  nmodes                   
-     : Atomic numbers                    atno            natoms   
-     : Atomic masses                     atms            natoms           
-     : Atomic coordinates                pos             natoms, 3        
+  GR : Section name                      Shortcut       Dimension             
  - - : - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     : ESP charges                       esp             natoms           
-     : ChelpG charges                    chlpg           natoms           
-     : DMTP centers                      rdma            ndma  , 3        
-     : DMTP charges                      dmac            ndma             
-     : DMTP dipoles                      dmad            ndma  , 3        
- II  : DMTP quadrupoles                  dmaq            ndma  , 6        
-     : DMTP octupoles                    dmao            ndma  , 10       
-     : Polarizable centers               rpol            npol  , 3        
-     : Distributed polarizabilities      dpol            npol  , 9        
-     : Distributed polarizabilities      dpol1           nmodes, npol, 9
-     : - first derivatives                                                
- - - : - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-     : Harmonic frequencies              freq            nmodes           
-     : Reduced masses                    redmass         nmodes           
- III : Mass-weighted eigenvectors        lvec            nmodes, natoms, 3
+     : molecule                    · · · mol                                  
+     :                             ·      name                                
+     :                             P      shortname                           
+     :                             R      basis                               
+     :                             E      nbasis                              
+     :                             A      method                              
+     :                             M      atoms                               
+     :                             B      natoms                              
+  I  :                             U      ndma                                
+     :                             L      npol                                
+     :                             E      nmos                                
+     :                             ·      ncmos                               
+     :                             · · ·  nmodes                              
+     : Atomic numbers                    atno            natoms               
+     : Atomic masses                     atms            natoms               
+     : Atomic coordinates                pos             natoms, 3            
+ - - : - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     : ESP charges                       esp             natoms               
+     : ChelpG charges                    chlpg           natoms               
+     : DMTP centers                      rdma            ndma  , 3            
+     : DMTP charges                      dmac            ndma                 
+     : DMTP dipoles                      dmad            ndma  , 3            
+ II  : DMTP quadrupoles                  dmaq            ndma  , 6            
+     : DMTP octupoles                    dmao            ndma  , 10           
+     : Polarizable centers               rpol            npol  , 3            
+     : Distributed polarizabilities      dpol            npol  , 9            
+     : Distributed polarizabilities      dpol1           nmodes, npol, 9      
+     : - first derivatives                                                    
+ - - : - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     : Harmonic frequencies              freq            nmodes               
+     : Reduced masses                    redmass         nmodes               
+ III : Mass-weighted eigenvectors        lvec            nmodes, natoms, 3    
      : Cubic anharmonic constants        gijk            nmodes, nmodes, nmodes
  - - : - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     : LMO centroids                     lmoc            nmos  , 3        
-     : LMO centroids                     lmoc1           nmodes, nmos  , 3
-     : - first derivatives                                                
-     : Fock matrix                       fock            nmos  , nmos     
-     : Fock matrix                       fock1           nmodes, nmos  , nmos
-     : - first derivatives                                                
-     : Canonical Fock matrix             fckc            ncmos , ncmos    
+     : LMO centroids                     lmoc            nmos  , 3            
+     : LMO centroids                     lmoc1           nmodes, nmos  , 3    
+     : - first derivatives                                                    
+     : Fock matrix                       fock            nmos  , nmos         
+     : Fock matrix                       fock1           nmodes, nmos  , nmos 
+     : - first derivatives                                                    
+     : Canonical Fock matrix             fckc            ncmos , ncmos        
   V  : Canonical Fock matrix             fckc1           nmodes, ncmos , ncmos
-     : - first derivatives                                                
-     : AO->LMO matrix                    vecl            nmos  , nbasis   
+     : - first derivatives                                                    
+     : AO->LMO matrix                    vecl            nmos  , nbasis       
      : AO->LMO matrix                    vecl1           nmodes, nmos  , nbasis
-     : - first derivatives                                                
-     : AO->CMO matrix                    vecc            ncmos , nbasis   
+     : - first derivatives                                                    
+     : AO->CMO matrix                    vecc            ncmos , nbasis       
      : AO->CMO matrix                    vecc1           nmodes, ncmos , nbasis
-     : - first derivatives                                                
+     : - first derivatives                                                    
  =============================================================================
-  [3] TENSOR DIMENSIONS AND STORAGE CONVENTIONS            
+  [3] TENSOR DIMENSIONS AND STORAGE CONVENTIONS                               
  =============================================================================
-   All of the tensors exept for DMA and DPOL analyses are in full format.
-   DMA and DPOL are stored in reduced formats.
-          
+   All of the tensors exept for DMA and DPOL analyses are in full format.     
+   DMA and DPOL are stored in reduced formats.                                
+                                                                              
              CHG(i) .
                     1
              DIP(i) X   Y   Z
@@ -191,13 +193,13 @@ class Frag(object,UNITS):
                     1   2   3   4   5   6   7   8   9   10
              POL(i) XX  XY  XZ  YX  YY  YZ  ZX  ZY  ZZ 
                     1   2   3   4   5   6   7   8   9
-
+                                                                              
    * Turn of indices in the case of DMA distributions is identical as GAMESS  
    * Turn of indices in distributed polarizabilities is different as in GAMESS
  =============================================================================
  Notes:                                                                       
-   1) -ALL- the data in the instance of Frag are stored in ATOMIC UNITS!!!   
-
+   1) -ALL- the data in the instance of Frag are stored in ATOMIC UNITS!!!    
+                                                                              
        [ Angstrom, kcal/mole, cm-1, C, amu, ... ] ----> [a.u.]                
                                                                               
  References:                                                                  
@@ -244,19 +246,8 @@ class Frag(object,UNITS):
     
     # public
     
-    def set_par(self,**kwargs):
-        """set the particular parameters parameters"""
-        for key, arg in kwargs.items():
-            if key == 'fock' : self.__fock  = arg
-            if key == 'fock1': self.__fock1 = arg
-            if key == 'vecl' : self.__vecl  = arg
-            if key == 'vecl1': self.__vecl1 = arg
-            if key == 'lmoc' : self.__lmoc  = arg
-            if key == 'lmoc1': self.__lmoc1 = arg
-        return
-    
     def set(self,mol=None,anh=None,frag=None,
-            dma=None,chelpg=None,esp=None):
+            dma=None,**kwargs):
         """set the parameters providing appropriate objects"""
         # molecular structure
         if mol is not None:
@@ -293,11 +284,23 @@ class Frag(object,UNITS):
         # EFP fragment parameters
         if frag is not None:
            self._parse_dict( frag.get() )
-        # other
-        self.__chlpg  = chelpg
-        self.__esp    = esp
+        # Other special data
+        if kwargs: self.set_par(**kwargs)
         return
-        
+    
+    def set_par(self,**kwargs):
+        """set the particular parameters"""
+        for key, arg in kwargs.items():
+            if key == 'fock' : self.__fock  = arg
+            if key == 'fock1': self.__fock1 = arg
+            if key == 'vecl' : self.__vecl  = arg
+            if key == 'vecl1': self.__vecl1 = arg
+            if key == 'lmoc' : self.__lmoc  = arg
+            if key == 'lmoc1': self.__lmoc1 = arg
+            if key == 'chlpg': self.__chlpg = arg
+            if key == 'esp'  : self.__esp   = arg
+        return
+            
     def get(self):
         """returns dictionary with parameters"""
         return self._make_dict()
