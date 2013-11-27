@@ -299,6 +299,10 @@ class Frag(object,UNITS):
             if key == 'lmoc1': self.__lmoc1 = arg
             if key == 'chlpg': self.__chlpg = arg
             if key == 'esp'  : self.__esp   = arg
+            if key == 'dmac1': self.__dmac1 = arg
+            if key == 'dmad1': self.__dmad1 = arg
+            if key == 'dmaq1': self.__dmaq1 = arg
+            if key == 'dmao1': self.__dmao1 = arg
         return
             
     def get(self):
@@ -324,6 +328,11 @@ class Frag(object,UNITS):
         dmaq, dmao = tracls(self.__dmaq, self.__dmao)
         return dmaq, dmao
     
+    def get_traceless_1(self):
+        """return traceless 1st derivatives wrt modes of quadrupoles and octupoles"""
+        dmaq1, dmao1 = tracl1(self.__dmaq1, self.__dmao1)
+        return dmaq1, dmao1
+    
     def write(self,file='slv.frg',par=None):
         """writes the parameters into a file"""
         f = open(file,'w')
@@ -343,6 +352,10 @@ class Frag(object,UNITS):
         if self.__dmad  is not None: self._write_dmad(f)
         if self.__dmaq  is not None: self._write_dmaq(f)
         if self.__dmao  is not None: self._write_dmao(f)
+        if self.__dmac1 is not None: self._write_dmac1(f)
+        if self.__dmad1 is not None: self._write_dmad1(f)
+        if self.__dmaq1 is not None: self._write_dmaq1(f)
+        if self.__dmao1 is not None: self._write_dmao1(f)
         if self.__rpol  is not None: self._write_rpol(f)
         if self.__dpol  is not None: self._write_dpol(f)
         if self.__dpol1 is not None: self._write_dpol1(f)
@@ -392,6 +405,9 @@ class Frag(object,UNITS):
         if self.__dmac  is not None:
            self.__dmad, self.__dmaq, self.__dmao = \
            rotdma(self.__dmad,self.__dmaq,self.__dmao,rot)
+        if self.__dmac1 is not None:
+           self.__dmad1, self.__dmaq1, self.__dmao1 = \
+           rotdm1(self.__dmad1,self.__dmaq1,self.__dmao1,rot)
         # transform distributed polarizabilities!
         if self.__dpol   is not None:
            for i in xrange(self.__npol):
@@ -431,6 +447,9 @@ class Frag(object,UNITS):
         if self.__dmac  is not None:
            self.__dmad, self.__dmaq, self.__dmao = \
            rotdma(self.__dmad,self.__dmaq,self.__dmao,rot)
+        if self.__dmac1 is not None:
+           self.__dmad1, self.__dmaq1, self.__dmao1 = \
+           rotdm1(self.__dmad1,self.__dmaq1,self.__dmao1,rot)
         # transform distributed polarizabilities!
         if self.__dpol   is not None:
            for i in xrange(self.__npol):
@@ -479,6 +498,8 @@ class Frag(object,UNITS):
         #
         self.__rdma, self.__dmac, self.__dmad = None, None, None
         self.__dmaq, self.__dmao, self.__ndma = None, None, None
+        self.__dmac1,self.__dmad1,self.__dmaq1= None, None, None
+        self.__dmao1                          = None
         #
         mol_names = ('name','basis','method','natoms','nbasis',
                      'nmos','nmodes','atoms','shortname','nsites',
@@ -569,6 +590,10 @@ class Frag(object,UNITS):
         if self.__dmad  is not None: par['dmad' ] = self.__dmad
         if self.__dmaq  is not None: par['dmaq' ] = self.__dmaq
         if self.__dmao  is not None: par['dmao' ] = self.__dmao
+        if self.__dmac1 is not None: par['dmac1'] = self.__dmac1
+        if self.__dmad1 is not None: par['dmad1'] = self.__dmad1
+        if self.__dmaq1 is not None: par['dmaq1'] = self.__dmaq1
+        if self.__dmao1 is not None: par['dmao1'] = self.__dmao1
         if self.__rpol  is not None: par['rpol' ] = self.__rpol
         if self.__dpol  is not None: par['dpol' ] = self.__dpol
         if self.__dpol1 is not None: par['dpol1'] = self.__dpol1
@@ -702,6 +727,39 @@ class Frag(object,UNITS):
                  assert self.__ndma == N/10, merror
                  data = data.reshape(self.__ndma,10)
                  self.__dmao = data
+            # - DMTP derivatives -
+            # distributed charge 1st derivatives
+            elif key == 'dmac1':
+                 merror = 'nmodes and ndma in section [ molecule ] '
+                 merror+= 'is not consistent with section [ DMTP charges ]!'
+                 assert self.__ndma*self.__nmodes == N, merror
+                 self.__dmac1 = data.reshape(self.__nmodes,self.__ndma)
+                 temp = sqrt(self.__redmass)[:,newaxis]
+                 self.__dmac1 = temp * self.__dmac1
+            # distributed dipole 1st derivatives
+            elif key == 'dmad1':
+                 merror = 'nmodes and ndma in section [ molecule ] '
+                 merror+= 'is not consistent with section [ DMTP dipoles ]!'
+                 assert self.__ndma*self.__nmodes == N/3, merror
+                 data = data.reshape(self.__nmodes,self.__ndma,3)
+                 temp = sqrt(self.__redmass)[:,newaxis,newaxis]
+                 self.__dmad1 = temp * data
+            # distributed quadrupoles 1st derivatives
+            elif key == 'dmaq1':
+                 merror = 'nmodes and ndma in section [ molecule ] '
+                 merror+= 'is not consistent with section [ DMTP quadrupoles ]!'
+                 assert self.__ndma*self.__nmodes == N/6, merror
+                 data = data.reshape(self.__nmodes,self.__ndma,6)
+                 temp = sqrt(self.__redmass)[:,newaxis,newaxis]
+                 self.__dmaq1 = temp * data
+            # distributed octupoles 1st derivatives
+            elif key == 'dmao1':
+                 merror = 'nmodes and ndma in section [ molecule ] '
+                 merror+= 'is not consistent with section [ DMTP octupoles ]!'
+                 assert self.__ndma*self.__nmodes == N/10, merror
+                 data = data.reshape(self.__nmodes,self.__ndma,10)
+                 temp = sqrt(self.__redmass)[:,newaxis,newaxis]
+                 self.__dmao1 = temp * data
             # CABMM
             elif key == 'cabmm':
                  pass
@@ -904,6 +962,8 @@ class Frag(object,UNITS):
         log+= '   nmodes     = %s\n'    % self.__nmodes
         log+= '   nmos       = %s\n'    % self.__nmos
         log+= '   ncmos      = %s\n'    % self.__ncmos
+        if self.__ndma is not None:
+           log+= '   ndma       = %s\n'    % self.__ndma
         log+= ' \n'
         file.write(log)
         return
@@ -1031,6 +1091,22 @@ class Frag(object,UNITS):
         file.write(log)
         return
     
+    def _write_dmac1(self,file):
+        """write DMTP charges 1st der wrt nmodes"""
+        nmodes, ndma = self.__dmac1.shape
+        N = ndma * nmodes
+        log = ' %s %s= %d\n' % (self.__sec_names['dmac1'].ljust(40),'N'.rjust(10),N)
+        n = 1
+        for i in xrange(nmodes):
+            for j in xrange(ndma):
+                log+= "%20.10E" % self.__dmac1[i,j]
+                if not n%5: log+= '\n'
+                n+=1
+        log+= '\n'
+        if N%5: log+= '\n'
+        file.write(log)
+        return
+    
     def _write_dmad(self,file):
         """write DMTP dipoles"""
         ndma = self.__dmad.shape[0]
@@ -1042,6 +1118,23 @@ class Frag(object,UNITS):
                 log+= "%20.10E" % self.__dmad[i,j]
                 if not n%5: log+= '\n'
                 n+=1
+        log+= '\n'
+        if N%5: log+= '\n'
+        file.write(log)
+        return
+    
+    def _write_dmad1(self,file):
+        """write DMTP dipoles 1st der wrt nmodes"""
+        nmodes,ndma,c = self.__dmad1.shape
+        N = nmodes * ndma * 3
+        log = ' %s %s= %d\n' % (self.__sec_names['dmad1'].ljust(40),'N'.rjust(10),N)
+        n = 1
+        for i in xrange(nmodes):
+            for j in xrange(ndma):
+                for k in xrange(3):
+                    log+= "%20.10E" % self.__dmad1[i,j,k]
+                    if not n%5: log+= '\n'
+                    n+=1
         log+= '\n'
         if N%5: log+= '\n'
         file.write(log)
@@ -1063,6 +1156,23 @@ class Frag(object,UNITS):
         file.write(log)
         return
     
+    def _write_dmaq1(self,file):
+        """write DMTP quadrupoles 1st der wrt nmodes"""
+        nmodes,ndma,c = self.__dmaq1.shape
+        N = nmodes * ndma * 6
+        log = ' %s %s= %d\n' % (self.__sec_names['dmaq1'].ljust(40),'N'.rjust(10),N)
+        n = 1
+        for i in xrange(nmodes):
+            for j in xrange(ndma):
+                for k in xrange(6):
+                    log+= "%20.10E" % self.__dmaq1[i,j,k]
+                    if not n%5: log+= '\n'
+                    n+=1
+        log+= '\n'
+        if N%5: log+= '\n'
+        file.write(log)
+        return
+    
     def _write_dmao(self,file):
         """write DMTP octupoles"""
         ndma = self.__dmao.shape[0]
@@ -1074,6 +1184,23 @@ class Frag(object,UNITS):
                 log+= "%20.10E" % self.__dmao[i,j]
                 if not n%5: log+= '\n'
                 n+=1
+        log+= '\n'
+        if N%5: log+= '\n'
+        file.write(log)
+        return
+    
+    def _write_dmao1(self,file):
+        """write DMTP octupoles 1st der wrt nmodes"""
+        nmodes,ndma,c = self.__dmao1.shape
+        N = nmodes * ndma * 10
+        log = ' %s %s= %d\n' % (self.__sec_names['dmao1'].ljust(40),'N'.rjust(10),N)
+        n = 1
+        for i in xrange(nmodes):
+            for j in xrange(ndma):
+                for k in xrange(10):
+                    log+= "%20.10E" % self.__dmao1[i,j,k]
+                    if not n%5: log+= '\n'
+                    n+=1
         log+= '\n'
         if N%5: log+= '\n'
         file.write(log)
