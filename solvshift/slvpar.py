@@ -9,7 +9,7 @@ from numpy     import array, float64, zeros, newaxis, sqrt, \
 from units     import *
 from dma       import DMA
 from utilities import order, SVDSuperimposer as svd_sup, MakeMol
-from efprot    import vecrot, vc1rot, tracls, rotdma
+from efprot    import vecrot, vc1rot, tracls, rotdma, tracl1, rotdm1
 from PyQuante.Ints import getbasis
 import sys, copy, os, re, math
 sys.stdout.flush()
@@ -330,7 +330,11 @@ class Frag(object,UNITS):
     
     def get_traceless_1(self):
         """return traceless 1st derivatives wrt modes of quadrupoles and octupoles"""
-        dmaq1, dmao1 = tracl1(self.__dmaq1, self.__dmao1)
+        self.__dmaq1 = self.__dmaq1.ravel()
+        self.__dmao1 = self.__dmao1.ravel()
+        dmaq1, dmao1 = tracl1(self.__dmaq1, self.__dmao1, self.__nmodes, self.__ndma)
+        self.__dmaq1 = self.__dmaq1.reshape(self.__nmodes,self.__ndma,6)
+        self.__dmao1 = self.__dmao1.reshape(self.__nmodes,self.__ndma,10)
         return dmaq1, dmao1
     
     def write(self,file='slv.frg',par=None):
@@ -406,8 +410,15 @@ class Frag(object,UNITS):
            self.__dmad, self.__dmaq, self.__dmao = \
            rotdma(self.__dmad,self.__dmaq,self.__dmao,rot)
         if self.__dmac1 is not None:
+           self.__dmad1 = self.__dmad1.ravel()
+           self.__dmaq1 = self.__dmaq1.ravel()
+           self.__dmao1 = self.__dmao1.ravel()
            self.__dmad1, self.__dmaq1, self.__dmao1 = \
-           rotdm1(self.__dmad1,self.__dmaq1,self.__dmao1,rot)
+           rotdm1(self.__dmad1,self.__dmaq1,self.__dmao1,rot,
+                  self.__nmodes,self.__ndma)
+           self.__dmad1 = self.__dmad1.reshape(self.__nmodes,self.__ndma,3)
+           self.__dmaq1 = self.__dmaq1.reshape(self.__nmodes,self.__ndma,6)
+           self.__dmao1 = self.__dmao1.reshape(self.__nmodes,self.__ndma,10)
         # transform distributed polarizabilities!
         if self.__dpol   is not None:
            for i in xrange(self.__npol):
@@ -448,8 +459,15 @@ class Frag(object,UNITS):
            self.__dmad, self.__dmaq, self.__dmao = \
            rotdma(self.__dmad,self.__dmaq,self.__dmao,rot)
         if self.__dmac1 is not None:
+           self.__dmad1 = self.__dmad1.ravel()
+           self.__dmaq1 = self.__dmaq1.ravel()
+           self.__dmao1 = self.__dmao1.ravel()
            self.__dmad1, self.__dmaq1, self.__dmao1 = \
-           rotdm1(self.__dmad1,self.__dmaq1,self.__dmao1,rot)
+           rotdm1(self.__dmad1,self.__dmaq1,self.__dmao1,rot,
+                  self.__nmodes,self.__ndma)
+           self.__dmad1 = self.__dmad1.reshape(self.__nmodes,self.__ndma,3)
+           self.__dmaq1 = self.__dmaq1.reshape(self.__nmodes,self.__ndma,6)
+           self.__dmao1 = self.__dmao1.reshape(self.__nmodes,self.__ndma,10)
         # transform distributed polarizabilities!
         if self.__dpol   is not None:
            for i in xrange(self.__npol):
