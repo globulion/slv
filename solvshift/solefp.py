@@ -247,6 +247,7 @@ Also set the BSM parameters if not done in set_bsm.
            # ------------------------------------- POL --------------------------------- #
               if self.__eval_pol:
                  npolc = parc['npol']
+                 ndmac = parc['ndma']
                  ### central molecule
                  N = len(self.__ntp)
                  PAR = []
@@ -301,10 +302,16 @@ Also set the BSM parameters if not done in set_bsm.
                  avec  =zeros( DIM,float64)
                  #
                  #pol1.fill(0.0)
-                 epol, shift = sftpol(rdma,chg,dip,qad,oct,rpol,pol,
-                                      dmat,flds,dipind,dimat,fivec,sdipnd,avec,vec1,mat1,
-                                      redmss,freq,gijj,rpol1,pol1,lvec,ndma,npol,
-                                      self.__mode,npolc,lwrite=False)
+                 epol, shift = sftpol(rdma,chg,dip,qad,oct,
+                                           chgc1,dipc1,qadc1,octc1,
+                                      rpol,pol,dmat,flds,dipind,dimat,fivec,
+                                      sdipnd,avec,vec1,mat1,
+                                      redmss,freq,gijj,rpol1,pol1,lvec,
+                                      ndma,npol,self.__mode,ndmac,npolc,lwrite=False)
+                 #epol, shift = sftpol(rdma,chg,dip,qad,oct,rpol,pol,
+                 #                     dmat,flds,dipind,dimat,fivec,sdipnd,avec,vec1,mat1,
+                 #                     redmss,freq,gijj,rpol1,pol1,lvec,ndma,npol,
+                 #                     self.__mode,npolc,lwrite=False)
                  if self.__cunit:
                     epol  *= self.HartreeToKcalPerMole
                     shift *= self.HartreePerHbarToCmRec
