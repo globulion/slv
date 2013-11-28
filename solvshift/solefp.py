@@ -118,11 +118,13 @@ Also set the BSM parameters if not done in set_bsm.
            N = len(self.__nmol)
            PAR = []
            QO  = []
+           nm_sum = 0
            for i in range(N):
                nm = self.__nmol[i]
                im = self.__ind[i]
+               nm_sum += nm
                #
-               STR = self.__rcoordc[nm*i:nm*(i+1)]
+               STR = self.__rcoordc[nm_sum-nm:nm_sum]
                frg = self.__bsm[im].copy()
                rms = frg.sup( STR )
                par = frg.get()
@@ -203,10 +205,14 @@ Also set the BSM parameters if not done in set_bsm.
            qadc, octc = tracls( parc['dmaq'], parc['dmao'] )
            QO.append( (qadc,octc) )
            #
-           gijj = parc['gijk'][:,self.__mode-1,self.__mode-1]
-           freq = parc['freq']
-           redmss= parc['redmass']
-           lvec = parc['lvec']
+           chgc1 = parc['dmac1'].ravel()
+           dipc1 = parc['dmad1'].ravel()
+           qadc1, octc1 = frg.get_traceless_1(ravel=True)
+           #
+           gijj   = parc['gijk'][:,self.__mode-1,self.__mode-1]
+           freq   = parc['freq']
+           redmss = parc['redmass']
+           lvec   = parc['lvec'].ravel()#reshape((nmodes+6)*nmodes)
            nmodes = parc['nmodes']
            ### other molecules
            for i in range(N):
@@ -222,6 +228,7 @@ Also set the BSM parameters if not done in set_bsm.
                #
                qad, oct = tracls( par['dmaq'], par['dmao'] )
                QO.append( (qad,oct) )
+               #
            # ----------------------------------- ELECT --------------------------------- #
            if self.__eval_elect: 
               ndma = [ x['ndma'] for x in PAR ]
@@ -296,7 +303,7 @@ Also set the BSM parameters if not done in set_bsm.
                  #pol1.fill(0.0)
                  epol, shift = sftpol(rdma,chg,dip,qad,oct,rpol,pol,
                                       dmat,flds,dipind,dimat,fivec,sdipnd,avec,vec1,mat1,
-                                      redmss,freq,gijj,rpol1,pol1,ndma,npol,
+                                      redmss,freq,gijj,rpol1,pol1,lvec,ndma,npol,
                                       self.__mode,npolc,lwrite=False)
                  if self.__cunit:
                     epol  *= self.HartreeToKcalPerMole

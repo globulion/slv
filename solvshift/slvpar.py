@@ -328,13 +328,14 @@ class Frag(object,UNITS):
         dmaq, dmao = tracls(self.__dmaq, self.__dmao)
         return dmaq, dmao
     
-    def get_traceless_1(self):
+    def get_traceless_1(self,ravel=False):
         """return traceless 1st derivatives wrt modes of quadrupoles and octupoles"""
         self.__dmaq1 = self.__dmaq1.ravel()
         self.__dmao1 = self.__dmao1.ravel()
         dmaq1, dmao1 = tracl1(self.__dmaq1, self.__dmao1, self.__nmodes, self.__ndma)
-        self.__dmaq1 = self.__dmaq1.reshape(self.__nmodes,self.__ndma,6)
-        self.__dmao1 = self.__dmao1.reshape(self.__nmodes,self.__ndma,10)
+        if not ravel:
+           self.__dmaq1 = self.__dmaq1.reshape(self.__nmodes,self.__ndma,6)
+           self.__dmao1 = self.__dmao1.reshape(self.__nmodes,self.__ndma,10)
         return dmaq1, dmao1
     
     def write(self,file='slv.frg',par=None):
