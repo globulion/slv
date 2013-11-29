@@ -208,6 +208,8 @@ Also set the BSM parameters if not done in set_bsm.
            chgc1 = parc['dmac1'].ravel()
            dipc1 = parc['dmad1'].ravel()
            qadc1, octc1 = frg.get_traceless_1(ravel=True)
+           #qadc1 = parc['dmaq1'].ravel()
+           #octc1 = parc['dmao1'].ravel()
            #
            gijj   = parc['gijk'][:,self.__mode-1,self.__mode-1]
            freq   = parc['freq']
@@ -230,7 +232,7 @@ Also set the BSM parameters if not done in set_bsm.
                QO.append( (qad,oct) )
                #
            # ----------------------------------- ELECT --------------------------------- #
-           if self.__eval_elect: 
+           if self.__eval_elect:
               ndma = [ x['ndma'] for x in PAR ]
               ndmas= sum(ndma)
               
@@ -289,6 +291,7 @@ Also set the BSM parameters if not done in set_bsm.
                  #
                  DIM  = npols*3
                  #rpol1.fill(0.0)
+                 #pol1.fill(0.0)
                  #
                  dmat = zeros((DIM,DIM),float64)
                  dimat= zeros((DIM,DIM),float64)
