@@ -23,8 +23,9 @@ __version__ = '1.0.1'
 
 class EFP(object,UNITS):
     """"""
-    def __init__(self,ccut=None,pcut=None,pairwise_all=False,
+    def __init__(self,ccut=None,pcut=None,ecut=None,pairwise_all=False,
                       elect=True,pol=False,rep=False,ct=False,disp=False,all=False,
+                      suplist=None,
                       nlo=False,freq=False,mode=None,cunit=False):
         """The global settings for a computation:
 ccut         - Coulomb cutoff
@@ -40,9 +41,11 @@ disp         - evaluate dispersion
 all          - evaluate all these interactions"""
         self._create()
         self.__cunit = cunit
+        self.__suplist = suplist
         #
         self.__ccut = ccut
         self.__pcut = pcut
+        self.__ecut = ecut
         #
         if all:
            self.__eval_elect = True
@@ -197,7 +200,7 @@ Also set the BSM parameters if not done in set_bsm.
            QO  = []
            ### central molecule
            frg = self.__bsm[0].copy()
-           rms = frg.sup( self.__rc )
+           rms = frg.sup( self.__rc, self.__suplist )
            if lwrite: print "rms: ",rms
            parc= frg.get()
            PAR.append( parc )
@@ -208,8 +211,6 @@ Also set the BSM parameters if not done in set_bsm.
            chgc1 = parc['dmac1'].ravel()
            dipc1 = parc['dmad1'].ravel()
            qadc1, octc1 = frg.get_traceless_1(ravel=True)
-           #qadc1 = parc['dmaq1'].ravel()
-           #octc1 = parc['dmao1'].ravel()
            #
            gijj   = parc['gijk'][:,self.__mode-1,self.__mode-1]
            freq   = parc['freq']
@@ -224,7 +225,7 @@ Also set the BSM parameters if not done in set_bsm.
                STR = self.__rcoordc[nm*i:nm*(i+1)]
                frg = self.__bsm[im].copy()
                rms = frg.sup( STR )
-               if lwrite: print "rms E: ",rms
+               if lwrite: print "rms C: ",rms
                par = frg.get()
                PAR.append( par )
                #
@@ -311,15 +312,11 @@ Also set the BSM parameters if not done in set_bsm.
                                       sdipnd,avec,vec1,mat1,
                                       redmss,freq,gijj,rpol1,pol1,lvec,
                                       ndma,npol,self.__mode,ndmac,npolc,lwrite=False)
-                 #epol, shift = sftpol(rdma,chg,dip,qad,oct,rpol,pol,
-                 #                     dmat,flds,dipind,dimat,fivec,sdipnd,avec,vec1,mat1,
-                 #                     redmss,freq,gijj,rpol1,pol1,lvec,ndma,npol,
-                 #                     self.__mode,npolc,lwrite=False)
                  if self.__cunit:
                     epol  *= self.HartreeToKcalPerMole
                     shift *= self.HartreePerHbarToCmRec
                  if lwrite: 
-                    print " Polarization frequency shift: %10.6f"%shift
+                    print " Polarization       frequency shift: %10.6f"%shift
                     #print " Polarization energy         : %10.6f"%epol
                  del PAR, QO
            # ---------------------------------- EX-REP --------------------------------- #
@@ -331,16 +328,60 @@ Also set the BSM parameters if not done in set_bsm.
                    nm = self.__nte[i]
                    im = self.__mte[i]
                    #
-                   STR = self.__rcoordc[nm*i:nm*(i+1)]
-                   frg = self.__bsm[im+1].copy()
+                   STR = self.__rcoorde[nm*i:nm*(i+1)]
+                   frg = self.__bsm[im].copy()
                    rms = frg.sup( STR )
+                   if lwrite: print "rms E: ",rms
                    par = frg.get()
                    PAR.append( par )
                    #
                shift = 0
-               for par in PAR: shift += self._pair_rep_freq(parc,par)
+               #for par in PAR: shift += self._pair_rep_freq(parc,par)
+               # basis sets
+               molA = MakeMol(parc['atno'],parc['pos'])
+               bfsA = getbasis(molA,parc['basis'])
+               # parameters for central molecule
+               faij = parc['fock']
+               faij1= parc['fock1']
+               cika = parc['vecl']
+               cika1= parc['vecl1']
+               za   = parc['atno']
+               rna  = parc['pos']
+               ria  = parc['lmoc']
+               ria1 = parc['lmoc1']
+               mlist= bfsA.get_bfsl() + 1
+               redmss= parc['redmass']
+               gijj = parc['gijk'][:,self.__mode-1,self.__mode-1]
+               freq = parc['freq']
+               lvec = parc['lvec']
+               #
+               for par in PAR:
+                   molB = MakeMol(par['atno'],par['pos'])
+                   bfsB = getbasis(molB,par['basis'])
+                   # instantaneous integrals
+                   skm  = getSAB(bfsA,bfsB)
+                   tkm  = getTAB(bfsA,bfsB)
+                   sk1m = getSA1B(bfsA,bfsB)
+                   tk1m = getTA1B(bfsA,bfsB)
+                   ### molecule B
+                   fbij = par['fock']
+                   cikb = par['vecl']
+                   zb   = par['atno']
+                   rnb  = par['pos']
+                   rib  = par['lmoc']
+                   # calculate the properties!
+                   sma ,shftea = shftex(redmss,freq,gijj,lvec,
+                                        ria,rib,rna,rnb,ria1,
+                                        cika,cikb,cika1,
+                                        skm,tkm,sk1m,tk1m,
+                                        za,zb,mlist,
+                                        faij,fbij,faij1,self.__mode)
+                   shift+=sma
+                   #
                if self.__cunit:
                   shift *= self.HartreePerHbarToCmRec
+               if lwrite: 
+                  print " Exchange-repulsion frequency shift: %10.6f"%shift
         #
         #
         return # ========================================================================== # 
@@ -376,30 +417,41 @@ Also set the BSM parameters if not done in set_bsm.
            #
            ic = zeros(natoms-nac,dtype=bool)
            ip = zeros(natoms-nac,dtype=bool)
+           ie = zeros(natoms-nac,dtype=bool)
            icm = zeros(nm,dtype=bool)
-           icp = zeros(nm,dtype=bool)
+           ipm = zeros(nm,dtype=bool)
+           iem = zeros(nm,dtype=bool)
            #
-           nccut, npcut, mccut, mpcut = mollst(rc,rm,ic,ip,icm,icp,
+           nccut, npcut, necut, mccut, mpcut, mecut = \
+                                        mollst(rc,rm,ic,ip,ie,icm,ipm,iem,
                                                self.__nmol[1:],
-                                               self.__ccut,self.__pcut)
+                                               self.__ccut,
+                                               self.__pcut,
+                                               self.__ecut)
                                                #
            # molecule coordinate lists
            rcoordc = pos[nac:][array(nccut,dtype=bool)]
            rcoordp = pos[nac:][array(npcut,dtype=bool)]
+           rcoorde = pos[nac:][array(necut,dtype=bool)]
            # molecule type lists
            mtc= self.__ind[1:][array(mccut,dtype=bool)]
            mtp= self.__ind[1:][array(mpcut,dtype=bool)]
+           mte= self.__ind[1:][array(mecut,dtype=bool)]
            # moleculear atom number lists
            ntc= self.__nmol[1:][array(mccut,dtype=bool)]
            ntp= self.__nmol[1:][array(mpcut,dtype=bool)]
+           nte= self.__nmol[1:][array(mecut,dtype=bool)]
            #
            self.__rc = rc
            self.__rcoordc = rcoordc
            self.__rcoordp = rcoordp
+           self.__rcoorde = rcoorde
            self.__mtc = mtc
            self.__mtp = mtp
+           self.__mte = mte
            self.__ntc = ntc
            self.__ntp = ntp
+           self.__nte = nte
         else:
            self.__rcoordc = pos
         return

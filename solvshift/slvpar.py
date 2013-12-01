@@ -441,15 +441,17 @@ class Frag(object,UNITS):
               self.__vecc1 = vc1rot(self.__vecc1,rot,typs)
         return
     
-    def sup(self,xyz):
+    def sup(self,xyz,suplist=None):
         """superimpose structures <str> and <self.__pos>. Return rms in A.U."""
         s = svd_sup()
-        s.set(xyz,self.__pos)
+        if suplist is None: s.set(xyz,self.__pos)
+        else:               s.set(xyz[suplist],self.__pos[suplist])
         s.run()
         rms         = s.get_rms()
         rot, transl = s.get_rotran()
         # perform transformations
-        self.__pos       = s.get_transformed()
+        #self.__pos       = s.get_transformed()
+        self.__pos = dot(self.__pos , rot) + transl
         if self.__lmoc  is not None: self.__lmoc   = dot(self.__lmoc , rot) + transl
         if self.__rpol  is not None: self.__rpol   = dot(self.__rpol , rot) + transl
         if self.__rdma  is not None: self.__rdma   = dot(self.__rdma , rot) + transl

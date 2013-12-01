@@ -53,7 +53,7 @@ C
       CALL CALCEN(NMOSA,NMOSB,NATA,NATB,ZA,ZB,
      &            RIA,RIB,RNA,RNB,FAIJ,FBIJ,EINT)
       EINT = EINT * 627.509469D+00
-      WRITE(*,*) "INTERACTION ENERGY IN KCAL/MOL: ", EINT
+c      WRITE(*,*) "INTERACTION ENERGY IN KCAL/MOL: ", EINT
 C
 C     calculate mechanical and electronic frequency shift!!!
 C
@@ -160,8 +160,8 @@ C
       TT1 = - TT1 * TWO 
       TT2 =   TT2 * TWO 
       EINT = TTT + TT1 + TT2
-      WRITE(*,*) TTT* 627.509469D+00,TT1* 627.509469D+00,
-     &                      TT2* 627.509469D+00
+c      WRITE(*,*) TTT* 627.509469D+00,TT1* 627.509469D+00,
+c     &                      TT2* 627.509469D+00
 C
       RETURN
       END
