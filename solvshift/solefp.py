@@ -197,7 +197,6 @@ Also set the BSM parameters if not done in set_bsm.
            print " NOT IMPLEMENTED YET. QUITTING..."
            N = len(self.__ntc)
            nmols = N+1
-           print nmols,'s'
            PAR = []
            QO  = []
            ### central molecule
@@ -237,21 +236,21 @@ Also set the BSM parameters if not done in set_bsm.
            # ----------------------------------- ELECT --------------------------------- #
            if self.__eval_elect:
               ndma = [ x['ndma'] for x in PAR ]
-              ndmas= sum(ndma)
               ndmac = parc['ndma']
+              ndmas= sum(ndma)
               
               rdma = con  ([ x['rdma'] for x in PAR ]).reshape(ndmas*3)
               chg  = con  ([ x['dmac'] for x in PAR ]).reshape(ndmas)
               dip  = con  ([ x['dmad'] for x in PAR ]).reshape(ndmas*3)
-
               qad  = con  ([ QO[x][0]  for x in range(N+1)   ]).reshape(ndmas*6)
               oct  = con  ([ QO[x][1]  for x in range(N+1)   ]).reshape(ndmas*10)
               
               #eel = clemtp.edmtpa(rdma,chg,dip,qad,oct,ndma,lwrite)
-              mea,a,b,c,d,e = clemtp.sdmtpm(rdma,chg,dip,qad,oct,
+              mea,a,b,c,d,e = clemtp.sdmtpm(rdma,ndma,chg,dip,qad,oct,
                                               chgc1,dipc1,qadc1,octc1,
-                                              redmss,freq,gijj,nmols,ndmac,
-                                              self.__mode,lwrite=False)
+                                              redmss,freq,gijj,
+                                              ndmac,self.__mode,lwrite=False)
+              
               if self.__cunit:
                     #eel  *= self.HartreeToKcalPerMole
                     mea *= self.HartreePerHbarToCmRec
@@ -282,7 +281,6 @@ Also set the BSM parameters if not done in set_bsm.
                      QO.append( (qad,oct) )
                      #
                  ndma = [ x['ndma'] for x in PAR ]
-                 ndmas= sum(ndma)
                  #
                  rdma = con  ([ x['rdma'] for x in PAR ]).reshape(ndmas*3)
                  chg  = con  ([ x['dmac'] for x in PAR ]).reshape(ndmas)
