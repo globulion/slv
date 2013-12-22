@@ -196,6 +196,8 @@ Also set the BSM parameters if not done in set_bsm.
         # ============================================================================== #
            print " NOT IMPLEMENTED YET. QUITTING..."
            N = len(self.__ntc)
+           nmols = N+1
+           print nmols,'s'
            PAR = []
            QO  = []
            ### central molecule
@@ -236,6 +238,7 @@ Also set the BSM parameters if not done in set_bsm.
            if self.__eval_elect:
               ndma = [ x['ndma'] for x in PAR ]
               ndmas= sum(ndma)
+              ndmac = parc['ndma']
               
               rdma = con  ([ x['rdma'] for x in PAR ]).reshape(ndmas*3)
               chg  = con  ([ x['dmac'] for x in PAR ]).reshape(ndmas)
@@ -244,13 +247,19 @@ Also set the BSM parameters if not done in set_bsm.
               qad  = con  ([ QO[x][0]  for x in range(N+1)   ]).reshape(ndmas*6)
               oct  = con  ([ QO[x][1]  for x in range(N+1)   ]).reshape(ndmas*10)
               
-              #shift = clemtp.edmtpa(rdma,chg,dip,qad,oct,ndma,lwrite)
-              #if lwrite: print " Electrostatic frequency shift: %10.6f"%shift
+              #eel = clemtp.edmtpa(rdma,chg,dip,qad,oct,ndma,lwrite)
+              mea,a,b,c,d,e = clemtp.sdmtpm(rdma,chg,dip,qad,oct,
+                                              chgc1,dipc1,qadc1,octc1,
+                                              redmss,freq,gijj,nmols,ndmac,
+                                              self.__mode,lwrite=False)
+              if self.__cunit:
+                    #eel  *= self.HartreeToKcalPerMole
+                    mea *= self.HartreePerHbarToCmRec
+              if lwrite: print " Electrostatic frequency shift: %10.6f"%mea
               del PAR, QO
            # ------------------------------------- POL --------------------------------- #
               if self.__eval_pol:
                  npolc = parc['npol']
-                 ndmac = parc['ndma']
                  ### central molecule
                  N = len(self.__ntp)
                  PAR = []
