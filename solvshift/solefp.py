@@ -194,7 +194,8 @@ Also set the BSM parameters if not done in set_bsm.
         #                      (interaction energy,frequency shift)                      #
         #                                                                                #
         # ============================================================================== #
-           print " NOT IMPLEMENTED YET. QUITTING..."
+           shift_total = 0.0
+           #
            N = len(self.__ntc)
            nmols = N+1
            PAR = []
@@ -202,7 +203,7 @@ Also set the BSM parameters if not done in set_bsm.
            ### central molecule
            frg = self.__bsm[0].copy()
            rms = frg.sup( self.__rc, self.__suplist )
-           if lwrite: print "rms: ",rms
+           if lwrite: print "Central rms: ",rms
            parc= frg.get()
            PAR.append( parc )
            #
@@ -213,11 +214,21 @@ Also set the BSM parameters if not done in set_bsm.
            dipc1 = parc['dmad1'].ravel()
            qadc1, octc1 = frg.get_traceless_1(ravel=True)
            #
+           chgc2 = parc['dmac2'].ravel()
+           dipc2 = parc['dmad2'].ravel()
+           qadc2, octc2 = frg.get_traceless_2()
+           qadc2 = qadc2.ravel()
+           octc2 = octc2.ravel()
+           #
            gijj   = parc['gijk'][:,self.__mode-1,self.__mode-1]
            freq   = parc['freq']
            redmss = parc['redmass']
            lvec   = parc['lvec'].ravel()#reshape((nmodes+6)*nmodes)
            nmodes = parc['nmodes']
+           #
+           freqc = freq[self.__mode-1]
+           redmssc=redmss[self.__mode-1]
+           #
            ### other molecules
            for i in range(N):
                nm = self.__ntc[i]
@@ -245,16 +256,26 @@ Also set the BSM parameters if not done in set_bsm.
               qad  = con  ([ QO[x][0]  for x in range(N+1)   ]).reshape(ndmas*6)
               oct  = con  ([ QO[x][1]  for x in range(N+1)   ]).reshape(ndmas*10)
               
-              #eel = clemtp.edmtpa(rdma,chg,dip,qad,oct,ndma,lwrite)
+              # mechanical anharmonicity
               mea,a,b,c,d,e = clemtp.sdmtpm(rdma,ndma,chg,dip,qad,oct,
                                               chgc1,dipc1,qadc1,octc1,
                                               redmss,freq,gijj,
                                               ndmac,self.__mode,lwrite=False)
+              # electronic anharmonicity
+              ea ,a,b,c,d,e = clemtp.sdmtpe(rdma,ndma,chg,dip,qad,oct,
+                                              chgc2,dipc2,qadc2,octc2,
+                                              redmss,freq,
+                                              self.__mode,lwrite=False)
               
               if self.__cunit:
                     #eel  *= self.HartreeToKcalPerMole
                     mea *= self.HartreePerHbarToCmRec
-              if lwrite: print " Electrostatic frequency shift: %10.6f"%mea
+                    ea  *= self.HartreePerHbarToCmRec
+              shift_total += mea+ea
+              if lwrite: 
+                 print " Electrostatic  MEA frequency shift: %10.6f"%mea
+                 print " Electrostatic   EA frequency shift: %10.6f"% ea
+                 print " Electrostatic  TOT frequency shift: %10.6f"% shift_total
               del PAR, QO
            # ------------------------------------- POL --------------------------------- #
               if self.__eval_pol:
@@ -273,7 +294,7 @@ Also set the BSM parameters if not done in set_bsm.
                      STR = self.__rcoordp[nm*i:nm*(i+1)]
                      frg = self.__bsm[im].copy()
                      rms = frg.sup( STR )
-                     if lwrite: print "rms P: ",rms
+                     #if lwrite: print "rms P: ",rms
                      par = frg.get()
                      PAR.append( par )
                      #
@@ -313,17 +334,18 @@ Also set the BSM parameters if not done in set_bsm.
                  avec  =zeros( DIM,float64)
                  #
                  #pol1.fill(0.0)
-                 epol, shift = sftpol(rdma,chg,dip,qad,oct,
-                                           chgc1,dipc1,qadc1,octc1,
+                 epol, spol = sftpol(rdma,chg,dip,qad,oct,
+                                      chgc1,dipc1,qadc1,octc1,
                                       rpol,pol,dmat,flds,dipind,dimat,fivec,
                                       sdipnd,avec,vec1,mat1,
                                       redmss,freq,gijj,rpol1,pol1,lvec,
                                       ndma,npol,self.__mode,ndmac,npolc,lwrite=False)
                  if self.__cunit:
                     epol  *= self.HartreeToKcalPerMole
-                    shift *= self.HartreePerHbarToCmRec
+                    spol  *= self.HartreePerHbarToCmRec
+                 shift_total += spol
                  if lwrite: 
-                    print " Polarization       frequency shift: %10.6f"%shift
+                    print " Polarization       frequency shift: %10.6f"%spol
                     #print " Polarization energy         : %10.6f"%epol
                  del PAR, QO
            # ---------------------------------- EX-REP --------------------------------- #
@@ -338,11 +360,11 @@ Also set the BSM parameters if not done in set_bsm.
                    STR = self.__rcoorde[nm*i:nm*(i+1)]
                    frg = self.__bsm[im].copy()
                    rms = frg.sup( STR )
-                   if lwrite: print "rms E: ",rms
+                   #if lwrite: print "rms E: ",rms
                    par = frg.get()
                    PAR.append( par )
                    #
-               shift = 0
+               serp = 0
                #for par in PAR: shift += self._pair_rep_freq(parc,par)
                # basis sets
                molA = MakeMol(parc['atno'],parc['pos'])
@@ -383,12 +405,15 @@ Also set the BSM parameters if not done in set_bsm.
                                         skm,tkm,sk1m,tk1m,
                                         za,zb,mlist,
                                         faij,fbij,faij1,self.__mode)
-                   shift+=sma
+                   serp+=sma
                    #
                if self.__cunit:
-                  shift *= self.HartreePerHbarToCmRec
+                  serp *= self.HartreePerHbarToCmRec
+               shift_total += serp
                if lwrite: 
-                  print " Exchange-repulsion frequency shift: %10.6f"%shift
+                  print " Exchange-repulsion frequency shift: %10.6f"%serp
+                  print " TOTAL FREQUENCY SHIFT             : %10.6f"%shift_total
+                  print " TOTAL FREQUENCY SHIFT (MEA)       : %10.6f"%(shift_total-ea)
         #
         #
         return # ========================================================================== # 
