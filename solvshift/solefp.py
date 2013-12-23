@@ -109,6 +109,10 @@ Also set the BSM parameters if not done in set_bsm.
         self._update(pos)
         return
     
+    def get_shift(self):
+        """return frequency shift data"""
+        return self.__shift
+    
     def eval(self,lwrite=False):
         """evaluate the properties"""
         if self.__pairwise_all:
@@ -272,6 +276,8 @@ Also set the BSM parameters if not done in set_bsm.
                     mea *= self.HartreePerHbarToCmRec
                     ea  *= self.HartreePerHbarToCmRec
               shift_total += mea+ea
+              self.__shift[0] = mea
+              self.__shift[1] =  ea
               if lwrite: 
                  print " Electrostatic  MEA frequency shift: %10.6f"%mea
                  print " Electrostatic   EA frequency shift: %10.6f"% ea
@@ -344,6 +350,7 @@ Also set the BSM parameters if not done in set_bsm.
                     epol  *= self.HartreeToKcalPerMole
                     spol  *= self.HartreePerHbarToCmRec
                  shift_total += spol
+                 self.__shift[2] = spol
                  if lwrite: 
                     print " Polarization       frequency shift: %10.6f"%spol
                     #print " Polarization energy         : %10.6f"%epol
@@ -410,6 +417,8 @@ Also set the BSM parameters if not done in set_bsm.
                if self.__cunit:
                   serp *= self.HartreePerHbarToCmRec
                shift_total += serp
+               self.__shift[3] = serp
+               self.__shift[6] = shift_total
                if lwrite: 
                   print " Exchange-repulsion frequency shift: %10.6f"%serp
                   print " TOTAL FREQUENCY SHIFT             : %10.6f"%shift_total
@@ -436,6 +445,7 @@ Also set the BSM parameters if not done in set_bsm.
         self.__bsm = None
         self.__eval_freq = False
         self.__eval_nlo  = None
+        self.__shift = zeros(7,dtype=float64)
         return
     
     def _update(self,pos):
