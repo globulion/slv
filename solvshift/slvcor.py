@@ -89,8 +89,8 @@ in cm-1 and other quantities in AU."""
                         f1   =   dot(Da[i],R) * dot(self.__Lvec(I,i),Db[j])
                         f1  +=   dot(self.__Lvec(I,i),R) * dot(Da[i],Db[j])
                         f1  +=   dot(Db[j],R) * dot(self.__Lvec(I,i),Da[i])
-                        f1  *= -3                                                      /Rab**5
-                        rf4 += f1
+                        f1  *=-3                                                       / Rab**5
+                        rf4 +=   f1
                         rf4 +=15*dot(Da[i],R) * dot(Db[j],R) * dot(self.__Lvec(I,i),R) / Rab**7
                         #
                         rf4 += 2*qb[j]*dot(dot(Qa[i],self.__Lvec(I,i)),R)              / Rab**5
@@ -108,8 +108,8 @@ in cm-1 and other quantities in AU."""
                     #
                     rk3 -= 6*fqa[i] * dot(self.__Lvec(J,i),R) * dot(Db[j],R)           / Rab**5
                     rk3 += 2*fqa[i] * dot(self.__Lvec(J,i),Db[j])                      / Rab**3
-                    rk3 += 6* qa[i] * qb[j] * dot(self.__Lvec(J,i),R)                  / Rab**5
-                    rk3 -=    qa[i] * qb[j] * dot(self.__Lvec(J,i),self.__Lvec(J,i))   / Rab**3
+                    rk3 += 6* qa[i] * qb[j] * dot(self.__Lvec(J,i),R)                  / Rab**5 # error
+                    rk3 -=    qa[i] * qb[j] * dot(self.__Lvec(J,i),self.__Lvec(J,i))   / Rab**3 # error
                     rk3 += 6* qb[j] * dot(self.__Lvec(J,i),R) * dot(fDa[i],R)          / Rab**5
                     rk3 -= 2* qb[j] * dot(fDa[i],self.__Lvec(J,i))                     / Rab**3
                     #
@@ -119,25 +119,25 @@ in cm-1 and other quantities in AU."""
                     k1   = 2*dot(self.__Lvec(J,i),R) * dot(self.__Lvec(J,i),Db[j])
                     k1  +=   dot(self.__Lvec(J,i),self.__Lvec(J,i)) * dot(Db[j],R)
                     k1  *=-3*qa[i]                                                     / Rab**5
-                    rk4 += k1
+                    rk4 +=   k1
                     rk4 +=15*qa[i] * (dot(self.__Lvec(J,i),R))**2 * dot(Db[j],R)       / Rab**7
                     #
                     k1   = 2*dot(self.__Lvec(J,i),R) * dot(self.__Lvec(J,i),Da[i])
                     k1  +=   dot(self.__Lvec(J,i),self.__Lvec(J,i)) * dot(Da[i],R)
                     k1  *= 3*qb[j]                                                     / Rab**5
-                    rk4 += k1
+                    rk4 +=   k1
                     rk4 -=15*qb[j] * (dot(self.__Lvec(J,i),R))**2 * dot(Da[i],R)       / Rab**7
                     #
                     k1   =   dot(fDa[i],R) * dot(self.__Lvec(J,i),Db[j])
                     k1  +=   dot(self.__Lvec(J,i),R) * dot(fDa[i],Db[j])
                     k1  +=   dot(fDa[i],self.__Lvec(J,i)) * dot(Db[j],R)
-                    k1  *=-6                                                           /Rab**5
-                    rk4 += k1
+                    k1  *=-6                                                           / Rab**5
+                    rk4 +=   k1
                     #
                     rk4 +=30*dot(fDa[i],R) * dot(self.__Lvec(J,i),R) * dot(Db[j],R)    / Rab**7
                     #
-                    rk4 += 4*qb[j] * dot(dot(fQa[i],self.__Lvec(J,i)),R)                / Rab**5
-                    rk4 -=10*qb[j] * dot(dot(fQa[i],R),R) * dot(self.__Lvec(J,i),R)     / Rab**7
+                    rk4 += 4*qb[j] * dot(dot(fQa[i],self.__Lvec(J,i)),R)               / Rab**5
+                    rk4 -=10*qb[j] * dot(dot(fQa[i],R),R) * dot(self.__Lvec(J,i),R)    / Rab**7
                     
                     Rn_kjj[1] += rk2
                     Rn_kjj[2] += rk3
