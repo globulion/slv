@@ -25,7 +25,7 @@ class EFP(object,UNITS):
     """"""
     def __init__(self,ccut=None,pcut=None,ecut=None,pairwise_all=False,
                       elect=True,pol=False,rep=False,ct=False,disp=False,all=False,
-                      suplist=None,
+                      corr=False,suplist=None,
                       nlo=False,freq=False,mode=None,cunit=False):
         """The global settings for a computation:
 ccut         - Coulomb cutoff
@@ -53,12 +53,14 @@ all          - evaluate all these interactions"""
            self.__eval_rep   = True
            self.__eval_ct    = True
            self.__eval_disp  = True
+           self.__eval_corr  = True
         else:
            self.__eval_elect = elect
            self.__eval_pol   = pol
            self.__eval_rep   = rep
            self.__eval_ct    = ct
            self.__eval_disp  = disp
+           self.__eval_corr  = corr
         #
         if (freq or mode): 
            self.__pairwise_all = False
@@ -198,7 +200,10 @@ Also set the BSM parameters if not done in set_bsm.
         #                      (interaction energy,frequency shift)                      #
         #                                                                                #
         # ============================================================================== #
-           shift_total = 0.0
+           shift_total = 0.0; corr = 0.0
+           rf2 = 0.0; rf3 = 0.0; rf4 = 0.0
+           rk2 = 0.0; rk3 = 0.0; rk4 = 0.0
+           corr_b, corr_c, corr_d = 0.0, 0.0, 0.0
            #
            N = len(self.__ntc)
            nmols = N+1
@@ -270,18 +275,39 @@ Also set the BSM parameters if not done in set_bsm.
                                               chgc2,dipc2,qadc2,octc2,
                                               redmss,freq,
                                               self.__mode,lwrite=False)
-              
+              # correction terms
+              if self.__eval_corr:
+                 corr,rf2,rf3,rf4,rk2,rk3,rk4,corr_b,corr_c,corr_d = \
+                              clemtp.dmtcor(rdma,ndma,chg,dip,qad,oct,
+                                            chgc1,dipc1,qadc1,octc1,
+                                            redmss,freq,gijj,lvec,
+                                            ndmac,self.__mode,lwrite)
+              # change units from A.U. to specific units
               if self.__cunit:
                     #eel  *= self.HartreeToKcalPerMole
                     mea *= self.HartreePerHbarToCmRec
                     ea  *= self.HartreePerHbarToCmRec
-              shift_total += mea+ea
+                    corr_b   *= self.HartreePerHbarToCmRec
+                    corr_c   *= self.HartreePerHbarToCmRec
+                    corr_d   *= self.HartreePerHbarToCmRec
+                    rf2 *= self.HartreePerHbarToCmRec
+                    rk2 *= self.HartreePerHbarToCmRec
+                    rf3 *= self.HartreePerHbarToCmRec
+                    rk3 *= self.HartreePerHbarToCmRec
+                    rf4 *= self.HartreePerHbarToCmRec
+                    rk4 *= self.HartreePerHbarToCmRec
+                    corr*= self.HartreePerHbarToCmRec
+                    
+              shift_total += mea+ea+corr_d
               self.__shift[0] = mea
               self.__shift[1] =  ea
+              self.__shift[7] = rf2+rf3+rf4
+              self.__shift[8] = rk2+rk3+rk4
               if lwrite: 
                  print " Electrostatic  MEA frequency shift: %10.6f"%mea
                  print " Electrostatic   EA frequency shift: %10.6f"% ea
                  print " Electrostatic  TOT frequency shift: %10.6f"% shift_total
+                 print " Electrostatic CORR frequency shift: %10.6f"% corr
               del PAR, QO
            # ------------------------------------- POL --------------------------------- #
               if self.__eval_pol:
@@ -445,7 +471,7 @@ Also set the BSM parameters if not done in set_bsm.
         self.__bsm = None
         self.__eval_freq = False
         self.__eval_nlo  = None
-        self.__shift = zeros(7,dtype=float64)
+        self.__shift = zeros(9,dtype=float64)
         return
     
     def _update(self,pos):
