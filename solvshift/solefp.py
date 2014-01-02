@@ -298,11 +298,12 @@ Also set the BSM parameters if not done in set_bsm.
                     rk4 *= self.HartreePerHbarToCmRec
                     corr*= self.HartreePerHbarToCmRec
                     
-              shift_total += mea+ea+corr_d
+              shift_total    += mea+ea+corr_d
               self.__shift[0] = mea
               self.__shift[1] =  ea
               self.__shift[7] = rf2+rf3+rf4
               self.__shift[8] = rk2+rk3+rk4
+
               if lwrite: 
                  print " Electrostatic  MEA frequency shift: %10.6f"%mea
                  print " Electrostatic   EA frequency shift: %10.6f"% ea
