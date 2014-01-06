@@ -305,10 +305,10 @@ Also set the BSM parameters if not done in set_bsm.
               self.__shift[8] = rk2+rk3+rk4
 
               if lwrite: 
-                 print " Electrostatic  MEA frequency shift: %10.6f"%mea
-                 print " Electrostatic   EA frequency shift: %10.6f"% ea
-                 print " Electrostatic  TOT frequency shift: %10.6f"% shift_total
-                 print " Electrostatic CORR frequency shift: %10.6f"% corr
+                 print " Electrostatic  MEA frequency shift: %10.2f"%mea
+                 print " Electrostatic   EA frequency shift: %10.2f"% ea
+                 print " Electrostatic  TOT frequency shift: %10.2f"% shift_total
+                 print " Electrostatic CORR frequency shift: %10.2f"% corr
               del PAR, QO
            # ------------------------------------- POL --------------------------------- #
               if self.__eval_pol:
@@ -379,7 +379,7 @@ Also set the BSM parameters if not done in set_bsm.
                  shift_total += spol
                  self.__shift[2] = spol
                  if lwrite: 
-                    print " Polarization       frequency shift: %10.6f"%spol
+                    print " Polarization       frequency shift: %10.2f"%spol
                     #print " Polarization energy         : %10.6f"%epol
                  del PAR, QO
            # ---------------------------------- EX-REP --------------------------------- #
@@ -447,9 +447,10 @@ Also set the BSM parameters if not done in set_bsm.
                self.__shift[3] = serp
                self.__shift[6] = shift_total
                if lwrite: 
-                  print " Exchange-repulsion frequency shift: %10.6f"%serp
-                  print " TOTAL FREQUENCY SHIFT             : %10.6f"%shift_total
-                  print " TOTAL FREQUENCY SHIFT (MEA)       : %10.6f"%(shift_total-ea)
+                  print " Exchange-repulsion frequency shift: %10.2f"%serp
+                  print " ----------------------------------------------- "
+                  print " TOTAL FREQUENCY SHIFT             : %10.2f"%shift_total
+                  print " TOTAL FREQUENCY SHIFT (MEA)       : %10.2f"%(shift_total-ea)
         #
         #
         return # ========================================================================== # 
