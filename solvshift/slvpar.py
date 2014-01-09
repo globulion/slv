@@ -291,6 +291,11 @@ class Frag(object,UNITS):
     def set_par(self,**kwargs):
         """set the particular parameters"""
         for key, arg in kwargs.items():
+            if key == 'rdma' : self.__rdma  = arg
+            if key == 'dmac' : self.__dmac  = arg
+            if key == 'dmad' : self.__dmad  = arg
+            if key == 'dmaq' : self.__dmaq  = arg
+            if key == 'dmao' : self.__dmao  = arg
             if key == 'fock' : self.__fock  = arg
             if key == 'fock1': self.__fock1 = arg
             if key == 'vecl' : self.__vecl  = arg
