@@ -322,7 +322,7 @@ class Frag(object,UNITS):
         """return the name of the fragment"""
         return self.__name
     
-    def get_atno(self):
+    def get_natoms(self):
         """return the number of atoms"""
         return self.__natoms
     
