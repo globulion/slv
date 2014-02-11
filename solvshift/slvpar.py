@@ -322,6 +322,10 @@ class Frag(object,UNITS):
         """return the name of the fragment"""
         return self.__name
     
+    def get_atno(self):
+        """return the number of atoms"""
+        return self.__natoms
+    
     def get_bfs(self):
         """return basis set object"""
         mol = MakeMol(self.__atno,self.__pos,name=self.__name)

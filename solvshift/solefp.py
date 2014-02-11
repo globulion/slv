@@ -269,12 +269,12 @@ Also set the BSM parameters if not done in set_bsm.
               mea,a,b,c,d,e = clemtp.sdmtpm(rdma,ndma,chg,dip,qad,oct,
                                               chgc1,dipc1,qadc1,octc1,
                                               redmss,freq,gijj,
-                                              ndmac,self.__mode,lwrite=False)
+                                              ndmac,self.__mode,lwrite)
               # electronic anharmonicity
               ea ,a,b,c,d,e = clemtp.sdmtpe(rdma,ndma,chg,dip,qad,oct,
                                               chgc2,dipc2,qadc2,octc2,
                                               redmss,freq,
-                                              self.__mode,lwrite=False)
+                                              self.__mode,lwrite)
               # correction terms
               if self.__eval_corr:
                  corr,rf2,rf3,rf4,rk2,rk3,rk4,corr_b,corr_c,corr_d = \
