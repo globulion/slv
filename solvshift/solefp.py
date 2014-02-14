@@ -212,7 +212,7 @@ Also set the BSM parameters if not done in set_bsm.
            ### central molecule
            frg = self.__bsm[0].copy()
            rms = frg.sup( self.__rc, self.__suplist )
-           if lwrite: print "Central rms: ",rms
+           #if lwrite: print "Central rms: ",rms
            parc= frg.get()
            PAR.append( parc )
            #
@@ -301,8 +301,10 @@ Also set the BSM parameters if not done in set_bsm.
               shift_total    += mea+ea+corr_d
               self.__shift[0] = mea
               self.__shift[1] =  ea
-              self.__shift[7] = rf2+rf3+rf4
-              self.__shift[8] = rk2+rk3+rk4
+              #self.__shift[7] = rf2+rf3+rf4
+              #self.__shift[8] = rk2+rk3+rk4
+              self.__shift[4] = rf2+rf3+rf4
+              self.__shift[5] = rk2+rk3+rk4
 
               if lwrite: 
                  print " Electrostatic  MEA frequency shift: %10.2f"%mea
@@ -335,6 +337,7 @@ Also set the BSM parameters if not done in set_bsm.
                      QO.append( (qad,oct) )
                      #
                  ndma = [ x['ndma'] for x in PAR ]
+                 ndmas= sum(ndma)
                  #
                  rdma = con  ([ x['rdma'] for x in PAR ]).reshape(ndmas*3)
                  chg  = con  ([ x['dmac'] for x in PAR ]).reshape(ndmas)
