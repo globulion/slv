@@ -25,7 +25,7 @@ class EFP(object,UNITS):
     """"""
     def __init__(self,ccut=None,pcut=None,ecut=None,pairwise_all=False,
                       elect=True,pol=False,rep=False,ct=False,disp=False,all=False,
-                      corr=False,suplist=None,
+                      corr=False,
                       nlo=False,freq=False,mode=None,cunit=False):
         """The global settings for a computation:
 ccut         - Coulomb cutoff
@@ -41,7 +41,6 @@ disp         - evaluate dispersion
 all          - evaluate all these interactions"""
         self._create()
         self.__cunit = cunit
-        self.__suplist = suplist
         #
         self.__ccut = ccut
         self.__pcut = pcut
@@ -80,7 +79,7 @@ all          - evaluate all these interactions"""
     
     # P U B L I C
 
-    def set(self,pos,ind,nmol,bsm=None):
+    def set(self,pos,ind,nmol,bsm=None, supl=None):
         """Set the initial molecular coordinates and the moltype index list. 
 Also set the BSM parameters if not done in set_bsm. 
 <pos>     -  an 2D array of atomic coordinates of dimension natoms, 3
@@ -91,6 +90,10 @@ Also set the BSM parameters if not done in set_bsm.
         self.__ind = array(ind,int)
         self.__nmol= array(nmol,int)
         if bsm is not None: self.__bsm = bsm
+        if supl is not None: 
+           self.__suplist = supl
+           self.__suplist_c = supl[0]
+        else: self.__suplist_c = None
         self._update(pos)
         return    
     
@@ -114,6 +117,10 @@ Also set the BSM parameters if not done in set_bsm.
     def get_shift(self):
         """return frequency shift data"""
         return self.__shift
+    
+    def get_rms(self):
+        """return RMS of superimposition of central molecule with its parameters (relevant for central molecule mode)"""
+        return self.__rms_central
     
     def eval(self,lwrite=False):
         """evaluate the properties"""
@@ -211,8 +218,8 @@ Also set the BSM parameters if not done in set_bsm.
            QO  = []
            ### central molecule
            frg = self.__bsm[0].copy()
-           rms = frg.sup( self.__rc, self.__suplist )
-           #if lwrite: print "Central rms: ",rms
+           self.__rms_central = frg.sup( self.__rc, self.__suplist_c )
+           if lwrite: print "Central rms: ",self.__rms_central
            parc= frg.get()
            PAR.append( parc )
            #
@@ -232,7 +239,7 @@ Also set the BSM parameters if not done in set_bsm.
            gijj   = parc['gijk'][:,self.__mode-1,self.__mode-1]
            freq   = parc['freq']
            redmss = parc['redmass']
-           lvec   = parc['lvec'].ravel()#reshape((nmodes+6)*nmodes)
+           lvec   = parc['lvec'].ravel()
            nmodes = parc['nmodes']
            #
            freqc = freq[self.__mode-1]
@@ -245,7 +252,7 @@ Also set the BSM parameters if not done in set_bsm.
                #
                STR = self.__rcoordc[nm*i:nm*(i+1)]
                frg = self.__bsm[im].copy()
-               rms = frg.sup( STR )
+               rms = frg.sup( STR , suplist= self.__suplist[im] )
                if lwrite: print "rms C: ",rms
                par = frg.get()
                PAR.append( par )
@@ -328,7 +335,7 @@ Also set the BSM parameters if not done in set_bsm.
                      #
                      STR = self.__rcoordp[nm*i:nm*(i+1)]
                      frg = self.__bsm[im].copy()
-                     rms = frg.sup( STR )
+                     rms = frg.sup( STR, suplist= self.__suplist[im])
                      #if lwrite: print "rms P: ",rms
                      par = frg.get()
                      PAR.append( par )
@@ -396,7 +403,7 @@ Also set the BSM parameters if not done in set_bsm.
                    #
                    STR = self.__rcoorde[nm*i:nm*(i+1)]
                    frg = self.__bsm[im].copy()
-                   rms = frg.sup( STR )
+                   rms = frg.sup( STR , suplist= self.__suplist[im] )
                    #if lwrite: print "rms E: ",rms
                    par = frg.get()
                    PAR.append( par )
@@ -477,6 +484,8 @@ Also set the BSM parameters if not done in set_bsm.
         self.__eval_freq = False
         self.__eval_nlo  = None
         self.__shift = zeros(9,dtype=float64)
+        self.__rms_central = None
+        self.__suplist = None
         return
     
     def _update(self,pos):
