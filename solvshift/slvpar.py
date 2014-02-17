@@ -5,10 +5,10 @@
 # --------------------------------------------------------------------- #
 
 from numpy     import array, float64, zeros, newaxis, sqrt, \
-                      dot, asfortranarray, transpose
+                      dot, asfortranarray, transpose, arange
 from units     import *
 from dma       import DMA
-from utilities import order, SVDSuperimposer as svd_sup, MakeMol
+from utilities import order, reorder, SVDSuperimposer as svd_sup, MakeMol
 from efprot    import vecrot, vc1rot, tracls, rotdma, tracl1, rotdm1
 from PyQuante.Ints import getbasis
 import sys, copy, os, re, math
@@ -99,12 +99,16 @@ class Frag(object,UNITS):
                                                                               
      frag.write(file='slv.frg')                                               
                                                                               
-  4) actions on Frag object
+  4) actions on Frag object                                                   
                                                                               
      frag.translate(transl)     # translate all tensors by cartesian vector   
      frag.rotate(rot)           # rotate all tensors by unitary 3x3 matrix    
      frag.sup(xyz)              # superimpose (translate + rotate) to the pos
                                 # indicated by xyz Cartesian coordinates
+     frag.reorder(ord)          # reorder the turn of atoms by specifying ord
+                                # vector, e.g.: ord=[3,1,2] is equivalent to
+                                #        A-B-C ----> B-C-A
+                                #        1 2 3
      f_copy = frag.copy()       # create a deep copy of frag objects
      print frag                 # print the status of frag object
 
@@ -152,6 +156,14 @@ class Frag(object,UNITS):
      : DMTP dipoles                      dmad            ndma  , 3            
  II  : DMTP quadrupoles                  dmaq            ndma  , 6            
      : DMTP octupoles                    dmao            ndma  , 10           
+     : DMTP charges fder                 dmac1           nmodes, ndma         
+     : DMTP dipoles fder                 dmad1           nmodes, ndma ,3      
+     : DMTP quadrupoles fder             dmaq1           nmodes, ndma ,6      
+     : DMTP octupoles fder               dmao1           nmodes, ndma ,10     
+     : DMTP charges sder                 dmac2           ndma                 
+     : DMTP dipoles sder                 dmad2           ndma ,3              
+     : DMTP quadrupoles sder             dmad2           ndma ,6              
+     : DMTP octupoles sder               dmad2           ndma ,10             
      : Polarizable centers               rpol            npol  , 3            
      : Distributed polarizabilities      dpol            npol  , 9            
      : Distributed polarizabilities      dpol1           nmodes, npol, 9      
@@ -523,6 +535,40 @@ class Frag(object,UNITS):
     def copy(self):
         """return a deepcopy of me!"""
         return copy.deepcopy(self)
+    
+    def reorder(self,ord,dma=True):
+        """Reorder the turn of atoms in the parameter objects according to <ord>.
+<dma> option is designed for the case when dma is not atomic-based (then False)"""
+        sim = zeros((self.__natoms,2),int)
+        sim[:,0] = arange(1,self.__natoms+1,1)
+        sim[:,1] = ord
+        # reorder atomic positions
+        self.__pos = reorder(self.__pos,sim)
+        self.__atno= reorder(self.__atno,sim)
+        self.__atms= reorder(self.__atms,sim)
+        # reorder multipole moments
+        if dma: 
+           if self.__rdma is not None: self.__rdma = reorder(self.__rdma,sim)
+           if self.__dmac is not None: 
+              self.__dmac = reorder(self.__dmac,sim)
+              self.__dmad = reorder(self.__dmad,sim)
+              self.__dmaq = reorder(self.__dmaq,sim)
+              self.__dmao = reorder(self.__dmao,sim)
+           #
+           if self.__dmac1 is not None:
+              self.__dmac1 = reorder(self.__dmac1,sim,axis=1)
+              self.__dmad1 = reorder(self.__dmad1,sim,axis=1)
+              self.__dmaq1 = reorder(self.__dmaq1,sim,axis=1)
+              self.__dmao1 = reorder(self.__dmao1,sim,axis=1)
+              #
+              self.__dmac2 = reorder(self.__dmac2,sim,axis=0)
+              self.__dmad2 = reorder(self.__dmad2,sim,axis=0)
+              self.__dmaq2 = reorder(self.__dmaq2,sim,axis=0)
+              self.__dmao2 = reorder(self.__dmao2,sim,axis=0)
+        # reorder eigenvectors
+        if self.__lvec is not None: 
+           self.__lvec = reorder(self.__lvec,sim,axis=1)
+        return
     
     # protected
     
