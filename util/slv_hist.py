@@ -5,16 +5,22 @@ Makes histogram from SLV MD output file (report.md)
 
 Usage:
 
-./slv_hist.py [report file] [n] [bins]
+./slv_hist.py [report file] [n] [bins] <outname>
 
-note:
-n - accuracy (1: R-1,  2: R-2, ... , 5: R-5)
+
+Notes:
+1) n - column number to be analyzed
+2) The final plot will be saved to <plot.eps> file 
+   if no output <outname> will be supplied.
+
+                    Last revision: 17 Feb 2014
 """
 # ------------------------------- #
 from sys import argv, exit        #
 from numpy import array,float64   #
 from numpy import average, std    #
 from scipy import optimize        #
+from scitools import filetable    #
 #import utilities                  #
 import pylab as pl                #
 import math, numpy                #
@@ -39,19 +45,16 @@ def r_square(func,args,data,**kwargs):
     sst = numpy.sum((data-data_av)**2)
     return 1 - sse/sst
 
+out = 'plot.eps'
+if len(argv) > 4: out = argv[4]
+
 report =     argv[1]
 N      = int(argv[2])
 bins   = int(argv[3])
 
-shifts = []
 data   = open(report)
-for i in range(4):line = data.readline()
-while line!='\n':
-   if not line.startswith('#'):
-      shifts.append(line.split()[N])
-   line = data.readline()
+shifts = filetable.read(data)[:,N]
 data.close()
-shifts = array(shifts,dtype=float64)
 
 # ------------------------------------------------------------------------
 log = '\n'
@@ -102,4 +105,5 @@ pl.text(0.02,0.58,func_parm,fontsize=16,transform=ax.transAxes,bbox=dict(facecol
 pl.plot(X, Gaussian(X, sigma, n_o),linewidth=2.0)
 
 pl.show()
+pl.savefig(out)
 # --- END --- #
