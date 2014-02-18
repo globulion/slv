@@ -571,7 +571,8 @@ class Frag(object,UNITS):
         if self.__lvec is not None: 
            self.__lvec = reorder(self.__lvec,sim,axis=1)
         # reorder the wavefunction
-        self._reorder_wfn(sim,LIST1)
+        if self.__vecl is not None:
+           self._reorder_wfn(sim,LIST1)
         return
     
     
@@ -720,7 +721,6 @@ class Frag(object,UNITS):
         P1, P2 = [], []
         #
         T1 = transpose(self.__vecl,axes=(1,0))
-        T2 = transpose(self.__vecl1,axes=(2,1,0))
         #
         b=[]; n=1; curr= LIST1[0]
         for i in range(len(LIST1)-1):
@@ -736,21 +736,29 @@ class Frag(object,UNITS):
         #
         for i in range(self.__natoms):
             P1.append( T1[c[i]:c[i+1]] )
-            P2.append( T2[c[i]:c[i+1]] )
-        P1 = array(P1); P2 = array(P2)
+        P1 = array(P1)
         #
         N1 = zeros(self.__natoms,object)
-        N2 = zeros(self.__natoms,object)
         #
         for i,j in sim:
             N1[i-1] = P1[j-1]
-            N2[i-1] = P2[j-1]
         #
         self.__vecl = con(tuple(N1))
         self.__vecl = transpose(self.__vecl,axes=(1,0))
-        #
-        self.__vecl1 = con(tuple(N2))
-        self.__vecl1 = transpose(self.__vecl1,axes=(2,1,0))
+        ### DERIVATIVES
+        if self.__vecl1 is not None:
+           T2 = transpose(self.__vecl1,axes=(2,1,0))
+           #
+           for i in range(self.__natoms):
+               P2.append( T2[c[i]:c[i+1]] )
+           P2 = array(P2)
+           #
+           N2 = zeros(self.__natoms,object)
+           for i,j in sim:
+               N2[i-1] = P2[j-1]
+           #
+           self.__vecl1 = con(tuple(N2))
+           self.__vecl1 = transpose(self.__vecl1,axes=(2,1,0))
         return
     
     def _tr_lvec(self,lvec,nmodes,natoms):
