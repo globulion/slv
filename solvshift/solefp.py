@@ -404,7 +404,7 @@ Also set the BSM parameters if not done in set_bsm.
                    STR = self.__rcoorde[nm*i:nm*(i+1)]
                    frg = self.__bsm[im].copy()
                    rms = frg.sup( STR , suplist= self.__suplist[im] )
-                   #if lwrite: print "rms E: ",rms
+                   if lwrite: print "rms E: ",rms
                    par = frg.get()
                    PAR.append( par )
                    #

@@ -4,8 +4,9 @@
 #             EFFECTIVE FRAGMENT PARAMETER FORMAT MODULE                #
 # --------------------------------------------------------------------- #
 
-from numpy     import array, float64, zeros, newaxis, sqrt, \
-                      dot, asfortranarray, transpose, arange
+from numpy     import array, float64, zeros, newaxis, sqrt,  \
+                      dot, asfortranarray, transpose, arange,\
+                      concatenate as con
 from units     import *
 from dma       import DMA
 from utilities import order, reorder, SVDSuperimposer as svd_sup, MakeMol
@@ -539,6 +540,7 @@ class Frag(object,UNITS):
     def reorder(self,ord,dma=True):
         """Reorder the turn of atoms in the parameter objects according to <ord>.
 <dma> option is designed for the case when dma is not atomic-based (then False)"""
+        LIST1 = self.get_bfs().get_bfsl() + 1
         sim = zeros((self.__natoms,2),int)
         sim[:,0] = arange(1,self.__natoms+1,1)
         sim[:,1] = ord
@@ -568,7 +570,10 @@ class Frag(object,UNITS):
         # reorder eigenvectors
         if self.__lvec is not None: 
            self.__lvec = reorder(self.__lvec,sim,axis=1)
+        # reorder the wavefunction
+        self._reorder_wfn(sim,LIST1)
         return
+    
     
     # protected
     
@@ -710,6 +715,44 @@ class Frag(object,UNITS):
         #
         return par
         
+    def _reorder_wfn(self,sim,LIST1):
+        """reorders the turn of basis functions according to <ord> list of atomic interchange"""
+        P1, P2 = [], []
+        #
+        T1 = transpose(self.__vecl,axes=(1,0))
+        T2 = transpose(self.__vecl1,axes=(2,1,0))
+        #
+        b=[]; n=1; curr= LIST1[0]
+        for i in range(len(LIST1)-1):
+            if curr==LIST1[i+1]: n+=1
+            else:
+                b.append(n)
+                n=1
+            curr=LIST1[i+1]
+        b.append(n)
+        #
+        c = [ sum(b[:x]) for x in range(len(b)) ]
+        c.append(len(LIST1))
+        #
+        for i in range(self.__natoms):
+            P1.append( T1[c[i]:c[i+1]] )
+            P2.append( T2[c[i]:c[i+1]] )
+        P1 = array(P1); P2 = array(P2)
+        #
+        N1 = zeros(self.__natoms,object)
+        N2 = zeros(self.__natoms,object)
+        #
+        for i,j in sim:
+            N1[i-1] = P1[j-1]
+            N2[i-1] = P2[j-1]
+        #
+        self.__vecl = con(tuple(N1))
+        self.__vecl = transpose(self.__vecl,axes=(1,0))
+        #
+        self.__vecl1 = con(tuple(N2))
+        self.__vecl1 = transpose(self.__vecl1,axes=(2,1,0))
+        return
+    
     def _tr_lvec(self,lvec,nmodes,natoms):
         """Transpose axes and reshape the L-matrix from FREQ instance"""
         return lvec.transpose().reshape(nmodes,natoms,3)
