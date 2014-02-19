@@ -539,7 +539,8 @@ class Frag(object,UNITS):
     
     def reorder(self,ord,dma=True):
         """Reorder the turn of atoms in the parameter objects according to <ord>.
-<dma> option is designed for the case when dma is not atomic-based (then False)"""
+<dma> option is designed for the case when dma is not atomic and mid-bond-based (then False).
+In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and others ..."""
         LIST1 = self.get_bfs().get_bfsl() + 1
         sim = zeros((self.__natoms,2),int)
         sim[:,0] = arange(1,self.__natoms+1,1)
@@ -549,24 +550,25 @@ class Frag(object,UNITS):
         self.__atno= reorder(self.__atno,sim)
         self.__atms= reorder(self.__atms,sim)
         # reorder multipole moments
-        if dma: 
-           if self.__rdma is not None: self.__rdma = reorder(self.__rdma,sim)
-           if self.__dmac is not None: 
-              self.__dmac = reorder(self.__dmac,sim)
-              self.__dmad = reorder(self.__dmad,sim)
-              self.__dmaq = reorder(self.__dmaq,sim)
-              self.__dmao = reorder(self.__dmao,sim)
+        if dma:
+           if self.__rdma is not None:
+              self.__rdma[:self.__natoms] = reorder(self.__rdma[:self.__natoms],sim)
+           if self.__dmac is not None:
+              self.__dmac[:self.__natoms] = reorder(self.__dmac[:self.__natoms],sim)
+              self.__dmad[:self.__natoms] = reorder(self.__dmad[:self.__natoms],sim)
+              self.__dmaq[:self.__natoms] = reorder(self.__dmaq[:self.__natoms],sim)
+              self.__dmao[:self.__natoms] = reorder(self.__dmao[:self.__natoms],sim)
            #
            if self.__dmac1 is not None:
-              self.__dmac1 = reorder(self.__dmac1,sim,axis=1)
-              self.__dmad1 = reorder(self.__dmad1,sim,axis=1)
-              self.__dmaq1 = reorder(self.__dmaq1,sim,axis=1)
-              self.__dmao1 = reorder(self.__dmao1,sim,axis=1)
+              self.__dmac1[:self.__natoms] = reorder(self.__dmac1[:self.__natoms],sim,axis=1)
+              self.__dmad1[:self.__natoms] = reorder(self.__dmad1[:self.__natoms],sim,axis=1)
+              self.__dmaq1[:self.__natoms] = reorder(self.__dmaq1[:self.__natoms],sim,axis=1)
+              self.__dmao1[:self.__natoms] = reorder(self.__dmao1[:self.__natoms],sim,axis=1)
               #
-              self.__dmac2 = reorder(self.__dmac2,sim,axis=0)
-              self.__dmad2 = reorder(self.__dmad2,sim,axis=0)
-              self.__dmaq2 = reorder(self.__dmaq2,sim,axis=0)
-              self.__dmao2 = reorder(self.__dmao2,sim,axis=0)
+              self.__dmac2[:self.__natoms] = reorder(self.__dmac2[:self.__natoms],sim,axis=0)
+              self.__dmad2[:self.__natoms] = reorder(self.__dmad2[:self.__natoms],sim,axis=0)
+              self.__dmaq2[:self.__natoms] = reorder(self.__dmaq2[:self.__natoms],sim,axis=0)
+              self.__dmao2[:self.__natoms] = reorder(self.__dmao2[:self.__natoms],sim,axis=0)
         # reorder eigenvectors
         if self.__lvec is not None: 
            self.__lvec = reorder(self.__lvec,sim,axis=1)
