@@ -50,7 +50,7 @@ where X=5,9"""
           # DMA set from FFxpt input files
           if camm:
              self.DMA_set, smiec1 = self.ParseDMA_set(dir,'coulomb')
-             smiec1, self.Overall_MM_set = self.ParseDMA_set(dir,self.file_type)
+             #smiec1, self.Overall_MM_set = self.ParseDMA_set(dir,self.file_type)
              del smiec1
           else:
              self.DMA_set, self.Overall_MM_set = self.ParseDMA_set(dir,self.file_type)
@@ -61,22 +61,27 @@ where X=5,9"""
           ###self.nfrags = len(self.reference_str)
           self.nfrags = len(self.reference_origin)
         
-          # parse polarizability sets
-          self.polarizability_set_1 = self.Parse_Polarizability(dir)
-          self.polarizability_set_2 = self.Parse_Polarizability(self.sderiv_wrk)
-          #if pol:
-          self.fpol = self.get_pol_fder()
-          self.spol = 0#self.get_pol_sder()
+          if pol:
+             self.polarizability_set_1 = self.Parse_Polarizability(dir)
+             self.polarizability_set_2 = self.Parse_Polarizability(self.sderiv_wrk)
+             self.fpol = self.get_pol_fder()
+             self.spol = 0#self.get_pol_sder()
         
           # --- [!] Calculate the derivatives!
-          self.Fder, self.Sder ,self.FDip, self.SDip = self._CalcDerCartesian()
-        
+          #if self.calculate_sder:
+          #   self.Fder, self.Sder ,self.FDip, self.SDip = self._CalcDerCartesian()
+          #else:
           if self.calculate_sder:
+              self.sder_DMA_set, smiec1\
+                =  self.ParseDMA_set(self.sderiv_wrk,'coulomb')
+          self.Fder, self.Sder = self._NEW(sder=self.calculate_sder)
+        
+          if 0:#self.calculate_sder:
              if camm:
                 self.sder_DMA_set, smiec1\
                 =  self.ParseDMA_set(self.sderiv_wrk,'coulomb')
-                smiec1, self.Overall_MM_set\
-                =  self.ParseDMA_set(self.sderiv_wrk,self.file_type)
+                #smiec1, self.Overall_MM_set\
+                #=  self.ParseDMA_set(self.sderiv_wrk,self.file_type)
                 del smiec1
              else:
                 self.sder_DMA_set, self.Overall_MM_set\
@@ -86,7 +91,7 @@ where X=5,9"""
                   self._Sderivatives(self.sderiv_wrk,self.mode_id,self.sderiv_step) 
                 
           # --- [!] Calculate IR Harmonic intensities
-          self.IR_Harm_Int = self.CalcIrInt()
+          #self.IR_Harm_Int = self.CalcIrInt()
         
         # solvatochromic EFP
         elif solefp:
@@ -569,10 +574,62 @@ type -3: transformation matrix from AO to LMO (nmos, nbasis)
         
         return Fder_DMA, Sder_DMA, Fder_MMM, Sder_MMM
 
+    def _NEW(self,sder=False):
+        """calculates FIRST derivatives wrt cartesian coordinates of DMA distribution"""
+        Fder = []
+        sder_DMA = None
+        print "STEP", self.step, self.sderiv_step
+        # change origin in the case of CAMM
+        if self.camm:
+           for i,dma in enumerate(self.DMA_set):
+               dma.MAKE_FULL()
+               dma.ChangeOrigin(new_origin_set=self.reference_origin)
+        s1 = 1./self.step
+        ### 5-point formulae
+        if self.n_point == 5:
+          for i in range(self.nAtoms*3):
+            K = 1 + 4*i
+            # first derivatves of DMA
+            fder_DMA = (1./12.) *  (\
+                       (self.DMA_set[K+3] - self.DMA_set[K+0] ) \
+                 + 8*  (self.DMA_set[K+1] - self.DMA_set[K+2] ))\
+                 * s1
+            Fder.append( fder_DMA/self.AngstromToBohr )
+            
+        # transform to normal mode space  
+        Fder_DMA = DMAMadrixMultiply(transpose(self.L),Fder)
+        #
+        if sder:
+           s2 = 1./(self.sderiv_step**2)
+           # change origin in the case of CAMM
+           if self.camm:
+              for i,dma in enumerate(self.sder_DMA_set):
+                  dma.MAKE_FULL()
+                  dma.ChangeOrigin(new_origin_set=self.reference_origin)
+               
+           ### 5-point formulae
+           if self.n_point == 5:
+             for i in range(1):
+               K = 1 + 4*i 
+               # first derivatves of DMA
+               fder_DMA = (1./12.) *  (\
+                          (self.sder_DMA_set[K+3] - self.sder_DMA_set[K+0] ) \
+                    + 8*  (self.sder_DMA_set[K+1] - self.sder_DMA_set[K+2] ))\
+                    *s1
+               # second derivatives of DMA
+               sder_DMA = (1./12.) *  (\
+                    -     (self.sder_DMA_set[K+3] + self.sder_DMA_set[K+0] ) \
+                    +16*  (self.sder_DMA_set[K+1] + self.sder_DMA_set[K+2] ) \
+                    -30*   self.sder_DMA_set[0  ] )                     \
+                    *s2
+        #
+        return Fder_DMA, sder_DMA
+    
     def _Sderivatives(self,sderiv_wrk,mode_id,step):
         """calculates second derivatives wrt NORMAL (!) coordinates
         for selected mode. It requires input files for normal mode displacements!!!
         """
+        sder_MM = 0
         # store first and diagonal second derivatives in the lists
         s1 = 1./step
         s2 = 1./(step**2)
@@ -749,7 +806,7 @@ from a setup file slv.step"""
         sderiv_wrk= step_file.readline().split()[-1]
         # step of differentiation wrt normal modes for sderv routine
         sderiv_step = float64(step_file.readline().split()[-1])
-
+        print "MODE", mode_id
         return step , n_point, file_type, mode_id, sderiv_wrk, sderiv_step
     
     def ReadAtoms(self,dir):
@@ -1076,7 +1133,8 @@ using COULOMB.py routines"""
    ### calculate camms!
    from sys  import argv
    #bonds = [map(int,(x.split(','))) for x in argv[-1].split('-')]
-   bonds=None
+   #bonds=[(1,0),(2,1),(3,2),(4,2)] # NMA
+   bonds = None
    vec = None
    #for i in range(len(bonds)): bonds[i]=tuple(bonds[i])
    #print bonds

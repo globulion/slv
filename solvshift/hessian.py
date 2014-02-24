@@ -261,6 +261,7 @@ using appropriate level of SOL-X theory"""
                  iter+=1
                  ####print dq_new
                  ####ax.plot(dq_new,'r')
+                 if (not iter%10000): print iter,max_iter
               ####fig.show()
               dQ = dq_new
            self.__iter = iter

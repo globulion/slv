@@ -135,7 +135,7 @@ Eg. : O1H1H1 O2H2H2 O3H3H3 ...
         #                         self.solute_structure)
 
 
-    def eval_hessian(self,mol,ua_list=None):
+    def eval_hessian(self,mol,ua_list=None,theory=0):
         """evaluates Hessian"""
         fderiv_rot, L_rot, transformed_gas_phase_str, rot =\
          self.get_fder_rotated(self.fderiv, self.L, self.solute_structure, self.ref_structure, )
@@ -150,7 +150,7 @@ Eg. : O1H1H1 O2H2H2 O3H3H3 ...
                       gijj=self.gijj,
                       ua_list=ua_list,
                       mol=mol)
-        hess.eval(theory=0,max_iter=500000000,threshold=1e-6)
+        hess.eval(theory=theory,max_iter=1000000,threshold=1e-6)
         return hess
     
     def get_fder_rotated(self,fderiv, L, solute_structure, ref_structure):
@@ -181,11 +181,11 @@ Eg. : O1H1H1 O2H2H2 O3H3H3 ...
         
         return fderiv_copy, Lrot, transformed_gas_phase_str, rot
     
-    def eval_shiftcorr(self,solute_DMA,ua_list=None):
+    def eval_shiftcorr(self,solute_DMA,ua_list=None,suplist=None):
         """evaluates corrections to frequency shifts"""
         
         ### get rotated quantities: L, fderiv, solute DMA
-        fderiv_rot, transformed_gas_phase_str, L_rot, rot = self.get_rotated(self.fderiv, self.L, self.solute_structure, self.ref_structure)
+        fderiv_rot, transformed_gas_phase_str, L_rot, rot = self.get_rotated(self.fderiv, self.L, self.solute_structure, self.ref_structure, suplist)
         sol = ParseDMA(solute_DMA,'coulomb')
         self.SOLVENT.makeDMAfromFULL()
         if ua_list is not None: sol.MakeUa(ua_list,change_origin=True)
@@ -256,7 +256,7 @@ Eg. : O1H1H1 O2H2H2 O3H3H3 ...
         self.log = Emtp.log
         return shift, solute
 
-    def get_rotated(self,fderiv, L, solute_structure, ref_structure, suplist):
+    def get_rotated(self,fderiv, L, solute_structure, ref_structure, suplist=None):
         """rotates first derivatives of DMA and the ref structure to target orientation"""
         ### superimpose structures
         sup = SVDSuperimposer()

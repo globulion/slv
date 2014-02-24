@@ -171,7 +171,7 @@ class MCHO(UNITS):
                     (self.redmass[i]*self.AmuToElectronMass*self.freq_mcho[i]**2))
                 #
             ### ADD SDERIV CONTRIBUTION
-            sum += sderiv[j] *self.redmass[j]*self.AmuToElectronMass
+            sum += sderiv *self.redmass[j]*self.AmuToElectronMass
             ###
             sum /= 2.0 * self.redmass[j]*self.AmuToElectronMass * self.freq_mcho[j]
             ###

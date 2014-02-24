@@ -532,8 +532,8 @@ def Main(argv):
               if not SolMMM:
                  PARAM = MCHO(fderiv=CALC.Fder,
                               sderiv=CALC.Sder,
-                              fpol=CALC.fpol,
-                              spol=CALC.spol,
+                              #fpol=CALC.fpol,
+                              #spol=CALC.spol,
                               pol=ons_pol,
                               gijj=ANH.K3,
                               freq=freq,
@@ -728,7 +728,9 @@ def Main(argv):
                 if (not fderiv_j and not Hessian): fderiv = CALC.Fder[mode_id]
                 else: fderiv = CALC.Fder
              except UnboundLocalError:
-                fderiv = []
+                if fderiv_j: fderiv = ParseDMA(fderiv_j)
+                else: fderiv = []
+                
                 
              if SolCHELPG:
                    
@@ -785,11 +787,12 @@ def Main(argv):
                 ### evaluate mean Hessian
                 if Hessian:
                   #if typ=='52_n3':
-                   mol = Read_xyz_file('CH3N3.xyz',mol=True)
+                   #mol = Read_xyz_file('CH3N3.xyz',mol=True)
                    #mol = Read_xyz_file('nma-opt-b3lyp-6-311++Ggg.xyz',mol=True)
+                   mol = Read_xyz_file('nma.xyz',mol=True)
                    if make_ua:
-                      hess = f.eval_hessian(mol,ua_list)
-                   else: hess = f.eval_hessian(mol)
+                      hess = f.eval_hessian(mol,ua_list,theory=0)
+                   else: hess = f.eval_hessian(mol,theory=-1)
                    #print hess.diag().round()
                    #print PUPA(hess.get())
                    print typ
@@ -812,8 +815,9 @@ def Main(argv):
                 else:
                  f.eval()
                  if corrections:
-                   if fderiv_j: f.eval_shiftcorr(zero_camm)
-                   else:        f.eval_shiftcorr(zero_camm,ua_list)
+                   print zero_camm
+                   if fderiv_j: f.eval_shiftcorr(zero_camm,suplist=sol_suplist)
+                   else:        f.eval_shiftcorr(zero_camm,ua_list,sol_suplist)
 
                  ### nice report
                  print " ===== ",typ," ===== "
