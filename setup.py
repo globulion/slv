@@ -7,9 +7,6 @@ from numpy.distutils.core import setup, Extension
 
 ### extension module specifications
 
-# solscf theory (not working)
-SOLSCF = Extension(name='solscf',
-                   sources=['solvshift/src/solscf.f'],)
 # exchange-repulsion EFP
 SHFTEX = Extension(name='shftex',
                    sources=['solvshift/src/shftex.f'],)
@@ -37,5 +34,5 @@ setup(name='SOLVSHIFT',
                 #'solvshift.util',
                 #'solvshift.diff',
                ],
-      ext_modules=[SOLSCF,SHFTEX,EFPROT,SHFTCE,EXREP,]
+      ext_modules=[SHFTEX,EFPROT,SHFTCE,EXREP,]
      )
