@@ -193,8 +193,12 @@ class Frag(object,UNITS):
  =============================================================================
   [3] TENSOR DIMENSIONS AND STORAGE CONVENTIONS                               
  =============================================================================
-   All of the tensors exept for DMA and DPOL analyses are in full format.     
-   DMA and DPOL are stored in reduced formats.                                
+   All of the nonsymmetric tensors exept for DMA and DPOL analyses are in full 
+   format. DMA and DPOL are stored in reduced formats. Other symmetric tensor 
+   elements are stored in triangular matrix format (Fock matrices + derivs, cu
+   bic anharmonic constants).
+
+   Reduced format for electrostatic descriptors:
                                                                               
              CHG(i) .
                     1
