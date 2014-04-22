@@ -255,7 +255,7 @@ Also set the BSM parameters if not done in set_bsm.
                #
                STR = self.__rcoordc[nm*i:nm*(i+1)]
                frg = self.__bsm[im].copy()
-               rms = frg.sup( STR , suplist= self.__suplist[im] )
+               rms = frg.sup( STR , suplist= self.__suplist[self.__bsm[im]] )
                if lwrite: print "rms C: ",rms
                par = frg.get()
                PAR.append( par )
@@ -266,7 +266,7 @@ Also set the BSM parameters if not done in set_bsm.
            # ----------------------------------- ELECT --------------------------------- #
            if self.__eval_elect:
               ndma = [ x['ndma'] for x in PAR ]
-              ndmac = parc['ndma']
+              ndmac= parc['ndma']
               ndmas= sum(ndma)
               
               rdma = con  ([ x['rdma'] for x in PAR ]).reshape(ndmas*3)
@@ -338,7 +338,7 @@ Also set the BSM parameters if not done in set_bsm.
                      #
                      STR = self.__rcoordp[nm*i:nm*(i+1)]
                      frg = self.__bsm[im].copy()
-                     rms = frg.sup( STR, suplist= self.__suplist[im])
+                     rms = frg.sup( STR, suplist= self.__suplist[self.__bsm[im]])
                      #if lwrite: print "rms P: ",rms
                      par = frg.get()
                      PAR.append( par )
@@ -406,7 +406,7 @@ Also set the BSM parameters if not done in set_bsm.
                    #
                    STR = self.__rcoorde[nm*i:nm*(i+1)]
                    frg = self.__bsm[im].copy()
-                   rms = frg.sup( STR , suplist= self.__suplist[im] )
+                   rms = frg.sup( STR , suplist= self.__suplist[self.__bsm[im]] )
                    if lwrite: print "rms E: ",rms
                    par = frg.get()
                    PAR.append( par )
