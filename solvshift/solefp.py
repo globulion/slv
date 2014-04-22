@@ -23,7 +23,7 @@ __version__ = '1.0.1'
 
 class EFP(object,UNITS):
     """"""
-    def __init__(self,ccut=None,pcut=None,ecut=None,pairwise_all=False,
+    def __init__(self,ccut=None,pcut=None,ecut=None,#pairwise_all=False,
                       elect=True,pol=False,rep=False,ct=False,disp=False,all=False,
                       corr=False,
                       nlo=False,freq=False,cunit=False):
@@ -61,11 +61,11 @@ all          - evaluate all these interactions"""
            self.__eval_disp  = disp
            self.__eval_corr  = corr
         #
-        if (freq or mode): 
+        if freq: 
            self.__pairwise_all = False
            self.__eval_freq = True
 
-        else: self.__pairwise_all = pairwise_all
+        else: self.__pairwise_all = True
         #
         if nlo: 
            self.__eval_nlo = True
@@ -255,7 +255,7 @@ Also set the BSM parameters if not done in set_bsm.
                #
                STR = self.__rcoordc[nm*i:nm*(i+1)]
                frg = self.__bsm[im].copy()
-               rms = frg.sup( STR , suplist= self.__suplist[self.__bsm[im]] )
+               rms = frg.sup( STR , suplist= self.__suplist[self.__ind[im]] )
                if lwrite: print "rms C: ",rms
                par = frg.get()
                PAR.append( par )
@@ -338,7 +338,7 @@ Also set the BSM parameters if not done in set_bsm.
                      #
                      STR = self.__rcoordp[nm*i:nm*(i+1)]
                      frg = self.__bsm[im].copy()
-                     rms = frg.sup( STR, suplist= self.__suplist[self.__bsm[im]])
+                     rms = frg.sup( STR, suplist= self.__suplist[self.__ind[im]])
                      #if lwrite: print "rms P: ",rms
                      par = frg.get()
                      PAR.append( par )
@@ -406,7 +406,7 @@ Also set the BSM parameters if not done in set_bsm.
                    #
                    STR = self.__rcoorde[nm*i:nm*(i+1)]
                    frg = self.__bsm[im].copy()
-                   rms = frg.sup( STR , suplist= self.__suplist[self.__bsm[im]] )
+                   rms = frg.sup( STR , suplist= self.__suplist[self.__ind[im]] )
                    if lwrite: print "rms E: ",rms
                    par = frg.get()
                    PAR.append( par )
