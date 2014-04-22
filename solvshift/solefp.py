@@ -26,7 +26,7 @@ class EFP(object,UNITS):
     def __init__(self,ccut=None,pcut=None,ecut=None,pairwise_all=False,
                       elect=True,pol=False,rep=False,ct=False,disp=False,all=False,
                       corr=False,
-                      nlo=False,freq=False,mode=None,cunit=False):
+                      nlo=False,freq=False,cunit=False):
         """The global settings for a computation:
 ccut         - Coulomb cutoff
 pcut         - Polarization cutoff
@@ -64,7 +64,7 @@ all          - evaluate all these interactions"""
         if (freq or mode): 
            self.__pairwise_all = False
            self.__eval_freq = True
-           self.__mode = mode
+
         else: self.__pairwise_all = pairwise_all
         #
         if nlo: 
@@ -221,6 +221,9 @@ Also set the BSM parameters if not done in set_bsm.
            self.__rms_central = frg.sup( self.__rc, self.__suplist_c )
            if lwrite: print "Central rms: ",self.__rms_central
            parc= frg.get()
+           #
+           self.__mode = parc['mode']
+           #
            PAR.append( parc )
            #
            qadc, octc = tracls( parc['dmaq'], parc['dmao'] )
