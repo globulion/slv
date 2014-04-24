@@ -7,6 +7,7 @@ from numpy     import *
 from units     import *
 from dma       import *
 from utilities import *
+from solvshift.slvpar import Frag
 import sys, copy, pp, utilities, re, \
        units, numpy, time, dma, \
        MDAnalysis.coordinates.xdrfile.libxdrfile
@@ -110,7 +111,6 @@ Usage:
 
        # read the fragment parameters
        frag = Frag(lines[0].split()[1])
-       print frag
 
        # reorder the fragment
        for line in lines:
@@ -131,7 +131,7 @@ Usage:
                atoms, n_frags = line.split()[1:]
                atoms = text_to_list(atoms)
                n_frags = int(n_frags)
-               print atoms, n_frags
+               
                n_atoms = atoms[-1]-atoms[0]+1
                merror = 'MDInputError: Invalid atomic indices or fragment numbers in fragment %i' % (self.__frag_idx + 1)
                merror += '\n -----> %s' % line
