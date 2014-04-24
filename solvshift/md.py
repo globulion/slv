@@ -14,9 +14,152 @@ from MDAnalysis.coordinates.xdrfile.libxdrfile import xdrfile_open, xdrfile_clos
                                                       read_xtc_natoms, read_xtc  ,\
                                                       read_xtc, DIM, exdrOK
 __all__ = ['SLV_MD',]
-__version__ = '2.0.3'
+__version__ = '3.0.1'
 
 sys.stdout.flush()
+
+class MDInput:
+   """
+ -------------------------------------------------------------------
+                   Represents SLV MD input file
+ -------------------------------------------------------------------
+                                               April 23, 2014
+                                               
+ Import:
+ 
+   from solvshift.md import MDInput
+   
+ Usage:
+ 
+   inp  = MDInput(file)
+   args, idx = inp.get()
+ 
+ The <args> list and slicing indices <idx> can be now set to 
+ solvshift.slvpar.Frag.set method:
+
+   Frag_instance.set(frame[idx],*args)
+
+ <args> is a list and contains the following information:
+
+   args = [ ind, nmol, bsm, supl ]
+
+ For the details about these memorials read Frag class documentation
+ by typing 
+
+   from solvshift.slvpar import Frag
+   help(Frag)
+
+ -------------------------------------------------------------------
+                                                         @Globulion
+"""
+   def __init__(self,file):
+       self.__file_name = file
+       self.__bsm  = list()
+       self.__supl = list()
+       self.__nmol = list()
+       self.__ind  = list()
+       self.__frag_idx = 0
+       self.__frame_slice = list()
+
+       self.__call__(file)
+
+   def get(self):
+       """
+Return the options for Frag.set method and slicing list
+
+Usage:
+
+    args, idx = MDInputInstance.get()
+"""
+       args = [ self.__ind, self.__nmol, self.__bsm, self.__supl ]
+       idx  = self.__frame_slice
+       return args, idx
+
+   # auxiliary methods
+   def get_idx(self):
+       """get slicing list"""
+       return self.__frame_slice
+   
+   def get_args(self):
+       """get arguments for Frag.set method"""
+       args = [ self.__ind, self.__nmol, self.__bsm, self.__supl ]
+       return args
+
+   def get_efp(self,frame):
+       """parse EFP coordinates from MD frame"""
+       return frame[self.__frame_slice]
+
+   def __call__(self,file):
+       file = open(file)
+       text = file.read()
+       self.__input_text = text
+       file.close()
+       templ = re.compile(r'\$Frag',re.DOTALL)
+       sections = re.split(templ,text)[1:]
+       for section in sections:
+           self._read(section)
+       return
+
+   def _read(self,section):
+       """read one unique (Sol)EFP fragment"""
+       b_reorder = False
+       b_supl    = False
+       if 'reorder' in section: b_reorder = True
+       if 'supl'    in section: b_supl    = True
+       lines = section.split('\n')[1:]
+
+       # read the fragment parameters
+       frag = Frag(lines[0].split()[1])
+       print frag
+
+       # reorder the fragment
+       for line in lines:
+           if 'reorder' in line:
+               ord_list = map(int,line.split()[1:])
+       if b_reorder:
+          frag.reorder(ord_list)
+
+       # add superimpositon list
+       supl = None
+       for line in lines:
+           if 'supl' in line:
+               supl = text_to_list(line.split('supl')[-1])
+
+       # parse atoms for (Sol)EFP fragment
+       for line in lines:
+           if 'atoms' in line:
+               atoms, n_frags = line.split()[1:]
+               atoms = text_to_list(atoms)
+               n_frags = int(n_frags)
+               print atoms, n_frags
+               n_atoms = atoms[-1]-atoms[0]+1
+               merror = 'MDInputError: Invalid atomic indices or fragment numbers in fragment %i' % (self.__frag_idx + 1)
+               merror += '\n -----> %s' % line
+               assert n_atoms%n_frags==0, merror
+               n_atoms_per_mol = (atoms[-1]-atoms[0]+1)/n_frags
+               for i in range(n_frags):
+                   self.__ind.append(self.__frag_idx)
+                   self.__nmol.append(n_atoms_per_mol)
+               atoms = list(array(atoms-1))
+               self.__frame_slice += atoms
+
+       # --- append to bsm and supl memorial lists
+       self.__bsm.append(frag)
+       self.__supl.append(supl)
+      
+       # go to the next fragment
+       self.__frag_idx += 1 
+       return
+
+   def __repr__(self):
+       """print the input file"""
+       N = 50
+       log = '-'*N+'\n'
+       log+= 'SLV-MD input file: '
+       log+= self.__file_name+'\n\n'+self.__input_text
+       log+= '-'*N+'\n'
+       return str(log)
+
 
 class layer(UNITS):
     """represents single layer in SLV-MD environment"""
