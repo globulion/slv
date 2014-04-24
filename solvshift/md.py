@@ -7,7 +7,7 @@ from numpy     import *
 from units     import *
 from dma       import *
 from utilities import *
-import sys, copy, pp, utilities,\
+import sys, copy, pp, utilities, re, \
        units, numpy, time, dma, \
        MDAnalysis.coordinates.xdrfile.libxdrfile
 from MDAnalysis.coordinates.xdrfile.libxdrfile import xdrfile_open, xdrfile_close,\
