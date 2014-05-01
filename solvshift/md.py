@@ -129,11 +129,11 @@ Usage:
        for line in lines:
            if 'atoms' in line:
                atoms, n_frags = line.split()[1:]
-               atoms = text_to_list(atoms)
+               atoms   = text_to_list(atoms)
                n_frags = int(n_frags)
                
                n_atoms = atoms[-1]-atoms[0]+1
-               merror = 'MDInputError: Invalid atomic indices or fragment numbers in fragment %i' % (self.__frag_idx + 1)
+               merror  = 'MDInputError: Invalid atomic indices or fragment numbers in fragment %i' % (self.__frag_idx + 1)
                merror += '\n -----> %s' % line
                assert n_atoms%n_frags==0, merror
                n_atoms_per_mol = (atoms[-1]-atoms[0]+1)/n_frags
