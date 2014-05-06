@@ -2,11 +2,14 @@
 #             FITTING MODULE              #
 # --------------------------------------- #
 
-from numpy import array, float64, zeros, sqrt, sum
+from numpy import array, float64, zeros, sqrt, \
+                  sum, transpose, linalg, ones, \
+                  dot
 from units import *
 from dma   import *
 from diff  import *
-import os
+from utilities import QMFile, ModifyStruct
+import os, glob
 
 __all__ = ['FIT','LxFit',]
 __version__ = '3.2.56'
@@ -61,8 +64,9 @@ Usage:
                 S.makeRing(*ring)
             f.insert(S.ring[1:],id=atoms)
             new_name = f.get_file_name()+'_ring.xyz'
+            new_name = new_name.split('/')[-1]
             f.write(new_name)
-            os.system('mv %s ../new/%s' % (new_name,new_name))
+            os.system('mv %s ./new/%s' % (new_name,new_name))
 
         self.__exclude_atoms += len(S.ring)-1
         self.__atoms += len(S.ring)-1
