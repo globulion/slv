@@ -4,7 +4,7 @@
 
 from numpy import array, float64, zeros, sqrt, \
                   sum, transpose, linalg, ones, \
-                  dot
+                  dot, average
 from units import *
 from dma   import *
 from diff  import *
@@ -41,35 +41,17 @@ Usage:
 
     def makeRings(self):
         """create obvolutkis in the benchmark set of clusters"""
-        # copy files
+        # create temporary folder
         path = self.__dat_path
         os.system('mkdir ./new')
-        #os.system('cp -r %s/* ./new ' % path)
-        #os.system('mv %s ./old' % path)
-        #os.system('mv ./new %s' % path)
         # create rings
-        self._rings(self.__dat_path,self.__ext,self.__atoms,self.__rings,self.__exclude_atoms)
-        return
-
-    def _rings(self,path,ext,atoms,rings,exclude_atoms):
-        """add rings"""
-        files = glob.glob(path+'/'+'*.'+ext)
-        f = QMFile()
-        for file in files:
-            f.open(file,format='xyz')
-            pos = f.get_pos()
-
-            S = ModifyStruct(pos[:,:3])
-            for ring in self.__rings:
-                S.makeRing(*ring)
-            f.insert(S.ring[1:],id=atoms)
-            new_name = f.get_file_name()+'_ring.xyz'
-            new_name = new_name.split('/')[-1]
-            f.write(new_name)
-            os.system('mv %s ./new/%s' % (new_name,new_name))
-
-        self.__exclude_atoms += len(S.ring)-1
-        self.__atoms += len(S.ring)-1
+        self._rings(self.__dat_path,self.__ext,self.__atoms,
+                    self.__rings,self.__exclude_atoms)
+        # rename
+        os.system('mv %s ./old' % path)
+        os.system('mv ./new %s' % path)
+        # copy reference
+        os.system('cp ./old/__ref__ %s' % path)
         return
 
     def check(self):
@@ -110,11 +92,30 @@ Usage:
         VV[:-1] = V
 
         self.__par = dot(linalg.inv(B), VV )[:-1]
+        
+        #if self.__unique_idx is not None:
+        #   self.__par = self._explicit_params(self.__par,self.__unique_idx)
+        #self.__shifts = dot(self.__phi_start,self.__par)
         self.__shifts = dot(self.__phi,self.__par)
         return
 
     # protected
 
+    def _explicit_params(self,par,unique_idx):
+        """show explicitly the parameters"""
+        par_exp = zeros(self.__atoms,float64)
+        K = [len(x) for x in unique_idx]
+        nK = len(K)
+        par_exp = []
+        #par_exp[:self.__atoms-nK] = par[:self.__atoms-nK]
+        print par, range(self.__atoms-sum(K))
+        for i in range(self.__atoms-sum(K)): par_exp.append(par[i])
+        for dupa,i in enumerate(K):
+            for j in range(i):
+                par_exp.append(par[self.__atoms-sum(K)+dupa]/float64(i))
+        par_exp = array(par_exp,float64)
+        return par_exp
+    
     def _phi(self,atoms,exclude_atoms):
         """
 construct electrostatic potential matrix
@@ -143,7 +144,7 @@ phi_ij = phi_i(r_j)"""
         f = QMFile()
         freq = list(); pos = list(); chg = list(); file_names = list()
         for file in files:
-            f.open(file,format='xyz')
+            f.open(file,format='xyz',mol=False)
             w = float64(f.get_misc().split(':')[-1])
             q = f.get_pos()
 
@@ -153,7 +154,7 @@ phi_ij = phi_i(r_j)"""
  
             file_names.append(f.get_file_name())
 
-        f.open(path+'/'+'__ref__',format='xyz')
+        f.open(path+'/'+'__ref__',format='xyz',mol=False)
 
         ref_freq = float64(f.get_misc().split(':')[-1])
         ref_pos = f.get_pos()[:,:3]
@@ -193,6 +194,27 @@ phi_ij = phi_i(r_j)"""
         for i in range(n_gr,N_):  Phi_contr[:,i] = Phi_new[:,i-n_gr]
         return Phi_contr
 
+    def _rings(self,path,ext,atoms,rings,exclude_atoms):
+        """add rings"""
+        files = glob.glob(path+'/'+'*.'+ext)
+        f = QMFile()
+        for file in files:
+            f.open(file,format='xyz',mol=False)
+            pos = f.get_pos()
+
+            S = ModifyStruct(pos[:,:3])
+            for ring in self.__rings:
+                S.makeRing(*ring)
+            f.insert(S.ring[1:],id=atoms)
+            
+            new_name = f.get_file_name()+'_ring.xyz'
+            new_name = new_name.split('/')[-1]
+            f.write(new_name)
+            os.system('mv %s ./new/%s' % (new_name,new_name))
+
+        self.__exclude_atoms += len(S.ring)-1
+        self.__atoms += len(S.ring)-1
+        return
 
 
 class FIT(UNITS,DIFF):
