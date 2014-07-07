@@ -61,7 +61,7 @@ Usage:
         for i,j in enumerate(self.__shifts*self.HartreePerHbarToCmRec):
             print "%50s %10.2f %10.2f" % (self.__file_names[i].ljust(50),j,ref_shifts[i])
         print " R²        : %10.4f" % self.get_r2() 
-        print " Sum of l_x: %10.4f" % sum(self.__par)
+        print " Sum of l_x: %10.4f" % dot(self.__par,self.__g)
         print " ---------------------------------------- check -----------------------------------------------"
         return 
 
@@ -105,8 +105,8 @@ Usage:
         C = dot(pt,self.__phi)
         
         B = ones((C.shape[0]+1,C.shape[1]+1),float64)
-        B[0,:-1] = self.__g
-        B[:-1,0] = self.__g
+        B[-1,:-1] = self.__g
+        B[:-1,-1] = self.__g
         B[:-1,:-1] = C; B[-1,-1] = 0.0
         V = dot(pt,self.__freq-self.__ref_freq)
         VV = zeros(len(V)+1,float64)
@@ -115,7 +115,10 @@ Usage:
         self.__par = dot(linalg.inv(B), VV )[:-1]
         
         #if self.__unique_idx is not None:
+        #   print "DUPA"
         #   self.__par = self._explicit_params(self.__par,self.__unique_idx)
+        #print self.__par.shape
+        #print self.__phi_start.shape
         #self.__shifts = dot(self.__phi_start,self.__par)
         self.__shifts = dot(self.__phi,self.__par)
         #print "CONTRACTED"
