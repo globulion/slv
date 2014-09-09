@@ -10,10 +10,10 @@ from utilities import *
 from solvshift.slvpar import Frag
 import sys, copy, pp, utilities, re, \
        units, numpy, time, dma, \
-       MDAnalysis.coordinates.xdrfile.libxdrfile
-from MDAnalysis.coordinates.xdrfile.libxdrfile import xdrfile_open, xdrfile_close,\
-                                                      read_xtc_natoms, read_xtc  ,\
-                                                      read_xtc, DIM, exdrOK
+  	      MDAnalysis.coordinates.xdrfile.libxdrfile2
+from MDAnalysis.coordinates.xdrfile.libxdrfile2 import xdrfile_open, xdrfile_close,\
+                                                       read_xtc_natoms, read_xtc  ,\
+                                                       read_xtc, DIM, exdrOK
 from MDAnalysis.coordinates.TRJ import TRJReader, NCDFReader
 
 __all__ = ['SLV_MD',]
@@ -602,7 +602,7 @@ Usage: will be added soon!"""
                print " * Reading frame %10i from total %i frames"%(i+1,nframes)
                frame = array(md.next()) * self.AngstromToBohr
 
-               group = "group-%i"%(i/4)
+               group = "group-%i"%(i/ncpus)
                
                self.jobs.append( self.job_server.submit(func=md_shifts_pp,
                     args=(frame,self.frame_idx,self.prot_no,self.slt_no,
@@ -614,9 +614,9 @@ Usage: will be added soon!"""
                     depfuncs=(),
                     group=group,
                     modules=("utilities","numpy","units","dma",
-                             "MDAnalysis.coordinates.xdrfile.libxdrfile","clemtp"),
+                             "MDAnalysis.coordinates.xdrfile.libxdrfile2","clemtp"),
                            ) )
-               if (i%4==0 and i!=0): self.job_server.wait()
+               if (i%ncpus==0 and i!=0): self.job_server.wait()
                i+=1
                #
                self.frame_idx += 1
@@ -631,7 +631,7 @@ Usage: will be added soon!"""
              i=0
              #while self.status == exdrOK:
              for i in range(20):
-                 group = "group-%i"%(i/4)
+                 group = "group-%i"%(i/ncpus)
                  self.__read_xtc(XTC,natoms,frame,box,DIM)
                  self.jobs.append( self.job_server.submit(func=md_shifts_pp,
                       args=(frame,self.frame_idx,self.prot_no,self.slt_no,
@@ -643,9 +643,9 @@ Usage: will be added soon!"""
                       depfuncs=(),
                       group=group,
                       modules=("utilities","numpy","units","dma",
-                               "MDAnalysis.coordinates.xdrfile.libxdrfile","clemtp"),
+                               "MDAnalysis.coordinates.xdrfile.libxdrfile2","clemtp"),
                            ) )
-                 if (i%4==0 and i!=0): self.job_server.wait()
+                 if (i%ncpus==0 and i!=0): self.job_server.wait()
                  i+=1
              
              # close the trajectory file
@@ -1104,7 +1104,7 @@ Usage: will be added soon!"""
                       depfuncs=(),
                       group=group,
                       modules=("utilities","numpy","units","dma",
-                               "MDAnalysis.coordinates.xdrfile.libxdrfile","clemtp"),
+                               "MDAnalysis.coordinates.xdrfile.libxdrfile2","clemtp"),
                            ) )
                  if (i%4==0 and i!=0): self.job_server.wait()
                  i+=1
