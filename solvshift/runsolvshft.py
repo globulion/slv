@@ -918,7 +918,7 @@ def Main(argv):
                                   trajectory=md_trajectory,
                                   solute_parameters=parameters,
                                   camm=SolCAMM,
-                                  suplist=suplist,
+                                  suplist=ral_suplist,
                                   ncpus=ncpus,
                                   non_atomic=False,
                                   inp=md_input)

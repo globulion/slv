@@ -21,10 +21,10 @@
 #    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 # set here your path of SLV package
-export SLV_PATH='/home/globula/programs/solvshift'
+export SLV_PATH='/home/globula/Packages/slv-master/'
 
 # set here the path for COULOMB.py package if wanted
-export COULOMB_PATH='/home/globula/programs/coulomb/'
+export COULOMB_PATH='/home/globula/programs/clmb-master/'
 
 # set this variable as '1' if you want to use coulomb package
 export __IMPORT__COULOMB__=1
