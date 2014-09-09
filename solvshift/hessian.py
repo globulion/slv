@@ -6,7 +6,7 @@ from numpy     import *
 from units     import *
 from dma       import *
 from utilities import *
-import sys, copy, pylab, solscf
+import sys, copy, pylab #, solscf
 sys.stdout.flush()
 
 __all__ = ['HESSIAN',]
