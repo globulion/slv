@@ -71,12 +71,12 @@ def write_slv_md_file():
     out.close()
     return
 
-def read_slv_md_file():
+def read_slv_md_file(debug=True):
     """read the 'slv.md' file"""
     global N_SOLVENT_ATOMS, N_SOLVENT_MOL
     global N_ION_ATOMS, N_ION_MOL, C_ION
     s = open('slv.md')
-    templ = re.compile('=.*\n')#,re.DOTALL)
+    templ = re.compile('=.*\n')
     t = s.read()
     q = re.findall(templ,t)    
     Q = []
@@ -87,6 +87,14 @@ def read_slv_md_file():
     N_ION_MOL = array(Q[:-1],int)
     C_ION = Q[-1]
     s.close()
+    if debug:
+       print
+       print 'N_SOLVENT_ATOMS= %5d' % N_SOLVENT_ATOMS
+       print 'N_SOLVENT_MOL  = %5d' % N_SOLVENT_MOL
+       print 'N_ION_ATOMS    = %5d' % N_ION_ATOMS
+       print 'N_ION_MOL      = %5d' % N_ION_MOL
+       print 'C_ION          = %.5f'% C_ION 
+       print
     return
 
 def parse_charges(c_file,
@@ -223,7 +231,7 @@ if argv[1]=='-f':
    exit()
 
 # read slv.md system file
-read_slv_md_file()
+read_slv_md_file(debug=True)
 
 # create the indices of atoms (in Python convention)
 solat= text_to_list(argv[2],delimiter=',') - 1
