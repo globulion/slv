@@ -10,9 +10,9 @@
  
  Usage:
  
-  1) Obtaining help
+  1) Obtaining more detailed help
   
-     slv_md-prepare.py  
+     slv_md-prepare.py -h
  
   2) Creation of 'slv.md' system file
 
@@ -59,6 +59,41 @@ from numpy import array, float64
 import re, re_templates
 
 # utilities
+def help():
+    log = """
+    ADDITIONAL INFORMATION (IMPORTANT FOR NEWCOMER!)
+
+
+ 1) Providing atom number arguments:
+
+    example:
+
+    slv_md-prepare.py file 1-7 344-356:899-1023:12,13,15,16
+
+    This will set solute atoms from 1 to 7 and zero out charges
+    between 344 and 356, 899 and 1023 as well as 12,13,15 and 16
+
+    1-7      is equivalent to 1,2,3,4,5,6,7
+    12,13,14 is equivalent to 12-14
+
+ 2) Note about charge files (ITP/TPR/PRMTOP)
+
+    o Reading slv function of GROMACS ITP file does not store the charges 
+      from the solvent. Therefore, you should set the following in slv.md:
+     
+                N_SOLVENT_ATOMS = 0
+                N_SOLVENT_MOL   = 0
+
+    o For reading GROMACS TPR and AMBER PRMTOP files all of the charges
+      are read (protein, ions and solvent molecules). HOWEVER, in the case
+      of TPR files there is only one solvent molecule stored whereas for PR
+      MTOP case all the solvent molecules are stored!
+
+                              * * *
+"""
+    print log
+    return
+
 def write_slv_md_file():
     """create a temlate for 'slv.md' file"""
     out = open('slv.md','w')
@@ -152,7 +187,24 @@ def parse_charges(c_file,
 
     # AMBER PRMTOP
     elif c_file.lower().endswith(".prmtop"):
-       pass
+       print "  *******************************************************************************"
+       print "  ******* WARNING! METHOD FOR AMBER PRMTOP FILES WAS -- NOT -- TESTED ! *********"
+       print "  ******* YOU SHOULD TEST IT BEFORE YOU APPLY THE RESULTS FURTHER ! ! ! *********"
+       print "  *******************************************************************************"
+       querry = "CHARGE"
+       line = a.readline()
+       while querry not in line:
+             line = a.readline()
+
+       line = a.readline()
+       line = a.readline()
+
+       while not line.startswith("%FLAG MASS"):
+             Q+= [ float64(x) for x in line.split() ]
+             line = a.readline()
+             
+       ### convert charges to au units!
+       Q = array(Q,float64)/18.2223
  
     # return charges 
     if all:
@@ -229,6 +281,10 @@ def write_input(chg_ep,solat,zout,
 # create the slv.md system file
 if argv[1]=='-f': 
    write_slv_md_file()
+   exit()
+
+if argv[1]=='-h':
+   help()
    exit()
 
 # read slv.md system file
