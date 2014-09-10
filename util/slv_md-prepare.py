@@ -10,7 +10,17 @@
  
  Usage:
  
- ./slv_md-prepare.py [charges] [solute atoms] [atoms to zero-out]
+  1) Obtaining help
+  
+     slv_md-prepare.py  
+ 
+  2) Creation of 'slv.md' system file
+
+     slv_md-prepare.py -f
+
+  3) Creation of 'environment.inp' file
+
+     slv_md-prepare.py [charges] [solute atoms] [atoms to zero-out]
  
  The output of the script is 'environment.inp' file which is to be us
  ed by SLV_MD class. The debug information for checking is stored in
@@ -49,6 +59,36 @@ from numpy import array, float64
 import re, re_templates
 
 # utilities
+def write_slv_md_file():
+    """create a temlate for 'slv.md' file"""
+    out = open('slv.md','w')
+    log = 'N_SOLVENT_ATOMS = 3\n'
+    log+= 'N_SOLVENT_MOL   = 1\n'
+    log+= 'N_ION_ATOMS     = 1\n'
+    log+= 'N_ION_MOL       = 0\n'
+    log+= 'C_ION           = 1.00000\n'
+    out.write(log)
+    out.close()
+    return
+
+def read_slv_md_file():
+    """read the 'slv.md' file"""
+    global N_SOLVENT_ATOMS, N_SOLVENT_MOL
+    global N_ION_ATOMS, N_ION_MOL, C_ION
+    s = open('slv.md')
+    templ = re.compile('=.*\n')#,re.DOTALL)
+    t = s.read()
+    q = re.findall(templ,t)    
+    Q = []
+    for i in q:
+        Q.append(i[1:])
+    Q = array(Q,float64)
+    N_SOLVENT_ATOMS, N_SOLVENT_MOL, N_ION_ATOMS, \
+    N_ION_MOL = array(Q[:-1],int)
+    C_ION = Q[-1]
+    s.close()
+    return
+
 def parse_charges(c_file,
                   n_solvent_atoms=3,n_solvent_mol=0,
                   n_ion_atoms=1,n_ion_mol=0,c_ion=1.0,
@@ -56,6 +96,7 @@ def parse_charges(c_file,
     """parse charges from TPR formatted file or ITP file"""
 
     Q = []
+
     # GROMACS TPR 
     if c_file.lower().endswith('.tpr'):
        # open the formatted (gmx-dumped) TPR file                      
@@ -80,7 +121,26 @@ def parse_charges(c_file,
 
     # GROMACS ITP
     elif c_file.lower().endswith('.itp'):
-       pass 
+       querry = "[ atoms ]"
+       a = open(c_file)
+       line = a.readline()
+       while 1:
+             if querry in line: break
+             else: line = a.readline()
+
+       line = a.readline()
+       line = a.readline()
+       while line!='\n':
+             Q.append(line.split()[6])
+             line=a.readline()
+           
+       for i in range(n_ion_mol): 
+           Q.append(c_ion)
+
+       for i in range(n_solvent_mol*n_solvent_atoms):
+           Q.append(10000000.000)
+       Q = array(Q,float64)
+       a.close()
 
     # AMBER PRMTOP
     elif c_file.lower().endswith(".prmtop"):
@@ -98,7 +158,10 @@ def parse_charges(c_file,
        return Q
     else:
        chg_ep = Q[:-n_solvent_atoms-n_ion_atoms*n_ion_mol]
-       chg_ion= Q[-n_solvent_atoms-n_ion_atoms*n_ion_mol:-n_solvent_atoms]
+       if n_solvent_atoms:
+          chg_ion= Q[-n_solvent_atoms-n_ion_atoms*n_ion_mol:-n_solvent_atoms]
+       else: 
+          chg_ion= Q[-n_solvent_atoms-n_ion_atoms*n_ion_mol:]
        chg_sol= Q[-n_solvent_atoms:] 
        chg_sol = chg_sol.tolist()
        chg_sol*= n_solvent_mol
@@ -154,6 +217,14 @@ def write_input(chg_ep,solat,zout,
     out.close()
     return
 
+# create the slv.md system file
+if argv[1]=='-f': 
+   write_slv_md_file()
+   exit()
+
+# read slv.md system file
+read_slv_md_file()
+
 # create the indices of atoms (in Python convention)
 solat= text_to_list(argv[2],delimiter=',') - 1
 zout = argv[3].split(':')
@@ -166,13 +237,10 @@ for i in range(len(zout)):
 
 # parse the charges
 chg_ep, chg_ion, chg_sol = parse_charges(argv[1],
-                                        n_solvent_atoms=3,n_solvent_mol=3,
-                                        n_ion_atoms=1,n_ion_mol=4,c_ion=1.0,
-                                        all=False,debug=True)
+                                         n_solvent_atoms=N_SOLVENT_ATOMS,n_solvent_mol=N_SOLVENT_MOL,
+                                         n_ion_atoms=N_ION_ATOMS,n_ion_mol=N_ION_MOL,c_ion=C_ION,
+                                         all=False,debug=True)
 
-print len(chg_ep)
-print chg_ion
-print chg_sol
 # create the input file
 write_input(chg_ep,solat,zout,
-            n_ion_mol=4,c_ion=1.0,name_ion='Sodium cation')
+            n_ion_mol=N_ION_MOL,c_ion=C_ION,name_ion='dummy ion')
