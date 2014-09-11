@@ -1,0 +1,99 @@
+#!/usr/bin/env python
+"""
+ ---------------------------------------------------------------------
+                       SLV SolEFP - WFN PARAMETERS 
+ ---------------------------------------------------------------------
+ Prepare the SolEFP parameters relating to wavefunction
+
+ Computes first derivatives of:
+ 
+  o Fock matrix elements
+  o LMO centroids
+  o LMO coefficients
+ 
+ with respect to normal coordinates. Returns derivatives in units
+ 
+              [ unit/(bohr*sqrt(elmass)) ]
+ 
+ where unit is A.U. unit of one of the above three quantities a-c. The 
+ parameter file will be saved in [outname].
+ 
+ Usage:
+ 
+          [anh] [fchk] [dma] [nae] [basis] [outname]
+ 
+ Notes:
+ 
+  o anh     - amharmonic file
+  o fchk    - formatted g09 checkpoint file
+  o dma     - DMA file in Coulomb format
+  o nae     - number of alpha electrons
+  o basis   - basis set
+  o outname - output name of *.frg file with SolEFP parameters 
+ --------------------------------------------------------------------
+                                         Last revision: 11 Sep 2014
+"""
+from sys import argv, exit
+from gaussfreq import FREQ
+from solvshift.diff import DIFF
+from utilities import PRINTL, ParseDMA, Read_xyz_file
+from numpy import shape
+from solvshift.slvpar import Frag
+
+print __doc__
+if len(argv)==1: exit()
+anh    = argv[1]
+mol    = Read_xyz_file(argv[2],mol=True)
+dma    = ParseDMA(argv[3],'c')
+nae    = int(argv[4])
+basis  = argv[5]
+name   = argv[6]
+
+a = FREQ(anh)
+c = DIFF(freq=a.freq,step=0.006,
+         dir="./",L=a.L,
+         solefp='./',nae=nae,basis=basis)
+
+fock1= c.get(12)
+lmoc1= c.get(13)
+vecl1= c.get(14)
+fock = c.get(-1)
+lmoc = c.get(-2)
+vecl = c.get(-3)
+
+print 'FOCK ', fock.shape
+print 'LMOC ', lmoc.shape
+print 'VECL ', vecl.shape
+print 'FOCK1', fock1.shape
+print 'LMOC1', lmoc1.shape
+print 'VECL1', vecl1.shape
+print 'SAVING THE PARAMETERS...'
+param = Frag()
+param.set(fock=fock,lmoc=lmoc,vecl=vecl,
+          fock1=fock1,lmoc1=lmoc1,vecl1=vecl1,
+          mol=mol,dma=dma,anh=a.w())
+param.write(file=name)
+
+par = Frag()
+par(name)
+pars = par.get()
+print 'LMOC '
+print pars['lmoc' ] - lmoc
+print 
+print pars['lmoc1'] - lmoc1
+print 'FOCK '
+print pars['fock' ] - fock
+print
+print pars['fock1'] - fock1
+print 'VECL '
+print pars['vecl' ] - vecl
+print
+print pars['vecl1'] - vecl1
+
+print 'QUITTING...'
+
+#for i in range(len(fock)):
+#    print "------ MODE %i ------ "%(i+1)
+#    PRINTL(fock[i])
+
+
