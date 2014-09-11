@@ -24,7 +24,7 @@ where X=5,9"""
                  dir="",cartesian=False,L=0,
                  camm=False,pol=False,eds=False,efp=False,
                  solefp=False,nae=0,basis='6-311++G**',
-                 dpol=False,lprint=True):
+                 dpol=False,lprint=True,sims=None):
 
         self.camm = camm
         # number of normal modes
@@ -95,6 +95,7 @@ where X=5,9"""
         
         # solvatochromic EFP
         elif solefp:
+           self.__sim_gms = list()
            fdir = solefp
            print " PIPEK-MEZEY LOCALIZATION AND LMTP EVALUATION..."
            self.tran_set_1, self.lmoc_set_1, self.vecl_set_1 = self.Parse_tran(dir+fdir,nae,basis)
@@ -102,12 +103,20 @@ where X=5,9"""
            self.rLMO = self.lmoc_set_1[0]
            print " PARSING FOCK MATRICES..."
            self.fock_set_1 = self.Parse_fock(dir+fdir,self.vecl_set_1)
+           #### reorder Fock matrices!
+           #for i in range(len(self.fock_set_1)):
+           #    sim = self.__sim_gms[i]
+           #    fck = self.fock_set_1[i]
+           #    self.fock_set_1[i] = reorder(fck,sim)
+           ### save the sim_efp lists
+           self.__save_sim_gms(self.__sim_gms)
+           #
            self.Fock = self.fock_set_1[0]
            print " CALCULATION OF FIRST DERIVATIVES..."
            self.fock1, self.lmoc1 ,self.vecl1 = self.get_efp_fder()
         # Distributed polarizabilities
         elif dpol:
-           self.dpos_set_1, self.dpol_set_1 = self.Parse_dpol(dir+dpol)
+           self.dpos_set_1, self.dpol_set_1 = self.Parse_dpol(dir+dpol,sims=sims)
            self.dpol1 = self.get_dpol_fder()
         # EDS
         elif eds:
@@ -123,9 +132,22 @@ where X=5,9"""
            self.EFP_set_2 = self.Parse_EFP(dir+sdir)
            self.fEFP = self.get_EFP_fder()
            self.sEFP = self.get_EFP_sder()
-           
+    
+    def __save_sim_gms(self,sim):
+        """saves slv.sim file which is read by 1.py file"""
+        out = open('slv.sim','w')
+        log = ''
+        for i in range(len(self.__sim_gms)):
+            t = array(self.__sim_gms[i],int).ravel()
+            l = ''
+            for j in range(len(t)):
+                l+= '%4d' % t[j]
+            log+= l + '\n'
+        out.write(log)
+        out.close()
+        return
 
-    def Parse_dpol(self,dir):
+    def Parse_dpol_old(self,dir):
         """"""
         files = glob.glob('%s/*_.efp' % dir)
         files.sort()
@@ -139,6 +161,23 @@ where X=5,9"""
             r, sim = order(r_ref,r,start=0,lprint=self.__lprint)
             if self.__lprint: print sim
             a = reorder(a,sim)
+            dPos.append(r)
+            dPol.append(a)
+        dPos = array(dPos,float64)
+        dPol = array(dPol,float64)
+        return dPos, dPol
+    
+    def Parse_dpol(self,dir,sims):
+        """"""
+        files = glob.glob('%s/*_.efp' % dir)
+        files.sort()
+        dPos = []
+        dPol = []
+        for i,file in enumerate(files):
+            r,a=ParseDistributedPolarizabilitiesFromGamessEfpFile(file)
+            # reorder
+            a = reorder(a,sims[i])
+            r = reorder(r,sims[i])
             dPos.append(r)
             dPol.append(a)
         dPos = array(dPos,float64)
@@ -169,24 +208,35 @@ where X=5,9"""
     def Parse_tran(self,dir,nae,basis):
         """parses CMO transformation matrices from fchk files and transforms
 them to LMO space"""
-        files = glob.glob('%s/*_.fchk' % dir)
-        files.sort()
+        files_fchk = glob.glob('%s/*_.fchk' % dir)
+        files_fchk.sort()
+        files_efp  = glob.glob('%s/*_.efp'  % dir)
+        files_efp.sort()
         Tran = []
         Lmoc = []
         VecL = []
         vec_ref = None
-        
+        # debug purposes
+        print "\n Files to be used during the differentiation process:"
+        for i,fchk in enumerate(files_fchk):
+            print " %26s %26s" % (fchk,files_efp[i])
+        print
+
+        log_efp = ''
+        log_wfn = ''
+        debug_efp = open('debug_efp','w')
+        debug_wfn = open('debug_wfn','w')
         # evaluate transformation matrices and LMO centroids
-        for file in files:
-            mol  = Read_xyz_file(file,mol=True,
+        for I,fchk in enumerate(files_fchk):
+            mol  = Read_xyz_file(fchk,mol=True,
                                  mult=1,charge=0,
                                  name='happy dummy molecule')
             bfs        = PyQuante.Ints.getbasis(mol,basis)
             basis_size = len(bfs)
             natoms= len(mol.atoms)
             SAO   = PyQuante.Ints.getS(bfs)
-            dmat = ParseDmatFromFchk(file,basis_size)
-            veccmo= ParseVecFromFchk(file)[:nae,:]
+            dmat = ParseDmatFromFchk(fchk,basis_size)
+            veccmo= ParseVecFromFchk(fchk)[:nae,:]
             tran, veclmo = get_pmloca(natoms,mapi=bfs.LIST1,sao=SAO,
                                       vecin=veccmo,nae=nae,
                                       maxit=100000,conv=1.0E-6,
@@ -195,7 +245,8 @@ them to LMO space"""
             if vec_ref is None: vec_ref = veclmo.copy()
             veclmo, sim = order(vec_ref,veclmo,start=0)
             print sim
-            check_sim(sim)
+            log_wfn += str(sim) + '\n'
+            log_wfn += check_sim(sim) + '\n\n'
             # calculate LMTPs
             camm = coulomb.multip.MULTIP(molecule=mol,
                                          basis=basis,
@@ -206,12 +257,19 @@ them to LMO space"""
             camm.camms()
             dma = camm.get()[0]
             lmoc= dma.get_origin()[natoms:]
+            lmoc_efp = ParseLmocFromGamessEfpFile(files_efp[I])
+            lll,sim_efp = order(lmoc,lmoc_efp,start=0)
+            log_efp += str(sim_efp) + '\n'
+            log_efp += check_sim(sim_efp) + '\n\n'
+            #
+            ### here store the sim lists for DPOL reordering
+            self.__sim_gms.append(sim_efp)
             #
             Tran.append(tran)
             Lmoc.append(lmoc)
             VecL.append(veclmo)
             #
-            out = open(file[:-4]+'vecl','w')
+            out = open(fchk[:-4]+'vecl','w')
             log = '\n'
             n=1
             for i in range(len(veclmo)):
@@ -220,12 +278,18 @@ them to LMO space"""
                     log += "%20.10E"  % veclmo[i,j]
                     if not n%5: log+= '\n'
                     n+=1
-            log += '\n'
+                log += '\n'
             out.write(log)
             out.close()
         Tran = array(Tran,float64)
         Lmoc = array(Lmoc,float64)
         VecL = array(VecL,float64)
+        #
+        debug_efp.write(log_efp)
+        debug_wfn.write(log_wfn)
+        debug_efp.close()
+        debug_wfn.close()
+        #
         return Tran, Lmoc, VecL
     
     def Parse_fock(self,dir,Tran):
