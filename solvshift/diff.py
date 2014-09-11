@@ -189,7 +189,7 @@ them to LMO space"""
             veccmo= ParseVecFromFchk(file)[:nae,:]
             tran, veclmo = get_pmloca(natoms,mapi=bfs.LIST1,sao=SAO,
                                       vecin=veccmo,nae=nae,
-                                      maxit=100000,conv=1.0E-10,
+                                      maxit=100000,conv=1.0E-6,
                                       lprint=True,
                                       freeze=None)
             if vec_ref is None: vec_ref = veclmo.copy()
