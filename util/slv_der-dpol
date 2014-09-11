@@ -1,0 +1,111 @@
+#!/usr/bin/python
+"""
+Evaluate the derivatives wrt normal coordinates of distributed polarizabilities from Gamess *.efp File
+
+Usage:
+
+  [anh] [frg]
+"""
+print __doc__
+from sys import exit, argv
+from numpy import array, float64
+if len(argv)==1: exit()
+# --------------------------------------
+from solvshift.diff import DIFF as diff
+from gaussfreq import FREQ
+from solvshift.slvpar import Frag
+from utilities import order,reorder
+from scitools import filetable as ft
+# --------------------------------------
+
+# utilities
+def read_slv_sim():
+    """read 'slv.sim' system file written by slv_der-wfn tool"""
+    a = open('slv.sim')
+    r = ft.read(a)
+    a.close()
+    s = r.shape
+    sims = r.reshape(s[0],s[1]/2,2)
+    return sims
+
+# read 'slv.sim' file
+try:
+   sims = read_slv_sim()
+except IOError:
+   print 
+   print " SLV: No 'slv.sim' file! Run slv_der-wfn tool first!"
+   print
+   exit()
+
+anh    = FREQ(file=argv[1])
+frag   = Frag(argv[2])
+nmodes = len(anh.freq)
+
+c = diff(freq=anh.freq,step=0.006,dir='.',L=anh.L,dpol='./',lprint=False,sims=sims)
+print c.dpol1.sum(axis=1)
+dpol1 = c.dpol1
+nmos  = dpol1.shape[1]
+rpol  = c.dpos_set_1[0]
+dpol  = c.dpol_set_1[0]
+
+print " Shape of the dpol1 tensor // number of LMOs // shape of rpol"
+print dpol1.shape
+print nmos
+print rpol.shape
+
+# reorder
+if 0:
+ lmoc  = frag.get()['lmoc'].reshape(nmos,3)
+ rpol
+ r,sim = order(lmoc,rpol)
+ print sim
+ rpol  = reorder(rpol,sim)
+ dpol1 = dpol1.transpose((1,0,2,3))
+ print dpol1.shape
+ dpol1 = reorder(dpol1,sim)
+ dpol1 = dpol1.transpose((1,0,2,3))
+ print dpol1.shape
+ dpol  = reorder(dpol,sim)
+
+# write the output on the screen in the format of *.frg file
+name = '[ Distributed polarizabilities - first derivatives ]'
+N = nmodes*nmos*9
+log = ' %s %s= %d\n' % (name.ljust(40),'N'.rjust(10),N)
+n = 1
+for u in xrange(nmodes):
+    for i in xrange(nmos):
+        for j in [0,1,2]:
+            for k in [0,1,2]:
+                log+= "%20.10E" % dpol1[u,i,j,k]
+                if not n%5: log+= '\n'
+                n+=1
+
+log+= '\n'
+if N%5: log+= '\n'
+print log
+
+N = nmos*3
+log = ' %s %s= %d\n' % ('[ LMO centroids ]'.ljust(40),'N'.rjust(10),N)
+n = 1
+for i in xrange(nmos):
+    for j in [0,1,2]:
+        log+= "%20.10E" % rpol[i,j]
+        if not n%5: log+= '\n'
+        n+=1
+log+= '\n'
+if N%5: log+= '\n'
+print log
+
+N = nmos*9
+log = ' %s %s= %d\n' % ('[ Distributed polarizabilities ]'.ljust(40),'N'.rjust(10),N)
+n = 1
+for i in xrange(nmos):
+    for j in [0,1,2]:
+     for k in [0,1,2]:
+        log+= "%20.10E" % dpol[i,j,k]
+        if not n%5: log+= '\n'
+        n+=1
+log+= '\n'
+if N%5: log+= '\n'
+print log
+

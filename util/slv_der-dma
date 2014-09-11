@@ -1,0 +1,67 @@
+#!/usr/bin/env python
+"""
+Compute first derivatives of DMA distribution wrt normal coordinates
+
+Returns derivatives in units
+
+  [ unit/(bohr*sqrt(elmass)) ]
+
+where unit is A.U. unit of one of the tensors in DMA expansion
+The parameter file will be saved
+
+Usage:
+
+./dma_der.py [anh] [fchk] [dma] [outname]
+
+Note:
+
+anh - amharmonic file
+
+Warning: 
+
+change the appropriate values in slv.step file:
+    sderiv step, sderiv directory (ending with '/')
+"""
+from sys import argv, exit
+from gaussfreq import FREQ
+from solvshift.diff import DIFF
+from utilities import PRINTL, ParseDMA, Read_xyz_file
+from numpy import zeros, float64 as f64
+from solvshift.slvpar import Frag
+
+print __doc__
+if len(argv)==1: exit()
+anh    = argv[1]
+mol    = Read_xyz_file(argv[2],mol=True)
+name   = argv[4]
+Dma    = ParseDMA(argv[3])
+
+a = FREQ(anh)
+c = DIFF(freq=a.freq,step=0.006,dir='./',cartesian=True,L=a.L,camm=True)
+dma1 = c.Fder
+dma2 = c.Sder
+
+nmodes = len(dma1)
+ndma   = dma1[0][0].shape[0]
+
+C = zeros((nmodes,ndma),f64)
+D = zeros((nmodes,ndma,3),f64)
+Q = zeros((nmodes,ndma,6),f64)
+O = zeros((nmodes,ndma,10),f64)
+
+for i,dma in enumerate(dma1):
+    C[i,:] = dma[0]
+    D[i,:] = dma[1]
+    Q[i,:] = dma[2]
+    O[i,:] = dma[3]
+
+print 'SAVING THE PARAMETERS...'
+param = Frag()
+param.set(mol=mol,anh=a.w(),dmac1=C,dmad1=D,dmaq1=Q,dmao1=O,
+                            dmac2=dma2[0],dmad2=dma2[1],
+                            dmaq2=dma2[2],dmao2=dma2[3],
+                            dma=Dma)
+param.write(file=name)
+
+print 'QUITTING...'
+
