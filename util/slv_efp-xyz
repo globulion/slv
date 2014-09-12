@@ -1,0 +1,153 @@
+#!/usr/bin/env python
+"""
+ --------------------------------------------------------------------
+                         SLV SolEFP - XYZ 
+ --------------------------------------------------------------------
+
+ Read xyz file with solute and solvent(s) molecules and evaluate the
+ frequency shifts using SolEFP theory.
+
+ Usage:
+ 
+    [frg_1] [frg_2] [xyz] cutoffs <type> <supl_1> <supl_2>
+ 
+ Notes: 
+ 
+   1) frg_1/frg_2 - solute/solvent parameter file (*.frg format)
+ 
+   2) xyz         - structure to superimpose
+ 
+   3) cutoffs     - example 1: none 
+                      ccut, pcut, ecut - infinity (no cutoffs)
+
+                    example 2: 17.2,14,10
+                      ccut = 17.2 bohr  (Coulomb)
+                      pcut = 14.0 bohr  (Polarization)
+                      ecut = 10.0 bohr  (Exchange-Repulsion)
+ 
+                    example 2: 19,15.1
+                      ccut = infinity
+                      pcut = 19.0 bohr
+                      ecut = 14.0 bohr
+ 
+                    example 3: 10.0
+                      ccut, pcut = infinity
+                      ecut = 10.0 bohr
+ 
+   4) <type>      - type of interaction term: 
+ 
+                      e - Coulomb electrostatics
+                      c - correction terms to electrostatics
+                      p - polarization
+                      x - repulsion
+ 
+                    Just type the string like ecpx, epx, ep etc depen
+                    ding what you want. Typing 'all' will switch on a
+                    ll of the implemented terms and is equivalent to 
+                    'ecpx'.
+ 
+   5) supl_1      - superimposition list for SOLUTE (Optional).
+                    Default: superimpose to all atoms.
+                    Format in normal numbers (not in Python convention)
+                    Examples: 1-6     or 1,2,3,4    or 4,5,10,11,12
+ 
+   6) supl_2      - superimposition list for SOLVENT (Optional).
+                    See above (p. 5)
+
+ Warnings:
+  
+   o The turn of atoms of solute and solvent has to be exactly identic
+     al as it is in the *.frg parameter files!
+ --------------------------------------------------------------------
+                                         Last revision: 12 Sep 2014
+"""
+from sys import argv, exit
+from utilities import Read_xyz_file, MakeMol, ParseDMA, \
+                      PUPA, text_to_list
+from units import UNITS as u
+from time import time
+from solvshift.solefp import EFP
+from solvshift.slvpar import Frag
+from numpy import float64 as f64, array, zeros, linalg, \
+                  transpose, int64, concatenate as con, \
+                  asfortranarray as farray, dot
+
+print __doc__
+if len(argv)==1: exit()
+
+t0 = time()
+
+# [1] Gather the arguments and build data structures
+
+# --- read the parameter files
+frg_solute    = Frag(argv[1])
+frg_solvent   = Frag(argv[2])
+xyz           = Read_xyz_file(argv[3],mol=True,units='Angstrom').get_pos()
+
+# --- read the number of solvent molecules
+n_solute_atoms  = frg_solute.get_natoms()
+n_solvent_atoms = frg_solvent.get_natoms()
+n_atoms         = len(xyz)
+n_solvent_mol   = (n_atoms - n_solute_atoms)/n_solvent_atoms
+
+# --- read cutoffs
+ccut, pcut, ecut = 1000000.00, 1000000.00, 1000000.00
+if argv[4].lower() == 'none': pass
+else:
+   c = text_to_list( argv[4], delimiter=',', dtype=f64 )
+   if   len(c)==3: ccut, pcut, ecut = c
+   elif len(c)==2: pcut, ecut       = c
+   elif len(c)==1: ecut,            = c
+
+# --- provide terms to be evaluated
+if len(argv)>5: typ = argv[5]
+else:           typ = 'exp'
+elect,rep,pol,corr = True, False, False, False
+if 'e' in typ: elect= True
+if 'x' in typ: rep  = True
+if 'p' in typ: pol  = True
+if 'c' in typ: corr = True
+if typ.lower() == 'all': 
+   elect,rep,pol,corr = True, True, True, True
+
+# --- solute suplist
+if len(argv)>6: supl = [ text_to_list( argv[6], delimiter=',', dtype=int, dt=1 ) , ]
+else: supl = None
+
+# --- solvent suplist
+if len(argv)>7: supl_sol = text_to_list( argv[7], delimiter=',', dtype=int, dt=1 )
+else: supl_sol = None
+if supl is not None:
+   for i in range(n_solvent_mol): 
+       supl.append(supl_sol)
+
+# --- additional printout
+if len(argv)>8: lprint = bool(argv[8])
+else:           lprint = True
+
+# --- build nmol, ind and bsm data
+t1 = time()
+nmol = [  frg_solute.get_natoms() , ]
+ind  = [  0                       , ]
+for i in range(n_solvent_mol):
+    nmol.append( frg_solvent.get_natoms() )
+    ind .append( 1                        )
+bsm  = ( frg_solute, frg_solvent )
+
+# [2] Calculate the frequency shifts!
+
+# --- set the EFP environment
+efp = EFP(elect=elect,pol=pol,rep=rep,corr=corr,freq=True,
+          ccut=ccut,pcut=pcut,ecut=ecut,
+          cunit=True)
+
+# --- evaluate the shifts
+t2 = time()
+efp.set(xyz,ind,nmol,bsm,supl)
+efp.eval(lprint)
+t3 = time()
+print
+print " Read_xyz_file TIME: %10.6f seconds" % (t1-t0)
+print " nmol and ind  TIME: %10.6f seconds" % (t2-t1)
+print " mollst        TIME: %10.6f seconds" % (t3-t2)
+print
