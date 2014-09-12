@@ -12,7 +12,7 @@ from PyQuante.Ints import getT, getSAB, getTAB, getSA1B, getTA1B, getVEFP, \
                           getV, getbasis
 from shftex import shftex
 from shftce import shftce
-from cosik1 import solpol, mollst, sftpol
+from solpol import solpol, mollst, sftpol
 from efprot import tracls
 from exrep  import exrep
 import sys, copy, os, re, math, glob, PyQuante.Ints, coulomb.multip, clemtp
