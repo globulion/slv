@@ -38,6 +38,6 @@ References
 
 [5]: B. Błasiak and M. Cho, J. Chem. Phys. 140, 164107 (2014)
 
-[5]: Distributed Multipole Moments (Mulliken, Chelpg, DMA, CAMM etc.)
+[6]: Distributed Multipole Moments (Mulliken, Chelpg, DMA, CAMM etc.)
 
-[6]: Molecular Multipole Moments (centered at molecular origin, eg. center of mass)
+[7]: Molecular Multipole Moments (centered at molecular origin, eg. center of mass)
