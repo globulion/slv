@@ -19,7 +19,7 @@ import sys, copy, os, re, math, glob, PyQuante.Ints, coulomb.multip, clemtp
 sys.stdout.flush()
 
 __all__ = ['EFP','FragFactory',]
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 
 class EFP(object,UNITS):
     """"""
