@@ -1,0 +1,50 @@
+#!/usr/bin/python
+"""
+ Parse the charges from GROMACS itp file
+
+ Usage:
+
+  [itp] <index range>
+
+ Notes:
+  - index range is in Python convention (start from 0)
+    and is compatible with index ranges in VMD
+"""
+from sys import argv
+from numpy import *
+from utilities import text_to_list
+print __doc__
+if len(argv)==1:exit()
+
+charges = []
+querry = "[ atoms ]"
+itp=open(argv[1])
+line=itp.readline()
+
+while 1:
+   if querry in line: break
+   else: line=itp.readline()
+
+line=itp.readline()
+line=itp.readline()
+while line!='\n':
+   charges.append(line.split()[6])
+   line=itp.readline()
+
+charges= array(charges,float64)
+# number of charges
+nc = len(charges)
+
+print " There is %d charges stored" % nc
+
+if len(argv)>2:
+   ci = text_to_list(argv[2],delimiter=',',dtype=int)
+   cl = charges[ci]
+   log = '\n'
+   log+= '%6s %10s\n' % ('Index'.rjust(6),'Charge'.rjust(10))
+   for i in range(len(cl)):
+       log+= '%6d %10.6f\n' % (ci[i],cl[i])
+   log+= '\n%6s %10.6f\n' % ('Sum:'.rjust(6), sum(cl))
+
+   print log
+
