@@ -4,11 +4,13 @@ slv
 The Solvshift (SLV) project is designed to
 perform computations of frequency shift
 of a solute immerged in a solvent in terms of discrete and
-implicit solvatochromic models of prof. Minhaeng Cho [1-4] and its extended versions.
+implicit solvatochromic models of prof. Minhaeng Cho [1-5] and its extended versions.
 Available models are:
+  * Solvatochromic Effective Fragment Potentials (SolEFP)[5]
   * Discrete electrostatic SolX models and its arbitrary contractions.
-    The SolX models available are SolDMTP[5] and SolMMM[6]
-  * Kirkwood-Onsager continuum model
+    The SolX models available are SolDMTP[4,6] and SolMMM[4,7]
+  * Kirkwood-Onsager continuum solvatochromic model[4]
+
 
 To see the help box and the options type
 ```
@@ -34,6 +36,8 @@ References
 
 [4]: B. Błasiak, H. Lee and M. Cho, J. Chem. Phys. 139, 044111 (2013)
 
-[5]: Distributed Multipole Moments (Mulliken, Chelpg, DMA, CAMM etc.)
+[5]: B. Błasiak and M. Cho, J. Chem. Phys. 140, 164107 (2014)
 
-[6]: Molecular Multipole Moments (centered at molecular origin, eg. center of mass)
+[6]: Distributed Multipole Moments (Mulliken, Chelpg, DMA, CAMM etc.)
+
+[7]: Molecular Multipole Moments (centered at molecular origin, eg. center of mass)
