@@ -8,8 +8,8 @@ implicit solvatochromic models of prof. Minhaeng Cho [1-5] and its extended vers
 Available models are:
   * Solvatochromic Effective Fragment Potentials (SolEFP)[5]
   * Discrete electrostatic SolX models and its arbitrary contractions.
-    The SolX models available are SolDMTP[6] and SolMMM[7]
-  * Kirkwood-Onsager continuum solvatochromic model[3]
+    The SolX models available are SolDMTP[4,6] and SolMMM[4,7]
+  * Kirkwood-Onsager continuum solvatochromic model[4]
 
 
 To see the help box and the options type
