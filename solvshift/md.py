@@ -399,7 +399,7 @@ def md_shifts_pp(frame,frame_idx,
     if not camm: 
         rms_inst = 0
         rms_ref  = 0
-    report_line = "%5i %10.3f %10.3f %10.3f %10.3f %10.3f %10.4f %10.4f\n"\
+    report_line = "  %5i %10.3f %10.3f %10.3f %10.3f %10.3f %10.4f %10.4f\n"\
                         % (frame_idx-1,shift[0],shift[1],shift[2],shift[3],shift[4],
                             rms_inst, rms_ref)
                             
@@ -863,9 +863,9 @@ Usage: will be added soon!"""
     def __init_report(self):
         """initialize the report"""
         self.report = open(self.report_name,'w')
-        self.report.write("SLV Molecular Dynamics Shifts\n")
-        self.report.write("Units: shifts in [cm-1], rms in [Bohr]\n")
-        self.report.write("%5s %10s %10s %10s %10s %10s %10s %10s\n"\
+        self.report.write("# SLV Molecular Dynamics Shifts\n")
+        self.report.write("# Units: shifts in [cm-1], rms in [Bohr]\n")
+        self.report.write("# %5s %10s %10s %10s %10s %10s %10s %10s\n"\
                                        %("Frame"    .rjust(5),
                                          "1"        .rjust(10),
                                          "1+2"      .rjust(10),
@@ -880,19 +880,19 @@ Usage: will be added soon!"""
     def __repr__(self):
         """print me!"""
         
-        self.log+= "\n Your dreamed frequency shift distribution! [cm-1]\n"
-        self.log+=   " -------------------------------------------------\n"
-        self.log+=   "    1         :  %16.1f ± %.1f\n" % ( self.averages[0],
-                                                            self.stds[0] )
-        self.log+=   "    1+2       :  %16.1f ± %.1f\n" % ( self.averages[1],
-                                                            self.stds[1] )
-        self.log+=   "    1+2+3     :  %16.1f ± %.1f\n" % ( self.averages[2],
-                                                            self.stds[2] )
-        self.log+=   "    1+2+3+4   :  %16.1f ± %.1f\n" % ( self.averages[3],
-                                                            self.stds[3] )
-        self.log+=   "    1+2+3+4+5 :  %16.1f ± %.1f\n" % ( self.averages[4],
-                                                            self.stds[4] )
-        self.log+=   " -------------------------------------------------\n"
+        self.log+= "\n  Your dreamed frequency shift distribution! [cm-1]\n"
+        self.log+=   "  -------------------------------------------------\n"
+        self.log+=   "     1         :  %16.1f ± %.1f\n" % ( self.averages[0],
+                                                             self.stds[0] )
+        self.log+=   "     1+2       :  %16.1f ± %.1f\n" % ( self.averages[1],
+                                                             self.stds[1] )
+        self.log+=   "     1+2+3     :  %16.1f ± %.1f\n" % ( self.averages[2],
+                                                             self.stds[2] )
+        self.log+=   "     1+2+3+4   :  %16.1f ± %.1f\n" % ( self.averages[3],
+                                                             self.stds[3] )
+        self.log+=   "     1+2+3+4+5 :  %16.1f ± %.1f\n" % ( self.averages[4],
+                                                             self.stds[4] )
+        self.log+=   "  -------------------------------------------------\n"
         self.log+= "\n\n"
           
         return str(self.log)
