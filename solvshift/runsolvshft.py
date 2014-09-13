@@ -98,6 +98,8 @@ def Usage():
  *     -M, --MD        [traj]   : calculate frequency shift distribution from Molecular Dynamics simulation  *
  *                              : providing the trajectory [traj] / default are 'amber' files /              *
  *                              : charges file as the args[0]                                                *
+ *         --nframes   [int]    : specify the number of frames (for GROMACS, AMBER is being read from MDCRD  *
+ *                              : after modification of the head of this file                                *
  *     -U, --md-package         : specify MD package software (GROMACS or AMBER)                             *
  *     -Q, --struct             : evaluate solute structural distortions in the first order due              *
  *                              : to solvation                                                               *
@@ -212,7 +214,7 @@ def Main(argv):
     read_file      = ''                                                # read parameters
     make_cube      = False                                             # create cube
     make_coulomb   = False                                             # 
-    out_name       = 'slv.par'                                         # output file name
+    out_name       = 'report.slv'                                      # output file name
     make_sol       = '12,default'                                      # solute/solvent target files
 
     ### parameters
@@ -257,6 +259,7 @@ def Main(argv):
     md_charges     = ''                                                # file with charges
     md_trajectory  = ''                                                # file with trajectory
     md_input       = ''                                                # input file with charge information
+    n_frames       = 16                                                # number of MD frames to analyze
     
 
     ## --------------------------- ##
@@ -264,7 +267,7 @@ def Main(argv):
     ## --------------------------- ##
     
     try:
-        opts, args = getopt.getopt(argv, "hi:a:s:cF:n:gx:fM:ot:m:T:OC:ydu:b:pW:A:B:kQj:l:e:D:w:PN:SR:GEV:z:Z:XU:H:L:T:T" ,
+        opts, args = getopt.getopt(argv, "hi:a:s:cF:n:gx:fM:ot:m:T:OC:ydu:b:pW:A:B:kQj:l:e:D:w:PN:SR:GEV:z:Z:XU:H:L:T:TO:" ,
                                         ["help"      ,
                                          "inputs="   ,
                                          "anh="      ,
@@ -311,7 +314,8 @@ def Main(argv):
                                          "ncpus="     ,
                                          "suplist="   ,
                                          "sol-supl"   ,
-                                         "hessian"]    )
+                                         "hessian"    ,
+                                         "nframes="   ,]    )
     except getopt.GetoptError, error:  
         print "\n   SLV: Error in command line! Quitting...\n"
         exit()
@@ -387,6 +391,8 @@ def Main(argv):
            md_input = args[1]
         if opt in ("-U", "--md-package" ):
            md_package   = arg.lower()
+        if opt in ( "--nframes", ):
+           nframes = int(arg)
         if opt in ("-t", "--typ"):
            types = arg
         if opt in ("-m", "--mode-id"):
@@ -916,12 +922,14 @@ def Main(argv):
           md_freq_shifts = SLV_MD(pkg=md_package,
                                   charges=md_charges,
                                   trajectory=md_trajectory,
+                                  nframes=nframes,
                                   solute_parameters=parameters,
                                   camm=SolCAMM,
                                   suplist=ral_suplist,
                                   ncpus=ncpus,
                                   non_atomic=False,
-                                  inp=md_input)
+                                  inp=md_input,
+                                  report_name=out_name)
           
           print md_freq_shifts
           shifts, averages, stds = md_freq_shifts.get_shifts()

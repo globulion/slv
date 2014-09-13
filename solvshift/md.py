@@ -17,7 +17,7 @@ from MDAnalysis.coordinates.xdrfile.libxdrfile2 import xdrfile_open, xdrfile_clo
 from MDAnalysis.coordinates.TRJ import TRJReader, NCDFReader
 
 __all__ = ['SLV_MD',]
-__version__ = '3.0.1'
+__version__ = '3.0.2'
 
 sys.stdout.flush()
 
@@ -425,7 +425,7 @@ Usage: will be added soon!"""
 
     
     def __init__(self,pkg="amber",charges="",trajectory="",
-                 solute_parameters=None,
+                 solute_parameters=None,nframes=16,
                  camm=False,suplist=[],ncpus=None,
                  non_atomic=False,inp=None,
                  natoms=None,nprotein=None,
@@ -477,9 +477,9 @@ Usage: will be added soon!"""
         ### proceed the frames
         to = time.time()
         if ncpus is None: 
-           self._ProceedTheFrames_no_pp()
+           self._ProceedTheFrames_no_pp(nframes)
         else:
-           self._ProceedTheFrames(ncpus=ncpus)
+           self._ProceedTheFrames(nframes,ncpus=ncpus)
         print time.time()-to, "  :  TIME"
         ### report on average shift and std
         self.report.write(self.__repr__())
@@ -583,9 +583,19 @@ Usage: will be added soon!"""
         icharges  = array( icharges,dtype=float64)
         wcharges  = array( wcharges,dtype=float64)
         
+        ### warn if the sum of eprotein charges is not integer
+        sum_chg = sum(epcharges)
+        a_chg   = abs(sum_chg)
+        d_chg   = abs(a_chg-int(round(a_chg)))
+        if d_chg>0.001:
+            print "\n WARNING! The sum of charges for eprotein is not integer! sum=%5.6f\n" % sum_chg
+            print " Quitting... check carefully the charges and restart your task\n" % sum_chg
+            raise ValueError
+        else:
+            print "\n The sum of charges for eprotein is %5.6f\n" % sum_chg
         return epcharges, icharges, wcharges
 
-    def _ProceedTheFrames(self,ncpus=4):
+    def _ProceedTheFrames(self,nframes,ncpus):
         """proceeds frame by frame to collect frequency shifts"""
         
         print "\n SLV FREQUENCY SHIFT DISTRIBUTION CALCULATION MODE\n"
@@ -594,7 +604,6 @@ Usage: will be added soon!"""
                 
         if self.pkg == 'amber':
            # read frames
-           nframes = 10
            md = TRJReader(self.trajectory,self.natoms)
            md.open_trajectory()
 
@@ -630,7 +639,7 @@ Usage: will be added soon!"""
              # read frames
              i=0
              #while self.status == exdrOK:
-             for i in range(20):
+             for i in range(nframes):
                  group = "group-%i"%(i/ncpus)
                  self.__read_xtc(XTC,natoms,frame,box,DIM)
                  self.jobs.append( self.job_server.submit(func=md_shifts_pp,
@@ -671,7 +680,7 @@ Usage: will be added soon!"""
                            std(self.frequency_shifts[:,3]),
                            std(self.frequency_shifts[:,4])])
 
-    def _ProceedTheFrames_no_pp(self):
+    def _ProceedTheFrames_no_pp(self,nframes):
         """proceeds frame by frame to collect frequency shifts"""
         
         print "\n SLV FREQUENCY SHIFT DISTRIBUTION CALCULATION MODE\n"
@@ -712,7 +721,7 @@ Usage: will be added soon!"""
              box = zeros((DIM,DIM),dtype=float32)
              XTC = xdrfile_open(self.trajectory,'r')
              # read frames
-             for i in range(16):
+             for i in range(nframes):
              #while self.status == exdrOK:
                    self.__read_xtc(XTC,natoms,frame,box,DIM)
                    
