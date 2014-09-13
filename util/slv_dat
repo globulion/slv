@@ -1,0 +1,56 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+"""
+Parse the report.md files and generate graphs
+
+"""
+from sys import argv,exit
+from numpy import array, float64 as f64, dot, average, std
+print __doc__
+if len(argv)==1:exit()
+import re, re_templates as RE
+from scitools import filetable as ft
+
+# utilities
+def Read_slv_md_report(f):
+    """reads SLV md report file. Returns all shifts across trajectory and averages"""
+    a = open(f)
+    sh= ft.read(a)
+    a.close()
+
+    a = open(f)
+    t = a.read()
+    a.close()
+
+    templ = re.compile('Your dreamed frequency shift distribution.*\n')
+    sec = re.split(templ,t)
+    s = sec[-1]
+    templ = re.compile('.*:.*\n')
+    r = re.findall(templ,s)
+    d = []
+    for a in r:
+        d.append(array(a.split()) [[-3,-1]] )
+    av  = array(d,f64)
+    return sh, av 
+
+
+# gather the shifts from frames as well as averages
+SH = list()
+AV = list()
+
+files = argv[1:]
+for f in files:
+    sh, av  = Read_slv_md_report(f)
+    SH.append(sh); AV.append(av)
+
+SH = array(SH,f64); AV = array(AV,f64)
+
+# evaluate average shifts
+sh_av = average( AV[:,3,0] )
+st_av = average( AV[:,3,1] )
+
+log = '\n'
+log+= ' Average shift: %10.1f ± %10.2f\n' % (sh_av, st_av)
+log+= '\n'
+
+print log
