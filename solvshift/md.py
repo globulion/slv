@@ -371,17 +371,21 @@ def md_shifts_pp(frame,frame_idx,
     #solute_parameters.write('param.xyz','xyz')
         
     ### calculate frequency shifts!!!
-    shift = numpy.zeros(5,dtype=numpy.float64)
+    shift   = numpy.zeros(5,dtype=numpy.float64)
+    shift_e = numpy.zeros(5,dtype=numpy.float64)
+    shift_i = numpy.zeros(5,dtype=numpy.float64)
+    shift_w = numpy.zeros(5,dtype=numpy.float64)
+
     # eprotein
     if prot_no-slt_no:
-       shift+= utilities.FrequencyShift(solute=solute_parameters,
-                                        solvent=epdma,
-                                        solute_structure=solute_parameters.get_origin())
+       shift_e+= utilities.FrequencyShift(solute=solute_parameters,
+                                          solvent=epdma,
+                                          solute_structure=solute_parameters.get_origin())
     # ions
     if ion_no:
-       shift+= utilities.FrequencyShift(solute=solute_parameters,
-                                        solvent=idma,
-                                        solute_structure=solute_parameters.get_origin())
+       shift_i+= utilities.FrequencyShift(solute=solute_parameters,
+                                          solvent=idma,
+                                          solute_structure=solute_parameters.get_origin())
     # solvent molecules
     for mol in xrange(water_no):
         solcnt = numpy.sum(wdma_l[mol].get_pos(),axis=0)/numpy.float64(solvent_nat)
@@ -393,18 +397,30 @@ def md_shifts_pp(frame,frame_idx,
             #if R>50.: print " solvent-%4d  %36.4f %10.3f"%((mol+1),s[3],R)
             #if numpy.abs(s[3])>0.: wdma_l[mol].write('solvent-%d.xyz'%(mol+1),'xyz' )
             #if numpy.abs(s[3])>3.: print wdma_l[mol]
-            shift+=s
+            shift_w+=s
     #print "DUPCIA",water_no,ion_no,prot_no,slt_no
+    shift = shift_e + shift_i + shift_w
     ### update the report
     if not camm: 
         rms_inst = 0
         rms_ref  = 0
-    report_line = "  %5i %10.3f %10.3f %10.3f %10.3f %10.3f %10.4f %10.4f\n"\
+    report_line   = "  %5i %10.3f %10.3f %10.3f %10.3f %10.3f %10.4f %10.4f\n"\
                         % (frame_idx-1,shift[0],shift[1],shift[2],shift[3],shift[4],
                             rms_inst, rms_ref)
-                            
-    return shift, report_line
+    report_line_e = "  %5i %10.3f %10.3f %10.3f %10.3f %10.3f %10.4f %10.4f\n"\
+                        % (frame_idx-1,shift_e[0],shift_e[1],shift_e[2],shift_e[3],shift_e[4],
+                            rms_inst, rms_ref)
+    report_line_i = "  %5i %10.3f %10.3f %10.3f %10.3f %10.3f %10.4f %10.4f\n"\
+                        % (frame_idx-1,shift_i[0],shift_i[1],shift_i[2],shift_i[3],shift_i[4],
+                            rms_inst, rms_ref)
+    report_line_w = "  %5i %10.3f %10.3f %10.3f %10.3f %10.3f %10.4f %10.4f\n"\
+                        % (frame_idx-1,shift_w[0],shift_w[1],shift_w[2],shift_w[3],shift_w[4],
+                            rms_inst, rms_ref)
 
+    return shift  , report_line  , \
+           shift_e, report_line_e, \
+           shift_i, report_line_i, \
+           shift_w, report_line_w
 
 class SLV_MD(UNITS):
     """\
@@ -429,7 +445,7 @@ Usage: will be added soon!"""
                  camm=False,suplist=[],ncpus=None,
                  non_atomic=False,inp=None,
                  natoms=None,nprotein=None,
-                 report_name='report.md',):
+                 report_name='report',):
         solat, solchind, solch, ich, inmol,\
         iname, ithr, sch, snmol, sname, sthr = read_inp(inp)
         self.solchind = solchind
@@ -482,9 +498,15 @@ Usage: will be added soon!"""
            self._ProceedTheFrames(nframes,ncpus=ncpus)
         print time.time()-to, "  :  TIME"
         ### report on average shift and std
-        self.report.write(self.__repr__())
+        self.report  .write(self.__repr__())
+        self.report_e.write(self._print(self.averages_e,self.stds_e))
+        self.report_i.write(self._print(self.averages_i,self.stds_i))
+        self.report_w.write(self._print(self.averages_w,self.stds_w))
         ### close the files
-        self.report.close()
+        self.report  .close()
+        self.report_e.close()
+        self.report_i.close()
+        self.report_w.close()
         ### print cpu workers report on screen
         if ncpus is not None:
            self.job_server.print_stats()
@@ -587,7 +609,7 @@ Usage: will be added soon!"""
         sum_chg = sum(epcharges)
         a_chg   = abs(sum_chg)
         d_chg   = abs(a_chg-int(round(a_chg)))
-        if d_chg>0.001:
+        if d_chg>0.0001:
             print "\n WARNING! The sum of charges for eprotein is not integer! sum=%5.6f\n" % sum_chg
             print " Quitting... check carefully the charges and restart your task\n" % sum_chg
             raise ValueError
@@ -599,8 +621,11 @@ Usage: will be added soon!"""
         """proceeds frame by frame to collect frequency shifts"""
         
         print "\n SLV FREQUENCY SHIFT DISTRIBUTION CALCULATION MODE\n"
-        self.frequency_shifts = []
-        self.shift_corrections= []
+        self.frequency_shifts   = []
+        self.frequency_shifts_e = []
+        self.frequency_shifts_i = []
+        self.frequency_shifts_w = []
+        self.shift_corrections  = []
                 
         if self.pkg == 'amber':
            # read frames
@@ -662,23 +687,69 @@ Usage: will be added soon!"""
                     
         # gather the results
         for job in self.jobs:
-            shift, report_line = job()
-            self.report.write(report_line)
-            self.report.flush()
-            self.frequency_shifts.append( shift )
+            shift, report_line, shift_e, report_line_e, shift_i, report_line_i, shift_w, report_line_w = job()
+            #
+            for II,JJ,KK,LL in [(self.report  ,  report_line  , self.frequency_shifts   , shift  ),
+                                (self.report_e,  report_line_e, self.frequency_shifts_e , shift_e), 
+                                (self.report_i,  report_line_i, self.frequency_shifts_i , shift_i),
+                                (self.report_w,  report_line_w, self.frequency_shifts_w , shift_w)]:
+               II.write(JJ)
+               II.flush()
+               KK.append(LL)
 
         ### finalize the results
-        self.frequency_shifts = array( self.frequency_shifts )
+        self.frequency_shifts   = array( self.frequency_shifts   )
+        self.frequency_shifts_e = array( self.frequency_shifts_e )
+        self.frequency_shifts_i = array( self.frequency_shifts_i )
+        self.frequency_shifts_w = array( self.frequency_shifts_w )
+
         self.averages  = array([average(self.frequency_shifts[:,0]),
                                 average(self.frequency_shifts[:,1]),
                                 average(self.frequency_shifts[:,2]),
                                 average(self.frequency_shifts[:,3]),
                                 average(self.frequency_shifts[:,4])])
-        self.stds = array([std(self.frequency_shifts[:,0]),
-                           std(self.frequency_shifts[:,1]),
-                           std(self.frequency_shifts[:,2]),
-                           std(self.frequency_shifts[:,3]),
-                           std(self.frequency_shifts[:,4])])
+
+        self.averages_e= array([average(self.frequency_shifts_e[:,0]),
+                                average(self.frequency_shifts_e[:,1]),
+                                average(self.frequency_shifts_e[:,2]),
+                                average(self.frequency_shifts_e[:,3]),
+                                average(self.frequency_shifts_e[:,4])])
+
+        self.averages_i= array([average(self.frequency_shifts_i[:,0]),
+                                average(self.frequency_shifts_i[:,1]),
+                                average(self.frequency_shifts_i[:,2]),
+                                average(self.frequency_shifts_i[:,3]),
+                                average(self.frequency_shifts_i[:,4])])
+
+        self.averages_w= array([average(self.frequency_shifts_w[:,0]),
+                                average(self.frequency_shifts_w[:,1]),
+                                average(self.frequency_shifts_w[:,2]),
+                                average(self.frequency_shifts_w[:,3]),
+                                average(self.frequency_shifts_w[:,4])])
+
+        self.stds  = array([std(self.frequency_shifts[:,0]),
+                            std(self.frequency_shifts[:,1]),
+                            std(self.frequency_shifts[:,2]),
+                            std(self.frequency_shifts[:,3]),
+                            std(self.frequency_shifts[:,4])])
+
+        self.stds_e= array([std(self.frequency_shifts_e[:,0]),
+                            std(self.frequency_shifts_e[:,1]),
+                            std(self.frequency_shifts_e[:,2]),
+                            std(self.frequency_shifts_e[:,3]),
+                            std(self.frequency_shifts_e[:,4])])
+
+        self.stds_i= array([std(self.frequency_shifts_i[:,0]),
+                            std(self.frequency_shifts_i[:,1]),
+                            std(self.frequency_shifts_i[:,2]),
+                            std(self.frequency_shifts_i[:,3]),
+                            std(self.frequency_shifts_i[:,4])])
+
+        self.stds_w= array([std(self.frequency_shifts_w[:,0]),
+                            std(self.frequency_shifts_w[:,1]),
+                            std(self.frequency_shifts_w[:,2]),
+                            std(self.frequency_shifts_w[:,3]),
+                            std(self.frequency_shifts_w[:,4])])
 
     def _ProceedTheFrames_no_pp(self,nframes):
         """proceeds frame by frame to collect frequency shifts"""
@@ -862,8 +933,8 @@ Usage: will be added soon!"""
 
     def __init_report(self):
         """initialize the report"""
-        self.report = open(self.report_name,'w')
-        self.report.write("# SLV Molecular Dynamics Shifts\n")
+        self.report = open(self.report_name+'_T.md','w')
+        self.report.write("# SLV Molecular Dynamics Shifts - TOTAL\n")
         self.report.write("# Units: shifts in [cm-1], rms in [Bohr]\n")
         self.report.write("# %5s %10s %10s %10s %10s %10s %10s %10s\n"\
                                        %("Frame"    .rjust(5),
@@ -875,8 +946,73 @@ Usage: will be added soon!"""
                                          "rms-inst" .rjust(10),
                                          "rms-ref"  .rjust(10)))
         self.report.flush()
+
+        # eprotein
+        self.report_e = open(self.report_name+'_e.md','w')
+        self.report_e.write("# SLV Molecular Dynamics Shifts due to EPROTEIN\n")
+        self.report_e.write("# Units: shifts in [cm-1], rms in [Bohr]\n")
+        self.report_e.write("# %5s %10s %10s %10s %10s %10s %10s %10s\n"\
+                                       %("Frame"    .rjust(5),
+                                         "1"        .rjust(10),
+                                         "1+2"      .rjust(10),
+                                         "1+2+3"    .rjust(10),
+                                         "1+2+3+4"  .rjust(10),
+                                         "1+2+3+4+5".rjust(10),
+                                         "rms-inst" .rjust(10),
+                                         "rms-ref"  .rjust(10)))
+        self.report_e.flush()
+
+        # ions
+        self.report_i = open(self.report_name+'_i.md','w')
+        self.report_i.write("# SLV Molecular Dynamics Shifts due to IONS\n")
+        self.report_i.write("# Units: shifts in [cm-1], rms in [Bohr]\n")
+        self.report_i.write("# %5s %10s %10s %10s %10s %10s %10s %10s\n"\
+                                       %("Frame"    .rjust(5),
+                                         "1"        .rjust(10),
+                                         "1+2"      .rjust(10),
+                                         "1+2+3"    .rjust(10),
+                                         "1+2+3+4"  .rjust(10),
+                                         "1+2+3+4+5".rjust(10),
+                                         "rms-inst" .rjust(10),
+                                         "rms-ref"  .rjust(10)))
+        self.report_i.flush()
+
+        # eprotein
+        self.report_w = open(self.report_name+'_w.md','w')
+        self.report_w.write("# SLV Molecular Dynamics Shifts due to SOLVENT\n")
+        self.report_w.write("# Units: shifts in [cm-1], rms in [Bohr]\n")
+        self.report_w.write("# %5s %10s %10s %10s %10s %10s %10s %10s\n"\
+                                       %("Frame"    .rjust(5),
+                                         "1"        .rjust(10),
+                                         "1+2"      .rjust(10),
+                                         "1+2+3"    .rjust(10),
+                                         "1+2+3+4"  .rjust(10),
+                                         "1+2+3+4+5".rjust(10),
+                                         "rms-inst" .rjust(10),
+                                         "rms-ref"  .rjust(10)))
+        self.report_w.flush()
         return
-                        
+
+    def _print(self, av, st):
+        """print happy me!"""
+        
+        log = "\n      Your dreamed frequency shift distribution! [cm-1]\n"
+        log+=   "      -------------------------------------------------\n"
+        log+=   "         1         :  %16.1f ± %.1f\n" % ( av[0],
+                                                            st[0] )
+        log+=   "         1+2       :  %16.1f ± %.1f\n" % ( av[1],
+                                                            st[1] )
+        log+=   "         1+2+3     :  %16.1f ± %.1f\n" % ( av[2],
+                                                            st[2] )
+        log+=   "         1+2+3+4   :  %16.1f ± %.1f\n" % ( av[3],
+                                                            st[3] )
+        log+=   "         1+2+3+4+5 :  %16.1f ± %.1f\n" % ( av[4],
+                                                            st[4] )
+        log+=   "      -------------------------------------------------\n"
+        log+= "\n\n"
+          
+        return str(log)                       
+                       
     def __repr__(self):
         """print me!"""
         
