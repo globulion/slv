@@ -580,7 +580,7 @@ Usage: will be added soon!"""
            line=charges_file.readline()
            line=charges_file.readline()
            while line!='\n':
-             if not.linestartswith(';'):
+             if not line.startswith(';'):
                 epcharges.append(line.split()[6])
              line=charges_file.readline()
            
