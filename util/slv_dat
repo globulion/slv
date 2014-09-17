@@ -15,11 +15,26 @@
                                         Last revision: 13 Sep 2014
 """
 from sys import argv,exit
-from numpy import array, float64 as f64, dot, average, std
+from numpy import array, float64 as f64, dot, average, std, zeros
 print __doc__
 if len(argv)==1:exit()
 import re, re_templates as RE
 from scitools import filetable as ft
+from matplotlib.font_manager import FontProperties as FP
+from pylab import *
+
+n_col = 4
+n_xg  = 3 ; f_xs = 21 ; p_x = 0.04
+n_yg  = 3 ; f_ys = 15 ; p_y = 0.92
+
+# font size
+fs = 20
+# fancy font
+font0 = FP()
+font1 = font0.copy()
+font1.set_family('sans-serif')
+font1.set_weight('bold')
+marker = 'o'
 
 # utilities
 def Read_slv_md_report(f):
@@ -43,21 +58,47 @@ def Read_slv_md_report(f):
     av  = array(d,f64)
     return sh, av 
 
+def get_r_av(x,dx):
+    """return running average of x every dx"""
+    n = len(x)/int(round(dx))
+    r_av = zeros(n,float64)
+    r_av = [ average(x[i*dx:(i+1)*dx]) for i in range(n) ] 
+    x_av = [ i*dx + dx/2. for i in range(n) ] 
+    return  array(x_av,float64), array(r_av,float64) 
 
 # gather the shifts from frames as well as averages
 SH = list()
 AV = list()
 
 files = argv[1:]
-for f in files:
+
+fig = figure(figsize=(f_xs,f_ys))
+for i,f in enumerate(files):
     sh, av  = Read_slv_md_report(f)
     SH.append(sh); AV.append(av)
+    # running averages
+    x_av, r_av = get_r_av(sh[:,n_col],dx=100)
+    # plot shifts
+    ax= fig.add_subplot(n_xg, n_yg, i)
+    x = sh[:,0]
+    y = sh[:,n_col]
+    xt = (x.max()-x.min())*0.02 + x.min()
+    yt = (y.max()-y.min())*0.92 + y.min()
+    ax.plot(x, y, '-', color='gray', lw=0.2)
+    ax.plot(x_av, r_av, '-o', color='blue')
+    ax.plot([x.min(),x.max()], [r_av.min(),r_av.min()], '--', color='red', lw=1.0 )
+    ax.plot([x.min(),x.max()], [r_av.max(),r_av.max()], '--', color='red', lw=1.0 )
+    ax.text(p_x, p_y, f[7:-3], transform = ax.transAxes, fontsize=20, fontproperties=font1)
+    plt.xticks(fontsize=14, fontproperties=font1)
+    plt.yticks(fontsize=14, fontproperties=font1)
+savefig('fig-shifts.jpg')
+    
 
 SH = array(SH,f64); AV = array(AV,f64)
 
 # evaluate average shifts
-sh_av = average( AV[:,3,0] )
-st_av = average( AV[:,3,1] )
+sh_av = average( AV[:,n_col-1,0] )
+st_av = average( AV[:,n_col-1,1] )
 
 log = '\n'
 log+= ' Average shift: %10.1f ± %10.2f\n' % (sh_av, st_av)
