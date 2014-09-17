@@ -28,7 +28,8 @@ while 1:
 line=itp.readline()
 line=itp.readline()
 while line!='\n':
-   charges.append(line.split()[6])
+   if not line.startswith(';'):
+      charges.append(line.split()[6])
    line=itp.readline()
 
 charges= array(charges,float64)

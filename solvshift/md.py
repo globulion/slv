@@ -580,7 +580,8 @@ Usage: will be added soon!"""
            line=charges_file.readline()
            line=charges_file.readline()
            while line!='\n':
-             epcharges.append(line.split()[6])
+             if not.linestartswith(';'):
+                epcharges.append(line.split()[6])
              line=charges_file.readline()
            
            self.prot_no = len(epcharges)
