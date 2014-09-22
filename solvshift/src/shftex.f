@@ -418,13 +418,16 @@ C
      &                TIJM1(40,40,40)
       PARAMETER (ZERO=0.0D+00)
       FJEX = ZERO
-      DO 1937 M=1,NMODES
+      DO M=1,NMODES
          FIEX(M) = ZERO
-      DO 1937 I=1,NMOSA
-      DO 1937 J=1,NMOSB
+      DO I=1,NMOSA
+      DO J=1,NMOSB
          SIJM1(M,I,J) = ZERO
          TIJM1(M,I,J) = ZERO
- 1937 CONTINUE
+      ENDDO
+      ENDDO
+      ENDDO
+C 1937 CONTINUE
       RETURN
       END
 
