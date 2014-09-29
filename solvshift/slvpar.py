@@ -683,6 +683,8 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         if self.__natoms is not None: par['natoms'] = self.__natoms
         if self.__name   is not None: par['name'  ] = self.__name
         if self.__basis  is not None: par['basis' ] = self.__basis
+        if self.__nbasis is not None: par['nbasis'] = self.__nbasis
+        if self.__nmos   is not None: par['nmos'  ] = self.__nmos
         if self.__mode   is not None: par['mode'  ] = self.__mode
         # frequency analysis
         if self.__redmass  is not None: par['redmass'] = self.__redmass
