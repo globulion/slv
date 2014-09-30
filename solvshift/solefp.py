@@ -416,42 +416,60 @@ Also set the BSM parameters if not done in set_bsm.
                # basis sets
                molA = MakeMol(parc['atno'],parc['pos'])
                bfsA = getbasis(molA,parc['basis'])
+               nbsa = parc['nbasis']
+               nmosa= parc['nmos']
+               nmodes = parc['nmodes']
                # parameters for central molecule
-               faij = parc['fock']
-               faij1= parc['fock1']
-               cika = parc['vecl']
-               cika1= parc['vecl1']
+               faij = parc['fock'].ravel()
+               faij1= parc['fock1'].ravel()
+               cika = parc['vecl'].ravel()
+               cika1= parc['vecl1'].ravel()
                za   = parc['atno']
-               rna  = parc['pos']
-               ria  = parc['lmoc']
-               ria1 = parc['lmoc1']
+               rna  = parc['pos'].ravel()
+               ria  = parc['lmoc'].ravel()
+               ria1 = parc['lmoc1'].ravel()
                mlist= bfsA.get_bfsl() + 1
                redmss= parc['redmass']
                gijj = parc['gijk'][:,self.__mode-1,self.__mode-1]
                freq = parc['freq']
-               lvec = parc['lvec']
+               lvec = parc['lvec'].ravel()
                #
                for par in PAR:
                    molB = MakeMol(par['atno'],par['pos'])
                    bfsB = getbasis(molB,par['basis'])
+                   nbsb = par['nbasis']
+                   nmosb = par['nmos']
                    # instantaneous integrals
-                   skm  = getSAB(bfsA,bfsB)
-                   tkm  = getTAB(bfsA,bfsB)
-                   sk1m = getSA1B(bfsA,bfsB)
-                   tk1m = getTA1B(bfsA,bfsB)
+                   skm  = getSAB(bfsA,bfsB).ravel()
+                   tkm  = getTAB(bfsA,bfsB).ravel()
+                   sk1m = getSA1B(bfsA,bfsB).ravel()
+                   tk1m = getTA1B(bfsA,bfsB).ravel()
                    ### molecule B
-                   fbij = par['fock']
-                   cikb = par['vecl']
+                   fbij = par['fock'].ravel()
+                   cikb = par['vecl'].ravel()
                    zb   = par['atno']
-                   rnb  = par['pos']
-                   rib  = par['lmoc']
+                   rnb  = par['pos'].ravel()
+                   rib  = par['lmoc'].ravel()
                    # calculate the properties!
-                   sma ,shftea = shftex(redmss,freq,gijj,lvec,
+                   #sma ,shftea = shftex(redmss,freq,gijj,lvec,
+                   #                     ria,rib,rna,rnb,ria1,
+                   #                     cika,cikb,cika1,
+                   #                     skm,tkm,sk1m,tk1m,
+                   #                     za,zb,mlist,
+                   #                     faij,fbij,faij1,self.__mode)
+                   sij = zeros(nmosa*nmosb,float64)
+                   tij = zeros(nmosa*nmosb,float64)
+                   smij= zeros(nmodes*nmosa*nmosb,float64)
+                   tmij= zeros(nmodes*nmosa*nmosb,float64)
+                   fi  = zeros(nmodes,float64)
+                   #
+                   sma, shftea = shftex(redmss,freq,gijj,lvec,
                                         ria,rib,rna,rnb,ria1,
                                         cika,cikb,cika1,
                                         skm,tkm,sk1m,tk1m,
-                                        za,zb,mlist,
-                                        faij,fbij,faij1,self.__mode)
+                                        za,zb,nbsb,mlist,
+                                        faij,fbij,faij1,self.__mode,
+                                        sij,tij,smij,tmij,fi)
                    serp+=sma
                    #
                if self.__cunit:
