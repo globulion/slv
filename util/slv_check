@@ -86,8 +86,10 @@ for I,fchk in enumerate(fchk_files):
     # transform to LMO space
     sij = dot(veclmo,dot(sij,transpose(y_vecl)))
     SIJ.append(sij)
-
+#
+nmodes = nat*3-6 ; nbsa=len(x_bfs); nbsb=len(y_bfs)
 print log_wfn
+
 # change FD variables to numpy.ndarray-s
 SIJ = array(SIJ,float64)
 TIJ = array(TIJ,float64)
@@ -119,8 +121,8 @@ TIJ_DER = array(TIJ_DER,float64)
 VECL_DER= array(VECL_DER,float64)
 SXY_DER = array(SXY_DER,float64)
 
-S = zeros((121,37,3),float64)
-for i in range(121):
+S = zeros((nbsa,nbsb,3),float64)
+for i in range(nbsa):
     a = x_bfs.LIST1[i]
     ids= a*3
     ide= ids+3
@@ -142,8 +144,8 @@ sxy_der = PyQuante.Ints.getSA1B(x_bfs,y_bfs)
 # write the exact and numerical sxy_der and SXY_DER to a file
 out = open('sxy.dat','w')
 log = ''
-for i in range(121):
-    for j in range(37):
+for i in range(nbsa):
+    for j in range(nbsb):
         s = sxy_der[i,j,:]
         S = SXY_DER[i,j,:]
         log+= '%4i %4i' % (i+1,j+1)
@@ -152,15 +154,13 @@ for i in range(121):
 out.write(log)
 out.close()
 
-#
-nmodes = nat*3-6 ; nbsa=len(x_bfs); nbsb=len(y_bfs)
 lvec = lvec.reshape(nat,3,nmodes)
 
 # transform to normal coordinate space
-sij_der = zeros((nmodes,121,37),float64)
+sij_der = zeros((nmodes,nbsa,nbsb),float64)
 l = x_bfs.LIST1
 for i in range(nmodes):
-    for j in range(121):
+    for j in range(nbsa):
         lx = lvec[l[j],:,i] 
         sij_der[i,j,:] = tensordot(lx,sxy_der[j],(0,1))
 
