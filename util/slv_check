@@ -150,7 +150,8 @@ for i in range(nbsa):
         S = SXY_DER[i,j,:]
         log+= '%4i %4i' % (i+1,j+1)
         log+= '%15.6E %15.6E %15.6E | '   % tuple(s)
-        log+= '%15.6E %15.6E %15.6E\n'    % tuple(S)
+        log+= '%15.6E %15.6E %15.6E | '   % tuple(S)
+        log+= '%15.6E %15.6E %15.6E \n'   % tuple(S/s)
 out.write(log)
 out.close()
 
