@@ -17,6 +17,7 @@
    nae = number of alpha electrons
    anh = solute anharmonic g09 log file
    fchk= solvent FCHK g09 file
+   6-311++G** basis set and 1.0D-10 PM-local convergence are set
 """
 from sys import argv,exit
 print __doc__
@@ -33,18 +34,17 @@ import PyQuante.Ints
 basis               = '6-311++G**'
 nae                 =  int(argv[1])
 y_nae               =  int(argv[2])
-solute_anh          =  int(argv[3])
-solvent_fchk        =  int(argv[4])
-step                =  int(argv[5]) * u.AngstromToBohr
+solute_anh          =      argv[3]
+solvent_fchk        =      argv[4]
+step                =  float64(argv[5]) * u.AngstromToBohr
 conv                =  1.0E-10   # PM localization
 
 # FD variables
-SIJ                 = list()
-TIJ                 = list()
-SIJ_DER             = list()
-TIJ_DER             = list()
-VECL                = list()
-VECL_DER            = list()
+SIJ                 = list(); SIJ_DER             = list()
+TIJ                 = list(); TIJ_DER             = list()
+SXY                 = list(); SXY_DER             = list()
+TXY                 = list(); TXY_DER             = list()
+VECL                = list(); VECL_DER            = list()
 
 vec_ref = None; log_wfn = ''
 # read water molecule
@@ -56,7 +56,7 @@ tran, y_vecl = get_pmloca(len(y_mol.atoms),mapi=y_bfs.LIST1,sao=PyQuante.Ints.ge
                           lprint=0,freeze=None)
 
 # read solutes anharmonic file
-anh = FREQ(solute_anh).w()
+anh = FREQ(solute_anh)
 lvec= anh.L
 
 # read solutes displaced structures and evaluate S(ij) AO
@@ -81,6 +81,7 @@ for I,fchk in enumerate(fchk_files):
     VECL.append(veclmo)
     # overlap between solute-solvent
     sij = PyQuante.Ints.getSAB(bfs,y_bfs)
+    SXY.append(sij)
     if not I: x_sxy = sij.copy()
     # transform to LMO space
     sij = dot(veclmo,dot(sij,transpose(y_vecl)))
@@ -90,6 +91,7 @@ print log_wfn
 # change FD variables to numpy.ndarray-s
 SIJ = array(SIJ,float64)
 TIJ = array(TIJ,float64)
+SXY = array(SXY,float64)
 
 # numerically differentiate
 for i in range(nat*3):
@@ -105,11 +107,27 @@ for i in range(nat*3):
        +8.0*( VECL[K+1] - VECL[K+2] ))\
        / step
     VECL_DER.append(vd)
+    #
+    sd = (1./12.)* (\
+            ( SXY[K+3] - SXY[K+0] ) \
+       +8.0*( SXY[K+1] - SXY[K+2] ))\
+       / step
+    SXY_DER.append(sd)
 
 SIJ_DER = array(SIJ_DER,float64)
 TIJ_DER = array(TIJ_DER,float64)
 VECL_DER= array(VECL_DER,float64)
+SXY_DER = array(SXY_DER,float64)
 
+S = zeros((121,37,3),float64)
+for i in range(121):
+    a = x_bfs.LIST1[i]
+    ids= a*3
+    ide= ids+3
+    S[i,:,:] = transpose(SXY_DER[ids:ide,i,:])
+
+del SXY_DER
+SXY_DER = S
 # transform to normal coordinate space
 SIJ_DER = tensordot(lvec,SIJ_DER,(0,0))
 VECL_DER= tensordot(lvec,VECL_DER,(0,0))
@@ -121,6 +139,20 @@ VECL_DER= tensordot(lvec,VECL_DER,(0,0))
 # calculate integral derivatives in AO-atomic space
 sxy_der = PyQuante.Ints.getSA1B(x_bfs,y_bfs)
 
+# write the exact and numerical sxy_der and SXY_DER to a file
+out = open('sxy.dat','w')
+log = ''
+for i in range(121):
+    for j in range(37):
+        s = sxy_der[i,j,:]
+        S = SXY_DER[i,j,:]
+        log+= '%4i %4i' % (i+1,j+1)
+        log+= '%15.6E %15.6E %15.6E | '   % tuple(s)
+        log+= '%15.6E %15.6E %15.6E\n'    % tuple(S)
+out.write(log)
+out.close()
+
+#
 nmodes = nat*3-6 ; nbsa=len(x_bfs); nbsb=len(y_bfs)
 lvec = lvec.reshape(nat,3,nmodes)
 
@@ -138,9 +170,6 @@ sij_der = tensordot(sij_der,y_vecl,(2,1))
 sij_der = transpose(sij_der,(1,0,2))
 
 # add the contribution from VECL_DER
-print VECL_DER.shape
-print x_sxy.shape
-print y_vecl.shape
 c = tensordot(VECL_DER,x_sxy,(2,0))
 c = tensordot(c,y_vecl,(2,1))
 sij_der += c
