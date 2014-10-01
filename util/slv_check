@@ -1,0 +1,163 @@
+#!/usr/bin/python
+"""
+ Calculate derivatives of S(ij)_LMO wrt normal coordinates
+ for a model solute-solvent cluster and compare them with 
+ exact analytical evaluation.
+ 
+ Needs:
+   - finite field set of g09 FCHK files produced by slv inputs
+   - solute anharmonic file
+   - solvent fchk file in an appropriate XYZ position wrt solute
+ 
+ Usage:
+  ./slv_check [x_nae] [y_nae] [anh] [fchk]
+ 
+ Notes:
+   x/y = solute/solvent
+   nae = number of alpha electrons
+   anh = solute anharmonic g09 log file
+   fchk= solvent FCHK g09 file
+"""
+from sys import argv,exit
+print __doc__
+if len(argv)==1: exit()
+
+from utilities import get_pmloca, check_sim, order, ParseVecFromFchk, Read_xyz_file
+from glob import glob
+from numpy import *
+from units import UNITS as u
+from gaussfreq import FREQ
+import PyQuante.Ints
+
+# set these values for your solute-solvent system
+basis               = '6-311++G**'
+nae                 =  int(argv[1])
+y_nae               =  int(argv[2])
+solute_anh          =  int(argv[3])
+solvent_fchk        =  int(argv[4])
+step                =  int(argv[5]) * u.AngstromToBohr
+conv                =  1.0E-10   # PM localization
+
+# FD variables
+SIJ                 = list()
+TIJ                 = list()
+SIJ_DER             = list()
+TIJ_DER             = list()
+VECL                = list()
+VECL_DER            = list()
+
+vec_ref = None; log_wfn = ''
+# read water molecule
+y_mol = Read_xyz_file(solvent_fchk,mol=1,mult=1,charge=0,name='water')
+y_bfs = PyQuante.Ints.getbasis(y_mol,basis)
+y_sao = PyQuante.Ints.getS(y_bfs)
+tran, y_vecl = get_pmloca(len(y_mol.atoms),mapi=y_bfs.LIST1,sao=PyQuante.Ints.getS(y_bfs),
+                          vecin=ParseVecFromFchk(solvent_fchk)[:y_nae,:],nae=y_nae,conv=conv,
+                          lprint=0,freeze=None)
+
+# read solutes anharmonic file
+anh = FREQ(solute_anh).w()
+lvec= anh.L
+
+# read solutes displaced structures and evaluate S(ij) AO
+fchk_files = glob('*_.fchk'); fchk_files.sort()
+for I,fchk in enumerate(fchk_files):
+    print " - reading file %30s" % fchk
+    mol = Read_xyz_file(fchk,mol=1,mult=1,charge=0,name='happy',)
+    bfs = PyQuante.Ints.getbasis(mol,basis)
+    nbf = len(bfs)
+    nat = len(mol.atoms)
+    SAO = PyQuante.Ints.getS(bfs)
+    veccmo = ParseVecFromFchk(fchk)[:nae,:]
+    tran, veclmo = get_pmloca(nat,mapi=bfs.LIST1,sao=SAO,
+                              vecin=veccmo,nae=nae,conv=conv,
+                              lprint=0,freeze=None)
+    if vec_ref is None: 
+       vec_ref = veclmo.copy()
+       x_bfs   = bfs
+    veclmo, sim = order(vec_ref,veclmo,start=0,lprint=0)
+    log_wfn += str(sim) + '\n'
+    log_wfn += check_sim(sim) + '\n\n'
+    VECL.append(veclmo)
+    # overlap between solute-solvent
+    sij = PyQuante.Ints.getSAB(bfs,y_bfs)
+    if not I: x_sxy = sij.copy()
+    # transform to LMO space
+    sij = dot(veclmo,dot(sij,transpose(y_vecl)))
+    SIJ.append(sij)
+
+print log_wfn
+# change FD variables to numpy.ndarray-s
+SIJ = array(SIJ,float64)
+TIJ = array(TIJ,float64)
+
+# numerically differentiate
+for i in range(nat*3):
+    K = 1 + 4*i
+    fd = (1./12.)* (\
+            ( SIJ[K+3] - SIJ[K+0] ) \
+       +8.0*( SIJ[K+1] - SIJ[K+2] ))\
+       / step
+    SIJ_DER.append(fd)
+    #
+    vd = (1./12.)* (\
+            ( VECL[K+3] - VECL[K+0] ) \
+       +8.0*( VECL[K+1] - VECL[K+2] ))\
+       / step
+    VECL_DER.append(vd)
+
+SIJ_DER = array(SIJ_DER,float64)
+TIJ_DER = array(TIJ_DER,float64)
+VECL_DER= array(VECL_DER,float64)
+
+# transform to normal coordinate space
+SIJ_DER = tensordot(lvec,SIJ_DER,(0,0))
+VECL_DER= tensordot(lvec,VECL_DER,(0,0))
+
+# --------------------------------- #
+#               EXACT               #
+# --------------------------------- #
+
+# calculate integral derivatives in AO-atomic space
+sxy_der = PyQuante.Ints.getSA1B(x_bfs,y_bfs)
+
+nmodes = nat*3-6 ; nbsa=len(x_bfs); nbsb=len(y_bfs)
+lvec = lvec.reshape(nat,3,nmodes)
+
+# transform to normal coordinate space
+sij_der = zeros((nmodes,121,37),float64)
+l = x_bfs.LIST1
+for i in range(nmodes):
+    for j in range(121):
+        lx = lvec[l[j],:,i] 
+        sij_der[i,j,:] = tensordot(lx,sxy_der[j],(0,1))
+
+# transform to LMO space
+sij_der = tensordot(vec_ref,sij_der,(1,1))
+sij_der = tensordot(sij_der,y_vecl,(2,1))
+sij_der = transpose(sij_der,(1,0,2))
+
+# add the contribution from VECL_DER
+print VECL_DER.shape
+print x_sxy.shape
+print y_vecl.shape
+c = tensordot(VECL_DER,x_sxy,(2,0))
+c = tensordot(c,y_vecl,(2,1))
+sij_der += c
+
+# write the outputs to sij.dat and SIJ.dat files, respectively
+out1 = open('sij.dat','w')
+out2 = open('SIJ.dat','w')
+out3 = open('sdiff.dat','w')
+diff = (sij_der - SIJ_DER) / sij_der  * 100.00
+for i in range(nmodes):
+    l1 = str(sij_der[i]) + '\n'
+    l2 = str(SIJ_DER[i]) + '\n'
+    l3 = str(diff[i])    + '\n'
+    pre = 'MODE %i\n\n' %(i+1)
+    out1.write(pre+l1)
+    out2.write(pre+l2)
+    out3.write(pre+l3)
+out1.close()
+out2.close()
+out3.close()
