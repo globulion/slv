@@ -16,7 +16,7 @@ import sys, copy, os, re, math
 sys.stdout.flush()
 
 __all__     = ['Frag',]
-__version__ = '1.0.1'
+__version__ = '2.0.1'
 
 class Frag(object,UNITS):
     """
@@ -82,18 +82,25 @@ class Frag(object,UNITS):
      frag = Frag(name)   where name is the name of molecule or fragment writte
                          n in SLV standard fragment library $SLV_PATH/frg
                          The following are possible:
-    --------------------------------------------------------------------------                     
-       name       molecule              EINT   FREQ   NLO      comment                             
-    --------------------------------------------------------------------------                     
-     o water      H2O                   YES    NO     NO       with DMA-5                          
-     o water2     H2O                   YES    NO     NO       with CAMM-3                         
-     o nma        N-methyl acetamide    YES    YES    NO       amide I mode                        
-     o meoac      Methyl acetate        YES    YES    NO       C=O stretch                         
-     o mescn      methyl thiocyanide    YES    YES                                                 
-     o dmso       DMSO                  YES    NO     NO                                           
-     o meoh       Methanol              YES    NO     NO                                           
-     o chcl3      Chloroform            YES    NO     NO                                           
-    --------------------------------------------------------------------------                     
+    ----------------------------------------------------------------------------                   
+       name       molecule                EINT   FREQ   NLO      comment                           
+    ----------------------------------------------------------------------------                   
+     o water      H2O                     YES    NO     NO       with DMA-5                        
+     o water2     H2O                     YES    NO     NO       with CAMM-3                       
+     o dmso       DMSO                    YES    NO     NO                                         
+     o meoh       Methanol                YES    NO     NO                                         
+     o chcl3      Chloroform              YES    NO     NO                                         
+     o dcm        Dichloromethane         YES    NO     NO  
+     o na+        Sodium cation           YES    NO     NO
+     o me-so3-    Methyl sulphonate (-1)  YES    NO     NO
+     o so3--      SO3 (2-) anion          YES    NO     NO
+     o meoac      Methyl acetate          YES    YES    NO       C=O stretch                       
+     o nma        N-methyl acetamide      YES    YES    NO       amide I mode                      
+     o nma-d7     NMA-D7                  YES    YES    NO       amide I' mode
+                                                                (all H deuterated)
+     o mescn      Methyl thiocyanide      YES    YES             C=N stretch
+                                                                            
+    ----------------------------------------------------------------------------                   
      frag = Frag(file)   where file is the Frag format file (*.frg) with parame
                          ters created by a user. See slv_der-* for fragment par
                          ameter generators
