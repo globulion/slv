@@ -78,23 +78,38 @@ class Frag(object,UNITS):
  
   1) create the object (initialize)                                           
                                                                              
-     frag = Frag()     # or...                                                
-     frag = Frag(file) # where file is the Frag format file (*.frg) with parame
-                       # ters; see <doc> for examplary files for water and NMA
-                       # or...
-     frag(file)        # after initialization of Frag instance read the *.frg file
+     frag = Frag()       initialize empty object or ...
+     frag = Frag(name)   where name is the name of molecule or fragment writte
+                         n in SLV standard fragment library $SLV_PATH/frg
+                         The following are possible:
+    --------------------------------------------------------------------------                     
+       name       molecule              EINT   FREQ   NLO      comment                             
+    --------------------------------------------------------------------------                     
+     o water      H2O                   YES    NO     NO       with DMA-5                          
+     o water2     H2O                   YES    NO     NO       with CAMM-3                         
+     o nma        N-methyl acetamide    YES    YES    NO       amide I mode                        
+     o meoac      Methyl acetate        YES    YES    NO       C=O stretch                         
+     o mescn      methyl thiocyanide    YES    YES                                                 
+     o dmso       DMSO                  YES    NO     NO                                           
+     o meoh       Methanol              YES    NO     NO                                           
+     o chcl3      Chloroform            YES    NO     NO                                           
+    --------------------------------------------------------------------------                     
+     frag = Frag(file)   where file is the Frag format file (*.frg) with parame
+                         ters created by a user. See slv_der-* for fragment par
+                         ameter generators
+     frag(file)          after initialization of Frag instance read the *.frg file
                                                                               
   2) set the data to frag from other source than Frag format file (*.frg)     
                                                                               
      frag.set(mol=None, anh=None, frag=None, dma=None, chelpg=None, esp=None) 
-                       # mol  - Molecule    class object                      
-                       # anh  - FREQ        class object                      
-                       # frag - FragFactory class object                      
-                       # dma  - DMA         class object                      
-                       # and other:                                           
-                       # * elpg - array of ChelpG charges                     
-                       # * esp    - array of ESP    charges                   
-                       # * other keywors that match list of memorials (see [2])
+                         mol  - Molecule    class object                      
+                         anh  - FREQ        class object                      
+                         frag - FragFactory class object                      
+                         dma  - DMA         class object                      
+                         and other:                                           
+                         * elpg - array of ChelpG charges                     
+                         * esp    - array of ESP    charges                   
+                         * other keywors that match list of memorials (see [2])
                                                                               
   3) write the parameters to a file                                           
                                                                               
