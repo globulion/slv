@@ -133,8 +133,9 @@ else:           lprint = True
 
 # [5] create report file
 out = open('shifts.dat', 'w')
-t = '%8s %10s %10s %10s %10s %10s %10s %10s %10s %10s' % ('# Frame'.ljust(8),
-                                                          'Exact'  .ljust(10),
+t = '%8s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s' % ('# Frame'.ljust(8),
+                                                          'Exact'  .rjust(10),
+                                                          'EL-TOT' .rjust(10),
                                                           'EL-MEA' .rjust(10),
                                                           'EL-EA'  .rjust(10),
                                                           'POL'    .rjust(10),
@@ -192,10 +193,11 @@ for xyz, freq in target:
     shifts = efp.get_shift()
     rms = efp.get_rms()
     # line of output frequencies
-    log = " %7d" % I
-    log+= "%10.2f"   % (freq - freq_0)
-    log+= 7*"%10.2f" % tuple(shifts[:7])
-    log+= "%10.5f\n" % rms
+    log = "%8d" % I
+    log+= " %10.2f"   % (freq - freq_0)
+    log+= " %10.2f"   % (shifts[0]+shifts[1])
+    log+= 7*" %10.2f" % tuple(shifts[:7])
+    log+= " %10.5f\n" % rms
     out.write(log)
     out.flush()
     #
