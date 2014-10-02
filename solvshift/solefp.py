@@ -3,7 +3,7 @@
 # -------------------------------------------------------------------------- #
 
 from numpy     import tensordot, dot, transpose, array, float64, zeros, \
-                      concatenate as con
+                      concatenate as con, where
 from units     import *
 from utilities import Read_xyz_file, get_pmloca, ParseFockFromGamessLog, \
                       ParseDmatFromFchk, ParseVecFromFchk, MakeMol
@@ -420,19 +420,19 @@ Also set the BSM parameters if not done in set_bsm.
                nmosa= parc['nmos']
                nmodes = parc['nmodes']
                # parameters for central molecule
-               faij = parc['fock'].ravel()
-               faij1= parc['fock1'].ravel()
-               cika = parc['vecl'].ravel()
-               cika1= parc['vecl1'].ravel()
-               za   = parc['atno']
-               rna  = parc['pos'].ravel()
-               ria  = parc['lmoc'].ravel()
-               ria1 = parc['lmoc1'].ravel()
+               faij = parc['fock' ]               .ravel()
+               faij1= parc['fock1']               .ravel()
+               cika = parc['vecl' ]               .ravel()
+               cika1= parc['vecl1']               .ravel()
+               za   = parc['atno' ]
+               rna  = parc['pos'  ]               .ravel()
+               ria  = parc['lmoc' ]               .ravel()
+               ria1 = parc['lmoc1']               .ravel()
                mlist= bfsA.get_bfsl() + 1
                redmss= parc['redmass']
                gijj = parc['gijk'][:,self.__mode-1,self.__mode-1]
                freq = parc['freq']
-               lvec = parc['lvec'].ravel()
+               lvec = parc['lvec']                .ravel()
                #
                for par in PAR:
                    molB = MakeMol(par['atno'],par['pos'])
@@ -440,16 +440,16 @@ Also set the BSM parameters if not done in set_bsm.
                    nbsb = par['nbasis']
                    nmosb = par['nmos']
                    # instantaneous integrals
-                   skm  = getSAB(bfsA,bfsB).ravel()
-                   tkm  = getTAB(bfsA,bfsB).ravel()
-                   sk1m = getSA1B(bfsA,bfsB).ravel()
-                   tk1m = getTA1B(bfsA,bfsB).ravel()
+                   skm  = getSAB(bfsA,bfsB)       .ravel()
+                   tkm  = getTAB(bfsA,bfsB)       .ravel()
+                   sk1m = getSA1B(bfsA,bfsB)      .ravel()
+                   tk1m = getTA1B(bfsA,bfsB)      .ravel()
                    ### molecule B
-                   fbij = par['fock'].ravel()
-                   cikb = par['vecl'].ravel()
+                   fbij = par['fock']             .ravel()
+                   cikb = par['vecl']             .ravel()
                    zb   = par['atno']
-                   rnb  = par['pos'].ravel()
-                   rib  = par['lmoc'].ravel()
+                   rnb  = par['pos' ]             .ravel()
+                   rib  = par['lmoc']             .ravel()
                    # calculate the properties!
                    #sma ,shftea = shftex(redmss,freq,gijj,lvec,
                    #                     ria,rib,rna,rnb,ria1,
