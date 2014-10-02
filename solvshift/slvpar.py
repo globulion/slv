@@ -226,6 +226,10 @@ class Frag(object,UNITS):
  =============================================================================
   Globulion@                                                                  
 """
+    ### ready parameters
+    params = ['water','water2','nma','nma-d7','mescn','meoac',
+              'meoh' ,'dmso'  , ]
+              
     def __init__(self,file=None):
         self.__file = file
         self._create()
@@ -234,8 +238,15 @@ class Frag(object,UNITS):
         
     def __call__(self,file):
         """parse the parameters from a file"""
-        self.__file = file
-        filef = open(file,'r')
+        if file in self.params:
+           self.__file = os.environ['SLV_PATH'] + '/frg/%s.frg' % file
+           if not os.path.isfile(self.__file):
+              message = " No such file: <%s>. There is no *.frg file for that molecule,\n" % self.__file
+              message+= " the name is misspelled or check if the $SLV_PATH variable is set properly\n"
+              message+= " (echo $SLV_PATH)" 
+              raise IOError, message
+        else: self.__file = file
+        filef = open(self.__file,'r')
         text = filef.read()
         filef.close()
         templ = re.compile(r'\[',re.DOTALL)
