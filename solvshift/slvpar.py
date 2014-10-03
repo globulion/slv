@@ -248,9 +248,10 @@ class Frag(object,UNITS):
  =============================================================================
   Globulion@                                                                  
 """
-    ### ready parameters
-    params = ['water','water2','nma','nma-d7','mescn','meoac',
-              'meoh' ,'dmso'  , ]
+    ### built-in parameters
+    params = ['water'  ,'water2' ,'nma'     ,'nma-d7'  ,'mescn'   ,'meoac'   ,
+              'meoh'   ,'dmso'   ,'dcm'     ,'chcl3'   ,'na+'     ,'so3--'   ,
+              'me-so3-',]
               
     def __init__(self,file=None):
         self.__file = file
