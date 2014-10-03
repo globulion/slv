@@ -1,0 +1,103 @@
+#!/usr/bin/python
+"""
+Pick the solute-solvent clusters from MD trajectory file
+
+Usage:
+
+ [xtc] nframes dframe thr n_1 a_c <n_2> <a_s>
+
+Notes: 
+ - nframes - number of frames
+ - dframe  - frame increment
+ - thr     - threshold for cluster size (COG-COG max distance)
+            (in Angstroms)
+ - n_1/n_2 - number of solute/solvent atoms
+ - s_1/s_2 - list of atoms (delimiter: coma ,)
+             ex. C,H,O,O,N,H,H,H,H
+ - Defaults are for water molecule (O,H,H)
+"""
+from sys import argv, exit
+from math import sqrt as msqrt
+print __doc__
+if len(argv)==1:exit()
+from numpy import float32, zeros, array, sum, sqrt, where, lexsort, arange
+from MDAnalysis.coordinates.xdrfile.libxdrfile2 import xdrfile_open, xdrfile_close,\
+                                                       read_xtc_natoms, read_xtc  ,\
+                                                       read_xtc, DIM, exdrOK
+from MDAnalysis.coordinates.TRJ import TRJReader, NCDFReader
+from units import UNITS as u
+import pylab
+
+# operational arguments
+trajectory = argv[1]
+nframes    = int(argv[2])
+dframe     = int(argv[3])
+thr        = float(argv[4]) * u.AngstromToBohr
+n_1        = int(argv[5])
+a_c        = argv[6].split(',')
+if len(argv)>7: n_2        = int(argv[7])
+else:           n_2        = 3 # water as default
+if len(argv)>8: a_s        = argv[8].split(',')
+else:           a_s        = ['O','H','H']
+
+natoms  = read_xtc_natoms(trajectory)
+nsmol   = (natoms-n_1)/n_2
+assert (natoms-n_1)%n_2==0, 'Error in atom numbers: Total No: %5d does not contain integer number of moelcules!'
+frame = zeros((natoms,DIM),dtype=float32)
+box = zeros((DIM,DIM),dtype=float32)
+XTC = xdrfile_open(trajectory,'r')
+
+def get_cog(r1):
+    """calculate center of geometry"""
+    cog = sum(r1,axis=0)/float(len(r1))
+    return cog
+
+def get_d(r1,r2):
+    """calculate distance between r1 and r2 points"""
+    d = msqrt(sum((r1-r2)*(r1-r2)))
+    return d
+
+def write_xyz(i,r_c,a_c,solvent_mols,a_s):
+    """write xyz file for i-th cluster"""
+    out = open('cluster-%03i.xyz' % i,'w') 
+    log = '%3d\n\n' % (len(a_c) + len(solvent_mols)*len(a_s))
+    # write solute
+    for i in range(len(r_c)):
+        log+=  '%2s'      %       a_c[i]
+        log+= ' %14.6f'*3 % tuple(r_c[i])
+        log+= '\n'
+    # write solvents
+    for sol in solvent_mols:
+        for i in range(len(a_s)):
+            log+=  '%2s'      %       a_s[i]
+            log+= ' %14.6f'*3 % tuple(sol[i])
+            log+= '\n'
+    log+= '\n'
+    out.write(log)
+    out.close()
+    return
+
+print " Picking clusters ..."
+I= 0
+for i in range(nframes):
+    solvent_mols = list()
+    #
+    status, step, time, prec = read_xtc(XTC,box,frame)
+    if not (i+1)%dframe:
+       print " * Reading frame %10i"%(i+1),
+       frame *= u.NanometerToAngstrom
+       r_c = frame[:n_1]
+       com_c = get_cog(r_c)
+       #
+       for n in range(nsmol):                   
+           s_c = frame[n_1+n*n_2:n_1+(n+1)*n_2]
+           com_s = get_cog(s_c)
+           d = get_d(com_s,com_c)
+           if d<=thr: solvent_mols.append(s_c)
+       #
+       print " no of solvent molecules: %3d" % len(solvent_mols)
+       I+=1
+       write_xyz(I,r_c,a_c,solvent_mols,a_s)
+
+xdrfile_close(XTC) 
+print " Congratulations! %4d clusters were picked and saved!\n" % I
