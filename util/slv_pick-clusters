@@ -4,13 +4,14 @@ Pick the solute-solvent clusters from MD trajectory file
 
 Usage:
 
- [xtc] nframes dframe thr n_1 a_c <n_2> <a_s>
+ [xtc] nframes dframe thr name_1 n_1 a_c <name_2> <n_2> <a_s>
 
 Notes: 
  - nframes - number of frames
  - dframe  - frame increment
  - thr     - threshold for cluster size (COG-COG max distance)
             (in Angstroms)
+ - name_1/2- name of molecule 
  - n_1/n_2 - number of solute/solvent atoms
  - s_1/s_2 - list of atoms (delimiter: coma ,)
              ex. C,H,O,O,N,H,H,H,H
@@ -18,6 +19,7 @@ Notes:
 """
 from sys import argv, exit
 from math import sqrt as msqrt
+from string import Template
 print __doc__
 if len(argv)==1:exit()
 from numpy import float32, zeros, array, sum, sqrt, where, lexsort, arange
@@ -26,19 +28,49 @@ from MDAnalysis.coordinates.xdrfile.libxdrfile2 import xdrfile_open, xdrfile_clo
                                                        read_xtc, DIM, exdrOK
 from MDAnalysis.coordinates.TRJ import TRJReader, NCDFReader
 from units import UNITS as u
-import pylab
+import glob, os
+
+# GAMESS input template
+t_c = """\
+ $system mwords=5 memddi=12 parall=.t. $end
+ $contrl scftyp=rhf runtyp=optimize icharg=0 mult=1 units=angs
+         maxit=100 exetyp=run ispher=-1 coord=fragonly
+         icut=20 itol=30 local=pop $end
+!$globop rndini=.true. riord=rand mcmin=.true.
+!        mctyp=4 nblock=0 $end
+!$statpt nstep=20 $end
+!$basis  gbasis=newnew extfil=.true. $end
+ $efrag
+coord=cart iscrelect=1 iscrpol=1
+FRAGNAME=@SOLUTE
+@COORD\
+@SCOORD\
+ $end
+ $@SOLUTE
+@PARC\
+ $end
+ $@SOLVENT
+@PARS\
+ $end
+"""
+t_s = """\
+FRAGNAME=@SOLVENT
+@COORD"""
 
 # operational arguments
-trajectory = argv[1]
-nframes    = int(argv[2])
-dframe     = int(argv[3])
+trajectory =     argv[1]
+nframes    =   int(argv[2])
+dframe     =   int(argv[3])
 thr        = float(argv[4]) * u.AngstromToBohr
-n_1        = int(argv[5])
-a_c        = argv[6].split(',')
-if len(argv)>7: n_2        = int(argv[7])
-else:           n_2        = 3 # water as default
-if len(argv)>8: a_s        = argv[8].split(',')
-else:           a_s        = ['O','H','H']
+name_1     =       argv[5]
+n_1        =   int(argv[6])
+a_c        =       argv[7].split(',')
+if len(argv)>8 : name_2     =     argv[8]
+else:            name_2     = 'water'
+if len(argv)>9 : n_2        = int(argv[9])
+else:            n_2        = 3 # water as default
+if len(argv)>10: a_s        =     argv[10].split(',')
+else:            a_s        = ['O','H','H']
 
 natoms  = read_xtc_natoms(trajectory)
 nsmol   = (natoms-n_1)/n_2
@@ -46,6 +78,17 @@ assert (natoms-n_1)%n_2==0, 'Error in atom numbers: Total No: %5d does not conta
 frame = zeros((natoms,DIM),dtype=float32)
 box = zeros((DIM,DIM),dtype=float32)
 XTC = xdrfile_open(trajectory,'r')
+
+sym_c  = [ 'A%02i%s' % (x+1,a_c[x]) for x in range(len(a_c)) ]
+sym_s  = [ 'A%02i%s' % (x+1,a_s[x]) for x in range(len(a_s)) ]
+file_c = os.environ['SLV_PATH'] + '/frg/%s/%s.efp' % (name_1,name_1)
+file_s = os.environ['SLV_PATH'] + '/frg/%s/%s.efp' % (name_2,name_2)
+
+o  = open(file_c); par_c = o.read(); o.close()
+o  = open(file_s); par_s = o.read(); o.close()
+
+class Templ(Template): delimiter='@'
+t_c = Templ(t_c); t_s = Templ(t_s)
 
 def get_cog(r1):
     """calculate center of geometry"""
@@ -57,25 +100,48 @@ def get_d(r1,r2):
     d = msqrt(sum((r1-r2)*(r1-r2)))
     return d
 
-def write_xyz(i,r_c,a_c,solvent_mols,a_s):
-    """write xyz file for i-th cluster"""
-    out = open('cluster-%03i.xyz' % i,'w') 
+def write(i,r_c,a_c,solvent_mols,a_s):
+    """write xyz file and GAMESS inp file for i-th cluster"""
+    global t_c, t_s
+    soltxt = ''
+    xyz = open('cluster-%03i.xyz' % i,'w') 
+    inp = open('cluster-%03i.inp' % i,'w')
+    #
     log = '%3d\n\n' % (len(a_c) + len(solvent_mols)*len(a_s))
     # write solute
+    dat = ''
     for i in range(len(r_c)):
         log+=  '%2s'      %       a_c[i]
         log+= ' %14.6f'*3 % tuple(r_c[i])
         log+= '\n'
+        #
+        dat+=  '%s'       % sym_c[i]
+        dat+= ' %14.6f'*3 % tuple(r_c[i])
+        dat+=  '\n'
     # write solvents
     for sol in solvent_mols:
+        txt = ''
         for i in range(len(a_s)):
             log+=  '%2s'      %       a_s[i]
             log+= ' %14.6f'*3 % tuple(sol[i])
             log+= '\n'
+            #
+            txt+=  '%s'       % sym_s[i]
+            txt+= ' %14.6f'*3 % tuple(sol[i])
+            txt+=  '\n'
+        soltxt += t_s.substitute(SOLVENT=name_2.upper(),COORD=txt)
     log+= '\n'
-    out.write(log)
-    out.close()
+    xyz.write(log)
+    inp.write(t_c.substitute(SOLUTE=name_1.upper(),SOLVENT=name_2.upper(),
+                             COORD=dat,            SCOORD=soltxt,
+                             PARC=par_c,           PARS=par_s))
+    xyz.close()
+    inp.close()
     return
+
+
+# 1. Pick the clusters
+#
 
 print " Picking clusters ..."
 I= 0
@@ -97,7 +163,14 @@ for i in range(nframes):
        #
        print " no of solvent molecules: %3d" % len(solvent_mols)
        I+=1
-       write_xyz(I,r_c,a_c,solvent_mols,a_s)
+       write(I,r_c,a_c,solvent_mols,a_s)
 
 xdrfile_close(XTC) 
 print " Congratulations! %4d clusters were picked and saved!\n" % I
+
+# 2. Generate GAMESS EFP optimization input files
+#
+
+
+
+
