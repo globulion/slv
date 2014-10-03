@@ -43,7 +43,7 @@ t_1 = """\
  $statpt nstep=200 opttol=0.00001 $end
 !$basis  gbasis=newnew extfil=.true. $end
  $efrag
-coord=cart iscrelect=1 iscrpol=1 nodisp
+coord=cart iscrelec=1 iscrpol=1 nodisp
 FRAGNAME=@SOLUTE
 @COORD\
 @SCOORD\
