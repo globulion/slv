@@ -42,12 +42,12 @@ all          - evaluate all these interactions"""
         self._create()
         self.__cunit = cunit
         #
-        if self.__ccut is None: self.__ccut = 1.E+10
-        else:                   self.__ccut = ccut
-        if self.__pcut is None: self.__pcut = 1.E+10
-        else:                   self.__pcut = pcut
-        if self.__ecut is None: self.__ecut = 1.E+10
-        else:                   self.__ecut = ecut
+        if ccut is None: self.__ccut = 1.E+10
+        else:            self.__ccut = ccut
+        if pcut is None: self.__pcut = 1.E+10
+        else:            self.__pcut = pcut
+        if ecut is None: self.__ecut = 1.E+10
+        else:            self.__ecut = ecut
         #
         if all:
            self.__eval_elect = True
