@@ -28,7 +28,41 @@
 # OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 # PERFORMANCE OF THIS SOFTWARE.
 # ----------------------------------------------------------------------
+about="""
+SLV Calculator, Bartosz Błasiak Copyright
 
+This plugin application is designed to facilitate exploring
+the nature of interaction-induced frequency shifts. It couples
+PyMol visualization package with Solvshift programs carrying
+out coarse-grained calculations of frequency shifts using Solvatochromic
+Theory Based on Effective Fragment Potential Method (SolEFP). 
+This includes quantum mechanical effets as follows:
+
+a) pseudo-Coulomb electrostatics (not dumped)
+b) first-order exchange-repulsion energy
+c) second-order polarization effects
+
+The charge trasfer is generally believed to be negligible. The 
+dispersio effects are not developed and implemented yet.
+
+The evaluation of solvatochromic properties is based on molecule-specific
+parameters which are obtained from fully first-principles calculations
+and, therefore, are completely free from any empirical manipulation.
+Solvshift already offers the builtin set of various (Sol)EFP parameters
+which are read when a proper molecule name is provided. The callable names
+are as follows: nma, nma-d7, water, water2, meoh, dmso, mescn, meoac, dcm,
+chcl3, na+, so3-- and me-so3-. water contains 5-centered DMA distribution 
+for Coulomb electrostatics whereas water2 is based on 3-centered CAMM distribution.
+
+Usage: 
+
+1) load molecules 
+2) set the appropriate selection names
+3) set the appropirate (Sol)EFP fragment molecule file name
+4) specify the pick-up lists used for superimposition. They contain
+the information which atoms are to be superimposed with the benchmark
+molecule's parameters.
+"""
 import tkSimpleDialog
 import tkMessageBox
 from pymol import cmd
@@ -115,7 +149,6 @@ class SLV_Calculator(Fonts,units.UNITS):
                                      label_text='Solvent supl                      : ',
                                      value='None',
                                         )
-
         self.checkbuttons = Pmw.RadioSelect(group.interior(),
                                             buttontype = 'checkbutton',
                                             orient = 'vertical',
@@ -133,11 +166,20 @@ class SLV_Calculator(Fonts,units.UNITS):
             entry.pack(fill='x',padx=4,pady=1)
  
         # happy results!
+        t = '%7s %7s %7s %7s %7s %7s %7s %7s %7s\n' % ('Elect' .rjust(7),
+                                                       'mea'   .rjust(7),
+                                                       'ea'    .rjust(7),
+                                                       'Pol'   .rjust(7),
+                                                       'Rep'   .rjust(7),
+                                                       'C-mea' .rjust(7),
+                                                       'C-ea'  .rjust(7),
+                                                       'TOT'   .rjust(7),
+                                                       'rms'   .rjust(7) )
         self.resultsFrame=Tkinter.Frame(group.interior())
         bar=Tkinter.Scrollbar(self.resultsFrame,)
-        self.resultsText=Tkinter.Text(self.resultsFrame,yscrollcommand=bar.set,background="#ddddff",font="Helvetica 12")
+        self.resultsText=Tkinter.Text(self.resultsFrame,yscrollcommand=bar.set,background="#ddddff",font="Courier 12")
         bar.config(command=self.resultsText.yview)
-        self.resultsText.insert(Tkinter.END,'')
+        self.resultsText.insert(Tkinter.END,t)
         self.resultsText.pack(side=Tkinter.LEFT,expand="yes",fill="both")
         bar.pack(side=Tkinter.LEFT,expand="yes",fill="y")
         self.resultsFrame.pack(expand="yes",fill="both")
@@ -146,7 +188,7 @@ class SLV_Calculator(Fonts,units.UNITS):
         page2 = self.notebook.add('About Me')
         group = Pmw.Group(page2, tag_text='About PyMOL APBS Tools')
         group.pack(fill = 'both', expand = 1, padx = 10, pady = 5)
-        text = """HaaaaaaaaaaaaaAAAAAaaaaaaaaaaaaaPPPY!"""
+        text = about
         interior_frame=Tkinter.Frame(group.interior())
         bar=Tkinter.Scrollbar(interior_frame,)
         text_holder=Tkinter.Text(interior_frame,yscrollcommand=bar.set,background="#ddddff",font="Helvetica 12")
@@ -170,15 +212,6 @@ class SLV_Calculator(Fonts,units.UNITS):
         n_solute_atoms  = frg_solute.get_natoms()
         n_solvent_atoms = frg_solvent.get_natoms()
         
-        t = '%10s %10s %10s %10s %10s %10s %10s %10s %10s\n' % ('EL-TOT' .rjust(10),
-                                                              'EL-MEA' .rjust(10),
-                                                              'EL-EA'  .rjust(10),
-                                                              'POL'    .rjust(10),
-                                                              'REP'    .rjust(10),
-                                                              'EL-MEA-C'.rjust(10),
-                                                              'EL-EA-C' .rjust(10),
-                                                              'TOTAL'   .rjust(10),
-                                                              'RMS'     .rjust(10) )
         
         efp = EFP(elect=1,pol=1,rep=1,corr=0,freq=True,
                   ccut=None,pcut=None,ecut=None,
@@ -210,10 +243,10 @@ class SLV_Calculator(Fonts,units.UNITS):
         shifts = efp.get_shift()
         rms = efp.get_rms()
         # line of output frequency shifts
-        log = t
-        log+= "%10.2f"    % (shifts[0]+shifts[1])
-        log+= 7*" %10.2f" % tuple(shifts[:7])
-        log+= " %10.5f\n" % rms
+        log = ''
+        log+= "%7.2f"    % (shifts[0]+shifts[1])
+        log+= 7*" %7.2f" % tuple(shifts[:7])
+        log+= " %7.5f\n" % rms
         print log
         self.resultsText.insert(Tkinter.END,log) 
         return
