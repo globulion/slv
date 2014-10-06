@@ -112,14 +112,14 @@ if typ.lower() == 'all':
 
 # --- solute suplist
 if len(argv)>6: 
-   supl = [ text_to_list( argv[6], delimiter=',', dtype=int, dt=1 ) , ]
+   supl = [ array( text_to_list( argv[6], delimiter=',', dtype=int, dt=1 ) , int) , ]
    for i in range(len(supl)): supl[i]-=1
 else: supl = None
 
 # --- solvent suplist
 if len(argv)>7: 
-   supl_sol = text_to_list( argv[7], delimiter=',', dtype=int, dt=1 )
-   for i in range(len(supl_sol)): supl_sol[i]-=1
+   supl_sol = array( text_to_list( argv[7], delimiter=',', dtype=int, dt=1 ), int)
+   supl_sol-=1
 else: supl_sol = None
 if supl is not None:
    for i in range(n_solvent_mol): 
