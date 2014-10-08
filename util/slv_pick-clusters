@@ -40,7 +40,7 @@ t_1 = """\
          icut=20 itol=30 local=pop $end
 !$globop rndini=.true. riord=rand mcmin=.true.
 !        mctyp=4 nblock=0 $end
- $statpt nstep=200 opttol=0.00001 $end
+ $statpt nstep=2000 opttol=0.000001 $end
 !$basis  gbasis=newnew extfil=.true. $end
  $efrag
 coord=cart iscrelec=1 iscrpol=1 nodisp
