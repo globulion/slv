@@ -228,12 +228,12 @@ class SLV_Calculator(Fonts,units.UNITS):
         supl.append(s_2)  # solvent
         
         # --- build nmol, ind and bsm data
+        bsm  = ( frg_solute, frg_solvent )
         nmol = [  frg_solute.get_natoms() , ]
         ind  = [  0                       , ]
         for i in range(n_solvent_mol):
             nmol.append( frg_solvent.get_natoms() )
             ind .append( 1                        )
-            bsm  = ( frg_solute, frg_solvent )
         
         # --- evaluate the shifts
         efp.set(xyz,ind,nmol,bsm,supl)
