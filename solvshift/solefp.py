@@ -122,8 +122,16 @@ Also set the BSM parameters if not done in set_bsm.
         return self.__shift
     
     def get_rms(self):
-        """return RMS of superimposition of central molecule with its parameters (relevant for central molecule mode)"""
+        """
+Return RMS of superimposition of central molecule with its parameters (relevant for central molecule mode)"""
         return self.__rms_central
+    
+    def get_rms_sol(self):
+        """
+Return maximal RMS of superimposition of (solvent) molecules with its parameters.
+If central molecule mode is ON, rms_central is not included. Otherwise, all superimpositions
+are counted."""
+        return self.__rms_solvent_max
     
     def eval(self,lwrite=False):
         """evaluate the properties"""
@@ -138,6 +146,7 @@ Also set the BSM parameters if not done in set_bsm.
            PAR = []
            QO  = []
            nm_sum = 0
+           rms_max= 0.
            for i in range(N):
                nm = self.__nmol[i]
                im = self.__ind[i]
@@ -146,12 +155,14 @@ Also set the BSM parameters if not done in set_bsm.
                STR = self.__rcoordc[nm_sum-nm:nm_sum]
                frg = self.__bsm[im].copy()
                rms = frg.sup( STR )
+               if rms >rms_max: rms_max = rms
                par = frg.get()
                PAR.append( par )
                #
                qad, oct = tracls( par['dmaq'], par['dmao'] )
                QO.append( (qad,oct) )
-           
+           #
+           self.__rms_solvent_max = rms_max
            # ----------------------------------- ELECT --------------------------------- #
            if self.__eval_elect:
               ndma = [ x['ndma'] for x in PAR ]
@@ -252,6 +263,7 @@ Also set the BSM parameters if not done in set_bsm.
            redmssc=redmss[self.__mode-1]
            #
            ### other molecules
+           rms_max = 0.0
            for i in range(N):
                nm = self.__ntc[i]
                im = self.__mtc[i]
@@ -260,12 +272,14 @@ Also set the BSM parameters if not done in set_bsm.
                frg = self.__bsm[im].copy()
                rms = frg.sup( STR , suplist= self.__suplist[self.__ind[im]] )
                if lwrite: print "rms C: ",rms
+               if rms > rms_max: rms_max = rms
                par = frg.get()
                PAR.append( par )
                #
                qad, oct = tracls( par['dmaq'], par['dmao'] )
                QO.append( (qad,oct) )
                #
+           self.__rms_solvent_max = rms_max
            # ----------------------------------- ELECT --------------------------------- #
            if self.__eval_elect:
               ndma = [ x['ndma'] for x in PAR ]
@@ -399,6 +413,7 @@ Also set the BSM parameters if not done in set_bsm.
                     #print " Polarization energy         : %10.6f"%epol
                  del PAR, QO
            # ---------------------------------- EX-REP --------------------------------- #
+           rms_max = 0.0
            if  self.__eval_rep:
                N = len(self.__nte)
                PAR = []
@@ -411,9 +426,12 @@ Also set the BSM parameters if not done in set_bsm.
                    frg = self.__bsm[im].copy()
                    rms = frg.sup( STR , suplist= self.__suplist[self.__ind[im]] )
                    if lwrite: print "rms E: ",rms
+                   if rms > rms_max: rms_max = rms
                    par = frg.get()
                    PAR.append( par )
                    #
+               if self.__rms_solvent_max is None: self.__rms_solvent_max = rms_max
+               #
                serp = 0
                #for par in PAR: shift += self._pair_rep_freq(parc,par)
                # basis sets
@@ -504,12 +522,13 @@ Also set the BSM parameters if not done in set_bsm.
     
     def _create(self):
         """namespace of objects"""
-        self.__bsm = None
-        self.__eval_freq = False
-        self.__eval_nlo  = None
-        self.__shift = zeros(9,dtype=float64)
-        self.__rms_central = None
-        self.__suplist = None
+        self.__bsm               = None
+        self.__eval_freq         = False
+        self.__eval_nlo          = None
+        self.__shift             = zeros(9,dtype=float64)
+        self.__rms_central       = None
+        self.__suplist           = None
+        self.__rms_solvent_max   = None
         return
     
     def _update(self,pos):
