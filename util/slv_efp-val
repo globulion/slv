@@ -64,7 +64,7 @@
    o The turn of atoms of solute and solvent has to be exactly identic
      al as it is in the *.frg parameter files!
  --------------------------------------------------------------------
-                                         Last revision:  6 Oct 2014
+                                         Last revision: 10 Oct 2014
 """
 from sys import argv, exit, stdout
 from utilities import Read_xyz_file, MakeMol, ParseDMA, \
@@ -210,3 +210,4 @@ for xyz, freq in target:
 
 # close the output file
 out.close()
+print "\n The results were written to the file <shifts.dat> ! \n\n"
