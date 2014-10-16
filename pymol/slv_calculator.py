@@ -7,7 +7,8 @@
 # the copyright notices.
 # 
 # ----------------------------------------------------------------------
-# This PyMOL Plugin is Copyright (C) 2004 by Charles Moad <cmoad@indiana.edu>
+# This PyMOL Plugin is Copyright (C) 2014 by Bartosz Błasiak 
+#              <blasiak.bartosz@gmail.com>
 # 
 #                        All Rights Reserved
 # 
