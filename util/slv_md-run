@@ -36,7 +36,7 @@ stdout.flush()
 # -----------------------------------------------------------------------------------------------------
 # [1] INPUT VARIABLES
 #     number of frames to be considered
-NFRAMES = 501
+NFRAMES = 10
 
 #     cutoffs [Bohr]  ; Terms
 ccut= 40              ; elect = True ; correc = False
@@ -71,13 +71,13 @@ except IndexError:
   numatoms = None
 
 # [3] determine the trajectory type
-if   trajectory[-6:]=='mdcrd' or trajectory[-6:]=='netcdf':
+if   trajectory[-5:]=='mdcrd' or trajectory[-6:]=='netcdf':
      error = " Total number of atoms has to be specified for AMBER trajectory files!"
      assert numatoms is not None, error
      pkg = 'amber'
 elif trajectory[-3:]=='xtc': 
      pkg = 'gromacs-xtc'
-else: raise 'Incorrect trajectory file supplied! (only mdcrd, netcdf and xtc are supporded)'
+else: raise Exception('Incorrect trajectory file supplied! (only mdcrd, netcdf and xtc are supporded)')
 
 # [4] set up the server
 job_server = pp.Server(ncpus)
@@ -127,7 +127,6 @@ print " SLV SolEFP calculations:"
 print " %10s %20s" % ('File'.rjust(10)  , trajectory.rjust(10))
 print " %10s %20d" % ('Frames'.rjust(10), NFRAMES             ) 
 print
-exit()
 for i in range(NFRAMES):
     print " * Reading frame %10i" % (frame_idx+1)
     if   pkg=='gromacs-xtc':
