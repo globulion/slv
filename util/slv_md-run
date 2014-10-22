@@ -1,0 +1,161 @@
+#!/usr/bin/python
+"""
+ Calculate the frequency shifts from MD mdcrd, netcdf or xtc trajectory.
+ 
+ Usage:
+ 
+ ./md.py [mdinput] [traj] ncpus <natoms>
+ 
+ Notes:
+ 
+ natoms - total number of atoms in MD trajectory 
+          (also these not belonging to EFPs!)
+"""
+
+# [0] import necessary modules
+from sys import argv, stdout, exit
+print __doc__
+
+if len(argv)==1: exit()
+
+# -----------------------------------------------------------------------------------------------------
+from solvshift.md import MDInput
+from solvshift.solefp import EFP
+from MDAnalysis.coordinates.TRJ import TRJReader
+from MDAnalysis.coordinates.xdrfile.libxdrfile2 import xdrfile_open, xdrfile_close,\
+                                                       read_xtc_natoms, read_xtc  ,\
+                                                       read_xtc, DIM, exdrOK
+from utilities import dihedral
+from units import UNITS as u
+from numpy import array, zeros, arange, float64, float32
+import pp, units, utilities, gaussfreq,\
+       solvshift.diff, solvshift.solefp, solvshift.slvpar
+# -----------------------------------------------------------------------------------------------------
+stdout.flush()
+
+# -----------------------------------------------------------------------------------------------------
+# [1] INPUT VARIABLES
+#     number of frames to be considered
+NFRAMES = 501
+
+#     cutoffs [Bohr]  ; Terms
+ccut= 40              ; elect = True ; correc = False
+pcut= 17              ; repul = True
+ecut= 10              ; polar = True
+
+#     output file name
+report = 'report.dat'
+
+# --- you don't need to change anything else below ----------------------------------------------------
+def eval_parall(efp, idx, args, frame, frame_idx):
+    """evaluator for parallel run"""
+    # eval
+    efp.set(frame[idx], *args)
+    efp.eval(0)
+    rms_c = efp.get_rms()
+    rms_s = efp.get_rms_sol()
+    shifts = efp.get_shift()
+    # line of output frequencies and misc data
+    log = " %7d" % frame_idx
+    log+= 7*"%10.2f" % tuple(shifts[:7])
+    log+= "%10.5f %10.5f\n" % (rms_c,rms_s)
+    return log
+
+# [2] gather the arguments
+inp        =     argv[1]
+trajectory =     argv[2]
+ncpus      = int(argv[3])
+try:
+  numatoms = int(argv[4])
+except IndexError:
+  numatoms = None
+
+# [3] determine the trajectory type
+if   trajectory[-6:]=='mdcrd' or trajectory[-6:]=='netcdf':
+     error = " Total number of atoms has to be specified for AMBER trajectory files!"
+     assert numatoms is not None, error
+     pkg = 'amber'
+elif trajectory[-3:]=='xtc': 
+     pkg = 'gromacs-xtc'
+else: raise 'Incorrect trajectory file supplied! (only mdcrd, netcdf and xtc are supporded)'
+
+# [4] set up the server
+job_server = pp.Server(ncpus)
+jobs = list()
+
+# [5] read the input
+input = MDInput(inp)
+args, idx = input.get()
+
+# [6] initialize EFP object
+efp = EFP(elect=elect, pol=polar, rep=repul, corr=correc,
+          ccut=ccut, pcut=pcut, ecut=ecut,
+          freq=True, cunit=True,)
+
+# [7] initiate the report file
+out = open(report, 'w')
+t = '%8s %10s %10s %10s %10s %10s %10s %10s %10s %10s' % ('# Frame'.ljust(8),
+                                                          'EL-MEA' .rjust(10),
+                                                          'EL-EA'  .rjust(10),
+                                                          'POL'    .rjust(10),
+                                                          'REP'    .rjust(10),
+                                                          'EL-MEA-C'.rjust(10),
+                                                          'EL-EA-C' .rjust(10),
+                                                          'TOTAL'   .rjust(10),
+                                                          'RMS_C'   .rjust(10),
+                                                          'RMS_S'   .rjust(10) )
+
+out.write(t+'\n')
+out.flush()
+
+# [8] read the trajectory file and initialize the frame of coordinates
+if pkg == 'gromacs-xtc':
+   numatoms = read_xtc_natoms(trajectory)
+   box = zeros((DIM,DIM),dtype=float32)
+   XTC = xdrfile_open(trajectory,'r')
+
+elif pkg == 'amber':
+   md = TRJReader(trajectory, numatoms) 
+   md.open_trajectory()
+
+frame = zeros((numatoms,DIM),dtype=float32)
+
+# [9] iterate over frames and evaluate frequency shifts
+frame_idx = 0
+print
+print " SLV SolEFP calculations:"
+print " %10s %20s" % ('File'.rjust(10)  , trajectory.rjust(10))
+print " %10s %20d" % ('Frames'.rjust(10), NFRAMES             ) 
+print
+exit()
+for i in range(NFRAMES):
+    print " * Reading frame %10i" % (frame_idx+1)
+    if   pkg=='gromacs-xtc':
+         status, step, time, prec = read_xtc(XTC, box, frame)
+         frame *= u.NanometerToBohr
+    else: 
+         frame = array(md.next()) * u.AngstromToBohr
+
+    jobs.append( job_server.submit(eval_parall,(efp, idx, args, frame, frame_idx+1), (solvshift.slvpar.Frag, solvshift.solefp.EFP),
+                                   ('units','utilities','numpy','solvshift','solvshift.solefp','solvshift.slvpar','efprot','PyQuante.Ints','dma'),
+                                   ) )
+    if (frame_idx%ncpus==0 and frame_idx!=0):
+       job_server.wait()
+       K = arange(frame_idx-ncpus,frame_idx)
+       for j in K:
+           log = jobs[j]()
+           out.write(log)
+       out.flush()
+       k_max = max(K)
+       n_left = NFRAMES - k_max - 1
+    frame_idx += 1
+
+# --- write the remaining tasks
+for i in range(-n_left,0):
+    log = jobs[i]()
+    out.write(log)
+
+# [10] close the trajectory files and the report
+if pkg == 'gromacs-xtc': xdrfile_close(XTC)
+else: pass
+out.close()
