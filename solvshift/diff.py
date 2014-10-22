@@ -2,20 +2,21 @@
 #         D I F F E R E N T I A T I O N   M O D U L E          #
 # ------------------------------------------------------------ #
 
-from numpy      import array, float64, zeros, sqrt,\
-                       sum, shape, ceil, transpose,\
-                       tensordot
-from units      import *
-from dma        import *
-from utilities  import *
-from gaussfreq  import *
-import os, glob, PyQuante.Ints, coulomb.multip
+#from numpy      import array, float64, zeros, sqrt,\
+#                       sum, shape, ceil, transpose,\
+#                       tensordot
+#from units      import *
+#from dma        import *
+#from utilities  import *
+#from gaussfreq  import *
+import os, glob, PyQuante.Ints, coulomb.multip, numpy, units, \
+       dma, utilities, gaussfreq, sys
 os.environ['__IMPORT__COULOMB__']='1'
 
 __all__ = ['DIFF',]
 __version__ = '5.2.1'
                 
-class DIFF(UNITS,FREQ):
+class DIFF(units.UNITS, gaussfreq.FREQ):
     """contains usefull procedures for differentiation
 of DMA and molecular multipole moments in FFXpt-diag scheme
 where X=5,9"""
@@ -138,7 +139,7 @@ where X=5,9"""
         out = open('slv.sim','w')
         log = ''
         for i in range(len(self.__sim_gms)):
-            t = array(self.__sim_gms[i],int).ravel()
+            t = numpy.array(self.__sim_gms[i],int).ravel()
             l = ''
             for j in range(len(t)):
                 l+= '%4d' % t[j]
@@ -155,12 +156,12 @@ where X=5,9"""
         dPol = []
         r_ref = None
         for file in files:
-            r,a=ParseDistributedPolarizabilitiesFromGamessEfpFile(file)
+            r,a = utilities.ParseDistributedPolarizabilitiesFromGamessEfpFile(file)
             if r_ref is None: r_ref = r
             #
-            r, sim = order(r_ref,r,start=0,lprint=self.__lprint)
+            r, sim = utilities.order(r_ref, r, start=0, lprint=self.__lprint)
             if self.__lprint: print sim
-            a = reorder(a,sim)
+            a = utilities.reorder(a,sim)
             dPos.append(r)
             dPol.append(a)
         dPos = array(dPos,float64)
@@ -174,14 +175,14 @@ where X=5,9"""
         dPos = []
         dPol = []
         for i,file in enumerate(files):
-            r,a=ParseDistributedPolarizabilitiesFromGamessEfpFile(file)
+            r,a=utilities.ParseDistributedPolarizabilitiesFromGamessEfpFile(file)
             # reorder
-            a = reorder(a,sims[i])
-            r = reorder(r,sims[i])
+            a = utilities.reorder(a,sims[i])
+            r = utilities.reorder(r,sims[i])
             dPos.append(r)
             dPol.append(a)
-        dPos = array(dPos,float64)
-        dPol = array(dPol,float64)
+        dPos = numpy.array(dPos,numpy.float64)
+        dPol = numpy.array(dPol,numpy.float64)
         return dPos, dPol
     
     def get_dpol_fder(self):
@@ -197,10 +198,10 @@ where X=5,9"""
                  /(self.step* self.AngstromToBohr)
                  
             first_der_dpol_cart.append( fd )
-        first_der_dpol_cart = array(first_der_dpol_cart,float64).reshape(self.nAtoms*3,N*3*3)
+        first_der_dpol_cart = numpy.array(first_der_dpol_cart,numpy.float64).reshape(self.nAtoms*3,N*3*3)
 
         ### TRANSFORM FIRST DERIVATIVES TO NORMAL MODE SPACE
-        first_der_dpol_mode = tensordot(self.L,first_der_dpol_cart,(0,0))
+        first_der_dpol_mode = numpy.tensordot(self.L,first_der_dpol_cart,(0,0))
 
         return first_der_dpol_mode.reshape(self.nAtoms*3-6,N,3,3)
         #return first_der_dpol_cart.reshape(self.nAtoms*3,N,3,3)
@@ -228,22 +229,22 @@ them to LMO space"""
         debug_wfn = open('debug_wfn','w')
         # evaluate transformation matrices and LMO centroids
         for I,fchk in enumerate(files_fchk):
-            mol  = Read_xyz_file(fchk,mol=True,
-                                 mult=1,charge=0,
-                                 name='happy dummy molecule')
+            mol  = utilities.Read_xyz_file(fchk,mol=True,
+                                           mult=1,charge=0,
+                                           name='happy dummy molecule')
             bfs        = PyQuante.Ints.getbasis(mol,basis)
             basis_size = len(bfs)
             natoms= len(mol.atoms)
             SAO   = PyQuante.Ints.getS(bfs)
-            dmat = ParseDmatFromFchk(fchk,basis_size)
-            veccmo= ParseVecFromFchk(fchk)[:nae,:]
-            tran, veclmo = get_pmloca(natoms,mapi=bfs.LIST1,sao=SAO,
-                                      vecin=veccmo,nae=nae,
-                                      maxit=100000,conv=1.0E-6,
-                                      lprint=True,
-                                      freeze=None)
+            dmat  = utilities.ParseDmatFromFchk(fchk,basis_size)
+            veccmo= utilities.ParseVecFromFchk(fchk)[:nae,:]
+            tran, veclmo = utilities.get_pmloca(natoms,mapi=bfs.LIST1,sao=SAO,
+                                                vecin=veccmo,nae=nae,
+                                                maxit=100000,conv=1.0E-6,
+                                                lprint=True,
+                                                freeze=None)
             if vec_ref is None: vec_ref = veclmo.copy()
-            veclmo, sim = order(vec_ref,veclmo,start=0)
+            veclmo, sim = utilities.order(vec_ref,veclmo,start=0)
             print sim
             log_wfn += str(sim) + '\n'
             log_wfn += check_sim(sim) + '\n\n'
@@ -257,8 +258,8 @@ them to LMO space"""
             camm.camms()
             dma = camm.get()[0]
             lmoc= dma.get_origin()[natoms:]
-            lmoc_efp = ParseLmocFromGamessEfpFile(files_efp[I])
-            lll,sim_efp = order(lmoc,lmoc_efp,start=0)
+            lmoc_efp = utilities.ParseLmocFromGamessEfpFile(files_efp[I])
+            lll,sim_efp = utilities.order(lmoc,lmoc_efp,start=0)
             log_efp += str(sim_efp) + '\n'
             log_efp += check_sim(sim_efp) + '\n\n'
             #
@@ -281,9 +282,9 @@ them to LMO space"""
                 log += '\n'
             out.write(log)
             out.close()
-        Tran = array(Tran,float64)
-        Lmoc = array(Lmoc,float64)
-        VecL = array(VecL,float64)
+        Tran = numpy.array(Tran,numpy.float64)
+        Lmoc = numpy.array(Lmoc,numpy.float64)
+        VecL = numpy.array(VecL,numpy.float64)
         #
         debug_efp.write(log_efp)
         debug_wfn.write(log_wfn)
@@ -298,16 +299,16 @@ them to LMO space"""
         files.sort()
         Fock = []
         for file in files:
-            Fock.append(ParseFockFromGamessLog(file,interpol=False))
-        Fock = array(Fock,float64)
+            Fock.append(utilities.ParseFockFromGamessLog(file,interpol=False))
+        Fock = numpy.array(Fock,numpy.float64)
         # transform from AO to LMO space
         I = Fock.shape[ 0]
         N = Tran.shape[-2]
-        Fock_t = zeros((I,N,N),float64)
+        Fock_t = numpy.zeros((I,N,N),numpy.float64)
         for i in xrange(I):
             T = Tran[i]
             F = Fock[i]
-            Fock_t[i] = tensordot(T,tensordot(T,F,(1,0)),(1,1))
+            Fock_t[i] = numpy.tensordot(T,numpy.tensordot(T,F,(1,0)),(1,1))
         return Fock_t
     
     def get_efp_fder(self):
@@ -347,14 +348,14 @@ Returns ndarray of dimension (nmodes,nmos,nbasis)"""
             first_der_lmoc_cart.append( fd2 )
             first_der_vecl_cart.append( fd3 )
             #
-        first_der_fock_cart = array(first_der_fock_cart,float64)
-        first_der_lmoc_cart = array(first_der_lmoc_cart,float64)
-        first_der_vecl_cart = array(first_der_vecl_cart,float64)
+        first_der_fock_cart = numpy.array(first_der_fock_cart,numpy.float64)
+        first_der_lmoc_cart = numpy.array(first_der_lmoc_cart,numpy.float64)
+        first_der_vecl_cart = numpy.array(first_der_vecl_cart,numpy.float64)
 
         ### TRANSFORM FIRST DERIVATIVES TO NORMAL MODE SPACE
-        first_der_fock_mode = tensordot(self.L,first_der_fock_cart,(0,0))
-        first_der_lmoc_mode = tensordot(self.L,first_der_lmoc_cart,(0,0))
-        first_der_vecl_mode = tensordot(self.L,first_der_vecl_cart,(0,0))
+        first_der_fock_mode = numpy.tensordot(self.L,first_der_fock_cart,(0,0))
+        first_der_lmoc_mode = numpy.tensordot(self.L,first_der_lmoc_cart,(0,0))
+        first_der_vecl_mode = numpy.tensordot(self.L,first_der_vecl_cart,(0,0))
 
         return first_der_fock_mode, first_der_lmoc_mode, first_der_vecl_mode
     
@@ -391,10 +392,10 @@ type -3: transformation matrix from AO to LMO (nmos, nbasis)
                  /(self.step* self.AngstromToBohr)
                  
             first_der_EDS_cart.append( fd )
-        first_der_EDS_cart = array(first_der_EDS_cart,float64)
+        first_der_EDS_cart = numpy.array(first_der_EDS_cart,numpy.float64)
 
         ### TRANSFORM FIRST DERIVATIVES TO NORMAL MODE SPACE
-        first_der_EDS_mode = tensordot(self.L,first_der_EDS_cart,(0,0))
+        first_der_EDS_mode = numpy.tensordot(self.L,first_der_EDS_cart,(0,0))
 
         return first_der_EDS_mode
     
@@ -411,10 +412,10 @@ type -3: transformation matrix from AO to LMO (nmos, nbasis)
                  /(self.step* self.AngstromToBohr)
                  
             first_der_EFP_cart.append( fd )
-        first_der_EFP_cart = array(first_der_EFP_cart,float64)
+        first_der_EFP_cart = numpy.array(first_der_EFP_cart,numpy.float64)
 
         ### TRANSFORM FIRST DERIVATIVES TO NORMAL MODE SPACE
-        first_der_EFP_mode = tensordot(self.L,first_der_EFP_cart,(0,0))
+        first_der_EFP_mode = numpy.tensordot(self.L,first_der_EFP_cart,(0,0))
 
         return first_der_EFP_mode
     
@@ -455,10 +456,10 @@ type -3: transformation matrix from AO to LMO (nmos, nbasis)
                  /(self.step* self.AngstromToBohr)
                  
             first_der_pol_cart.append( fd )
-        first_der_pol_cart = array(first_der_pol_cart,float64)
+        first_der_pol_cart = numpy.array(first_der_pol_cart,numpy.float64)
 
         ### TRANSFORM FIRST DERIVATIVES TO NORMAL MODE SPACE
-        first_der_pol_mode = tensordot(self.L,first_der_pol_cart,(0,0))
+        first_der_pol_mode = numpy.tensordot(self.L,first_der_pol_cart,(0,0))
 
         return first_der_pol_mode
     
@@ -491,15 +492,15 @@ type -3: transformation matrix from AO to LMO (nmos, nbasis)
             line = data.readline()
             
         # construct explicit 2D density matrix
-        P = zeros((basis_size,basis_size),dtype=float64)
+        P = numpy.zeros((basis_size,basis_size),dtype=numpy.float64)
         #I = 0
         for i in range(basis_size):
             for j in range(i+1):
-                P[i,j] = float64(dmat.pop(0))#dmat[I]
+                P[i,j] = numpy.float64(dmat.pop(0))#dmat[I]
                 P[j,i] = P[i,j] #dmat[I]
                 #I += 1
        
-        return array(P)
+        return numpy.array(P)
        
     def _CalcDerCartesian(self):
         """calculates FIRST (and diagonal second - but ONLY diagonal!!!)
@@ -630,11 +631,11 @@ type -3: transformation matrix from AO to LMO (nmos, nbasis)
 
 
         # transform to normal mode space  
-        Fder_DMA = DMAMadrixMultiply(transpose(self.L),Fder)
-        Sder_DMA = [ DMA(nfrag=self.nfrags) for x in range(self.nModes) ]  
+        Fder_DMA = utilities.DMAMadrixMultiply(numpy.transpose(self.L),Fder)
+        Sder_DMA = [ dma.DMA(nfrag=self.nfrags) for x in range(self.nModes) ]  
         #FDip = dot( transpose(self.L) ,array( FDip ) )
-        Fder_MMM = DMAMadrixMultiply(transpose(self.L),Fmmm)
-        Sder_MMM = zeros((self.nModes,3),float64)
+        Fder_MMM = utilities.DMAMadrixMultiply(numpy.transpose(self.L),Fmmm)
+        Sder_MMM = numpy.zeros((self.nModes,3),numpy.float64)
         
         return Fder_DMA, Sder_DMA, Fder_MMM, Sder_MMM
 
@@ -661,7 +662,7 @@ type -3: transformation matrix from AO to LMO (nmos, nbasis)
             Fder.append( fder_DMA/self.AngstromToBohr )
             
         # transform to normal mode space  
-        Fder_DMA = DMAMadrixMultiply(transpose(self.L),Fder)
+        Fder_DMA = utilities.DMAMadrixMultiply(numpy.transpose(self.L),Fder)
         #
         if sder:
            s2 = 1./(self.sderiv_step**2)
@@ -765,7 +766,7 @@ type -3: transformation matrix from AO to LMO (nmos, nbasis)
         DMA_set = []
         Overall_MM_set = []
         for file in files:
-            dma = ParseDMA ( file, type )
+            dma = utilities.ParseDMA ( file, type )
             Fragment = dma.get_pos()
             DMA_set.append( dma )
             ###Fragments_set.append( Fragment )
@@ -780,11 +781,11 @@ type -3: transformation matrix from AO to LMO (nmos, nbasis)
                quadrupole = self.Quadrupole(file)
                octupole   = self.Octupole(file)
             
-               MM = DMA(nfrag=1)
-               MM.pos = zeros(3,dtype=float64)
-               MM.DMA[1][0] = array(dipole)
-               MM.DMA[2][0] = array(quadrupole)
-               MM.DMA[3][0] = array(octupole)
+               MM = dma.DMA(nfrag=1)
+               MM.pos = numpy.zeros(3,dtype=numpy.float64)
+               MM.DMA[1][0] = numpy.array(dipole)
+               MM.DMA[2][0] = numpy.array(quadrupole)
+               MM.DMA[3][0] = numpy.array(octupole)
 
                Overall_MM_set.append( MM )
         
@@ -804,9 +805,9 @@ type -3: transformation matrix from AO to LMO (nmos, nbasis)
 
         set = []
         for file in files:
-            set.append(Parse_EDS_InteractionEnergies(dir+file))
+            set.append(utilities.Parse_EDS_InteractionEnergies(dir+file))
             
-        return array(set)
+        return numpy.array(set)
 
     def Parse_EFP(self,dir):
         """parses EFP energies"""
@@ -821,9 +822,9 @@ type -3: transformation matrix from AO to LMO (nmos, nbasis)
         files.sort()  
         set = []
         for file in files:
-            set.append(ParseEFPInteractionEnergies(dir+file))
+            set.append(utilities.ParseEFPInteractionEnergies(dir+file))
             
-        return array(set)
+        return numpy.array(set)
 
     def Parse_Polarizability(self,dir):
         """parses files to collect polarisabilities"""
@@ -841,15 +842,15 @@ type -3: transformation matrix from AO to LMO (nmos, nbasis)
         for file in files:
             set.append(self.Polarizability(dir+file))
             
-        return array(set)
+        return numpy.array(set)
     
     def CalcIrInt(self):
         """calculate IR Harmonic intensities in [kM/mole] 
 using L matrix from Gaussfreq and numerical FDip"""
-        FDip = zeros((self.nModes,3),dtype=float64)
+        FDip = numpy.zeros((self.nModes,3),dtype=numpy.float64)
         #print self.FDip[7]
         for mode in range(self.nModes): FDip[mode] = self.FDip[mode].DMA[1]
-        return sum(FDip**2,axis=1) * self.BohrElectronToDebye**2\
+        return numpy.sum(FDip**2,axis=1) * self.BohrElectronToDebye**2\
                 /(self.BohrToAngstrom**2 * self.ElectronMassToAmu) * self.IrIntToKmM
 
     
@@ -859,7 +860,7 @@ from a setup file slv.step"""
         
         step_file = open('%s/slv.step' % dir,'r')
         # step
-        step = float64(step_file.readline().split()[-1])
+        step = numpy.float64(step_file.readline().split()[-1])
         # pointity
         n_point = int(step_file.readline().split()[-1])
         # file type
@@ -869,7 +870,7 @@ from a setup file slv.step"""
         # sderiv working directory
         sderiv_wrk= step_file.readline().split()[-1]
         # step of differentiation wrt normal modes for sderv routine
-        sderiv_step = float64(step_file.readline().split()[-1])
+        sderiv_step = numpy.float64(step_file.readline().split()[-1])
         print "MODE", mode_id
         return step , n_point, file_type, mode_id, sderiv_wrk, sderiv_step
     
@@ -922,8 +923,7 @@ from a setup file slv.step"""
 
 ##############################################################################
 if __name__ == '__main__':
-   from head import *
-   from sys import argv
+   #from head import *
    import os, glob, pp, PyQuante, utilities, coulomb.multip
    
    def ParseDmatFromFchk(file,basis_size):
@@ -943,28 +943,26 @@ if __name__ == '__main__':
             dmat+=[x for x in line.split()] 
             line = data.readline()
         print len(dmat)
-        #dmat = array(dmat,dtype=float64)
+        #dmat = numpy.array(dmat,dtype=numpy.float64)
         
         # construct explicit 2D density matrix
-        P = zeros((basis_size,basis_size),dtype=float64)
+        P = numpy.zeros((basis_size,basis_size),dtype=numpy.float64)
         #I = 0
         for i in range(basis_size):
             for j in range(i+1):
-                P[i,j] = float64(dmat.pop(0))#dmat[I]
+                P[i,j] = numpy.float64(dmat.pop(0))#dmat[I]
                 P[j,i] = P[i,j] #dmat[I]
                 #I += 1
 
-        return array(P)    
+        return numpy.array(P)    
     
    def test1(): 
        """calculates CAMMs from density matrux from GAUSSIAN09
        using COULOMB.py routines"""
-       
-       from sys import argv
-       
-       file_fchk = argv[1]
-       file_log  = argv[2]
-       dma, fragment = ParseDMA( file_log, 'gaussian' )
+
+       file_fchk = sys.argv[1]
+       file_log  = sys.argv[2]
+       dma, fragment = utilities.ParseDMA( file_log, 'gaussian' )
        
        frag_file = open('slv.frags','r')
        frag_names = []
@@ -977,19 +975,19 @@ if __name__ == '__main__':
        ### create Molecule object
        structure = []
        for j in range(len(fragment)):
-           structure.append( (UNITS.atomic_numbers[frag_names[j]],
-                              fragment[j]) ) 
-       molecule = Molecule('mol',
-                            structure,
-                            multiplicity=1,
-                            charge=0,
-                            units='Bohr')
+           structure.append( (units.UNITS.atomic_numbers[frag_names[j]],
+                                    fragment[j]) ) 
+       molecule = PyQuante.Molecule('mol',
+                                     structure,
+                                     multiplicity=1,
+                                     charge=0,
+                                     units='Bohr')
                             
-       basis_size = len(Ints.getbasis(molecule,'6-311++G**'))
+       basis_size = len(PyQuante.Ints.getbasis(molecule,'6-311++G**'))
        dmat = ParseDmatFromFchk(file_fchk,basis_size)
        
        ### calculate CAMMs                    
-       CAMM = multip.MULTIP(molecule=molecule,
+       CAMM = coulomb.multip.MULTIP(molecule=molecule,
                      basis='6-311++G**',
                      #basis='sto-3g',
                      method='b3lyp',
@@ -998,28 +996,28 @@ if __name__ == '__main__':
        CAMM.camms()
        #CAMM.__printCAMMs__()
        
-       result = DMA(nfrag=12)
+       result = dma.DMA(nfrag=12)
        result.DMA[0][:] = CAMM.Mon
        #
        result.DMA[1][:] = CAMM.Dip
        #
-       result.DMA[2][:,0] = array(CAMM.Quad)[:,0,0]
-       result.DMA[2][:,1] = array(CAMM.Quad)[:,1,1]
-       result.DMA[2][:,2] = array(CAMM.Quad)[:,2,2]
-       result.DMA[2][:,3] = array(CAMM.Quad)[:,0,1]
-       result.DMA[2][:,4] = array(CAMM.Quad)[:,0,2]
-       result.DMA[2][:,5] = array(CAMM.Quad)[:,1,2]
+       result.DMA[2][:,0] = numpy.array(CAMM.Quad)[:,0,0]
+       result.DMA[2][:,1] = numpy.array(CAMM.Quad)[:,1,1]
+       result.DMA[2][:,2] = numpy.array(CAMM.Quad)[:,2,2]
+       result.DMA[2][:,3] = numpy.array(CAMM.Quad)[:,0,1]
+       result.DMA[2][:,4] = numpy.array(CAMM.Quad)[:,0,2]
+       result.DMA[2][:,5] = numpy.array(CAMM.Quad)[:,1,2]
        #
-       result.DMA[3][:,0] = array(CAMM.Oct)[:,0,0,0]
-       result.DMA[3][:,1] = array(CAMM.Oct)[:,1,1,1]
-       result.DMA[3][:,2] = array(CAMM.Oct)[:,2,2,2]
-       result.DMA[3][:,3] = array(CAMM.Oct)[:,0,0,1]
-       result.DMA[3][:,4] = array(CAMM.Oct)[:,0,0,2]
-       result.DMA[3][:,5] = array(CAMM.Oct)[:,0,1,1]
-       result.DMA[3][:,6] = array(CAMM.Oct)[:,1,1,2]
-       result.DMA[3][:,7] = array(CAMM.Oct)[:,0,2,2]
-       result.DMA[3][:,8] = array(CAMM.Oct)[:,1,2,2]
-       result.DMA[3][:,9] = array(CAMM.Oct)[:,0,1,2]
+       result.DMA[3][:,0] = numpy.array(CAMM.Oct)[:,0,0,0]
+       result.DMA[3][:,1] = numpy.array(CAMM.Oct)[:,1,1,1]
+       result.DMA[3][:,2] = numpy.array(CAMM.Oct)[:,2,2,2]
+       result.DMA[3][:,3] = numpy.array(CAMM.Oct)[:,0,0,1]
+       result.DMA[3][:,4] = numpy.array(CAMM.Oct)[:,0,0,2]
+       result.DMA[3][:,5] = numpy.array(CAMM.Oct)[:,0,1,1]
+       result.DMA[3][:,6] = numpy.array(CAMM.Oct)[:,1,1,2]
+       result.DMA[3][:,7] = numpy.array(CAMM.Oct)[:,0,2,2]
+       result.DMA[3][:,8] = numpy.array(CAMM.Oct)[:,1,2,2]
+       result.DMA[3][:,9] = numpy.array(CAMM.Oct)[:,0,1,2]
        #
        print result
        out = open('test.dat','w')
@@ -1043,7 +1041,7 @@ using COULOMB.py routines"""
        print
        
        for i,file_log in enumerate(pliki_log):
-           dma = ParseDMA( file_log, 'gaussian' )
+           dma = utilities.ParseDMA( file_log, 'gaussian' )
            fragment = dma.get_pos()
            
            ### read atomic symbols
@@ -1058,8 +1056,8 @@ using COULOMB.py routines"""
            ### create Molecule object
            structure = []
            for j in range(len(fragment)):
-               #structure.append( (UNITS.atomic_numbers[frag_names[j]],
-               structure.append( (Atom(frag_names[j]).atno,
+               #structure.append( (units.UNITS.atomic_numbers[frag_names[j]],
+               structure.append( (units.Atom(frag_names[j]).atno,
                                   fragment[j]) ) 
            molecule = Molecule('mol',
                                 structure,
@@ -1067,12 +1065,12 @@ using COULOMB.py routines"""
                                 charge=0,
                                 units='Bohr')
                             
-           basis_size = len(Ints.getbasis(molecule,basis))
+           basis_size = len(PyQuante.Ints.getbasis(molecule,basis))
            print " - basis size= ",basis_size
            dmat = ParseDmatFromFchk(pliki_fchk[i],basis_size)
        
            ### calculate CAMMs                    
-           camm = multip.MULTIP(molecule=molecule,
+           camm = coulomb.multip.MULTIP(molecule=molecule,
                          basis=basis,
                          #basis='sto-3g',
                          method='b3lyp',

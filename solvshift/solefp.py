@@ -2,26 +2,27 @@
 #            SOLVATOCHROMIC EFFECTIVE FRAGMENT POTENTIAL MODULE              #
 # -------------------------------------------------------------------------- #
 
-from numpy     import tensordot, dot, transpose, array, float64, zeros, \
-                      concatenate as con, where
-from units     import *
-from utilities import Read_xyz_file, get_pmloca, ParseFockFromGamessLog, \
-                      ParseDmatFromFchk, ParseVecFromFchk, MakeMol
-from diff      import DIFF
-from PyQuante.Ints import getT, getSAB, getTAB, getSA1B, getTA1B, getVEFP, \
-                          getV, getbasis
-from shftex import shftex
-from shftce import shftce
-from solpol import solpol, mollst, sftpol
-from efprot import tracls
-from exrep  import exrep
-import sys, copy, os, re, math, glob, PyQuante.Ints, coulomb.multip, clemtp
+#from numpy     import tensordot, dot, transpose, array, float64, zeros, \
+#                      concatenate as con, where
+#from units     import *
+#from utilities import Read_xyz_file, get_pmloca, ParseFockFromGamessLog, \
+#                      ParseDmatFromFchk, ParseVecFromFchk, MakeMol
+#from diff      import DIFF
+#from PyQuante.Ints import getT, getSAB, getTAB, getSA1B, getTA1B, getVEFP, \
+#                          getV, getbasis
+#from shftex import shftex
+#from shftce import shftce
+#from solpol import solpol, mollst, sftpol
+#from efprot import tracls
+#from exrep  import exrep
+import sys, copy, os, re, math, glob, PyQuante.Ints, coulomb.multip, clemtp,\
+       numpy, units, utilities, diff, shftex, shftce, solpol, efprot, exrep
 sys.stdout.flush()
 
 __all__ = ['EFP','FragFactory',]
 __version__ = '1.0.2'
 
-class EFP(object,UNITS):
+class EFP(object, units.UNITS):
     """"""
     def __init__(self,ccut=None,pcut=None,ecut=None,#pairwise_all=False,
                       elect=True,pol=False,rep=False,ct=False,disp=False,all=False,
@@ -90,8 +91,8 @@ Also set the BSM parameters if not done in set_bsm.
           -  total number of molecules
 <nmol>    - a list of number of atoms (integers) in each molecule
 <bsm>     - a list of a form: bsm = list(<Frag object>)"""
-        self.__ind = array(ind,int)
-        self.__nmol= array(nmol,int)
+        self.__ind = numpy.array(ind,int)
+        self.__nmol= numpy.array(nmol,int)
         if bsm is not None: self.__bsm = bsm
         if supl is not None: 
            self.__suplist = supl
@@ -159,7 +160,7 @@ are counted."""
                par = frg.get()
                PAR.append( par )
                #
-               qad, oct = tracls( par['dmaq'], par['dmao'] )
+               qad, oct = efprot.tracls( par['dmaq'], par['dmao'] )
                QO.append( (qad,oct) )
            #
            self.__rms_solvent_max = rms_max
@@ -168,11 +169,11 @@ are counted."""
               ndma = [ x['ndma'] for x in PAR ]
               ndmas= sum(ndma)
               
-              rdma = con  ([ x['rdma'] for x in PAR ]).reshape(ndmas*3)
-              chg  = con  ([ x['dmac'] for x in PAR ]).reshape(ndmas)
-              dip  = con  ([ x['dmad'] for x in PAR ]).reshape(ndmas*3)
-              qad  = con  ([ QO[x][0]  for x in range(N)   ]).reshape(ndmas*6)
-              oct  = con  ([ QO[x][1]  for x in range(N)   ]).reshape(ndmas*10)
+              rdma = numpy.concatenate  ([ x['rdma'] for x in PAR ]).reshape(ndmas*3)
+              chg  = numpy.concatenate  ([ x['dmac'] for x in PAR ]).reshape(ndmas)
+              dip  = numpy.concatenate  ([ x['dmad'] for x in PAR ]).reshape(ndmas*3)
+              qad  = numpy.concatenate  ([ QO[x][0]  for x in range(N)   ]).reshape(ndmas*6)
+              oct  = numpy.concatenate  ([ QO[x][1]  for x in range(N)   ]).reshape(ndmas*10)
               
               e_el = clemtp.edmtpa(rdma,chg,dip,qad,oct,ndma,lwrite)
               if self.__cunit: e_el  *= self.HartreeToKcalPerMole
@@ -184,18 +185,18 @@ are counted."""
                  npol = [ x['npol'] for x in PAR ]
                  npols= sum(npol)
                  #
-                 rpol = con  ([ x['rpol'] for x in PAR ]).reshape(npols*3)
-                 pol  = con  ([ x['dpol'] for x in PAR ]).reshape(npols*9)
+                 rpol = numpy.concatenate  ([ x['rpol'] for x in PAR ]).reshape(npols*3)
+                 pol  = numpy.concatenate  ([ x['dpol'] for x in PAR ]).reshape(npols*9)
                  #
                  DIM  = npols*3
-                 dmat = zeros((DIM,DIM),float64)
-                 flds = zeros( DIM,float64)
-                 dipind=zeros( DIM,float64)
+                 dmat = numpy.zeros((DIM,DIM),numpy.float64)
+                 flds = numpy.zeros( DIM,numpy.float64)
+                 dipind=numpy.zeros( DIM,numpy.float64)
                  #
-                 e_pol = solpol(rdma,chg,dip,qad,oct,
-                                rpol,pol,dmat,
-                                flds,dipind,
-                                ndma,npol,lwrite=False)
+                 e_pol = solpol.solpol(rdma,chg,dip,qad,oct,
+                                       rpol,pol,dmat,
+                                       flds,dipind,
+                                       ndma,npol,lwrite=False)
                  if self.__cunit: e_pol  *= self.HartreeToKcalPerMole
                  if lwrite: print " Polarization       energy: %10.6f"%e_pol
               
@@ -240,7 +241,7 @@ are counted."""
            #
            PAR.append( parc )
            #
-           qadc, octc = tracls( parc['dmaq'], parc['dmao'] )
+           qadc, octc = efprot.tracls( parc['dmaq'], parc['dmao'] )
            QO.append( (qadc,octc) )
            #
            chgc1 = parc['dmac1'].ravel()
@@ -276,7 +277,7 @@ are counted."""
                par = frg.get()
                PAR.append( par )
                #
-               qad, oct = tracls( par['dmaq'], par['dmao'] )
+               qad, oct = efprot.tracls( par['dmaq'], par['dmao'] )
                QO.append( (qad,oct) )
                #
            self.__rms_solvent_max = rms_max
@@ -286,11 +287,11 @@ are counted."""
               ndmac= parc['ndma']
               ndmas= sum(ndma)
               
-              rdma = con  ([ x['rdma'] for x in PAR ]).reshape(ndmas*3)
-              chg  = con  ([ x['dmac'] for x in PAR ]).reshape(ndmas)
-              dip  = con  ([ x['dmad'] for x in PAR ]).reshape(ndmas*3)
-              qad  = con  ([ QO[x][0]  for x in range(N+1)   ]).reshape(ndmas*6)
-              oct  = con  ([ QO[x][1]  for x in range(N+1)   ]).reshape(ndmas*10)
+              rdma = numpy.concatenate  ([ x['rdma'] for x in PAR ]).reshape(ndmas*3)
+              chg  = numpy.concatenate  ([ x['dmac'] for x in PAR ]).reshape(ndmas)
+              dip  = numpy.concatenate  ([ x['dmad'] for x in PAR ]).reshape(ndmas*3)
+              qad  = numpy.concatenate  ([ QO[x][0]  for x in range(N+1)   ]).reshape(ndmas*6)
+              oct  = numpy.concatenate  ([ QO[x][1]  for x in range(N+1)   ]).reshape(ndmas*10)
               
               # mechanical anharmonicity
               mea,a,b,c,d,e = clemtp.sdmtpm(rdma,ndma,chg,dip,qad,oct,
@@ -360,23 +361,23 @@ are counted."""
                      par = frg.get()
                      PAR.append( par )
                      #
-                     qad, oct = tracls( par['dmaq'], par['dmao'] )
+                     qad, oct = efprot.tracls( par['dmaq'], par['dmao'] )
                      QO.append( (qad,oct) )
                      #
                  ndma = [ x['ndma'] for x in PAR ]
                  ndmas= sum(ndma)
                  #
-                 rdma = con  ([ x['rdma'] for x in PAR ]).reshape(ndmas*3)
-                 chg  = con  ([ x['dmac'] for x in PAR ]).reshape(ndmas)
-                 dip  = con  ([ x['dmad'] for x in PAR ]).reshape(ndmas*3)
-                 qad  = con  ([ QO[x][0]  for x in range(N+1)   ]).reshape(ndmas*6)
-                 oct  = con  ([ QO[x][1]  for x in range(N+1)   ]).reshape(ndmas*10)
+                 rdma = numpy.concatenate  ([ x['rdma'] for x in PAR ]).reshape(ndmas*3)
+                 chg  = numpy.concatenate  ([ x['dmac'] for x in PAR ]).reshape(ndmas)
+                 dip  = numpy.concatenate  ([ x['dmad'] for x in PAR ]).reshape(ndmas*3)
+                 qad  = numpy.concatenate  ([ QO[x][0]  for x in range(N+1)   ]).reshape(ndmas*6)
+                 oct  = numpy.concatenate  ([ QO[x][1]  for x in range(N+1)   ]).reshape(ndmas*10)
                  #
                  npol = [ x['npol'] for x in PAR ]
                  npols= sum(npol)
                  #
-                 rpol = con  ([ x['rpol'] for x in PAR ]).reshape(npols*3)
-                 pol  = con  ([ x['dpol'] for x in PAR ]).reshape(npols*9)
+                 rpol = numpy.concatenate  ([ x['rpol'] for x in PAR ]).reshape(npols*3)
+                 pol  = numpy.concatenate  ([ x['dpol'] for x in PAR ]).reshape(npols*9)
                  #
                  rpol1= parc['lmoc1'].reshape(nmodes*npolc*3)
                  pol1 = parc['dpol1'].reshape(nmodes*npolc*9)
@@ -385,24 +386,24 @@ are counted."""
                  #rpol1.fill(0.0)
                  #pol1.fill(0.0)
                  #
-                 dmat = zeros((DIM,DIM),float64)
-                 dimat= zeros((DIM,DIM),float64)
-                 mat1 = zeros((DIM,DIM),float64)
+                 dmat = numpy.zeros((DIM,DIM), numpy.float64)
+                 dimat= numpy.zeros((DIM,DIM), numpy.float64)
+                 mat1 = numpy.zeros((DIM,DIM), numpy.float64)
                  #
-                 flds = zeros( DIM,float64)
-                 dipind=zeros( DIM,float64)
-                 sdipnd=zeros( DIM,float64)
-                 vec1  =zeros( DIM,float64)
-                 fivec =zeros( DIM,float64)
-                 avec  =zeros( DIM,float64)
+                 flds = numpy.zeros( DIM, numpy.float64)
+                 dipind=numpy.zeros( DIM, numpy.float64)
+                 sdipnd=numpy.zeros( DIM, numpy.float64)
+                 vec1  =numpy.zeros( DIM, numpy.float64)
+                 fivec =numpy.zeros( DIM, numpy.float64)
+                 avec  =numpy.zeros( DIM, numpy.float64)
                  #
                  #pol1.fill(0.0)
-                 epol, spol = sftpol(rdma,chg,dip,qad,oct,
-                                      chgc1,dipc1,qadc1,octc1,
-                                      rpol,pol,dmat,flds,dipind,dimat,fivec,
-                                      sdipnd,avec,vec1,mat1,
-                                      redmss,freq,gijj,rpol1,pol1,lvec,
-                                      ndma,npol,self.__mode,ndmac,npolc,lwrite=False)
+                 epol, spol = solpol.sftpol(rdma, chg, dip, qad, oct,
+                                            chgc1, dipc1, qadc1, octc1,
+                                            rpol, pol, dmat, flds, dipind, dimat, fivec,
+                                            sdipnd, avec, vec1, mat1,
+                                            redmss, freq, gijj, rpol1, pol1, lvec,
+                                            ndma, npol, self.__mode, ndmac, npolc, lwrite=False)
                  if self.__cunit:
                     epol  *= self.HartreeToKcalPerMole
                     spol  *= self.HartreePerHbarToCmRec
@@ -435,8 +436,8 @@ are counted."""
                serp = 0
                #for par in PAR: shift += self._pair_rep_freq(parc,par)
                # basis sets
-               molA = MakeMol(parc['atno'],parc['pos'])
-               bfsA = getbasis(molA,parc['basis'])
+               molA = utilities.MakeMol(parc['atno'],parc['pos'])
+               bfsA = PyQuante.Ints.getbasis(molA,parc['basis'])
                nbsa = parc['nbasis']
                nmosa= parc['nmos']
                nmodes = parc['nmodes']
@@ -456,15 +457,15 @@ are counted."""
                lvec = parc['lvec']                .ravel()
                #
                for par in PAR:
-                   molB = MakeMol(par['atno'],par['pos'])
-                   bfsB = getbasis(molB,par['basis'])
+                   molB = utilities.MakeMol(par['atno'],par['pos'])
+                   bfsB = PyQuante.Ints.getbasis(molB,par['basis'])
                    nbsb = par['nbasis']
                    nmosb = par['nmos']
                    # instantaneous integrals
-                   skm  = getSAB(bfsA,bfsB)       .ravel()
-                   tkm  = getTAB(bfsA,bfsB)       .ravel()
-                   sk1m = getSA1B(bfsA,bfsB)      .ravel()
-                   tk1m = getTA1B(bfsA,bfsB)      .ravel()
+                   skm  = PyQuante.Ints.getSAB(bfsA,bfsB)       .ravel()
+                   tkm  = PyQuante.Ints.getTAB(bfsA,bfsB)       .ravel()
+                   sk1m = PyQuante.Ints.getSA1B(bfsA,bfsB)      .ravel()
+                   tk1m = PyQuante.Ints.getTA1B(bfsA,bfsB)      .ravel()
                    ### molecule B
                    fbij = par['fock']             .ravel()
                    cikb = par['vecl']             .ravel()
@@ -472,25 +473,25 @@ are counted."""
                    rnb  = par['pos' ]             .ravel()
                    rib  = par['lmoc']             .ravel()
                    # calculate the properties!
-                   #sma ,shftea = shftex(redmss,freq,gijj,lvec,
-                   #                     ria,rib,rna,rnb,ria1,
-                   #                     cika,cikb,cika1,
-                   #                     skm,tkm,sk1m,tk1m,
-                   #                     za,zb,mlist,
-                   #                     faij,fbij,faij1,self.__mode)
-                   sij = zeros(nmosa*nmosb,float64)
-                   tij = zeros(nmosa*nmosb,float64)
-                   smij= zeros(nmodes*nmosa*nmosb,float64)
-                   tmij= zeros(nmodes*nmosa*nmosb,float64)
-                   fi  = zeros(nmodes,float64)
+                   #sma ,shftea = shftex.shftex(redmss,freq,gijj,lvec,
+                   #                            ria,rib,rna,rnb,ria1,
+                   #                            cika,cikb,cika1,
+                   #                            skm,tkm,sk1m,tk1m,
+                   #                            za,zb,mlist,
+                   #                            faij,fbij,faij1,self.__mode)
+                   sij = numpy.zeros(nmosa*nmosb       , numpy.float64)
+                   tij = numpy.zeros(nmosa*nmosb       , numpy.float64)
+                   smij= numpy.zeros(nmodes*nmosa*nmosb, numpy.float64)
+                   tmij= numpy.zeros(nmodes*nmosa*nmosb, numpy.float64)
+                   fi  = numpy.zeros(nmodes            , numpy.float64)
                    #
-                   sma, shftea = shftex(redmss,freq,gijj,lvec,
-                                        ria,rib,rna,rnb,ria1,
-                                        cika,cikb,cika1,
-                                        skm,tkm,sk1m,tk1m,
-                                        za,zb,nbsb,mlist,
-                                        faij,fbij,faij1,self.__mode,
-                                        sij,tij,smij,tmij,fi)
+                   sma, shftea = shftex.shftex(redmss, freq, gijj, lvec,
+                                               ria, rib, rna, rnb, ria1,
+                                               cika, cikb, cika1,
+                                               skm, tkm, sk1m, tk1m,
+                                               za, zb, nbsb, mlist,
+                                               faij, fbij, faij1, self.__mode,
+                                               sij, tij, smij, tmij, fi)
                    serp+=sma
                    #
                if self.__cunit:
@@ -525,7 +526,7 @@ are counted."""
         self.__bsm               = None
         self.__eval_freq         = False
         self.__eval_nlo          = None
-        self.__shift             = zeros(9,dtype=float64)
+        self.__shift             = numpy.zeros(9,dtype=numpy.float64)
         self.__rms_central       = None
         self.__suplist           = None
         self.__rms_solvent_max   = None
@@ -540,32 +541,32 @@ are counted."""
            rc = pos[:nac ]
            rm = pos[ nac:].reshape((natoms-nac)*3)
            #
-           ic = zeros(natoms-nac,dtype=bool)
-           ip = zeros(natoms-nac,dtype=bool)
-           ie = zeros(natoms-nac,dtype=bool)
-           icm = zeros(nm,dtype=bool)
-           ipm = zeros(nm,dtype=bool)
-           iem = zeros(nm,dtype=bool)
+           ic  = numpy.zeros(natoms-nac, dtype=bool)
+           ip  = numpy.zeros(natoms-nac, dtype=bool)
+           ie  = numpy.zeros(natoms-nac, dtype=bool)
+           icm = numpy.zeros(nm        , dtype=bool)
+           ipm = numpy.zeros(nm        , dtype=bool)
+           iem = numpy.zeros(nm        , dtype=bool)
            #
            nccut, npcut, necut, mccut, mpcut, mecut = \
-                                        mollst(rc,rm,ic,ip,ie,icm,ipm,iem,
-                                               self.__nmol[1:],
-                                               self.__ccut,
-                                               self.__pcut,
-                                               self.__ecut)
-                                               #
+                                        solpol.mollst(rc,rm,ic,ip,ie,icm,ipm,iem,
+                                                      self.__nmol[1:],
+                                                      self.__ccut,
+                                                      self.__pcut,
+                                                      self.__ecut)
+                                                      #
            # molecule coordinate lists
-           rcoordc = pos[nac:][array(nccut,dtype=bool)]
-           rcoordp = pos[nac:][array(npcut,dtype=bool)]
-           rcoorde = pos[nac:][array(necut,dtype=bool)]
+           rcoordc = pos[nac:][numpy.array(nccut, dtype=bool)]
+           rcoordp = pos[nac:][numpy.array(npcut, dtype=bool)]
+           rcoorde = pos[nac:][numpy.array(necut, dtype=bool)]
            # molecule type lists
-           mtc= self.__ind[1:][array(mccut,dtype=bool)]
-           mtp= self.__ind[1:][array(mpcut,dtype=bool)]
-           mte= self.__ind[1:][array(mecut,dtype=bool)]
+           mtc= self.__ind[1:][numpy.array(mccut, dtype=bool)]
+           mtp= self.__ind[1:][numpy.array(mpcut, dtype=bool)]
+           mte= self.__ind[1:][numpy.array(mecut, dtype=bool)]
            # moleculear atom number lists
-           ntc= self.__nmol[1:][array(mccut,dtype=bool)]
-           ntp= self.__nmol[1:][array(mpcut,dtype=bool)]
-           nte= self.__nmol[1:][array(mecut,dtype=bool)]
+           ntc= self.__nmol[1:][numpy.array(mccut, dtype=bool)]
+           ntp= self.__nmol[1:][numpy.array(mpcut, dtype=bool)]
+           nte= self.__nmol[1:][numpy.array(mecut, dtype=bool)]
            #
            self.__rc = rc
            self.__rcoordc = rcoordc
@@ -590,13 +591,13 @@ are counted."""
     def _pair_rep(self,varA,varB):
         """exchange-repulsion pair energy"""
         # basis sets
-        molA = MakeMol(varA['atno'],varA['pos'])
-        molB = MakeMol(varB['atno'],varB['pos'])
-        bfsA = getbasis(molA,varA['basis'])
-        bfsB = getbasis(molB,varB['basis'])
+        molA = utilities.MakeMol(varA['atno'],varA['pos'])
+        molB = utilities.MakeMol(varB['atno'],varB['pos'])
+        bfsA = PyQuante.Ints.getbasis(molA,varA['basis'])
+        bfsB = PyQuante.Ints.getbasis(molB,varB['basis'])
         # instantaneous integrals
-        skm  = getSAB(bfsA,bfsB)
-        tkm  = getTAB(bfsA,bfsB)
+        skm  = PyQuante.Ints.getSAB(bfsA,bfsB)
+        tkm  = PyQuante.Ints.getTAB(bfsA,bfsB)
         # parameters
         ### molecule A
         faij = varA['fock']
@@ -611,21 +612,21 @@ are counted."""
         rnb  = varB['pos']
         rib  = varB['lmoc']
         # calculate the properties!
-        eint = exrep(ria,rib,rna,rnb,faij,fbij,cika,cikb,skm,tkm,za,zb)
+        eint = exrep.exrep(ria,rib,rna,rnb,faij,fbij,cika,cikb,skm,tkm,za,zb)
         return eint
 
     def _pair_rep_freq(self,varA,varB):
         """exchange-repulsion pair frequency shift"""
         # basis sets
-        molA = MakeMol(varA['atno'],varA['pos'])
-        molB = MakeMol(varB['atno'],varB['pos'])
-        bfsA = getbasis(molA,varA['basis'])
-        bfsB = getbasis(molB,varB['basis'])
+        molA = utilities.MakeMol(varA['atno'],varA['pos'])
+        molB = utilities.MakeMol(varB['atno'],varB['pos'])
+        bfsA = PyQuante.Ints.getbasis(molA,varA['basis'])
+        bfsB = PyQuante.Ints.getbasis(molB,varB['basis'])
         # instantaneous integrals
-        skm  = getSAB(bfsA,bfsB)
-        tkm  = getTAB(bfsA,bfsB)
-        sk1m = getSA1B(bfsA,bfsB)
-        tk1m = getTA1B(bfsA,bfsB)
+        skm  = PyQuante.Ints.getSAB(bfsA,bfsB)
+        tkm  = PyQuante.Ints.getTAB(bfsA,bfsB)
+        sk1m = PyQuante.Ints.getSA1B(bfsA,bfsB)
+        tk1m = PyQuante.Ints.getTA1B(bfsA,bfsB)
         # parameters
         ### molecule A
         faij = varA['fock']
@@ -648,17 +649,17 @@ are counted."""
         rnb  = varB['pos']
         rib  = varB['lmoc']
         # calculate the properties!
-        shift ,shftea = shftex(redmss,freq,gijj,lvec,
-                               ria,rib,rna,rnb,ria1,
-                               cika,cikb,cika1,
-                               skm,tkm,sk1m,tk1m,
-                               za,zb,mlist,
-                               faij,fbij,faij1,self.__mode)
+        shift ,shftea = shftex.shftex(redmss,freq,gijj,lvec,
+                                      ria,rib,rna,rnb,ria1,
+                                      cika,cikb,cika1,
+                                      skm,tkm,sk1m,tk1m,
+                                      za,zb,mlist,
+                                      faij,fbij,faij1,self.__mode)
         return shift
         
 
 
-class EFP_pair(object,UNITS):
+class EFP_pair(object,units.UNITS):
     """
 =============================================================================
               EFFECTIVE FRAGMENT POTENTIAL METHOD FOR A DIMER                
@@ -755,18 +756,18 @@ Notes:
         # instantaneous integrals
         #import time
         #t0 = time.time()
-        skm  = getSAB(bfsA,bfsB)
-        tkm  = getTAB(bfsA,bfsB)
+        skm  = PyQuante.Ints.getSAB(bfsA,bfsB)
+        tkm  = PyQuante.Ints.getTAB(bfsA,bfsB)
         #t1 = time.time()
-        sk1m = getSA1B(bfsA,bfsB)
-        tk1m = getTA1B(bfsA,bfsB)
-        tkk =  getT(bfsA)
-        tll =  getT(bfsB)
+        sk1m = PyQuante.Ints.getSA1B(bfsA,bfsB)
+        tk1m = PyQuante.Ints.getTA1B(bfsA,bfsB)
+        tkk =  PyQuante.Ints.getT(bfsA)
+        tll =  PyQuante.Ints.getT(bfsB)
         #t2 = time.time()
-        vkl =  getVEFP(bfsA,bfsB,qb,rnb)
-        vlk =  getVEFP(bfsB,bfsA,qa,rna)
-        vkm =  getVEFP(bfsA,bfsA,qb,rnb)
-        vln =  getVEFP(bfsB,bfsB,qa,rna)
+        vkl =  PyQuante.Ints.getVEFP(bfsA,bfsB,qb,rnb)
+        vlk =  PyQuante.Ints.getVEFP(bfsB,bfsA,qa,rna)
+        vkm =  PyQuante.Ints.getVEFP(bfsA,bfsA,qb,rnb)
+        vln =  PyQuante.Ints.getVEFP(bfsB,bfsB,qa,rna)
         #t3 = time.time()
         #vvv = getV(bfsA,self.__molA.atoms)
         #t4 = time.time()
@@ -776,12 +777,12 @@ Notes:
         #print "TOTL %.2f" % (t3-t0)
         #print "DUPA %.2f" % (t4-t3)
         # calculate the properties!
-        shftma,shftea = shftce(redmss,freq,gijj,eiglvc,
-                               rna,rnb,ria,rib,ria1,
-                               cika,cikb,cikca,cikcb,cika1,
-                               skm,tkm,tkk,tll,vkm,vkl,vlk,vln,sk1m,tk1m,
-                               faij,fbij,faijc,fbijc,faij1,
-                               za,zb,mlist,nmode)
+        shftma,shftea = shftce.shftce(redmss,freq,gijj,eiglvc,
+                                      rna,rnb,ria,rib,ria1,                      
+                                      cika,cikb,cikca,cikcb,cika1,
+                                      skm,tkm,tkk,tll,vkm,vkl,vlk,vln,sk1m,tk1m,
+                                      faij,fbij,faijc,fbijc,faij1,
+                                      za,zb,mlist,nmode)
         if cunit:
            shftma *= self.HartreePerHbarToCmRec
            shftea *= self.HartreePerHbarToCmRec
@@ -797,10 +798,10 @@ Notes:
         bfsA = self.__molA.get_bfs()
         bfsB = self.__molB.get_bfs()
         # instantaneous integrals
-        skm  = getSAB(bfsA,bfsB)
-        tkm  = getTAB(bfsA,bfsB)
-        sk1m = getSA1B(bfsA,bfsB)
-        tk1m = getTA1B(bfsA,bfsB)
+        skm  = PyQuante.Ints.getSAB(bfsA,bfsB)
+        tkm  = PyQuante.Ints.getTAB(bfsA,bfsB)
+        sk1m = PyQuante.Ints.getSA1B(bfsA,bfsB)
+        tk1m = PyQuante.Ints.getTA1B(bfsA,bfsB)
         # parameters
         ### molecule A
         faij   = varA['fock']
@@ -823,19 +824,19 @@ Notes:
         rnb  = varB['pos']
         rib  = varB['lmoc']
         # calculate the properties!
-        shftma,shftea = shftex(redmss,freq,gijj,lvec,
-                               ria,rib,rna,rnb,ria1,
-                               cika,cikb,cika1,
-                               skm,tkm,sk1m,tk1m,
-                               za,zb,mlist,
-                               faij,fbij,faij1,nmode)
+        shftma,shftea = shftex.shftex(redmss,freq,gijj,lvec,
+                                      ria,rib,rna,rnb,ria1,  
+                                      cika,cikb,cika1,
+                                      skm,tkm,sk1m,tk1m,
+                                      za,zb,mlist,
+                                      faij,fbij,faij1,nmode)
         if cunit:
            shftma *= self.HartreePerHbarToCmRec
            shftea *= self.HartreePerHbarToCmRec
 
         return shftma, shftea
     
-class FragFactory(object,DIFF):
+class FragFactory(object,diff.DIFF):
     """
 Solvatochromic Effective Fragment Potential Fragment
 ----------------------------------------------------
@@ -916,14 +917,14 @@ the canonical Fock matrix and vectors will be saved."""
         assert self.__mol is not None, 'molecule not specified! (no fchk file)'
         # evaluate transformation matrices and LMO centroids
         SAO   = PyQuante.Ints.getS(self.__bfs)
-        dmat = ParseDmatFromFchk(self.__fchk,self.__basis_size)
-        vecc = ParseVecFromFchk(self.__fchk)
+        dmat  = utilities.ParseDmatFromFchk(self.__fchk,self.__basis_size)
+        vecc  = utilities.ParseVecFromFchk(self.__fchk)
         veccocc= vecc[:self.__nae,:]
-        tran, veclmo = get_pmloca(self.__natoms,mapi=self.__bfs.LIST1,sao=SAO,
-                                  vecin=veccocc,nae=self.__nae,
-                                  maxit=100000,conv=1.0E-14,
-                                  lprint=True,
-                                  freeze=None)
+        tran, veclmo = utilities.get_pmloca(self.__natoms,mapi=self.__bfs.LIST1,sao=SAO,
+                                            vecin=veccocc,nae=self.__nae,
+                                            maxit=100000,conv=1.0E-14, 
+                                            lprint=True,
+                                            freeze=None)
         # calculate LMTPs
         camm = coulomb.multip.MULTIP(molecule=self.__mol,
                                      basis=self.__basis,
@@ -934,9 +935,9 @@ the canonical Fock matrix and vectors will be saved."""
         camm.camms()
         dma = camm.get()[0]
         # parse Fock matrix
-        Fock = ParseFockFromGamessLog(self.__gmslog,interpol=False)
-        fock = tensordot(veclmo,tensordot(veclmo,Fock,(1,0)),(1,1))
-        if ct: fckc = tensordot(vecc  ,tensordot(vecc  ,Fock,(1,0)),(1,1))
+        Fock = utilities.ParseFockFromGamessLog(self.__gmslog,interpol=False)
+        fock = numpy.tensordot(veclmo,numpy.tensordot(veclmo,Fock,(1,0)),(1,1))
+        if ct: fckc = numpy.tensordot(vecc  ,numpy.tensordot(vecc  ,Fock,(1,0)),(1,1))
         # save
         self.__lmoc = dma.get_origin()[self.__natoms:]
         self.__tran = tran
@@ -965,9 +966,9 @@ the canonical Fock matrix and vectors will be saved."""
     def _create(self):
         """creates the molecule"""
         if self.__fchk is not None:
-           mol  = Read_xyz_file(self.__fchk,mol=True,
-                                mult=1,charge=0,
-                                name='happy dummy molecule')
+           mol  = utilities.Read_xyz_file(self.__fchk,mol=True,
+                                          mult=1,charge=0,
+                                          name='happy dummy molecule')
            bfs        = PyQuante.Ints.getbasis(mol,self.__basis)
            basis_size = len(bfs)
            natoms= len(mol.atoms)

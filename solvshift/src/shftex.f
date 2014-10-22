@@ -312,7 +312,40 @@ C
 C
 C     SIJ and TIJ 
 C
-      DO I=1,NMOSA
+C      DO I=1,NMOSA
+C      DO J=1,NMOSB
+C         IJ = NMOSB*(I-1) + J
+C
+C         SIJV = ZERO
+C         TIJV = ZERO
+C
+C         DO K=1,NBSA
+C         MLISTK = MLIST(K)
+C         IK = NBSA*(I-1) + K
+C
+C         CIKAIK = CIKA(IK)
+C         DO L=1,NBSB
+C            KL = NBSB*(K-1) + L
+C            JL = NBSB*(J-1) + L
+C
+C            CIKBJL = CIKB(JL)
+C            COEFFS = CIKAIK * CIKBJL
+C
+C            SKMKL = SKM(KL)
+C            TKMKL = TKM(KL)
+C
+C            SIJV = SIJV + COEFFS * SKMKL
+C            TIJV = TIJV + COEFFS * TKMKL
+C         ENDDO
+C         ENDDO
+C         SIJ(IJ) = SIJV
+C         TIJ(IJ) = TIJV
+C      ENDDO
+C      ENDDO
+C
+C     SMIJ and TMIJ
+C
+      DO I=1,NMOSA                                     
       DO J=1,NMOSB
          IJ = NMOSB*(I-1) + J
 C
@@ -340,14 +373,8 @@ C
          ENDDO
          SIJ(IJ) = SIJV
          TIJ(IJ) = TIJV
-      ENDDO
-      ENDDO
 C
-C     SMIJ and TMIJ
-C
-      DO M=1,NMODES
-         DO I=1,NMOSA                                     
-         DO J=1,NMOSB
+         DO M=1,NMODES
 C
             MIJ = NMOSA*NMOSB*(M-1) + NMOSB*(I-1) + J
 C                                                         

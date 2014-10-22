@@ -4,26 +4,27 @@
 #             EFFECTIVE FRAGMENT PARAMETER FORMAT MODULE                #
 # --------------------------------------------------------------------- #
 
-from numpy     import array, float64, zeros, newaxis, sqrt,  \
-                      dot, asfortranarray, transpose, arange,\
-                      concatenate as con
-from units     import *
-from dma       import DMA
-from utilities import order, reorder, SVDSuperimposer as svd_sup, MakeMol
-from efprot    import vecrot, vc1rot, tracls, rotdma, tracl1, rotdm1
-from PyQuante.Ints import getbasis
-import sys, copy, os, re, math
+#from numpy     import array, float64, zeros, newaxis, sqrt,  \
+#                      dot, asfortranarray, transpose, arange,\
+#                      concatenate as con
+#from units     import *
+#from dma       import DMA
+#from utilities import order, reorder, SVDSuperimposer as svd_sup, MakeMol
+#from efprot    import vecrot, vc1rot, tracls, rotdma, tracl1, rotdm1
+#from PyQuante.Ints import getbasis
+import sys, copy, os, re, math, numpy, units, dma, utilities, efprot, \
+       PyQuante.Ints
 sys.stdout.flush()
 
 __all__     = ['Frag',]
 __version__ = '2.0.1'
 
-class Frag(object,UNITS):
+class Frag(object, units.UNITS):
     """
  =============================================================================
                  Effective Fragment Parameter Format System                   
                                                                               
-            Bartosz Błasiak                last revision: 9 Nov 2013          
+            Bartosz Błasiak                last revision: 21 Oct 2014
  =============================================================================
                                                                               
  Represents Efective Fragment Potential (EFP) fragment. Designed to unify func
@@ -253,16 +254,20 @@ class Frag(object,UNITS):
               'meoh'   ,'dmso'   ,'dcm'     ,'chcl3'   ,'na+'     ,'so3--'   ,
               'me-so3-',]
               
-    def __init__(self,file=None):
+    def __init__(self, file=None):
         self.__file = file
         self._create()
-        self._nlines = lambda n: n/5+bool(n%5)
+        #self._nlines = lambda n: n/5+bool(n%5)
         if file is not None: self.__call__(file)
-        
-    def __call__(self,file):
+    
+    def _nlines(self,n):
+        """auxiliary method"""
+        return n/5+bool(n%5)
+ 
+    def __call__(self, file):
         """parse the parameters from a file"""
         if file in self.params:
-           self.__file = os.environ['SLV_PATH'] + '/frg/%s/%s.frg' % (file,file)
+           self.__file = os.environ['SLV_PATH'] + '/frg/%s/%s.frg' % (file, file)
            if not os.path.isfile(self.__file):
               message = " No such file: <%s>. There is no *.frg file for that molecule,\n" % self.__file
               message+= " the name is misspelled or check if the $SLV_PATH variable is set properly\n"
@@ -297,8 +302,7 @@ class Frag(object,UNITS):
     
     # public
     
-    def set(self,mol=None,anh=None,frag=None,
-            dma=None,**kwargs):
+    def set(self, mol=None, anh=None, frag=None, dma=None,**kwargs):
         """set the parameters providing appropriate objects"""
         # molecular structure
         if mol is not None:
@@ -330,7 +334,7 @@ class Frag(object,UNITS):
            assert anh.if_w(), 'Anharmonic object is in wrong units! Supply anh.w() object'
            self.__redmass = anh.redmass
            self.__freq = anh.freq
-           self.__lvec = self._tr_lvec(anh.L,self.__nmodes,self.__natoms)
+           self.__lvec = self._tr_lvec(anh.L, self.__nmodes, self.__natoms)
            self.__gijk = anh.K3
         # EFP fragment parameters
         if frag is not None:
@@ -379,8 +383,8 @@ class Frag(object,UNITS):
     
     def get_bfs(self):
         """return basis set object"""
-        mol = MakeMol(self.__atno,self.__pos,name=self.__name)
-        bfs = getbasis(mol,self.__basis)
+        mol = utilities.MakeMol(self.__atno, self.__pos, name=self.__name)
+        bfs = PyQuante.Ints.getbasis(mol, self.__basis)
         return bfs
     
     def get_pos(self):
@@ -389,22 +393,22 @@ class Frag(object,UNITS):
     
     def get_traceless(self):
         """return traceless quadrupoles and octupoles"""
-        dmaq, dmao = tracls(self.__dmaq, self.__dmao)
+        dmaq, dmao = efprot.tracls(self.__dmaq, self.__dmao)
         return dmaq, dmao
     
-    def get_traceless_1(self,ravel=False):
+    def get_traceless_1(self, ravel=False):
         """return traceless 1st derivatives wrt modes of quadrupoles and octupoles"""
         self.__dmaq1 = self.__dmaq1.ravel()
         self.__dmao1 = self.__dmao1.ravel()
-        dmaq1, dmao1 = tracl1(self.__dmaq1, self.__dmao1, self.__nmodes, self.__ndma)
+        dmaq1, dmao1 = efprot.tracl1(self.__dmaq1, self.__dmao1, self.__nmodes, self.__ndma)
         if not ravel:
-           self.__dmaq1 = self.__dmaq1.reshape(self.__nmodes,self.__ndma,6)
-           self.__dmao1 = self.__dmao1.reshape(self.__nmodes,self.__ndma,10)
+           self.__dmaq1 = self.__dmaq1.reshape(self.__nmodes, self.__ndma, 6)
+           self.__dmao1 = self.__dmao1.reshape(self.__nmodes, self.__ndma, 10)
         return dmaq1, dmao1
     
     def get_traceless_2(self):
         """return traceless  2nd derivatives wrt modes of quadrupoles and octupoles"""
-        dmaq2, dmao2 = tracls(self.__dmaq2, self.__dmao2)
+        dmaq2, dmao2 = efprot.tracls(self.__dmaq2, self.__dmao2)
         return dmaq2, dmao2
     
     def write(self,file='slv.frg',par=None):
@@ -413,113 +417,113 @@ class Frag(object,UNITS):
         if par is not None:
            pass
         # basic molecular data
-        if self.__name   is not None: self._write_preambule(f)
-        if self.__pos    is not None: self._write_pos(f)
-        if self.__origin is not None: self._write_origin(f)
-        if self.__atno   is not None: self._write_atno(f)
-        if self.__atms   is not None: self._write_atms(f)
+        if self.__name       is not None: self._write_preambule(f) 
+        if self.__pos        is not None: self._write_pos(f)
+        if self.__origin     is not None: self._write_origin(f)
+        if self.__atno       is not None: self._write_atno(f)
+        if self.__atms       is not None: self._write_atms(f)
         # population analysis
-        if self.__esp   is not None: self._write_esp(f)
-        if self.__chlpg is not None: self._write_chlpg(f)
-        if self.__rdma  is not None: self._write_rdma(f)
-        if self.__dmac  is not None: self._write_dmac(f)
-        if self.__dmad  is not None: self._write_dmad(f)
-        if self.__dmaq  is not None: self._write_dmaq(f)
-        if self.__dmao  is not None: self._write_dmao(f)
-        if self.__dmac1 is not None: self._write_dmac1(f)
-        if self.__dmad1 is not None: self._write_dmad1(f)
-        if self.__dmaq1 is not None: self._write_dmaq1(f)
-        if self.__dmao1 is not None: self._write_dmao1(f)
-        if self.__dmac2 is not None: self._write_dmac2(f)
-        if self.__dmad2 is not None: self._write_dmad2(f)
-        if self.__dmaq2 is not None: self._write_dmaq2(f)
-        if self.__dmao2 is not None: self._write_dmao2(f)
-        if self.__rpol  is not None: self._write_rpol(f)
-        if self.__dpol  is not None: self._write_dpol(f)
-        if self.__dpol1 is not None: self._write_dpol1(f)
+        if self.__esp        is not None: self._write_esp(f)   
+        if self.__chlpg      is not None: self._write_chlpg(f)
+        if self.__rdma       is not None: self._write_rdma(f)
+        if self.__dmac       is not None: self._write_dmac(f)
+        if self.__dmad       is not None: self._write_dmad(f)
+        if self.__dmaq       is not None: self._write_dmaq(f)
+        if self.__dmao       is not None: self._write_dmao(f)
+        if self.__dmac1      is not None: self._write_dmac1(f)
+        if self.__dmad1      is not None: self._write_dmad1(f)
+        if self.__dmaq1      is not None: self._write_dmaq1(f)
+        if self.__dmao1      is not None: self._write_dmao1(f)
+        if self.__dmac2      is not None: self._write_dmac2(f)
+        if self.__dmad2      is not None: self._write_dmad2(f)
+        if self.__dmaq2      is not None: self._write_dmaq2(f)
+        if self.__dmao2      is not None: self._write_dmao2(f)
+        if self.__rpol       is not None: self._write_rpol(f)
+        if self.__dpol       is not None: self._write_dpol(f)
+        if self.__dpol1      is not None: self._write_dpol1(f)
         # frequency analysis
-        if self.__redmass  is not None: self._write_redmass(f)
-        if self.__freq     is not None: self._write_freq(f)
-        if self.__lvec     is not None: self._write_lvec(f)
-        if self.__gijk     is not None: self._write_gijk(f)
+        if self.__redmass    is not None: self._write_redmass(f) 
+        if self.__freq       is not None: self._write_freq(f)
+        if self.__lvec       is not None: self._write_lvec(f)
+        if self.__gijk       is not None: self._write_gijk(f)
         # EFP parameters
-        if self.__lmoc  is not None: self._write_lmoc(f)
-        if self.__lmoc1 is not None: self._write_lmoc1(f)
-        if self.__fock  is not None: self._write_fock(f)
-        if self.__fock1 is not None: self._write_fock1(f)
-        if self.__vecl  is not None: self._write_vecl(f)
-        if self.__vecl1 is not None: self._write_vecl1(f)
-        if self.__fckc  is not None: self._write_fckc(f)
-        if self.__fckc1 is not None: self._write_fckc1(f)
-        if self.__vecc  is not None: self._write_vecc(f)
-        if self.__vecc1 is not None: self._write_vecc1(f)
+        if self.__lmoc       is not None: self._write_lmoc(f)  
+        if self.__lmoc1      is not None: self._write_lmoc1(f)
+        if self.__fock       is not None: self._write_fock(f)
+        if self.__fock1      is not None: self._write_fock1(f)
+        if self.__vecl       is not None: self._write_vecl(f)
+        if self.__vecl1      is not None: self._write_vecl1(f)
+        if self.__fckc       is not None: self._write_fckc(f)
+        if self.__fckc1      is not None: self._write_fckc1(f)
+        if self.__vecc       is not None: self._write_vecc(f)
+        if self.__vecc1      is not None: self._write_vecc1(f)
         f.close()
         return
     
     def translate(self,transl):
         """translate tensors by <transl> cartesian displacement vector"""
-        if self.__pos   is not None: self.__pos   += transl
-        if self.__lmoc  is not None: self.__lmoc  += transl
-        if self.__rpol  is not None: self.__rpol  += transl
-        if self.__rdma  is not None: self.__rdma  += transl
+        if self.__pos        is not None: self.__pos   += transl 
+        if self.__lmoc       is not None: self.__lmoc  += transl
+        if self.__rpol       is not None: self.__rpol  += transl
+        if self.__rdma       is not None: self.__rdma  += transl
         return
     
     def rotate(self,rot):
         """rotate the tensors by <rot> unitary matrix"""
         # transform the atomic position static and dynamic information
         if self.__pos   is not None:
-           self.__pos    = dot(self.__pos , rot)
+           self.__pos    = numpy.dot(self.__pos , rot)
         if self.__lmoc  is not None:
-           self.__lmoc   = dot(self.__lmoc, rot)
+           self.__lmoc   = numpy.dot(self.__lmoc, rot)
         if self.__lmoc1 is not None:
-           self.__lmoc1  = dot(self.__lmoc1,rot)
+           self.__lmoc1  = numpy.dot(self.__lmoc1,rot)
         if self.__lvec  is not None:
-           self.__lvec   = dot(self.__lvec, rot)
+           self.__lvec   = numpy.dot(self.__lvec, rot)
         if self.__rpol  is not None:
-           self.__rpol   = dot(self.__rpol, rot)
+           self.__rpol   = numpy.dot(self.__rpol, rot)
         if self.__rdma  is not None:
-           self.__rdma   = dot(self.__rdma, rot)
+           self.__rdma   = numpy.dot(self.__rdma, rot)
         # transform dipoles, quadrupoles and octupoles!
         if self.__dmac  is not None:
            self.__dmad, self.__dmaq, self.__dmao = \
-           rotdma(self.__dmad,self.__dmaq,self.__dmao,rot)
+           efprot.rotdma(self.__dmad, self.__dmaq, self.__dmao,rot)
         if self.__dmac1 is not None:
            self.__dmad1 = self.__dmad1.ravel()
            self.__dmaq1 = self.__dmaq1.ravel()
            self.__dmao1 = self.__dmao1.ravel()
            self.__dmad1, self.__dmaq1, self.__dmao1 = \
-           rotdm1(self.__dmad1,self.__dmaq1,self.__dmao1,rot,
-                  self.__nmodes,self.__ndma)
-           self.__dmad1 = self.__dmad1.reshape(self.__nmodes,self.__ndma,3)
-           self.__dmaq1 = self.__dmaq1.reshape(self.__nmodes,self.__ndma,6)
-           self.__dmao1 = self.__dmao1.reshape(self.__nmodes,self.__ndma,10)
+           efprot.rotdm1(self.__dmad1, self.__dmaq1, self.__dmao1, rot,
+                        self.__nmodes, self.__ndma)
+           self.__dmad1 = self.__dmad1.reshape(self.__nmodes, self.__ndma, 3)
+           self.__dmaq1 = self.__dmaq1.reshape(self.__nmodes, self.__ndma, 6)
+           self.__dmao1 = self.__dmao1.reshape(self.__nmodes, self.__ndma, 10)
         if self.__dmac2 is not None:
            self.__dmad2, self.__dmaq2, self.__dmao2 = \
-           rotdma(self.__dmad2,self.__dmaq2,self.__dmao2,rot)
+           efprot.rotdma(self.__dmad2, self.__dmaq2, self.__dmao2,rot)
         # transform distributed polarizabilities!
         if self.__dpol   is not None:
            for i in xrange(self.__npol):
-               self.__dpol[i] = dot(transpose(rot),dot(self.__dpol[i],rot))
+               self.__dpol[i] = numpy.dot(numpy.transpose(rot), numpy.dot(self.__dpol[i], rot))
         if self.__dpol1  is not None:
            for i in xrange(self.__nmodes):
                for j in xrange(self.__npol):
-                   self.__dpol1[i,j]  = dot(transpose(rot),dot(self.__dpol1[i,j],rot))
+                   self.__dpol1[i,j]  = numpy.dot(numpy.transpose(rot), numpy.dot(self.__dpol1[i,j], rot))
         # transform the wave function!
         if self.__vecl  is not None:
            bfs = self.get_bfs()
            typs= bfs.get_bfst().sum(axis=1)
-           self.__vecl = vecrot(self.__vecl,rot,typs)
+           self.__vecl = efprot.vecrot(self.__vecl, rot, typs)
            if self.__vecc  is not None:
-              self.__vecc  = vecrot(self.__vecc,rot,typs)
+              self.__vecc  = efprot.vecrot(self.__vecc, rot, typs)
            if self.__vecl1 is not None:
-              self.__vecl1 = vc1rot(self.__vecl1,rot,typs)
+              self.__vecl1 = efprot.vc1rot(self.__vecl1, rot, typs)
            if self.__vecc1 is not None:
-              self.__vecc1 = vc1rot(self.__vecc1,rot,typs)
+              self.__vecc1 = efprot.vc1rot(self.__vecc1, rot, typs)
         return
     
     def sup(self,xyz,suplist=None):
         """superimpose structures <str> and <self.__pos>. Return rms in A.U."""
-        s = svd_sup()
+        s = utilities.SVDSuperimposer()
         if suplist is None: s.set(xyz,self.__pos)
         else:               s.set(xyz[suplist],self.__pos[suplist])
         s.run()
@@ -527,48 +531,48 @@ class Frag(object,UNITS):
         rot, transl = s.get_rotran()
         # perform transformations
         #self.__pos       = s.get_transformed()
-        self.__pos = dot(self.__pos , rot) + transl
-        if self.__lmoc  is not None: self.__lmoc   = dot(self.__lmoc , rot) + transl
-        if self.__rpol  is not None: self.__rpol   = dot(self.__rpol , rot) + transl
-        if self.__rdma  is not None: self.__rdma   = dot(self.__rdma , rot) + transl
-        if self.__lmoc1 is not None: self.__lmoc1  = dot(self.__lmoc1, rot)
-        if self.__lvec  is not None: self.__lvec   = dot(self.__lvec , rot)
+        self.__pos = numpy.dot(self.__pos , rot) + transl
+        if self.__lmoc  is not None: self.__lmoc   = numpy.dot(self.__lmoc , rot) + transl
+        if self.__rpol  is not None: self.__rpol   = numpy.dot(self.__rpol , rot) + transl
+        if self.__rdma  is not None: self.__rdma   = numpy.dot(self.__rdma , rot) + transl
+        if self.__lmoc1 is not None: self.__lmoc1  = numpy.dot(self.__lmoc1, rot)
+        if self.__lvec  is not None: self.__lvec   = numpy.dot(self.__lvec , rot)
         # transform dipoles, quadrupoles and octupoles!
         if self.__dmac  is not None:
            self.__dmad, self.__dmaq, self.__dmao = \
-           rotdma(self.__dmad,self.__dmaq,self.__dmao,rot)
+           efprot.rotdma(self.__dmad, self.__dmaq, self.__dmao, rot)
         if self.__dmac1 is not None:
            self.__dmad1 = self.__dmad1.ravel()
            self.__dmaq1 = self.__dmaq1.ravel()
            self.__dmao1 = self.__dmao1.ravel()
            self.__dmad1, self.__dmaq1, self.__dmao1 = \
-           rotdm1(self.__dmad1,self.__dmaq1,self.__dmao1,rot,
-                  self.__nmodes,self.__ndma)
-           self.__dmad1 = self.__dmad1.reshape(self.__nmodes,self.__ndma,3)
-           self.__dmaq1 = self.__dmaq1.reshape(self.__nmodes,self.__ndma,6)
-           self.__dmao1 = self.__dmao1.reshape(self.__nmodes,self.__ndma,10)
+           efprot.rotdm1(self.__dmad1, self.__dmaq1, self.__dmao1, rot,
+                        self.__nmodes, self.__ndma)
+           self.__dmad1 = self.__dmad1.reshape(self.__nmodes, self.__ndma, 3)
+           self.__dmaq1 = self.__dmaq1.reshape(self.__nmodes, self.__ndma, 6)
+           self.__dmao1 = self.__dmao1.reshape(self.__nmodes, self.__ndma, 10)
         if self.__dmac2 is not None:
            self.__dmad2, self.__dmaq2, self.__dmao2 = \
-           rotdma(self.__dmad2,self.__dmaq2,self.__dmao2,rot)
+           efprot.rotdma(self.__dmad2, self.__dmaq2, self.__dmao2, rot)
         # transform distributed polarizabilities!
         if self.__dpol   is not None:
            for i in xrange(self.__npol):
-               self.__dpol[i] = dot(transpose(rot),dot(self.__dpol[i],rot))
+               self.__dpol[i] = numpy.dot(numpy.transpose(rot),numpy.dot(self.__dpol[i],rot))
         if self.__dpol1  is not None:
            for i in xrange(self.__nmodes):
                for j in xrange(self.__npol):
-                   self.__dpol1[i,j]  = dot(transpose(rot),dot(self.__dpol1[i,j],rot))
+                   self.__dpol1[i,j]  = numpy.dot(numpy.transpose(rot),numpy.dot(self.__dpol1[i,j],rot))
         # - wave function
         if self.__vecl  is not None:
            bfs = self.get_bfs()
            typs= bfs.get_bfst().sum(axis=1)
-           self.__vecl = vecrot(self.__vecl,rot,typs)
+           self.__vecl = efprot.vecrot(self.__vecl, rot, typs)
            if self.__vecc  is not None:
-              self.__vecc  = vecrot(self.__vecc,rot,typs)
+              self.__vecc  = efprot.vecrot(self.__vecc, rot, typs)
            if self.__vecl1 is not None:
-              self.__vecl1 = vc1rot(self.__vecl1,rot,typs)
+              self.__vecl1 = efprot.vc1rot(self.__vecl1, rot, typs)
            if self.__vecc1 is not None:
-              self.__vecc1 = vc1rot(self.__vecc1,rot,typs)
+              self.__vecc1 = efprot.vc1rot(self.__vecc1, rot, typs)
         return rms
     
     def copy(self):
@@ -579,40 +583,40 @@ class Frag(object,UNITS):
         """Reorder the turn of atoms in the parameter objects according to <ord>.
 <dma> option is designed for the case when dma is not atomic and mid-bond-based (then False).
 In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and others ..."""
-        LIST1 = self.get_bfs().get_bfsl() + 1
-        sim = zeros((self.__natoms,2),int)
-        sim[:,0] = arange(1,self.__natoms+1,1)
+        LIST1    = self.get_bfs().get_bfsl() + 1
+        sim      = numpy.zeros((self.__natoms, 2),int)
+        sim[:,0] = numpy.arange(1, self.__natoms+1, 1)
         sim[:,1] = ord
         # reorder atomic positions
-        self.__pos = reorder(self.__pos,sim)
-        self.__atno= reorder(self.__atno,sim)
-        self.__atms= reorder(self.__atms,sim)
+        self.__pos = utilities.reorder(self.__pos,  sim)
+        self.__atno= utilities.reorder(self.__atno, sim)
+        self.__atms= utilities.reorder(self.__atms, sim)
         # reorder multipole moments
         if dma:
            if self.__rdma is not None:
-              self.__rdma[:self.__natoms] = reorder(self.__rdma[:self.__natoms],sim)
+              self.__rdma[:self.__natoms] = utilities.reorder(self.__rdma[:self.__natoms], sim)
            if self.__dmac is not None:
-              self.__dmac[:self.__natoms] = reorder(self.__dmac[:self.__natoms],sim)
-              self.__dmad[:self.__natoms] = reorder(self.__dmad[:self.__natoms],sim)
-              self.__dmaq[:self.__natoms] = reorder(self.__dmaq[:self.__natoms],sim)
-              self.__dmao[:self.__natoms] = reorder(self.__dmao[:self.__natoms],sim)
+              self.__dmac[:self.__natoms] = utilities.reorder(self.__dmac[:self.__natoms], sim)
+              self.__dmad[:self.__natoms] = utilities.reorder(self.__dmad[:self.__natoms], sim)
+              self.__dmaq[:self.__natoms] = utilities.reorder(self.__dmaq[:self.__natoms], sim)
+              self.__dmao[:self.__natoms] = utilities.reorder(self.__dmao[:self.__natoms], sim)
            #
            if self.__dmac1 is not None:
-              self.__dmac1[:self.__natoms] = reorder(self.__dmac1[:self.__natoms],sim,axis=1)
-              self.__dmad1[:self.__natoms] = reorder(self.__dmad1[:self.__natoms],sim,axis=1)
-              self.__dmaq1[:self.__natoms] = reorder(self.__dmaq1[:self.__natoms],sim,axis=1)
-              self.__dmao1[:self.__natoms] = reorder(self.__dmao1[:self.__natoms],sim,axis=1)
+              self.__dmac1[:self.__natoms] = utilities.reorder(self.__dmac1[:self.__natoms], sim, axis=1)
+              self.__dmad1[:self.__natoms] = utilities.reorder(self.__dmad1[:self.__natoms], sim, axis=1)
+              self.__dmaq1[:self.__natoms] = utilities.reorder(self.__dmaq1[:self.__natoms], sim, axis=1)
+              self.__dmao1[:self.__natoms] = utilities.reorder(self.__dmao1[:self.__natoms], sim, axis=1)
               #
-              self.__dmac2[:self.__natoms] = reorder(self.__dmac2[:self.__natoms],sim,axis=0)
-              self.__dmad2[:self.__natoms] = reorder(self.__dmad2[:self.__natoms],sim,axis=0)
-              self.__dmaq2[:self.__natoms] = reorder(self.__dmaq2[:self.__natoms],sim,axis=0)
-              self.__dmao2[:self.__natoms] = reorder(self.__dmao2[:self.__natoms],sim,axis=0)
+              self.__dmac2[:self.__natoms] = utilities.reorder(self.__dmac2[:self.__natoms], sim, axis=0)
+              self.__dmad2[:self.__natoms] = utilities.reorder(self.__dmad2[:self.__natoms], sim, axis=0)
+              self.__dmaq2[:self.__natoms] = utilities.reorder(self.__dmaq2[:self.__natoms], sim, axis=0)
+              self.__dmao2[:self.__natoms] = utilities.reorder(self.__dmao2[:self.__natoms], sim, axis=0)
         # reorder eigenvectors
         if self.__lvec is not None: 
-           self.__lvec = reorder(self.__lvec,sim,axis=1)
+           self.__lvec = utilities.reorder(self.__lvec, sim, axis=1)
         # reorder the wavefunction
         if self.__vecl is not None:
-           self._reorder_wfn(sim,LIST1)
+           self._reorder_wfn(sim, LIST1)
         return
     
     
@@ -626,23 +630,23 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         self.__pos  ,self.__origin, self.__nsites = None, None, None
         self.__atno ,self.__atms  , self.__mode   = None, None, None
         #
-        self.__redmass, self.__freq, self.__lvec = None, None, None
-        self.__gijk                              = None
+        self.__redmass, self.__freq, self.__lvec  = None, None, None
+        self.__gijk                               = None
         #
-        self.__fock ,self.__lmoc ,self.__vecl = None, None, None
-        self.__fock1,self.__lmoc1,self.__vecl1= None, None, None
-        self.__ncmos,self.__vecc ,self.__vecc1= None, None, None
-        self.__fckc ,self.__fckc1             = None, None
-        #
-        self.__esp  ,self.__chlpg,self.__npol = None, None, None
-        self.__dpol ,self.__dpol1,self.__rpol = None, None, None
-        #
-        self.__rdma, self.__dmac, self.__dmad = None, None, None
-        self.__dmaq, self.__dmao, self.__ndma = None, None, None
-        self.__dmac1,self.__dmad1,self.__dmaq1= None, None, None
-        self.__dmao1                          = None
-        self.__dmac2,self.__dmad2,self.__dmaq2= None, None, None
-        self.__dmao2                          = None
+        self.__fock ,self.__lmoc ,self.__vecl     = None, None, None 
+        self.__fock1,self.__lmoc1,self.__vecl1    = None, None, None
+        self.__ncmos,self.__vecc ,self.__vecc1    = None, None, None
+        self.__fckc ,self.__fckc1                 = None, None
+        #                                                            
+        self.__esp  ,self.__chlpg,self.__npol     = None, None, None
+        self.__dpol ,self.__dpol1,self.__rpol     = None, None, None
+        #                                                            
+        self.__rdma, self.__dmac, self.__dmad     = None, None, None
+        self.__dmaq, self.__dmao, self.__ndma     = None, None, None
+        self.__dmac1,self.__dmad1,self.__dmaq1    = None, None, None
+        self.__dmao1                              = None
+        self.__dmac2,self.__dmad2,self.__dmaq2    = None, None, None
+        self.__dmao2                              = None
         #
         mol_names = ('name' ,'basis' ,'method','natoms'   ,'nbasis',
                      'nmos' ,'nmodes','atoms' ,'shortname','nsites',
@@ -758,11 +762,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         #
         return par
         
-    def _reorder_wfn(self,sim,LIST1):
+    def _reorder_wfn(self, sim, LIST1):
         """reorders the turn of basis functions according to <ord> list of atomic interchange"""
         P1, P2 = [], []
         #
-        T1 = transpose(self.__vecl,axes=(1,0))
+        T1 = numpy.transpose(self.__vecl,axes=(1,0))
         #
         b=[]; n=1; curr= LIST1[0]
         for i in range(len(LIST1)-1):
@@ -778,32 +782,32 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         #
         for i in range(self.__natoms):
             P1.append( T1[c[i]:c[i+1]] )
-        P1 = array(P1)
+        P1 = numpy.array(P1)
         #
-        N1 = zeros(self.__natoms,object)
+        N1 = numpy.zeros(self.__natoms, dtype=object)
         #
         for i,j in sim:
             N1[i-1] = P1[j-1]
         #
-        self.__vecl = con(tuple(N1))
-        self.__vecl = transpose(self.__vecl,axes=(1,0))
+        self.__vecl = numpy.concatenate(tuple(N1))
+        self.__vecl = numpy.transpose(self.__vecl, axes=(1,0))
         ### DERIVATIVES
         if self.__vecl1 is not None:
-           T2 = transpose(self.__vecl1,axes=(2,1,0))
+           T2 = numpy.transpose(self.__vecl1, axes=(2,1,0))
            #
            for i in range(self.__natoms):
                P2.append( T2[c[i]:c[i+1]] )
-           P2 = array(P2)
+           P2 = numpy.array(P2)
            #
-           N2 = zeros(self.__natoms,object)
+           N2 = numpy.zeros(self.__natoms, dtype=object)
            for i,j in sim:
                N2[i-1] = P2[j-1]
            #
-           self.__vecl1 = con(tuple(N2))
-           self.__vecl1 = transpose(self.__vecl1,axes=(2,1,0))
+           self.__vecl1 = numpy.concatenate(tuple(N2))
+           self.__vecl1 = numpy.transpose(self.__vecl1, axes=(2,1,0))
         return
     
-    def _tr_lvec(self,lvec,nmodes,natoms):
+    def _tr_lvec(self, lvec, nmodes, natoms):
         """Transpose axes and reshape the L-matrix from FREQ instance"""
         return lvec.transpose().reshape(nmodes,natoms,3)
     
@@ -811,10 +815,10 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
     #            R E A D I N G    P R O C E D U R E S           #
     # --------------------------------------------------------- #
     
-    def _read(self,section):
+    def _read(self, section):
         """read the appropriate field from section and save it in SLVPAR instance"""
         section = section.split('\n')
-        querry = section[0]
+        querry  = section[0]
         for key, val in self.__sec_names.items():
             if val[2:] in querry: break
         ### basic molecular specification
@@ -856,28 +860,28 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
             data = [] ; N = int(querry.split('N=')[1])
             n = self._nlines(N)
             for i in xrange(n): data += section[i+1].split()
-            data = array(data,dtype=float64)
+            data = numpy.array(data, dtype=numpy.float64)
             # ------------------------------------ MOL --------------------------------------------
             # Atomic coordinates
             if   key == 'pos':
                  merror = 'natoms in section [ molecule ] '
                  merror+= 'is not consistent with section [ Atomic coordinates ]!'
                  assert self.__natoms == N/3, merror
-                 data = data.reshape(self.__natoms,3)
+                 data = data.reshape(self.__natoms, 3)
                  self.__pos = data
             # DMTP origins
             elif key == 'origin':
                  merror = 'natoms in section [ molecule ] '
                  merror+= 'is not consistent with section [ DMTP origins ]!'
                  assert 1==1, merror
-                 data = data.reshape(N/3,3)
+                 data = data.reshape(N/3, 3)
                  self.__origin = data
             # Atomic numbers
             elif key == 'atno':
                  merror = 'natoms in section [ molecule ] '
                  merror+= 'is not consistent with section [ Atomic numbers ]!'
                  assert self.__natoms == N, merror
-                 self.__atno = array(data,int)
+                 self.__atno = numpy.array(data, int)
             # Atomic masses
             elif key == 'atms':
                  merror = 'natoms in section [ molecule ] '
@@ -903,7 +907,7 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
                  merror = 'ndma in section [ molecule ] '
                  merror+= 'is not consistent with section [ DMTP centers ]!'
                  assert self.__ndma == N/3, merror
-                 data = data.reshape(self.__ndma,3)
+                 data = data.reshape(self.__ndma, 3)
                  self.__rdma = data
             # distributed charges
             elif key == 'dmac':
@@ -916,21 +920,21 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
                  merror = 'ndma in section [ molecule ] '
                  merror+= 'is not consistent with section [ DMTP dipoles ]!'
                  assert self.__ndma == N/3, merror
-                 data = data.reshape(self.__ndma,3)
+                 data = data.reshape(self.__ndma, 3)
                  self.__dmad = data
             # distributed quadrupoles
             elif key == 'dmaq':
                  merror = 'ndma in section [ molecule ] '
                  merror+= 'is not consistent with section [ DMTP quadrupoles ]!'
                  assert self.__ndma == N/6, merror
-                 data = data.reshape(self.__ndma,6)
+                 data = data.reshape(self.__ndma, 6)
                  self.__dmaq = data
             # distributed octupoles
             elif key == 'dmao':
                  merror = 'ndma in section [ molecule ] '
                  merror+= 'is not consistent with section [ DMTP octupoles ]!'
                  assert self.__ndma == N/10, merror
-                 data = data.reshape(self.__ndma,10)
+                 data = data.reshape(self.__ndma, 10)
                  self.__dmao = data
             # - DMTP derivatives -
             # first derivatives
@@ -939,32 +943,32 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
                  merror = 'nmodes and ndma in section [ molecule ] '
                  merror+= 'is not consistent with section [ DMTP charges ]!'
                  assert self.__ndma*self.__nmodes == N, merror
-                 self.__dmac1 = data.reshape(self.__nmodes,self.__ndma)
-                 temp = sqrt(self.__redmass)[:,newaxis]
+                 self.__dmac1 = data.reshape(self.__nmodes, self.__ndma)
+                 temp = numpy.sqrt(self.__redmass)[:, numpy.newaxis]
                  self.__dmac1 = temp * self.__dmac1
             # distributed dipole 1st derivatives
             elif key == 'dmad1':
                  merror = 'nmodes and ndma in section [ molecule ] '
                  merror+= 'is not consistent with section [ DMTP dipoles ]!'
                  assert self.__ndma*self.__nmodes == N/3, merror
-                 data = data.reshape(self.__nmodes,self.__ndma,3)
-                 temp = sqrt(self.__redmass)[:,newaxis,newaxis]
+                 data = data.reshape(self.__nmodes, self.__ndma, 3)
+                 temp = numpy.sqrt(self.__redmass)[:, numpy.newaxis, numpy.newaxis]
                  self.__dmad1 = temp * data
             # distributed quadrupoles 1st derivatives
             elif key == 'dmaq1':
                  merror = 'nmodes and ndma in section [ molecule ] '
                  merror+= 'is not consistent with section [ DMTP quadrupoles ]!'
                  assert self.__ndma*self.__nmodes == N/6, merror
-                 data = data.reshape(self.__nmodes,self.__ndma,6)
-                 temp = sqrt(self.__redmass)[:,newaxis,newaxis]
+                 data = data.reshape(self.__nmodes, self.__ndma, 6)
+                 temp = numpy.sqrt(self.__redmass)[:, numpy.newaxis, numpy.newaxis]
                  self.__dmaq1 = temp * data
             # distributed octupoles 1st derivatives
             elif key == 'dmao1':
                  merror = 'nmodes and ndma in section [ molecule ] '
                  merror+= 'is not consistent with section [ DMTP octupoles ]!'
                  assert self.__ndma*self.__nmodes == N/10, merror
-                 data = data.reshape(self.__nmodes,self.__ndma,10)
-                 temp = sqrt(self.__redmass)[:,newaxis,newaxis]
+                 data = data.reshape(self.__nmodes, self.__ndma, 10)
+                 temp = numpy.sqrt(self.__redmass)[:, numpy.newaxis, numpy.newaxis]
                  self.__dmao1 = temp * data
             # second derivatives
             # distributed charges 2nd derivatives
@@ -979,7 +983,7 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
                  merror = 'ndma in section [ molecule ] '
                  merror+= 'is not consistent with section [ DMTP dipoles ]!'
                  assert self.__ndma == N/3, merror
-                 data = data.reshape(self.__ndma,3)
+                 data = data.reshape(self.__ndma, 3)
                  temp = self.__redmass[self.__mode-1]
                  self.__dmad2 = temp * data
             # distributed quadrupoles 2nd derivatives
@@ -987,7 +991,7 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
                  merror = 'ndma in section [ molecule ] '
                  merror+= 'is not consistent with section [ DMTP quadrupoles ]!'
                  assert self.__ndma == N/6, merror
-                 data = data.reshape(self.__ndma,6)
+                 data = data.reshape(self.__ndma, 6)
                  temp = self.__redmass[self.__mode-1]
                  self.__dmaq2 = temp * data
             # distributed octupoles 2nd derivatives
@@ -995,7 +999,7 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
                  merror = 'ndma in section [ molecule ] '
                  merror+= 'is not consistent with section [ DMTP octupoles ]!'
                  assert self.__ndma == N/10, merror
-                 data = data.reshape(self.__ndma,10)
+                 data = data.reshape(self.__ndma, 10)
                  temp = self.__redmass[self.__mode-1]
                  self.__dmao2 = temp * data
             # CABMM
@@ -1007,18 +1011,18 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
             # ------------------------------------ DPOL -------------------------------------------
             elif key == 'rpol':
                  merror = None
-                 self.__rpol = data.reshape(self.__npol,3)
+                 self.__rpol = data.reshape(self.__npol, 3)
             elif key == 'dpol':
                  merror = 'npol in section [ molecule ] '
                  merror+= 'is not consistent with section [ Distributed polarizabilities ]!'
                  assert self.__npol == (N/9), merror
-                 self.__dpol = data.reshape(self.__npol,3,3)
+                 self.__dpol = data.reshape(self.__npol, 3, 3)
             elif key == 'dpol1':
                  merror = 'npol and nmodes in section [ molecule ] '
                  merror+= 'is not consistent with section [ Distributed polarizabilities ]!'
                  assert self.__npol == (N/(9*self.__nmodes)), merror
-                 self.__dpol1 = data.reshape(self.__nmodes,self.__npol,3,3)
-                 temp = sqrt(self.__redmass)[:,newaxis,newaxis,newaxis]
+                 self.__dpol1 = data.reshape(self.__nmodes, self.__npol, 3, 3)
+                 temp = numpy.sqrt(self.__redmass)[:, numpy.newaxis, numpy.newaxis, numpy.newaxis]
                  self.__dpol1 = temp * self.__dpol1
             # ------------------------------------ FREQ -------------------------------------------
             # Harmonic frequencies
@@ -1038,13 +1042,13 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
                   merror = 'nmodes in section [ molecule ] '
                   merror+= 'is not consistent with section [ Mass-weighted eigenvectors ]!'
                   assert self.__nmodes == N/(self.__natoms*3), merror
-                  self.__lvec = data.reshape(self.__nmodes,self.__natoms,3)
+                  self.__lvec = data.reshape(self.__nmodes, self.__natoms, 3)
             # Cubic anharmonic constants
             elif  key == 'gijk':
                   merror = 'nmodes in section [ molecule ] '
                   merror+= 'is not consistent with section [ Cubic anharmonic constants ]!'
                   assert 1==1, merror
-                  gijk = zeros((self.__nmodes,self.__nmodes,self.__nmodes),dtype=float64)
+                  gijk = numpy.zeros((self.__nmodes, self.__nmodes, self.__nmodes), dtype=numpy.float64)
                   K = 0
                   for i in xrange(self.__nmodes):
                       for j in xrange(i+1):
@@ -1064,17 +1068,17 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
                   merror = 'nmos in section [ molecule ] '
                   merror+= 'is not consistent with section [ LMO centroids ]!'
                   assert self.__nmos == N/3, merror
-                  data = data.reshape(self.__nmos,3)
+                  data = data.reshape(self.__nmos, 3)
                   self.__lmoc = data
             # LMO centroids first derivatives
             elif  key == 'lmoc1':
                   merror = 'nmos and nmodes in section [ molecule ] '
                   merror+= 'is not consistent with section [ LMO centroids - first derivatives ]!'
                   assert self.__nmos == N/(3*self.__nmodes), merror
-                  data = data.reshape(self.__nmodes,self.__nmos,3)
+                  data = data.reshape(self.__nmodes, self.__nmos, 3)
                   # multiply by sqrt(redmass)
                   assert self.__redmass is not None, 'No reduced masses supplied!'
-                  temp = sqrt(self.__redmass)[:,newaxis,newaxis]
+                  temp = numpy.sqrt(self.__redmass)[:, numpy.newaxis, numpy.newaxis]
                   data = temp * data
                   self.__lmoc1 = data
             # Fock matrix
@@ -1082,7 +1086,7 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
                   merror = 'nmos in section [ molecule ] '
                   merror+= 'is not consistent with section [ Fock matrix ]!'
                   assert self.__nmos == (math.sqrt(1+8*N)-1)/2, merror
-                  fock = zeros((self.__nmos,self.__nmos),dtype=float64)
+                  fock = numpy.zeros((self.__nmos, self.__nmos), dtype=numpy.float64)
                   K = 0
                   for i in xrange(self.__nmos):
                       for j in xrange(i+1):
@@ -1096,7 +1100,7 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
                   merror = 'ncmos in section [ molecule ] '
                   merror+= 'is not consistent with section [ Canonical Fock matrix ]!'
                   assert self.__ncmos == (math.sqrt(1+8*N)-1)/2, merror
-                  fckc = zeros((self.__ncmos,self.__ncmos),dtype=float64)
+                  fckc = numpy.zeros((self.__ncmos, self.__ncmos), dtype=numpy.float64)
                   K = 0
                   for i in xrange(self.__ncmos):
                       for j in xrange(i+1):
@@ -1110,8 +1114,8 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
                   merror = 'nbasis and nmos in section [ molecule ] '
                   merror+= 'is not consistent with section [ Fock matrix - first derivatives ]!'
                   assert self.__nmos == (math.sqrt(1+8*(N/self.__nmodes))-1)/2, merror
-                  fock1 = zeros((self.__nmodes,self.__nmos,self.__nmos),dtype=float64)
-                  data = data.reshape(self.__nmodes,N/self.__nmodes)
+                  fock1 = numpy.zeros((self.__nmodes, self.__nmos, self.__nmos), dtype=numpy.float64)
+                  data = data.reshape(self.__nmodes, N/self.__nmodes)
                   for i in xrange(self.__nmodes):
                       K = 0
                       for j in xrange(self.__nmos):
@@ -1122,7 +1126,7 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
                               K += 1
                   # multiply by sqrt(redmass)
                   assert self.__redmass is not None, 'No reduced masses supplied!'
-                  temp = sqrt(self.__redmass)[:,newaxis,newaxis]
+                  temp = numpy.sqrt(self.__redmass)[:, numpy.newaxis, numpy.newaxis]
                   fock1= temp * fock1
                   self.__fock1 = fock1
             # Canonical Fock matrix first derivatives
@@ -1130,8 +1134,8 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
                   merror = 'nbasis and ncmos in section [ molecule ] '
                   merror+= 'is not consistent with section [ Canonical Fock matrix - first derivatives ]!'
                   assert self.__ncmos == (math.sqrt(1+8*(N/self.__nmodes))-1)/2, merror
-                  fckc1 = zeros((self.__nmodes,self.__ncmos,self.__ncmos),dtype=float64)
-                  data = data.reshape(self.__nmodes,N/self.__nmodes)
+                  fckc1 = numpy.zeros((self.__nmodes, self.__ncmos, self.__ncmos), dtype=numpy.float64)
+                  data  = data.reshape(self.__nmodes, N/self.__nmodes)
                   for i in xrange(self.__nmodes):
                       K = 0
                       for j in xrange(self.__ncmos):
@@ -1142,7 +1146,7 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
                               K += 1
                   # multiply by sqrt(redmass)
                   assert self.__redmass is not None, 'No reduced masses supplied!'
-                  temp = sqrt(self.__redmass)[:,newaxis,newaxis]
+                  temp = numpy.sqrt(self.__redmass)[:, numpy.newaxis, numpy.newaxis]
                   fckc1= temp * fckc1
                   self.__fckc1 = fckc1
             # AO to LMO transformation matrix
@@ -1150,24 +1154,24 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
                   merror = 'nmos and nbasis in section [ molecule ] '
                   merror+= 'is not consistent with section [ AO->LMO matrix ]!'
                   assert self.__nmos == N/self.__nbasis, merror
-                  data = data.reshape(self.__nmos,self.__nbasis)
+                  data = data.reshape(self.__nmos, self.__nbasis)
                   self.__vecl = data
             # AO to CMO transformation matrix
             elif  key == 'vecc':
                   merror = 'ncmos and nbasis in section [ molecule ] '
                   merror+= 'is not consistent with section [ AO->CMO matrix ]!'
                   assert self.__ncmos == N/self.__nbasis, merror
-                  data = data.reshape(self.__ncmos,self.__nbasis)
+                  data = data.reshape(self.__ncmos, self.__nbasis)
                   self.__vecc = data
             # AO to LMO transformation matrix first derivatives
             elif  key == 'vecl1':
                   merror = 'nmodes, nmos and nbasis in section [ molecule ] '
                   merror+= 'is not consistent with section [ AO->LMO matrix - first derivatives ]!'
                   assert self.__nmos == N/(self.__nbasis*self.__nmodes)
-                  data = data.reshape(self.__nmodes,self.__nmos,self.__nbasis)
+                  data = data.reshape(self.__nmodes, self.__nmos, self.__nbasis)
                   # multiply by sqrt(redmass)
                   assert self.__redmass is not None, 'No reduced masses supplied!'
-                  temp = sqrt(self.__redmass)[:,newaxis,newaxis]
+                  temp = numpy.sqrt(self.__redmass)[:, numpy.newaxis, numpy.newaxis]
                   data = temp * data
                   self.__vecl1 = data
             # AO to CMO transformation matrix first derivatives
@@ -1175,10 +1179,10 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
                   merror = 'nmodes, ncmos and nbasis in section [ molecule ] '
                   merror+= 'is not consistent with section [ AO->CMO matrix - first derivatives ]!'
                   assert self.__ncmos == N/(self.__nbasis*self.__nmodes)
-                  data = data.reshape(self.__nmodes,self.__ncmos,self.__nbasis)
+                  data = data.reshape(self.__nmodes, self.__ncmos, self.__nbasis)
                   # multiply by sqrt(redmass)
                   assert self.__redmass is not None, 'No reduced masses supplied!'
-                  temp = sqrt(self.__redmass)[:,newaxis,newaxis]
+                  temp = numpy.sqrt(self.__redmass)[:, numpy.newaxis, numpy.newaxis]
                   data = temp * data
                   self.__vecc1 = data
             # other not-programmed section
@@ -1194,7 +1198,7 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         """write the preambule of the parameter file"""
         log    = ' %s\n' % self.__sec_names['mol'].ljust(40)
         log   += '   name       = %s\n'    % self.__name
-        log   += '   basis      = %s/%s\n' % (self.__method, self.__basis)
+        log   += '   basis      = %s/%s\n' %(self.__method, self.__basis)
         log   += '   natoms     = %s\n'    % self.__natoms
         log   += '   nbasis     = %s\n'    % self.__nbasis
         log   += '   nmodes     = %s\n'    % self.__nmodes
@@ -1212,7 +1216,7 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         """write atomic coordinates"""
         natoms = self.__pos.shape[0]
         N = natoms * 3
-        log = ' %s %s= %d\n' % (self.__sec_names['pos'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['pos'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(natoms):
             for j in xrange(3):
@@ -1228,7 +1232,7 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         """write atomic numbers"""
         natoms = self.__atno.shape[0]
         N = natoms
-        log = ' %s %s= %d\n' % (self.__sec_names['atno'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['atno'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(natoms):
             log+= "%20d" % self.__atno[i]
@@ -1243,7 +1247,7 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         """write atomic masses"""
         natoms = self.__atms.shape[0]
         N = natoms
-        log = ' %s %s= %d\n' % (self.__sec_names['atms'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['atms'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(natoms):
             log+= "%20.10E" % self.__atms[i]
@@ -1258,7 +1262,7 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         """write DMTP origin coordinates"""
         nsites = self.__origin.shape[0]
         N = nsites * 3
-        log = ' %s %s= %d\n' % (self.__sec_names['origin'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['origin'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(nsites):
             for j in xrange(3):
@@ -1270,11 +1274,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
 
-    def _write_esp(self,file):
+    def _write_esp(self, file):
         """write ESP charges"""
         natoms = self.__atms.shape[0]
         N = natoms
-        log = ' %s %s= %d\n' % (self.__sec_names['esp'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['esp'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(natoms):
             log+= "%20.10E" % self.__esp[i]
@@ -1285,11 +1289,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
 
-    def _write_chlpg(self,file):
+    def _write_chlpg(self, file):
         """write ESP charges"""
         natoms = self.__atms.shape[0]
         N = natoms
-        log = ' %s %s= %d\n' % (self.__sec_names['chlpg'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['chlpg'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(natoms):
             log+= "%20.10E" % self.__chlpg[i]
@@ -1300,11 +1304,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
 
-    def _write_rdma(self,file):
+    def _write_rdma(self, file):
         """write DMTP center coordinates"""
         ndma = self.__rdma.shape[0]
         N = ndma * 3
-        log = ' %s %s= %d\n' % (self.__sec_names['rdma'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['rdma'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(ndma):
             for j in xrange(3):
@@ -1316,11 +1320,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
 
-    def _write_dmac(self,file):
+    def _write_dmac(self, file):
         """write DMTP charges"""
         ndma = self.__dmac.shape[0]
         N = ndma
-        log = ' %s %s= %d\n' % (self.__sec_names['dmac'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['dmac'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(ndma):
             log+= "%20.10E" % self.__dmac[i]
@@ -1331,11 +1335,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
     
-    def _write_dmac1(self,file):
+    def _write_dmac1(self, file):
         """write DMTP charges 1st der wrt nmodes"""
         nmodes, ndma = self.__dmac1.shape
         N = ndma * nmodes
-        log = ' %s %s= %d\n' % (self.__sec_names['dmac1'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['dmac1'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(nmodes):
             for j in xrange(ndma):
@@ -1347,11 +1351,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
     
-    def _write_dmac2(self,file):
+    def _write_dmac2(self, file):
         """write DMTP charges 2nd derivatives wrt <mode>"""
         ndma = self.__dmac2.shape[0]
         N = ndma
-        log = ' %s %s= %d\n' % (self.__sec_names['dmac2'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['dmac2'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(ndma):
             log+= "%20.10E" % self.__dmac2[i]
@@ -1362,11 +1366,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
     
-    def _write_dmad(self,file):
+    def _write_dmad(self, file):
         """write DMTP dipoles"""
         ndma = self.__dmad.shape[0]
         N = ndma * 3
-        log = ' %s %s= %d\n' % (self.__sec_names['dmad'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['dmad'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(ndma):
             for j in xrange(3):
@@ -1378,11 +1382,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
     
-    def _write_dmad1(self,file):
+    def _write_dmad1(self, file):
         """write DMTP dipoles 1st der wrt nmodes"""
-        nmodes,ndma,c = self.__dmad1.shape
+        nmodes, ndma, c = self.__dmad1.shape
         N = nmodes * ndma * 3
-        log = ' %s %s= %d\n' % (self.__sec_names['dmad1'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['dmad1'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(nmodes):
             for j in xrange(ndma):
@@ -1395,11 +1399,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
     
-    def _write_dmad2(self,file):
+    def _write_dmad2(self, file):
         """write DMTP dipoles 2nd derivatives wrt <mode>"""
         ndma = self.__dmad2.shape[0]
         N = ndma * 3
-        log = ' %s %s= %d\n' % (self.__sec_names['dmad2'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['dmad2'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(ndma):
             for j in xrange(3):
@@ -1411,11 +1415,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
     
-    def _write_dmaq(self,file):
+    def _write_dmaq(self, file):
         """write DMTP quadrupoles"""
         ndma = self.__dmaq.shape[0]
         N = ndma * 6
-        log = ' %s %s= %d\n' % (self.__sec_names['dmaq'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['dmaq'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(ndma):
             for j in xrange(6):
@@ -1427,11 +1431,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
     
-    def _write_dmaq1(self,file):
+    def _write_dmaq1(self, file):
         """write DMTP quadrupoles 1st der wrt nmodes"""
-        nmodes,ndma,c = self.__dmaq1.shape
+        nmodes, ndma, c = self.__dmaq1.shape
         N = nmodes * ndma * 6
-        log = ' %s %s= %d\n' % (self.__sec_names['dmaq1'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['dmaq1'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(nmodes):
             for j in xrange(ndma):
@@ -1444,11 +1448,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
     
-    def _write_dmaq2(self,file):
+    def _write_dmaq2(self, file):
         """write DMTP quadrupoles 2nd derivatives wrt <mode>"""
         ndma = self.__dmaq2.shape[0]
         N = ndma * 6
-        log = ' %s %s= %d\n' % (self.__sec_names['dmaq2'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['dmaq2'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(ndma):
             for j in xrange(6):
@@ -1460,11 +1464,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
     
-    def _write_dmao(self,file):
+    def _write_dmao(self, file):
         """write DMTP octupoles"""
         ndma = self.__dmao.shape[0]
         N = ndma * 10
-        log = ' %s %s= %d\n' % (self.__sec_names['dmao'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['dmao'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(ndma):
             for j in xrange(10):
@@ -1476,11 +1480,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
     
-    def _write_dmao1(self,file):
+    def _write_dmao1(self, file):
         """write DMTP octupoles 1st der wrt nmodes"""
-        nmodes,ndma,c = self.__dmao1.shape
+        nmodes, ndma, c = self.__dmao1.shape
         N = nmodes * ndma * 10
-        log = ' %s %s= %d\n' % (self.__sec_names['dmao1'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['dmao1'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(nmodes):
             for j in xrange(ndma):
@@ -1493,11 +1497,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
     
-    def _write_dmao2(self,file):
+    def _write_dmao2(self, file):
         """write DMTP octupoles 2nd derivatives wrt <mode>"""
         ndma = self.__dmao2.shape[0]
         N = ndma * 10
-        log = ' %s %s= %d\n' % (self.__sec_names['dmao2'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['dmao2'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(ndma):
             for j in xrange(10):
@@ -1509,11 +1513,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
     
-    def _write_rpol(self,file):
+    def _write_rpol(self, file):
         """write polarizable center coordinates"""
         npol = self.__rpol.shape[0]
         N = npol * 3
-        log = ' %s %s= %d\n' % (self.__sec_names['rpol'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['rpol'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(npol):
             for j in xrange(3):
@@ -1525,11 +1529,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
         
-    def _write_dpol(self,file):
+    def _write_dpol(self, file):
         """write distributed polarizabilities"""
         nmos = self.__dpol.shape[0]
         N = nmos*9
-        log = ' %s %s= %d\n' % (self.__sec_names['dpol'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['dpol'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(nmos):
             for j in [0,1,2]:
@@ -1542,12 +1546,12 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
         
-    def _write_dpol1(self,file):
+    def _write_dpol1(self, file):
         """write distributed polarizabilities first derivatives wrt modes"""
         nmodes = self.__dpol1.shape[0]
         nmos   = self.__dpol1.shape[1]
         N = nmodes*nmos*9
-        log = ' %s %s= %d\n' % (self.__sec_names['dpol1'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['dpol1'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(nmodes):
             for j in xrange(nmos):
@@ -1561,11 +1565,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
     
-    def _write_freq(self,file):
+    def _write_freq(self, file):
         """write harmonic frequencies"""
         nmodes = self.__freq.shape[0]
         N = nmodes
-        log = ' %s %s= %d\n' % (self.__sec_names['freq'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['freq'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(nmodes):
             log+= "%20.10E" % self.__freq[i]
@@ -1576,11 +1580,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
 
-    def _write_redmass(self,file):
+    def _write_redmass(self, file):
         """write reduced masses"""
         nmodes = self.__redmass.shape[0]
         N = nmodes
-        log = ' %s %s= %d\n' % (self.__sec_names['redmass'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['redmass'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(nmodes):
             log+= "%20.10E" % self.__redmass[i]
@@ -1591,11 +1595,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
 
-    def _write_lvec(self,file):
+    def _write_lvec(self, file):
         """write mass-weighted eigenvectors"""
         nmodes, natoms, x = self.__lvec.shape 
         N = nmodes * natoms * 3
-        log = ' %s %s= %d\n' % (self.__sec_names['lvec'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['lvec'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(nmodes):
             for j in xrange(natoms):
@@ -1608,11 +1612,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
 
-    def _write_gijk(self,file):
+    def _write_gijk(self, file):
         """write cubic anharmonic constants"""
         nmodes = self.__gijk.shape[0]
         N = nmodes*(nmodes+1)*(nmodes+2)/6
-        log = ' %s %s= %d\n' % (self.__sec_names['gijk'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['gijk'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(nmodes):
             for j in xrange(i+1):
@@ -1625,11 +1629,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
     
-    def _write_lmoc(self,file):
+    def _write_lmoc(self, file):
         """write LMO centroid coordinates"""
         nmos = self.__lmoc.shape[0]
         N = nmos * 3
-        log = ' %s %s= %d\n' % (self.__sec_names['lmoc'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['lmoc'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(nmos):
             for j in xrange(3):
@@ -1641,11 +1645,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
         
-    def _write_lmoc1(self,file):
+    def _write_lmoc1(self, file):
         """write LMO centroid first derivatives wrt nmodes"""
         nmodes, nmos, n = self.__lmoc1.shape
         N = nmodes * nmos * 3
-        log = ' %s %s= %d\n' % (self.__sec_names['lmoc1'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['lmoc1'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(nmodes):
             for j in xrange(nmos):
@@ -1658,11 +1662,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
         
-    def _write_fock(self,file):
+    def _write_fock(self, file):
         """write Fock matrix elements"""
         nmos = self.__fock.shape[0]
         N = (nmos**2 - nmos) / 2 + nmos
-        log = ' %s %s= %d\n' % (self.__sec_names['fock'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['fock'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(nmos):
             for j in xrange(i+1):
@@ -1674,11 +1678,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
 
-    def _write_fckc(self,file):
+    def _write_fckc(self, file):
         """write canonical Fock matrix elements"""
         ncmos = self.__fckc.shape[0]
         N = (ncmos**2 - ncmos) / 2 + ncmos
-        log = ' %s %s= %d\n' % (self.__sec_names['fckc'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['fckc'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(ncmos):
             for j in xrange(i+1):
@@ -1690,12 +1694,12 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
     
-    def _write_fock1(self,file):
+    def _write_fock1(self, file):
         """write Fock matrix element first derivatives wrt nmodes"""
         nmodes = self.__fock1.shape[0]
         nmos = self.__fock1.shape[1]
         N = nmodes * ( (nmos**2 - nmos) / 2 + nmos )
-        log = ' %s %s= %d\n' % (self.__sec_names['fock1'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['fock1'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(nmodes):
             for j in xrange(nmos):
@@ -1708,12 +1712,12 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
 
-    def _write_fckc1(self,file):
+    def _write_fckc1(self, file):
         """write canonical Fock matrix element first derivatives wrt nmodes"""
         nmodes = self.__fckc1.shape[0]
         ncmos = self.__fckc1.shape[1]
         N = nmodes * ( (ncmos**2 - ncmos) / 2 + ncmos )
-        log = ' %s %s= %d\n' % (self.__sec_names['fckc1'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['fckc1'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(nmodes):
             for j in xrange(ncmos):
@@ -1726,11 +1730,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
         
-    def _write_vecl(self,file):
+    def _write_vecl(self, file):
         """write AO-LMO transformation matrix elements"""
         nmos, nbasis = self.__vecl.shape
         N = nmos * nbasis
-        log = ' %s %s= %d\n' % (self.__sec_names['vecl'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['vecl'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(nmos):
             for j in xrange(nbasis):
@@ -1742,11 +1746,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
 
-    def _write_vecc(self,file):
+    def _write_vecc(self, file):
         """write AO-CMO transformation matrix elements"""
         ncmos, nbasis = self.__vecc.shape
         N = ncmos * nbasis
-        log = ' %s %s= %d\n' % (self.__sec_names['vecc'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['vecc'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(ncmos):
             for j in xrange(nbasis):
@@ -1758,11 +1762,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
     
-    def _write_vecl1(self,file):
+    def _write_vecl1(self, file):
         """write AO-LMO transformation matrix element first derivatives wrt nmodes"""
         nmodes, nmos, nbasis = self.__vecl1.shape
         N = nmodes * nmos * nbasis
-        log = ' %s %s= %d\n' % (self.__sec_names['vecl1'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['vecl1'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(nmodes):
             for j in xrange(nmos):
@@ -1775,11 +1779,11 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         file.write(log)
         return
 
-    def _write_vecc1(self,file):
+    def _write_vecc1(self, file):
         """write AO-CMO transformation matrix element first derivatives wrt nmodes"""
         nmodes, ncmos, nbasis = self.__vecc1.shape
         N = nmodes * ncmos * nbasis
-        log = ' %s %s= %d\n' % (self.__sec_names['vecc1'].ljust(40),'N'.rjust(10),N)
+        log = ' %s %s= %d\n' % (self.__sec_names['vecc1'].ljust(40), 'N'.rjust(10), N)
         n = 1
         for i in xrange(nmodes):
             for j in xrange(ncmos):
