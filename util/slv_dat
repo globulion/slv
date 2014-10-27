@@ -1,7 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 """
- Parse the report.md files and generate data
+ Parse the report.md files and generate data.
+ The output graph is written in fig-shifts.jpg file
 
  Usage:
 
