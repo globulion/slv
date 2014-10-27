@@ -99,6 +99,15 @@ Also set the BSM parameters if not done in set_bsm.
            self.__suplist_c = supl[0]
         else: self.__suplist_c = None
         self._update(pos)
+        # store the information about central molecule
+        if self.__eval_freq and bsm is not None:
+           parc = self.__bsm[0].get()
+           self.__nmodes = parc['nmodes']
+           self.__nata   = parc['natoms']
+           self.__gijk   = parc['gijk']
+           self.__redmss = parc['redmass']
+           self.__freq   = parc['freq']
+           self.__mode   = parc['mode']
         return    
     
     def set_cut(self,ccut,pcut):
@@ -126,7 +135,17 @@ Also set the BSM parameters if not done in set_bsm.
         """
 Return RMS of superimposition of central molecule with its parameters (relevant for central molecule mode)"""
         return self.__rms_central
-    
+
+    def get_dq(self,theory=0):
+        """
+Return structural distortions in a given Tn-th level of theory=n. 
+Returns tuple of size 3 with electrostatics, polarization and repulsion
+structural distortions numpy.ndarrays (nata x 3). In Bohr"""
+        dq_el = self._eval_dq(self.__fi_el , theory)
+        dq_pol= self._eval_dq(self.__fi_pol, theory)
+        dq_rep= self._eval_dq(self.__fi_rep, theory)
+        return dq_el, dq_pol, dq_rep
+ 
     def get_rms_sol(self):
         """
 Return maximal RMS of superimposition of (solvent) molecules with its parameters.
@@ -236,8 +255,7 @@ are counted."""
            self.__rms_central = frg.sup( self.__rc, self.__suplist_c )
            if lwrite: print "Central rms: ",self.__rms_central
            parc= frg.get()
-           #
-           self.__mode = parc['mode']
+           self.__lvec = parc['lvec']
            #
            PAR.append( parc )
            #
@@ -254,15 +272,21 @@ are counted."""
            qadc2 = qadc2.ravel()
            octc2 = octc2.ravel()
            #
-           gijj   = parc['gijk'][:,self.__mode-1,self.__mode-1]
-           freq   = parc['freq']
-           redmss = parc['redmass']
-           lvec   = parc['lvec'].ravel()
-           nmodes = parc['nmodes']
+           gijj   = self.__gijk[:,self.__mode-1,self.__mode-1]
+           freq   = self.__freq
+           redmss = self.__redmss
+           lvec   = self.__lvec.ravel()
+           nmodes = self.__nmodes
            #
            freqc = freq[self.__mode-1]
            redmssc=redmss[self.__mode-1]
            #
+           self.__fi_el  = numpy.zeros(self.__nmodes, dtype=numpy.float64)
+           self.__fi_pol = numpy.zeros(self.__nmodes, dtype=numpy.float64)
+           self.__fi_rep = numpy.zeros(self.__nmodes, dtype=numpy.float64)
+           self.__dq_el  = numpy.zeros((self.__nata,3), dtype=numpy.float64)
+           self.__dq_pol = numpy.zeros((self.__nata,3), dtype=numpy.float64)
+           self.__dq_rep = numpy.zeros((self.__nata,3), dtype=numpy.float64)
            ### other molecules
            rms_max = 0.0
            for i in range(N):
@@ -292,12 +316,16 @@ are counted."""
               dip  = numpy.concatenate  ([ x['dmad'] for x in PAR ]).reshape(ndmas*3)
               qad  = numpy.concatenate  ([ QO[x][0]  for x in range(N+1)   ]).reshape(ndmas*6)
               oct  = numpy.concatenate  ([ QO[x][1]  for x in range(N+1)   ]).reshape(ndmas*10)
-              
+             
               # mechanical anharmonicity
-              mea,a,b,c,d,e = clemtp.sdmtpm(rdma,ndma,chg,dip,qad,oct,
-                                              chgc1,dipc1,qadc1,octc1,
-                                              redmss,freq,gijj,
-                                              ndmac,self.__mode,lwrite)
+              mea,a,b,c,d,e,fi = clemtp.sdmtpm(rdma,ndma,chg,dip,qad,oct,
+                                               chgc1,dipc1,qadc1,octc1,
+                                               redmss,freq,gijj,
+                                               ndmac,self.__mode,lwrite)
+
+              # store forces
+              self.__fi_el = fi
+
               # electronic anharmonicity
               ea ,a,b,c,d,e = clemtp.sdmtpe(rdma,ndma,chg,dip,qad,oct,
                                               chgc2,dipc2,qadc2,octc2,
@@ -440,7 +468,7 @@ are counted."""
                bfsA = PyQuante.Ints.getbasis(molA,parc['basis'])
                nbsa = parc['nbasis']
                nmosa= parc['nmos']
-               nmodes = parc['nmodes']
+               nmodes = self.__nmodes
                # parameters for central molecule
                faij = parc['fock' ]               .ravel()
                faij1= parc['fock1']               .ravel()
@@ -451,10 +479,10 @@ are counted."""
                ria  = parc['lmoc' ]               .ravel()
                ria1 = parc['lmoc1']               .ravel()
                mlist= bfsA.get_bfsl() + 1
-               redmss= parc['redmass']
-               gijj = parc['gijk'][:,self.__mode-1,self.__mode-1]
-               freq = parc['freq']
-               lvec = parc['lvec']                .ravel()
+               redmss= self.__redmss
+               gijj = self.__gijk[:,self.__mode-1,self.__mode-1]
+               freq = self.__freq
+               lvec = self.__lvec                 .ravel()
                #
                for par in PAR:
                    molB = utilities.MakeMol(par['atno'],par['pos'])
@@ -493,6 +521,8 @@ are counted."""
                                                faij, fbij, faij1, self.__mode,
                                                sij, tij, smij, tmij, fi)
                    serp+=sma
+                   # store forces
+                   self.__fi_rep += fi
                    #
                if self.__cunit:
                   serp *= self.HartreePerHbarToCmRec
@@ -531,7 +561,7 @@ are counted."""
         self.__suplist           = None
         self.__rms_solvent_max   = None
         return
-    
+  
     def _update(self,pos):
         """update the neighbour/in-sphere lists based on actual <pos> coordinate array"""
         if not self.__pairwise_all:
@@ -582,6 +612,21 @@ are counted."""
            self.__rcoordc = pos
         return
 
+    # STRUCTURAL DISTORTIONS
+
+    def _eval_dq(fi, theory):
+        """calculate structural distortions according to the level of SolX theory"""
+        m = self.__redmss*self.__freq*self.__freq
+        dq = -fi/m
+        if theory==2:
+           #A  = numpy.zeros((self.__nmodes, self.__nmodes), numpy.float64)
+           g  = (self.__gijk / m * fi).sum(axis=2)
+           A  = g/m/2.
+           dq = numpy.dot( numpy.linalg.inv(numpy.identity(self.__nmodes)-A), dq)
+        else: raise Exeption('Incorrect level of theory used! Possible are 0 and 2 (chosen %i)'%theory)
+        dq = numpy.dot(self.__lvec.transpose(),dq).reshape(self.__nata,3)
+        return dq
+ 
     # PAIR ENERGIES
     
     def _pair_elect(self,varA,varB):
