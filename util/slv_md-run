@@ -1,6 +1,10 @@
 #!/usr/bin/python
 """
- Calculate the frequency shifts from MD mdcrd, netcdf or xtc trajectory.
+ Calculate the frequency shifts from MD trajectory file.
+ Formats currently supported:
+   o DCD           (CHARMM, NAMD)
+   o XTC           (GROMACS)
+   o MDCRD, NETCDF (AMBER)
  
  Usage:
  
@@ -10,6 +14,9 @@
  
  natoms - total number of atoms in MD trajectory 
           (also these not belonging to EFPs!)
+          This is necessary for AMBER files. 
+          You do not need to specify this for other
+          file formats.
 """
 
 # [0] import necessary modules
@@ -22,6 +29,7 @@ if len(argv)==1: exit()
 from solvshift.md import MDInput
 from solvshift.solefp import EFP
 from MDAnalysis.coordinates.TRJ import TRJReader
+from MDAnalysis.coordinates.DCD import DCDReader
 from MDAnalysis.coordinates.xdrfile.libxdrfile2 import xdrfile_open, xdrfile_close,\
                                                        read_xtc_natoms, read_xtc  ,\
                                                        read_xtc, DIM, exdrOK
@@ -77,6 +85,8 @@ if   trajectory[-5:]=='mdcrd' or trajectory[-6:]=='netcdf':
      pkg = 'amber'
 elif trajectory[-3:]=='xtc': 
      pkg = 'gromacs-xtc'
+elif trajectory[-3:]=='dcd':
+     pkg = 'namd-charmm'
 else: raise Exception('Incorrect trajectory file supplied! (only mdcrd, netcdf and xtc are supporded)')
 
 # [4] set up the server
@@ -118,6 +128,9 @@ elif pkg == 'amber':
    md = TRJReader(trajectory, numatoms) 
    md.open_trajectory()
 
+elif pkg == 'namd-charmm':
+   md = DCDReader(trajectory)
+
 frame = zeros((numatoms,DIM),dtype=float32)
 
 # [9] iterate over frames and evaluate frequency shifts
@@ -132,6 +145,8 @@ for i in range(NFRAMES):
     if   pkg=='gromacs-xtc':
          status, step, time, prec = read_xtc(XTC, box, frame)
          frame *= u.NanometerToBohr
+    elif pkg=='namd-charmm':
+         frame = array(md[i]) * u.AngstromToBohr
     else: 
          frame = array(md.next()) * u.AngstromToBohr
 
@@ -154,7 +169,7 @@ for i in range(-n_left,0):
     log = jobs[i]()
     out.write(log)
 
-# [10] close the trajectory files and the report
+# [10] close the trajectory file and the report
 if pkg == 'gromacs-xtc': xdrfile_close(XTC)
-else: pass
+else: md.close()
 out.close()
