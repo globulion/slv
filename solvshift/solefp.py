@@ -290,11 +290,14 @@ are counted."""
            ### other molecules
            rms_max = 0.0
            for i in range(N):
-               nm = self.__ntc[i]
                im = self.__mtc[i]
+               nm_prev = sum(self.__ntc[:i])
+               nm_curr = sum(self.__ntc[:i+1])
                #
-               STR = self.__rcoordc[nm*i:nm*(i+1)]
+               STR = self.__rcoordc[nm_prev:nm_curr]
                frg = self.__bsm[im].copy()
+               if lwrite: print frg.get()['name']
+               if lwrite: print STR * self.BohrToAngstrom
                rms = frg.sup( STR , suplist= self.__suplist[self.__ind[im]] )
                if lwrite: print "rms C: ",rms
                if rms > rms_max: rms_max = rms
@@ -379,10 +382,11 @@ are counted."""
                  QO.append( (qadc,octc) )
                  ### other molecules
                  for i in range(N):
-                     nm = self.__ntp[i]
                      im = self.__mtp[i]
+                     nm_prev = sum(self.__ntp[:i])
+                     nm_curr = sum(self.__ntp[:i+1])
                      #
-                     STR = self.__rcoordp[nm*i:nm*(i+1)]
+                     STR = self.__rcoordp[nm_prev:nm_curr]
                      frg = self.__bsm[im].copy()
                      rms = frg.sup( STR, suplist= self.__suplist[self.__ind[im]])
                      #if lwrite: print "rms P: ",rms
@@ -448,10 +452,11 @@ are counted."""
                PAR = []
                ### other molecules
                for i in range(N):
-                   nm = self.__nte[i]
                    im = self.__mte[i]
+                   nm_prev = sum(self.__nte[:i])
+                   nm_curr = sum(self.__nte[:i+1])
                    #
-                   STR = self.__rcoorde[nm*i:nm*(i+1)]
+                   STR = self.__rcoorde[nm_prev:nm_curr]
                    frg = self.__bsm[im].copy()
                    rms = frg.sup( STR , suplist= self.__suplist[self.__ind[im]] )
                    if lwrite: print "rms E: ",rms
@@ -614,16 +619,17 @@ are counted."""
 
     # STRUCTURAL DISTORTIONS
 
-    def _eval_dq(fi, theory):
+    def _eval_dq(self, fi, theory):
         """calculate structural distortions according to the level of SolX theory"""
         m = self.__redmss*self.__freq*self.__freq
         dq = -fi/m
+        if not theory in [0,2]:
+           raise Exception('Incorrect level of theory used! Possible are 0 and 2 (chosen %i)'%theory)
         if theory==2:
            #A  = numpy.zeros((self.__nmodes, self.__nmodes), numpy.float64)
            g  = (self.__gijk / m * fi).sum(axis=2)
            A  = g/m/2.
            dq = numpy.dot( numpy.linalg.inv(numpy.identity(self.__nmodes)-A), dq)
-        else: raise Exeption('Incorrect level of theory used! Possible are 0 and 2 (chosen %i)'%theory)
         dq = numpy.dot(self.__lvec.transpose(),dq).reshape(self.__nata,3)
         return dq
  

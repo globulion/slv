@@ -523,12 +523,17 @@ class Frag(object, units.UNITS):
     
     def sup(self,xyz,suplist=None):
         """superimpose structures <str> and <self.__pos>. Return rms in A.U."""
-        s = utilities.SVDSuperimposer()
-        if suplist is None: s.set(xyz,self.__pos)
-        else:               s.set(xyz[suplist],self.__pos[suplist])
-        s.run()
-        rms         = s.get_rms()
-        rot, transl = s.get_rotran()
+        if len(xyz)!=1:
+           s = utilities.SVDSuperimposer()
+           if suplist is None: s.set(xyz,self.__pos)
+           else:               s.set(xyz[suplist],self.__pos[suplist])
+           s.run()
+           rms         = s.get_rms()
+           rot, transl = s.get_rotran()
+        else: # the case of 1-atom "molecule" like Na+ cation
+           rot    = numpy.identity(3)
+           transl = xyz - self.__pos
+           rms    = 0.0
         # perform transformations
         #self.__pos       = s.get_transformed()
         self.__pos = numpy.dot(self.__pos , rot) + transl
