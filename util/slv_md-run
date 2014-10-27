@@ -130,6 +130,7 @@ elif pkg == 'amber':
 
 elif pkg == 'namd-charmm':
    md = DCDReader(trajectory)
+   numatoms = len(array(md[0]))
 
 frame = zeros((numatoms,DIM),dtype=float32)
 
