@@ -149,7 +149,7 @@ Usage:
                for i in range(n_frags):
                    self.__ind.append(self.__frag_idx)
                    self.__nmol.append(n_atoms_per_mol)
-               atoms = list(numpy.array(atoms-1))
+               atoms = list(numpy.array(atoms)-1)
                self.__frame_slice += atoms
 
        # --- append to bsm and supl memorial lists
