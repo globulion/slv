@@ -104,6 +104,8 @@ Also set the BSM parameters if not done in set_bsm.
            parc = self.__bsm[0].get()
            self.__nmodes = parc['nmodes']
            self.__nata   = parc['natoms']
+           self.__atno   = parc['atno']
+           self.__atms   = parc['atms']
            self.__gijk   = parc['gijk']
            self.__redmss = parc['redmass']
            self.__freq   = parc['freq']
@@ -528,6 +530,11 @@ are counted."""
                    serp+=sma
                    # store forces
                    self.__fi_rep += fi
+                   dq = -fi/(redmss*freq*freq)
+                   #l = parc['lvec'].reshape(15,21)
+                   l = self.__lvec.reshape(15,21)
+                   dq = numpy.dot(l.transpose(), dq).reshape(7,3)
+                   print dq
                    #
                if self.__cunit:
                   serp *= self.HartreePerHbarToCmRec
@@ -624,13 +631,17 @@ are counted."""
         m = self.__redmss*self.__freq*self.__freq
         dq = -fi/m
         if not theory in [0,2]:
-           raise Exception('Incorrect level of theory used! Possible are 0 and 2 (chosen %i)'%theory)
+           raise Exception('Incorrect level of theory used! Possible are 0 and 2 (---> chosen %i)'%theory)
         if theory==2:
            #A  = numpy.zeros((self.__nmodes, self.__nmodes), numpy.float64)
            g  = (self.__gijk / m * fi).sum(axis=2)
            A  = g/m/2.
            dq = numpy.dot( numpy.linalg.inv(numpy.identity(self.__nmodes)-A), dq)
-        dq = numpy.dot(self.__lvec.transpose(),dq).reshape(self.__nata,3)
+        # transform to Cartesian coordinates
+        l = self.__lvec.reshape(self.__nmodes, self.__nata*3)
+        dq = numpy.dot( l.transpose(), dq).reshape( self.__nata, 3)
+        #temp = numpy.sqrt(self.__atms)[:, numpy.newaxis]
+        #dq/= temp
         return dq
  
     # PAIR ENERGIES
