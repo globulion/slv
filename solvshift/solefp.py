@@ -633,9 +633,27 @@ are counted."""
         if not theory in [0,2]:
            raise Exception('Incorrect level of theory used! Possible are 0 and 2 (---> chosen %i)'%theory)
         if theory==2:
+           # 1 - good
+           M = numpy.diag(1./m)
+           g = self.__gijk
+           a = numpy.tensordot(M,g,(1,1))
+           b = numpy.tensordot(a,M,(2,0))
+           c = numpy.tensordot(b,fi,(2,0))
+           A = c/2.
+
+           # 2 - not good (slightly different result than in 1)
            #A  = numpy.zeros((self.__nmodes, self.__nmodes), numpy.float64)
-           g  = (self.__gijk / m * fi).sum(axis=2)
-           A  = g/m/2.
+           #for i in range(15):
+           #    for j in range(15):
+           #        gk = 0.0
+           #        for k in range(15):
+           #            gk+= self.__gijk[i,j,k] * fi[k]/m[k]
+           #        A[i,j] = gk/2.
+           #    A[i,j] /= m[i]
+
+           # 3 - incorrect, bad
+           #g  = (self.__gijk / m * fi).sum(axis=2)
+           #A  = g/m/2.
            dq = numpy.dot( numpy.linalg.inv(numpy.identity(self.__nmodes)-A), dq)
         # transform to Cartesian coordinates
         l = self.__lvec.reshape(self.__nmodes, self.__nata*3)
