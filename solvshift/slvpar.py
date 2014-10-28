@@ -300,7 +300,8 @@ class Frag(object, units.UNITS):
         log+= ' \n'
         return str(log)
     
-    # public
+    # --- public
+    # SET METHODS
     
     def set(self, mol=None, anh=None, frag=None, dma=None,**kwargs):
         """set the parameters providing appropriate objects"""
@@ -368,6 +369,8 @@ class Frag(object, units.UNITS):
             if key == 'dmaq2': self.__dmaq2 = arg
             if key == 'dmao2': self.__dmao2 = arg
         return
+
+    # GET METHODS
             
     def get(self):
         """returns dictionary with parameters"""
@@ -380,16 +383,24 @@ class Frag(object, units.UNITS):
     def get_natoms(self):
         """return the number of atoms"""
         return self.__natoms
-    
+
+    def get_pos(self):
+        """return position of a fragment"""
+        return self.__pos
+
+    def get_atno(self):
+        """return atomic numbers"""
+        return self.__atno
+
+    def get_atms(self):
+        """return atomic masses"""
+        return self.__atms
+   
     def get_bfs(self):
         """return basis set object"""
         mol = utilities.MakeMol(self.__atno, self.__pos, name=self.__name)
         bfs = PyQuante.Ints.getbasis(mol, self.__basis)
         return bfs
-    
-    def get_pos(self):
-        """return position of a fragment"""
-        return self.__pos
     
     def get_traceless(self):
         """return traceless quadrupoles and octupoles"""
@@ -410,7 +421,9 @@ class Frag(object, units.UNITS):
         """return traceless  2nd derivatives wrt modes of quadrupoles and octupoles"""
         dmaq2, dmao2 = efprot.tracls(self.__dmaq2, self.__dmao2)
         return dmaq2, dmao2
-    
+   
+    # UTILITY METHODS
+ 
     def write(self,file='slv.frg',par=None):
         """writes the parameters into a file"""
         f = open(file,'w')
@@ -625,7 +638,7 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         return
     
     
-    # protected
+    # --- protected
     
     def _create(self):
         """creates the namespace of parameter variables"""
