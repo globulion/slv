@@ -16,7 +16,7 @@
 #from efprot import tracls
 #from exrep  import exrep
 import sys, copy, os, re, math, glob, PyQuante.Ints, coulomb.multip, clemtp,\
-       numpy, units, utilities, diff, shftex, shftce, solpol, efprot, exrep
+       numpy, units, utilities, diff, shftex, shftce, solpol, solpol2, efprot, exrep
 sys.stdout.flush()
 
 __all__ = ['EFP','FragFactory',]
@@ -138,15 +138,27 @@ Also set the BSM parameters if not done in set_bsm.
 Return RMS of superimposition of central molecule with its parameters (relevant for central molecule mode)"""
         return self.__rms_central
 
-    def get_dq(self,theory=0):
+    def get_dq(self,theory=0,tot=0):
         """
 Return structural distortions in a given Tn-th level of theory=n. 
-Returns tuple of size 3 with electrostatics, polarization and repulsion
-structural distortions numpy.ndarrays (nata x 3). In Bohr"""
+If tot=0, returns tuple of size 3 with electrostatics, repulsion and polarization
+structural distortions numpy.ndarrays (nata x 3). If tot=1, returns total sum
+of the structural distortion contributions. Returns everything in A.U. (Bohr)!"""
         dq_el = self._eval_dq(self.__fi_el , theory)
-        dq_pol= self._eval_dq(self.__fi_pol, theory)
         dq_rep= self._eval_dq(self.__fi_rep, theory)
-        return dq_el, dq_pol, dq_rep
+        dq_pol= self._eval_dq(self.__fi_pol, theory)
+        if   tot==0: return dq_el, dq_rep, dq_pol
+        else       : return dq_el+ dq_rep+ dq_pol
+
+    def get_shift_from_fi(self,fi):
+        """calculate frequency shift from forces (in normal coordinate space)"""
+        mid = self.__mode-1
+        gijj = self.__gijk[:,mid,mid]
+        s = -numpy.sum(fi * gijj /(self.__redmss*self.__freq**2) ) / \
+             (2.*self.__redmss[mid]*self.__freq[mid]) 
+        if self.__cunit:
+           s*= self.HartreePerHbarToCmRec
+        return s
  
     def get_rms_sol(self):
         """
@@ -154,6 +166,17 @@ Return maximal RMS of superimposition of (solvent) molecules with its parameters
 If central molecule mode is ON, rms_central is not included. Otherwise, all superimpositions
 are counted."""
         return self.__rms_solvent_max
+
+    def get_pos_calc(self,theory=0):
+        """return the structure of the fragment calculated from SolX theory"""
+        pos = self.__pos_c + self.get_dq(theory,tot=1)
+        return pos
+
+    def get_pos_c(self):
+        return self.__pos_c
+
+    def get_rc(self):
+        return self.__rc
     
     def eval(self,lwrite=False):
         """evaluate the properties"""
@@ -255,7 +278,10 @@ are counted."""
            ### central molecule
            frg = self.__bsm[0].copy()
            self.__rms_central = frg.sup( self.__rc, self.__suplist_c )
+           # store actual position of the fragment
+           self.__pos_c = frg.get_pos()
            if lwrite: print "Central rms: ",self.__rms_central
+           # get the dictionary of the parameters
            parc= frg.get()
            self.__lvec = parc['lvec']
            #
@@ -411,7 +437,9 @@ are counted."""
                  npols= sum(npol)
                  #
                  rpol = numpy.concatenate  ([ x['rpol'] for x in PAR ]).reshape(npols*3)
-                 pol  = numpy.concatenate  ([ x['dpol'] for x in PAR ]).reshape(npols*9)
+                 pol  = numpy.concatenate  ([ x['dpol'] for x in PAR ])#.reshape(npols*9)
+                 polinv = numpy.concatenate([ numpy.linalg.inv(x) for x in pol ]).reshape(npols*9)
+                 pol  = pol.ravel()
                  #
                  rpol1= parc['lmoc1'].reshape(nmodes*npolc*3)
                  pol1 = parc['dpol1'].reshape(nmodes*npolc*9)
@@ -428,17 +456,28 @@ are counted."""
                  dipind=numpy.zeros( DIM, numpy.float64)
                  sdipnd=numpy.zeros( DIM, numpy.float64)
                  vec1  =numpy.zeros( DIM, numpy.float64)
+                 vec2  =numpy.zeros( DIM, numpy.float64)
                  fivec =numpy.zeros( DIM, numpy.float64)
                  avec  =numpy.zeros( DIM, numpy.float64)
+                 mivec =numpy.zeros( DIM, numpy.float64)
                  #
                  #pol1.fill(0.0)
-                 epol, spol = solpol.sftpol(rdma, chg, dip, qad, oct,
-                                            chgc1, dipc1, qadc1, octc1,
-                                            rpol, pol, dmat, flds, dipind, dimat, fivec,
-                                            sdipnd, avec, vec1, mat1,
-                                            redmss, freq, gijj, rpol1, pol1, lvec,
-                                            ndma, npol, self.__mode, ndmac, npolc, lwrite=False)
-                 if self.__cunit:
+                 #epol, spol = solpol.sftpol(rdma, chg, dip, qad, oct,
+                 #                           chgc1, dipc1, qadc1, octc1,
+                 #                           rpol, pol, dmat, flds, dipind, dimat, fivec,
+                 #                           sdipnd, avec, vec1, mat1,
+                 #                           redmss, freq, gijj, rpol1, pol1, lvec,
+                 #                           ndma, npol, self.__mode, ndmac, npolc, lwrite=False)
+                 epol, spol, fi, avec = solpol2.sftpli(rdma, chg, dip, qad, oct, 
+                                                       chgc1, dipc1, qadc1, octc1,
+                                                       rpol, polinv, mivec, dmat, flds, dimat, fivec,
+                                                       vec1, vec2, mat1, redmss, freq, gijj, 
+                                                       rpol1, pol1, lvec, 
+                                                       ndma, npol, self.__mode, ndmac, npolc, lwrite=False)
+                 # store the forces
+                 self.__fi_pol = fi
+                 #
+                 if self.__cunit: 
                     epol  *= self.HartreeToKcalPerMole
                     spol  *= self.HartreePerHbarToCmRec
                  shift_total += spol
