@@ -77,11 +77,13 @@ all          - evaluate all these interactions"""
         return
     
     def __call__(self,lwrite=False):
-        """evaluate the property"""
+        """Evaluate the property"""
         self.eval(lwrite)
         return
     
     # P U B L I C
+
+    #   SET METHODS
 
     def set(self,pos,ind,nmol,bsm=None, supl=None):
         """Set the initial molecular coordinates and the moltype index list. 
@@ -125,20 +127,56 @@ Also set the BSM parameters if not done in set_bsm.
         return
         
     def set_pos(self,pos):
-        """update position array"""
+        """Update position array"""
         self._update(pos)
         return
-    
-    def get_shift(self):
-        """return frequency shift data"""
-        return self.__shift.copy()
+
+    #   GET METHODS
     
     def get_rms(self):
         """
 Return RMS of superimposition of central molecule with its parameters (relevant for central molecule mode)"""
         return self.__rms_central
 
-    def get_dq(self,theory=0,tot=0):
+    def get_rms_sol(self):
+        """
+Return maximal RMS of superimposition of (solvent) molecules with its parameters.
+If central molecule mode is ON, rms_central is not included. Otherwise, all superimpositions
+are counted."""
+        return self.__rms_solvent_max
+
+    def get_rms_max(self):
+        """Return maximal RMS"""
+        rms_c = self.__rms_central
+        rms_s = self.__rms_solvent_max
+        if self.__rms_central is not None:
+           return max(self.__rms_central, self.__rms_solvent_max)
+        else:
+           return self.__rms_solvent_max
+
+    def get_shifts(self):
+        """Return frequency shift data"""
+        return self.__shift.copy()
+
+    def get_forces(self, tot=False):
+        """
+Return solvation forces associated with solute's normal coordinates. 
+Returns:
+  tot=False (default)    tuple of three numpy.ndarray's of size (nmodes)
+                         corresponds to electrostatic, repulsion and polarization 
+                         forces, respectively
+  tot=True               numpy.ndarray of size (nmodes)
+                         which is the sum of all the three contributions to the 
+                         total forces listed above
+
+Notes: 
+  o Dispersion and charge-gransfer forces are not implemented yet!
+  o Values are in A.U. units of [Hartree/(Bohr*sqrt(ElectronMass))]
+"""
+        if   tot: return self.__fi_el, self.__fi_rep, self.__fi_pol
+        else    : return self.__fi_el+ self.__fi_rep+ self.__fi_pol
+
+    def get_dq(self, theory=0, tot=False):
         """
 Return structural distortions in a given Tn-th level of theory=n. 
 If tot=0, returns tuple of size 3 with electrostatics, repulsion and polarization
@@ -147,11 +185,11 @@ of the structural distortion contributions. Returns everything in A.U. (Bohr)!""
         dq_el = self._eval_dq(self.__fi_el , theory)
         dq_rep= self._eval_dq(self.__fi_rep, theory)
         dq_pol= self._eval_dq(self.__fi_pol, theory)
-        if   tot==0: return dq_el, dq_rep, dq_pol
-        else       : return dq_el+ dq_rep+ dq_pol
+        if   tot: return dq_el, dq_rep, dq_pol
+        else    : return dq_el+ dq_rep+ dq_pol
 
-    def get_shift_from_fi(self,fi):
-        """calculate frequency shift from forces (in normal coordinate space)"""
+    def get_shift_from_fi(self, fi):
+        """Calculate frequency shift from forces (in normal coordinate space)"""
         mid = self.__mode-1
         gijj = self.__gijk[:,mid,mid]
         s = -numpy.sum(fi * gijj /(self.__redmss*self.__freq**2) ) / \
@@ -160,26 +198,25 @@ of the structural distortion contributions. Returns everything in A.U. (Bohr)!""
            s*= self.HartreePerHbarToCmRec
         return s
  
-    def get_rms_sol(self):
-        """
-Return maximal RMS of superimposition of (solvent) molecules with its parameters.
-If central molecule mode is ON, rms_central is not included. Otherwise, all superimpositions
-are counted."""
-        return self.__rms_solvent_max
-
-    def get_pos_calc(self,theory=0):
-        """return the structure of the fragment calculated from SolX theory"""
+    def get_pos_calc(self, theory=0):
+        """Return the structure of the fragment calculated from SolX theory"""
         pos = self.__pos_c + self.get_dq(theory,tot=1)
         return pos
 
     def get_pos_c(self):
+        """Return solute superimposed structure (relevant if central molecule is ON). 
+This structure has identical internal coordinates as fragment BSM gas-phase structure"""
         return self.__pos_c.copy()
 
     def get_rc(self):
+        """Return solute target structure (relevant if central molecule mode is ON)"""
         return self.__rc.copy()
-    
-    def eval(self,lwrite=False,dxyz=None):
-        """evaluate the properties"""
+   
+    #   OPERATIONAL METHODS
+ 
+    def eval(self, lwrite=False, dxyz=None):
+        """Evaluate the properties (interaction energies, frequency shifts or NLO properties -
+- the latter not implemented yet!)"""
         if self.__pairwise_all:
         # ============================================================================== #
         #                                                                                #
@@ -326,7 +363,7 @@ are counted."""
                STR = self.__rcoordc[nm_prev:nm_curr]
                frg = self.__bsm[im].copy()
                if lwrite: print frg.get()['name']
-               if lwrite: print STR * self.BohrToAngstrom
+               if lwrite: utilities.PRINTL(STR * self.BohrToAngstrom, '', '')
                rms = frg.sup( STR , suplist= self.__suplist[self.__ind[im]] )
                if lwrite: print "rms C: ",rms
                if rms > rms_max: rms_max = rms
