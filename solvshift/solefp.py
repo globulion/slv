@@ -173,8 +173,8 @@ Notes:
   o Dispersion and charge-gransfer forces are not implemented yet!
   o Values are in A.U. units of [Hartree/(Bohr*sqrt(ElectronMass))]
 """
-        if   tot: return self.__fi_el, self.__fi_rep, self.__fi_pol
-        else    : return self.__fi_el+ self.__fi_rep+ self.__fi_pol
+        if   tot: return self.__fi_el+ self.__fi_rep+ self.__fi_pol
+        else    : return self.__fi_el, self.__fi_rep, self.__fi_pol
 
     def get_dq(self, theory=0, tot=False):
         """
@@ -185,8 +185,8 @@ of the structural distortion contributions. Returns everything in A.U. (Bohr)!""
         dq_el = self._eval_dq(self.__fi_el , theory)
         dq_rep= self._eval_dq(self.__fi_rep, theory)
         dq_pol= self._eval_dq(self.__fi_pol, theory)
-        if   tot: return dq_el, dq_rep, dq_pol
-        else    : return dq_el+ dq_rep+ dq_pol
+        if   tot: return dq_el+ dq_rep+ dq_pol
+        else    : return dq_el, dq_rep, dq_pol
 
     def get_shift_from_fi(self, fi):
         """Calculate frequency shift from forces (in normal coordinate space)"""
