@@ -404,22 +404,23 @@ class Frag(object, units.UNITS):
     
     def get_traceless(self):
         """return traceless quadrupoles and octupoles"""
-        dmaq, dmao = efprot.tracls(self.__dmaq, self.__dmao)
+        dmaq, dmao = efprot.tracls(self.__dmaq.copy(), self.__dmao.copy())
         return dmaq, dmao
     
     def get_traceless_1(self, ravel=False):
         """return traceless 1st derivatives wrt modes of quadrupoles and octupoles"""
-        self.__dmaq1 = self.__dmaq1.ravel()
-        self.__dmao1 = self.__dmao1.ravel()
-        dmaq1, dmao1 = efprot.tracl1(self.__dmaq1, self.__dmao1, self.__nmodes, self.__ndma)
-        if not ravel:
-           self.__dmaq1 = self.__dmaq1.reshape(self.__nmodes, self.__ndma, 6)
-           self.__dmao1 = self.__dmao1.reshape(self.__nmodes, self.__ndma, 10)
+        dmaq1 = self.__dmaq1.ravel()
+        dmao1 = self.__dmao1.ravel()
+        dmaq1, dmao1 = efprot.tracl1(dmaq1.copy(), dmao1.copy(), self.__nmodes, self.__ndma)
+        #if not ravel:
+        #   self.__dmaq1 = self.__dmaq1.reshape(self.__nmodes, self.__ndma, 6)
+        #   self.__dmao1 = self.__dmao1.reshape(self.__nmodes, self.__ndma, 10)
+        #print self.__dmao1.shape
         return dmaq1, dmao1
     
     def get_traceless_2(self):
         """return traceless  2nd derivatives wrt modes of quadrupoles and octupoles"""
-        dmaq2, dmao2 = efprot.tracls(self.__dmaq2, self.__dmao2)
+        dmaq2, dmao2 = efprot.tracls(self.__dmaq2.copy(), self.__dmao2.copy())
         return dmaq2, dmao2
    
     # UTILITY METHODS
@@ -534,15 +535,31 @@ class Frag(object, units.UNITS):
               self.__vecc1 = efprot.vc1rot(self.__vecc1, rot, typs)
         return
     
-    def sup(self,xyz,suplist=None):
-        """superimpose structures <str> and <self.__pos>. Return rms in A.U."""
+    def sup(self,xyz,suplist=None,dxyz=None):
+        """superimpose structures <xyz> and <self.__pos>. Return rms in A.U."""
         if len(xyz)!=1:
            s = utilities.SVDSuperimposer()
-           if suplist is None: s.set(xyz,self.__pos)
-           else:               s.set(xyz[suplist],self.__pos[suplist])
-           s.run()
-           rms         = s.get_rms()
-           rot, transl = s.get_rotran()
+           if dxyz is None:
+              if suplist is None: s.set(xyz,self.__pos)
+              else:               s.set(xyz[suplist],self.__pos[suplist])
+              s.run()                       
+              rms         = s.get_rms()
+              rot, transl = s.get_rotran()
+           else:
+              #utilities.PRINTL(self.__pos*self.BohrToAngstrom,'','')
+              if suplist is None: s.set( xyz-dxyz,self.__pos )
+              else:               s.set((xyz-dxyz)[suplist],(self.__pos)[suplist])
+              s.run()
+              rms         = s.get_rms()
+              rot, transl = s.get_rotran()
+              #pos = numpy.dot(self.__pos , rot) + transl
+              #s = utilities.SVDSuperimposer()
+              #if suplist is None: s.set(pos ,self.__pos + dxyz )
+              #else:               s.set(pos[suplist],(self.__pos + dxyz)[suplist])
+              #s.run()
+              #rms         = s.get_rms()
+              #rot, transl = s.get_rotran()
+              #print "HUH", rot, transl, rms
         else: # the case of 1-atom "molecule" like Na+ cation
            rot    = numpy.identity(3)
            transl = xyz - self.__pos

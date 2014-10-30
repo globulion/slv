@@ -131,7 +131,7 @@ Also set the BSM parameters if not done in set_bsm.
     
     def get_shift(self):
         """return frequency shift data"""
-        return self.__shift
+        return self.__shift.copy()
     
     def get_rms(self):
         """
@@ -173,12 +173,12 @@ are counted."""
         return pos
 
     def get_pos_c(self):
-        return self.__pos_c
+        return self.__pos_c.copy()
 
     def get_rc(self):
-        return self.__rc
+        return self.__rc.copy()
     
-    def eval(self,lwrite=False):
+    def eval(self,lwrite=False,dxyz=None):
         """evaluate the properties"""
         if self.__pairwise_all:
         # ============================================================================== #
@@ -276,8 +276,8 @@ are counted."""
            PAR = []
            QO  = []
            ### central molecule
-           frg = self.__bsm[0].copy()
-           self.__rms_central = frg.sup( self.__rc, self.__suplist_c )
+           frg = self.__bsm[0]#.copy()
+           self.__rms_central = frg.sup( self.__rc, self.__suplist_c, dxyz=dxyz )
            # store actual position of the fragment
            self.__pos_c = frg.get_pos()
            if lwrite: print "Central rms: ",self.__rms_central
@@ -287,7 +287,7 @@ are counted."""
            #
            PAR.append( parc )
            #
-           qadc, octc = efprot.tracls( parc['dmaq'], parc['dmao'] )
+           qadc, octc = frg.get_traceless()#efprot.tracls( parc['dmaq'], parc['dmao'] )
            QO.append( (qadc,octc) )
            #
            chgc1 = parc['dmac1'].ravel()
@@ -407,7 +407,7 @@ are counted."""
                  PAR = []
                  QO  = []
                  PAR.append( parc )
-                 QO.append( (qadc,octc) )
+                 QO.append( (qadc, octc) )
                  ### other molecules
                  for i in range(N):
                      im = self.__mtp[i]
@@ -416,7 +416,7 @@ are counted."""
                      #
                      STR = self.__rcoordp[nm_prev:nm_curr]
                      frg = self.__bsm[im].copy()
-                     rms = frg.sup( STR, suplist= self.__suplist[self.__ind[im]])
+                     rms = frg.sup( STR, suplist= self.__suplist[self.__ind[im]] )
                      #if lwrite: print "rms P: ",rms
                      par = frg.get()
                      PAR.append( par )
@@ -499,7 +499,7 @@ are counted."""
                    #
                    STR = self.__rcoorde[nm_prev:nm_curr]
                    frg = self.__bsm[im].copy()
-                   rms = frg.sup( STR , suplist= self.__suplist[self.__ind[im]] )
+                   rms = frg.sup( STR , suplist= self.__suplist[self.__ind[im]])
                    if lwrite: print "rms E: ",rms
                    if rms > rms_max: rms_max = rms
                    par = frg.get()
@@ -569,11 +569,11 @@ are counted."""
                    serp+=sma
                    # store forces
                    self.__fi_rep += fi
-                   dq = -fi/(redmss*freq*freq)
+                   #dq = -fi/(redmss*freq*freq)
                    #l = parc['lvec'].reshape(15,21)
-                   l = self.__lvec.reshape(15,21)
-                   dq = numpy.dot(l.transpose(), dq).reshape(7,3)
-                   print dq
+                   #l = self.__lvec.reshape(15,21)
+                   #dq = numpy.dot(l.transpose(), dq).reshape(7,3)
+                   #print dq
                    #
                if self.__cunit:
                   serp *= self.HartreePerHbarToCmRec
