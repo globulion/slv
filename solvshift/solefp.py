@@ -292,7 +292,8 @@ are counted."""
            #
            chgc1 = parc['dmac1'].ravel()
            dipc1 = parc['dmad1'].ravel()
-           qadc1, octc1 = frg.get_traceless_1(ravel=True)
+           #qadc1, octc1 = frg.get_traceless_1(ravel=True)
+           qadc1, octc1 = frg.get_traceless_1()
            #
            chgc2 = parc['dmac2'].ravel()
            dipc2 = parc['dmad2'].ravel()

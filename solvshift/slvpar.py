@@ -407,7 +407,8 @@ class Frag(object, units.UNITS):
         dmaq, dmao = efprot.tracls(self.__dmaq.copy(), self.__dmao.copy())
         return dmaq, dmao
     
-    def get_traceless_1(self, ravel=False):
+#    def get_traceless_1(self, ravel=False):
+    def get_traceless_1(self):
         """return traceless 1st derivatives wrt modes of quadrupoles and octupoles"""
         dmaq1 = self.__dmaq1.ravel()
         dmao1 = self.__dmao1.ravel()
