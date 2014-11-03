@@ -396,6 +396,11 @@ class Frag(object, units.UNITS):
         """return atomic masses"""
         return self.__atms
    
+    def get_mol(self):
+        """return PyQuante.Molecule object"""
+        mol = utilities.MakeMol(self.__atno, self.__pos, name=self.__name)
+        return mol
+
     def get_bfs(self):
         """return basis set object"""
         mol = utilities.MakeMol(self.__atno, self.__pos, name=self.__name)
