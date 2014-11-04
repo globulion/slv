@@ -112,6 +112,16 @@ Also set the BSM parameters if not done in set_bsm.
            self.__redmss = parc['redmass']
            self.__freq   = parc['freq']
            self.__mode   = parc['mode']
+           self.__mol    = self.__bsm[0].get_mol()
+           # calculate M matrix                                                  
+           N = len(self.__mol.atoms)
+           M = numpy.zeros((N*3,N*3), dtype=numpy.float64)
+           for i in xrange(N):
+               m = numpy.sqrt(self.__mol.atoms[i].mass()*self.AmuToElectronMass)
+               M[3*i+0,3*i+0] = m
+               M[3*i+1,3*i+1] = m
+               M[3*i+2,3*i+2] = m
+           self.__M = M
         return    
     
     def set_cut(self,ccut,pcut):
@@ -171,20 +181,20 @@ Returns:
 
 Notes: 
   o Dispersion and charge-gransfer forces are not implemented yet!
-  o Values are in A.U. units of [Hartree/(Bohr*sqrt(ElectronMass))]
+  o Values are in A.U. units of [Hartree/Bohr]
 """
         if   tot: return self.__fi_el+ self.__fi_rep+ self.__fi_pol
         else    : return self.__fi_el, self.__fi_rep, self.__fi_pol
 
-    def get_dq(self, theory=0, tot=False):
+    def get_dq(self, theory=0, tot=False, cart=True):
         """
 Return structural distortions in a given Tn-th level of theory=n. 
 If tot=0, returns tuple of size 3 with electrostatics, repulsion and polarization
 structural distortions numpy.ndarrays (nata x 3). If tot=1, returns total sum
 of the structural distortion contributions. Returns everything in A.U. (Bohr)!"""
-        dq_el = self._eval_dq(self.__fi_el , theory)
-        dq_rep= self._eval_dq(self.__fi_rep, theory)
-        dq_pol= self._eval_dq(self.__fi_pol, theory)
+        dq_el = self._eval_dq(self.__fi_el , theory, cart=cart)
+        dq_rep= self._eval_dq(self.__fi_rep, theory, cart=cart)
+        dq_pol= self._eval_dq(self.__fi_pol, theory, cart=cart)
         if   tot: return dq_el+ dq_rep+ dq_pol
         else    : return dq_el, dq_rep, dq_pol
 
@@ -197,16 +207,53 @@ of the structural distortion contributions. Returns everything in A.U. (Bohr)!""
         if self.__cunit:
            s*= self.HartreePerHbarToCmRec
         return s
- 
-    def get_pos_calc(self, theory=0):
-        """Return the structure of the fragment calculated from SolX theory"""
-        pos = self.__pos_c + self.get_dq(theory,tot=1)
-        return pos
 
-    def get_pos_c(self):
+    def get_hessian(self, theory=0, mwc=True):
+        """return the Hessian matrix in gas-phase normal coordinate space"""
+        dq_el, dq_rep, dq_pol = self.get_dq(theory=theory, tot=0, cart=False)
+        dq_tot = dq_el+ dq_rep+ dq_pol
+        # calculate the Hessian in gas-phase normal coordinate space
+        m = numpy.diag( self.__redmss * self.__freq**2.0 )
+        s = numpy.tensordot(self.__gijk, dq_tot,(0,0))
+        t = numpy.outer(numpy.sqrt(self.__redmss), numpy.sqrt(self.__redmss))
+        h = (m + s)/ t
+        print self.__freq * self.HartreePerHbarToCmRec
+        # Calculate mass-weighted Hessian in Cartesian space (MWC)
+        if mwc:
+           t = numpy.sqrt(self.__redmss)[:,numpy.newaxis]
+           l = self.__lvec.reshape(self.__nmodes, self.__nata * 3) / t
+           l = numpy.dot(self.__M, l.transpose() )
+           h = numpy.dot(l,numpy.dot(h,l.transpose()))
+        return h
+
+    def get_slv(self, theory=0):
+        """Calculate the frequencies, reduced masses and transformation matrix"""
+        h = self.get_hessian(theory=theory, mwc=True)
+        vib = utilities.VIB(self.__mol, h, weight=False)
+        vib.eval()
+        freq, redmss, U = vib.get()
+        return freq, redmss, U
+ 
+    def get_pos_calc(self, theory=0, units='bohr'):
+        """Return the structure of the fragment calculated from SolX theory"""
+        c = 1.0000
+        if units.lower().startswith('ang'): c = self.BohrToAngstrom
+        pos = self.__pos_c + self.get_dq(theory,tot=1)
+        return pos * c
+
+    def get_pos_c(self, units='bohr'):
         """Return solute superimposed structure (relevant if central molecule is ON). 
 This structure has identical internal coordinates as fragment BSM gas-phase structure"""
-        return self.__pos_c.copy()
+        c = 1.0000
+        if units.lower().startswith('ang'): c = self.BohrToAngstrom
+        return self.__pos_c.copy() * c
+
+    def get_pos_sol(self, units='bohr'):
+        """Return solvent superimposed structure (relevant if central molecule is ON).
+Now, only for exchange-repulsion layer"""
+        c = 1.0000
+        if units.lower().startswith('ang'): c = self.BohrToAngstrom
+        return self.__solvent_exrep.copy() * c
 
     def get_rc(self):
         """Return solute target structure (relevant if central molecule mode is ON)"""
@@ -568,6 +615,7 @@ This structure has identical internal coordinates as fragment BSM gas-phase stru
                freq = self.__freq
                lvec = self.__lvec                 .ravel()
                #
+               RNB = list()
                for par in PAR:
                    molB = utilities.MakeMol(par['atno'],par['pos'])
                    bfsB = PyQuante.Ints.getbasis(molB,par['basis'])
@@ -582,7 +630,9 @@ This structure has identical internal coordinates as fragment BSM gas-phase stru
                    fbij = par['fock']             .ravel()
                    cikb = par['vecl']             .ravel()
                    zb   = par['atno']
-                   rnb  = par['pos' ]             .ravel()
+                   rnb  = par['pos' ]            # .ravel()
+                   RNB.append(rnb)
+                   rnb  = rnb.ravel()
                    rib  = par['lmoc']             .ravel()
                    # calculate the properties!
                    #sma ,shftea = shftex.shftex(redmss,freq,gijj,lvec,
@@ -613,6 +663,7 @@ This structure has identical internal coordinates as fragment BSM gas-phase stru
                    #dq = numpy.dot(l.transpose(), dq).reshape(7,3)
                    #print dq
                    #
+               self.__solvent_exrep = numpy.array(RNB, numpy.float64)
                if self.__cunit:
                   serp *= self.HartreePerHbarToCmRec
                shift_total += serp
@@ -649,6 +700,12 @@ This structure has identical internal coordinates as fragment BSM gas-phase stru
         self.__rms_central       = None
         self.__suplist           = None
         self.__rms_solvent_max   = None
+        # current position of solute superimposed
+        self.__pos_c             = None
+        # current position of solvent superimposed
+        self.__solvent_elect     = None
+        self.__solvent_polar     = None
+        self.__solvent_exrep     = None
         return
   
     def _update(self,pos):
@@ -703,7 +760,7 @@ This structure has identical internal coordinates as fragment BSM gas-phase stru
 
     # STRUCTURAL DISTORTIONS
 
-    def _eval_dq(self, fi, theory):
+    def _eval_dq(self, fi, theory, cart=True):
         """calculate structural distortions according to the level of SolX theory"""
         m = self.__redmss*self.__freq*self.__freq
         dq = -fi/m
@@ -711,12 +768,12 @@ This structure has identical internal coordinates as fragment BSM gas-phase stru
            raise Exception('Incorrect level of theory used! Possible are 0 and 2 (---> chosen %i)'%theory)
         if theory==2:
            # 1 - good
-           M = numpy.diag(1./m)
-           g = self.__gijk
-           a = numpy.tensordot(M,g,(1,1))
-           b = numpy.tensordot(a,M,(2,0))
-           c = numpy.tensordot(b,fi,(2,0))
-           A = c/2.
+           #M = numpy.diag(1./m)
+           #g = self.__gijk
+           #a = numpy.tensordot(M,g,(1,1))
+           #b = numpy.tensordot(a,M,(2,0))
+           #c = numpy.tensordot(b,fi,(2,0))
+           #A = c/2.
 
            # 2 - not good (slightly different result than in 1)
            #A  = numpy.zeros((self.__nmodes, self.__nmodes), numpy.float64)
@@ -731,12 +788,26 @@ This structure has identical internal coordinates as fragment BSM gas-phase stru
            # 3 - incorrect, bad
            #g  = (self.__gijk / m * fi).sum(axis=2)
            #A  = g/m/2.
-           dq = numpy.dot( numpy.linalg.inv(numpy.identity(self.__nmodes)-A), dq)
-        # transform to Cartesian coordinates
-        l = self.__lvec.reshape(self.__nmodes, self.__nata*3)
-        dq = numpy.dot( l.transpose(), dq).reshape( self.__nata, 3)
-        #temp = numpy.sqrt(self.__atms)[:, numpy.newaxis]
-        #dq/= temp
+           #dq = numpy.dot( numpy.linalg.inv(numpy.identity(self.__nmodes)-A), dq)
+
+           N = self.__nmodes
+           G = self.__gijk.copy()/2.
+           M = numpy.diag(self.__redmss*self.__freq**2)
+           F = fi
+           M1= numpy.linalg.inv(M)
+           I = numpy.identity(self.__nmodes, numpy.float64)
+           A = numpy.tensordot(M1,G,(1,1))
+           B = numpy.tensordot(A,M1,(1,0))
+           a = numpy.tensordot(B,F,(2,0))
+           #dQ = dot(linalg.inv(M-dot(M,a)),F)
+           dq = numpy.dot(numpy.dot(numpy.linalg.inv(I-a),M1),F)
+
+        if cart:
+           # transform to Cartesian coordinates                        
+           l = self.__lvec.reshape(self.__nmodes, self.__nata*3)
+           dq = numpy.dot( l.transpose(), dq).reshape( self.__nata, 3)
+           #temp = numpy.sqrt(self.__atms)[:, numpy.newaxis]
+           #dq/= temp
         return dq
  
     # PAIR ENERGIES
