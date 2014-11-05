@@ -541,35 +541,41 @@ class Frag(object, units.UNITS):
               self.__vecc1 = efprot.vc1rot(self.__vecc1, rot, typs)
         return
     
-    def sup(self,xyz,suplist=None,dxyz=None):
+    def sup(self, xyz, suplist=None, dxyz=None, rotran=None):
         """superimpose structures <xyz> and <self.__pos>. Return rms in A.U."""
-        if len(xyz)!=1:
-           s = utilities.SVDSuperimposer()
-           if dxyz is None:
-              if suplist is None: s.set(xyz,self.__pos)
-              else:               s.set(xyz[suplist],self.__pos[suplist])
-              s.run()                       
-              rms         = s.get_rms()
-              rot, transl = s.get_rotran()
-           else:
-              #utilities.PRINTL(self.__pos*self.BohrToAngstrom,'','')
-              if suplist is None: s.set( xyz-dxyz,self.__pos )
-              else:               s.set((xyz-dxyz)[suplist],(self.__pos)[suplist])
-              s.run()
-              rms         = s.get_rms()
-              rot, transl = s.get_rotran()
-              #pos = numpy.dot(self.__pos , rot) + transl
-              #s = utilities.SVDSuperimposer()
-              #if suplist is None: s.set(pos ,self.__pos + dxyz )
-              #else:               s.set(pos[suplist],(self.__pos + dxyz)[suplist])
-              #s.run()
-              #rms         = s.get_rms()
-              #rot, transl = s.get_rotran()
-              #print "HUH", rot, transl, rms
-        else: # the case of 1-atom "molecule" like Na+ cation
-           rot    = numpy.identity(3)
-           transl = xyz - self.__pos
-           rms    = 0.0
+        # superimposition
+        if rotran is None:
+           if len(xyz)!=1:                                                             
+              s = utilities.SVDSuperimposer()
+              if dxyz is None:
+                 if suplist is None: s.set(xyz,self.__pos)
+                 else:               s.set(xyz[suplist],self.__pos[suplist])
+                 s.run()                       
+                 rms         = s.get_rms()
+                 rot, transl = s.get_rotran()
+              else:
+                 #utilities.PRINTL(self.__pos*self.BohrToAngstrom,'','')
+                 if suplist is None: s.set( xyz-dxyz,self.__pos )
+                 else:               s.set((xyz-dxyz)[suplist],(self.__pos)[suplist])
+                 s.run()
+                 rms         = s.get_rms()
+                 rot, transl = s.get_rotran()
+                 #pos = numpy.dot(self.__pos , rot) + transl
+                 #s = utilities.SVDSuperimposer()
+                 #if suplist is None: s.set(pos ,self.__pos + dxyz )
+                 #else:               s.set(pos[suplist],(self.__pos + dxyz)[suplist])
+                 #s.run()
+                 #rms         = s.get_rms()
+                 #rot, transl = s.get_rotran()
+                 #print "HUH", rot, transl, rms
+           else: # the case of 1-atom "molecule" like Na+ cation
+              rot    = numpy.identity(3)
+              transl = xyz - self.__pos
+              rms    = 0.0
+        # user-defined rotation matrix and translation vector
+        else:
+           rot, transl = rotran
+           rms = 0.0
         # perform transformations
         #self.__pos       = s.get_transformed()
         self.__pos = numpy.dot(self.__pos , rot) + transl
