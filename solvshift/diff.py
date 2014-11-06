@@ -1179,7 +1179,8 @@ using COULOMB.py routines"""
        i=0
        for file_fchk in pliki_fchk:
            jobs.append( job_server.submit(bua, (file_fchk,basis,bonds,vec,vec_ref),
-                                          (Read_xyz_file,ParseDmatFromFchk,ParseDMA,ParseVecFromFchk,get_pmloca,),
+                                           (),
+                                          #(Read_xyz_file,ParseDmatFromFchk,ParseDMA,ParseVecFromFchk,get_pmloca,),
                                           ("coulomb.multip","PyQuante",
                                            "PyQuante.Ints","utilities","units","orbloc") ) )
            if (i%4==0 and i!=0): job_server.wait()
