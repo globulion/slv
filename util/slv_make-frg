@@ -1,0 +1,42 @@
+#!/usr/bin/env python
+"""
+Computes the SolEFP parameters for BSM solvent molecule
+
+Usage:
+
+  slv_make-frg [fchk] [Gamess log] [Gamess efp] [output file] [nae]
+"""
+from sys import argv, exit
+from solvshift.slvpar import *
+from solvshift.solefp import *
+from utilities import Read_xyz_file, ParseLmocFromGamessEfpFile as Parse_lmoc_efpgms, \
+                      ParseDistributedPolarizabilitiesFromGamessEfpFile as Parse_dpol_efpgms
+print __doc__
+if len(argv)==1: exit()
+
+fchk = argv[1]
+glog = argv[2]
+gefp = argv[3]
+outfile = argv[4]
+nae = int(argv[5])
+
+# parse basic data, multipoles and WFN
+sefp = FragFactory(fchk=fchk,gmslog=glog,basis='6-311++G**',nae=nae)
+sefp.eval(ct=False, cvgloc=1.0E-14)
+par = sefp.get()
+
+# parse rpol and dpol from EFP
+rpol, dpol = Parse_dpol_efpgms(gefp)
+
+# PyQuante.Molecule object
+mol = Read_xyz_file(fchk,mol=1)
+q = None
+
+# create fragment and write to the output file
+out = Frag()
+out.set(frag=sefp,
+        mol=mol,
+        rpol=rpol,
+        dpol=dpol)
+#        chlpg=q)
+out.write(outfile)
