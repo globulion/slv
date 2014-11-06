@@ -1135,9 +1135,10 @@ Usage:
         if self.__chlpg is not None: par['chlpg'] = self.__chlpg
         if self.__dpol  is not None: par['dpol' ] = self.__dpol
         if self.__dpol1 is not None: par['dpol1'] = self.__dpol1
+        if self.__rpol  is not None: par['rpol' ] = self.__rpol
         return par
     
-    def eval(self,ct=False):
+    def eval(self, ct=False, cvgloc=1.0E-14):
         """Parses AO-LMO transformation matrix and Fock matrix.
 Transforms the latter from AO to LMO space. Computes also 
 overlap integrals and parses density matrix. If ct is True
@@ -1150,7 +1151,7 @@ the canonical Fock matrix and vectors will be saved."""
         veccocc= vecc[:self.__nae,:]
         tran, veclmo = utilities.get_pmloca(self.__natoms,mapi=self.__bfs.LIST1,sao=SAO,
                                             vecin=veccocc,nae=self.__nae,
-                                            maxit=100000,conv=1.0E-14, 
+                                            maxit=100000,conv=cvgloc, 
                                             lprint=True,
                                             freeze=None)
         # calculate LMTPs
@@ -1168,6 +1169,7 @@ the canonical Fock matrix and vectors will be saved."""
         if ct: fckc = numpy.tensordot(vecc  ,numpy.tensordot(vecc  ,Fock,(1,0)),(1,1))
         # save
         self.__lmoc = dma.get_origin()[self.__natoms:]
+        self.__rpol = self.__lmoc.copy()
         self.__tran = tran
         self.__vecl = veclmo
         if ct: self.__vecc = vecc
@@ -1188,7 +1190,7 @@ the canonical Fock matrix and vectors will be saved."""
         self.__vecl   = None; self.__vecl1  = None; self.__vecc = None
         self.__vecc1  = None; self.__fckc   = None; self.__fckc1= None
         self.__chlpg  = None; self.__esp    = None; self.__dpol = None
-        self.__dpol1  = None
+        self.__dpol1  = None; self.__rpol   = None
         return
     
     def _create(self):

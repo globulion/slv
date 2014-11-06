@@ -347,27 +347,35 @@ class Frag(object, units.UNITS):
     def set_par(self,**kwargs):
         """set the particular parameters"""
         for key, arg in kwargs.items():
-            if key == 'rdma' : self.__rdma  = arg
-            if key == 'dmac' : self.__dmac  = arg
-            if key == 'dmad' : self.__dmad  = arg
-            if key == 'dmaq' : self.__dmaq  = arg
-            if key == 'dmao' : self.__dmao  = arg
-            if key == 'fock' : self.__fock  = arg
-            if key == 'fock1': self.__fock1 = arg
-            if key == 'vecl' : self.__vecl  = arg
-            if key == 'vecl1': self.__vecl1 = arg
-            if key == 'lmoc' : self.__lmoc  = arg
-            if key == 'lmoc1': self.__lmoc1 = arg
-            if key == 'chlpg': self.__chlpg = arg
-            if key == 'esp'  : self.__esp   = arg
-            if key == 'dmac1': self.__dmac1 = arg
-            if key == 'dmad1': self.__dmad1 = arg
-            if key == 'dmaq1': self.__dmaq1 = arg
-            if key == 'dmao1': self.__dmao1 = arg
-            if key == 'dmac2': self.__dmac2 = arg
-            if key == 'dmad2': self.__dmad2 = arg
-            if key == 'dmaq2': self.__dmaq2 = arg
-            if key == 'dmao2': self.__dmao2 = arg
+            if key == 'rdma'   : self.__rdma  = arg      
+            if key == 'rpol'   : self.__rpol  = arg
+            if key == 'dmac'   : self.__dmac  = arg
+            if key == 'dmad'   : self.__dmad  = arg
+            if key == 'dmaq'   : self.__dmaq  = arg
+            if key == 'dmao'   : self.__dmao  = arg
+            if key == 'dpol'   : self.__dpol  = arg
+            if key == 'dpol1'  : self.__dpol1 = arg
+            if key == 'fock'   : self.__fock  = arg
+            if key == 'fock1'  : self.__fock1 = arg
+            if key == 'vecl'   : self.__vecl  = arg
+            if key == 'vecl1'  : self.__vecl1 = arg
+            if key == 'lmoc'   : self.__lmoc  = arg
+            if key == 'lmoc1'  : self.__lmoc1 = arg
+            if key == 'chlpg'  : self.__chlpg = arg
+            if key == 'esp'    : self.__esp   = arg
+            if key == 'dmac1'  : self.__dmac1 = arg
+            if key == 'dmad1'  : self.__dmad1 = arg
+            if key == 'dmaq1'  : self.__dmaq1 = arg
+            if key == 'dmao1'  : self.__dmao1 = arg
+            if key == 'dmac2'  : self.__dmac2 = arg
+            if key == 'dmad2'  : self.__dmad2 = arg
+            if key == 'dmaq2'  : self.__dmaq2 = arg
+            if key == 'dmao2'  : self.__dmao2 = arg
+            if key == 'lvec'   : self.__lvec  = arg
+            if key == 'freq'   : self.__freq  = arg
+            if key == 'redmass': self.__redmass = arg
+            if key == 'redmss' : self.__redmass = arg
+            if key == 'gijk'   : self.__gijk  = gijk
         return
 
     # GET METHODS
