@@ -414,7 +414,12 @@ class Frag(object, units.UNITS):
         mol = utilities.MakeMol(self.__atno, self.__pos, name=self.__name)
         bfs = PyQuante.Ints.getbasis(mol, self.__basis)
         return bfs
-    
+   
+    def get_rotranrms(self):
+        """Return rotation matrix, translation vector
+and RMS from the last superimposition"""
+        return self.__rot, self.__transl, self.__rms
+
     def get_traceless(self):
         """return traceless quadrupoles and octupoles"""
         dmaq, dmao = efprot.tracls(self.__dmaq.copy(), self.__dmao.copy())
@@ -584,6 +589,10 @@ class Frag(object, units.UNITS):
         else:
            rot, transl = rotran
            rms = 0.0
+        # save the actual transformation tensors
+        self.__rot = rot
+        self.__transl = transl
+        self.__rms = rms
         # perform transformations
         #self.__pos       = s.get_transformed()
         self.__pos = numpy.dot(self.__pos , rot) + transl
