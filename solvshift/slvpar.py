@@ -256,6 +256,7 @@ class Frag(object, units.UNITS):
               
     def __init__(self, file=None):
         self.__file = file
+        self.__dir  = None
         self._create()
         #self._nlines = lambda n: n/5+bool(n%5)
         if file is not None: self.__call__(file)
@@ -268,6 +269,7 @@ class Frag(object, units.UNITS):
         """parse the parameters from a file"""
         if file in self.params:
            self.__file = os.environ['SLV_PATH'] + '/frg/%s/%s.frg' % (file, file)
+           self.__dir  = os.environ['SLV_PATH'] + '/frg/%s/'       % file 
            if not os.path.isfile(self.__file):
               message = " No such file: <%s>. There is no *.frg file for that molecule,\n" % self.__file
               message+= " the name is misspelled or check if the $SLV_PATH variable is set properly\n"
@@ -383,7 +385,11 @@ class Frag(object, units.UNITS):
     def get(self):
         """returns dictionary with parameters"""
         return self._make_dict()
-    
+   
+    def get_dir(self):
+        """Return the base directory of fragment storage"""
+        return self.__dir
+ 
     def get_name(self):
         """return the name of the fragment"""
         return self.__name

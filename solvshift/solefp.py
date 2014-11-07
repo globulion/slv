@@ -16,7 +16,8 @@
 #from efprot import tracls
 #from exrep  import exrep
 import sys, copy, os, re, math, glob, PyQuante.Ints, coulomb.multip, clemtp,\
-       numpy, units, utilities, diff, shftex, shftce, solpol, solpol2, efprot, exrep
+       numpy, units, utilities, diff, shftex, shftce, solpol, solpol2, efprot, exrep,\
+       solvshift.slvpar
 sys.stdout.flush()
 
 __all__ = ['EFP','FragFactory',]
@@ -85,7 +86,7 @@ all          - evaluate all these interactions"""
 
     #   SET METHODS
 
-    def set(self,pos,ind,nmol,bsm=None, supl=None):
+    def set(self, pos, ind, nmol, bsm=None, supl=None):
         """Set the initial molecular coordinates and the moltype index list. 
 Also set the BSM parameters if not done in set_bsm. 
 <pos>     -  an 2D array of atomic coordinates of dimension natoms, 3
@@ -186,6 +187,24 @@ Notes:
         if   tot: return self.__fi_el+ self.__fi_rep+ self.__fi_pol
         else    : return self.__fi_el, self.__fi_rep, self.__fi_pol
 
+    def get_hess(self, tot=False):
+        """
+Return Hessian matrix from numerical calculation of derivatives. 
+Returns:
+  tot=False (default)    tuple of three numpy.ndarray's of size (nmodes x nmodes)
+                         corresponds to electrostatic, repulsion and polarization 
+                         Hessian, respectively
+  tot=True               numpy.ndarray of size (nmodes x nmodes)
+                         which is the sum of all the three contributions to the 
+                         total Hessian listed above
+
+Notes: 
+  o Dispersion and charge-gransfer forces are not implemented yet!
+  o Values are in A.U. units of [Hartree/Bohr**2]
+"""
+        if   tot: return self.__hess_el+ self.__hess_rep+ self.__hess_pol
+        else    : return self.__hess_el, self.__hess_rep, self.__hess_pol
+
     def get_dq(self, theory=0, tot=False, cart=True):
         """
 Return structural distortions in a given Tn-th level of theory=n. 
@@ -226,6 +245,94 @@ of the structural distortion contributions. Returns everything in A.U. (Bohr)!""
            h = numpy.dot(l,numpy.dot(h,l.transpose()))
         return h
 
+    def _calc_hess(self, type='e', mwc=True, theory=0):
+        """Calculate the Hessian matrix from numerical evaluation of derivatives"""
+        m = numpy.diag( self.__redmss * self.__freq**2.0 )
+        if   type=='e': 
+             fi  = self.__fi_el
+             kij = self.__kij_el
+        elif type=='p': 
+             fi  = self.__fi_pol
+             kij = self.__kij_pol
+        elif type=='x': 
+             fi  = self.__fi_rep
+             kij = self.__kij_rep
+        elif type=='exp':
+             fi  = self.__fi_el + self.__fi_rep + self.__fi_pol 
+             kij = self.__kij_el+ self.__kij_rep+ self.__kij_pol
+
+        if not theory: dq= self._calc_dq(fi, theory, cart=False, kij=None)
+        else:          dq= self._calc_dq(fi, theory, cart=False, kij=kij )
+        s = numpy.tensordot(self.__gijk, dq,(0,0))
+        t = numpy.outer(numpy.sqrt(self.__redmss), numpy.sqrt(self.__redmss))
+        h = (m + s + kij)/ t
+        h_w = None
+        #h = numpy.diag(h.diagonal())
+        if mwc:
+           t = numpy.sqrt(self.__redmss)[:,numpy.newaxis]
+           l = self.__lvec.reshape(self.__nmodes, self.__nata * 3) / t
+           l = numpy.dot(self.__M, l.transpose() )
+           h_w = numpy.dot(l,numpy.dot(h,l.transpose()))
+        return h, h_w
+
+    def _get_slv(self, type='e', theory=0):
+        """Calculate the frequencies, reduced masses and transformation matrix from numerical derivatives"""
+        hess, hess_w = self._calc_hess(type, mwc=True, theory=theory)
+        vib = utilities.VIB(self.__mol, hess_w, weight=False)
+        vib.eval()
+        freq, redmss, U = vib.get()
+        return hess, freq, redmss, U
+
+    def _calc_dq(self, fi, theory, cart=False, kij=None):
+        """calculate structural distortions according to the level of SolX theory"""
+        if not theory in [0,2]:
+           raise Exception('Incorrect level of theory used! Possible are 0 and 2 (---> chosen %i)'%theory)
+        m = self.__redmss*self.__freq*self.__freq
+        dq = -fi/m
+        if theory==2: # requires kij matrix of size nmodes x nmodes
+           # 1 - good
+           #M = numpy.diag(1./m)
+           #g = self.__gijk
+           #a = numpy.tensordot(M,g,(1,1))
+           #b = numpy.tensordot(a,M,(2,0))
+           #c = numpy.tensordot(b,fi,(2,0))
+           #A = c/2.
+
+           # 2 - not good (slightly different result than in 1)
+           #A  = numpy.zeros((self.__nmodes, self.__nmodes), numpy.float64)
+           #for i in range(15):
+           #    for j in range(15):
+           #        gk = 0.0
+           #        for k in range(15):
+           #            gk+= self.__gijk[i,j,k] * fi[k]/m[k]
+           #        A[i,j] = gk/2.
+           #    A[i,j] /= m[i]
+
+           # 3 - incorrect, bad
+           #g  = (self.__gijk / m * fi).sum(axis=2)
+           #A  = g/m/2.
+           #dq = numpy.dot( numpy.linalg.inv(numpy.identity(self.__nmodes)-A), dq)
+
+           N = self.__nmodes
+           G = self.__gijk.copy()/2.
+           M = numpy.diag(self.__redmss*self.__freq**2) + kij
+           F = fi
+           M1= numpy.linalg.inv(M)
+           I = numpy.identity(self.__nmodes, numpy.float64)
+           A = numpy.tensordot(M1,G,(1,1))
+           B = numpy.tensordot(A,M1,(1,0))
+           a = numpy.tensordot(B,F,(2,0))
+           #dQ = dot(linalg.inv(M-dot(M,a)),F)
+           dq = numpy.dot(numpy.dot(numpy.linalg.inv(I-a),M1),F)
+
+        if cart:
+           # transform to Cartesian coordinates                        
+           l = self.__lvec.reshape(self.__nmodes, self.__nata*3)
+           dq = numpy.dot( l.transpose(), dq).reshape( self.__nata, 3)
+           #temp = numpy.sqrt(self.__atms)[:, numpy.newaxis]
+           #dq/= temp
+        return dq
+
     def get_slv(self, theory=0):
         """Calculate the frequencies, reduced masses and transformation matrix"""
         h = self.get_hessian(theory=theory, mwc=True)
@@ -260,7 +367,321 @@ Now, only for exchange-repulsion layer"""
         return self.__rc.copy()
    
     #   OPERATIONAL METHODS
- 
+    def eval_num(self, lwrite=False, dxyz=None):
+        """Evaluate the properties numerically (interaction energies, frequency shifts or NLO properties -
+- the latter not implemented yet!)"""
+        ### central molecule
+        frg = self.__bsm[0]
+        # get the dictionary of the parameters
+        frgc = frg.copy()
+        parc = frg.get()
+        self.__lvec = parc['lvec']
+        ndmac= parc['ndma']
+        # superimpose
+        self.__rms_central = frg.sup( self.__rc, self.__suplist_c, dxyz=dxyz )
+        # store actual position of the fragment
+        self.__pos_c = frg.get_pos()
+        if lwrite: print "Central rms: ",self.__rms_central
+        # get the transformation tensors
+        rot, transl, rms = frg.get_rotranrms()
+        rot_inv = rot.transpose()
+        transl_inv = -transl.copy()
+
+        ### FD fragments
+        _dir_ = frg.get_dir(); N_FD = 1 + 9*self.__nata**2 + 3*self.__nata
+        #frg_fd= numpy.zeros( N_FD, dtype=object )
+        files = glob.glob(_dir_+'/num/*.frg')
+        files.sort()
+        # read the FD *.frg files and superimpose them
+        PAR_FD = numpy.zeros( N_FD, dtype=object )
+        QO_FD  = numpy.zeros( N_FD, dtype=object )
+        for i in range(N_FD):
+            frg_i = solvshift.slvpar.Frag(files[i])
+            #frg_i.sup(xyz=None, rotran=(rot, transl))
+            #frg_fd[i] = frg_i
+            PAR_FD[i] = frg_i.get()
+            QO_FD [i] = frg_i.get_traceless()
+
+        ### parse the data
+        N = len(self.__ntc)
+        nmols = N+1
+        #
+        qadc, octc = frg.get_traceless()
+        #
+        gijk   = self.__gijk
+        freq   = self.__freq
+        redmss = self.__redmss
+        lvec   = self.__lvec.ravel()
+        nmodes = self.__nmodes
+        #
+        freqc = freq[self.__mode-1]
+        redmssc=redmss[self.__mode-1]
+        #
+        shift_total = 0.0; corr = 0.0
+        rf2 = 0.0; rf3 = 0.0; rf4 = 0.0
+        rk2 = 0.0; rk3 = 0.0; rk4 = 0.0
+        corr_b, corr_c, corr_d = 0.0, 0.0, 0.0
+        #
+        self.__fi_el  = numpy.zeros(self.__nmodes, dtype=numpy.float64)
+        self.__fi_pol = numpy.zeros(self.__nmodes, dtype=numpy.float64)
+        self.__fi_rep = numpy.zeros(self.__nmodes, dtype=numpy.float64)
+        self.__dq_el  = numpy.zeros((self.__nata,3), dtype=numpy.float64)
+        self.__dq_pol = numpy.zeros((self.__nata,3), dtype=numpy.float64)
+        self.__dq_rep = numpy.zeros((self.__nata,3), dtype=numpy.float64)
+        #
+        ### other molecules
+        rms_max = 0.0
+        PAR_SOL = list()
+        QO_SOL  = list()
+        for i in range(N):
+            im = self.__mtc[i]
+            nm_prev = sum(self.__ntc[:i])
+            nm_curr = sum(self.__ntc[:i+1])
+            #
+            STR = self.__rcoordc[nm_prev:nm_curr]
+            STR = numpy.dot(STR+transl_inv, rot_inv)
+            frg = self.__bsm[im].copy()
+            if lwrite: print frg.get()['name']
+            if lwrite: utilities.PRINTL(STR * self.BohrToAngstrom, '', '')
+            rms = frg.sup( STR , suplist= self.__suplist[self.__ind[im]] )
+            if lwrite: print "rms C: ",rms
+            if rms > rms_max: rms_max = rms
+            par = frg.get()
+            PAR_SOL.append( par )
+            #
+            qad, oct = efprot.tracls( par['dmaq'], par['dmao'] )
+            QO_SOL.append( (qad,oct) )
+            #
+        self.__rms_solvent_max = rms_max
+        # ----------------------------------- ELECT --------------------------------- #
+        if self.__eval_elect:
+           func_el  = numpy.zeros(N_FD, numpy.float64)
+           ndma_sol = [ x['ndma'] for x in PAR_SOL ]
+           
+           rdma_sol = numpy.concatenate  ([ x['rdma'] for x in PAR_SOL ])
+           chg_sol  = numpy.concatenate  ([ x['dmac'] for x in PAR_SOL ])
+           dip_sol  = numpy.concatenate  ([ x['dmad'] for x in PAR_SOL ])
+           qad_sol  = numpy.concatenate  ([ QO_SOL[x][0]  for x in range(N)   ])
+           oct_sol  = numpy.concatenate  ([ QO_SOL[x][1]  for x in range(N)   ])
+
+           ## test
+           #p    = parc
+           #q,o  = frgc.get_traceless()#efprot.tracls( parc['dmaq'], parc['dmao'] )
+           #ndma = [p['ndma'],] + ndma_sol
+           #rdma = numpy.concatenate ( (p['rdma'], rdma_sol) ).ravel()
+           #chg  = numpy.concatenate ( (p['dmac'],  chg_sol) ).ravel()
+           #dip  = numpy.concatenate ( (p['dmad'],  dip_sol) ).ravel()
+           #qad  = numpy.concatenate ( (q        ,  qad_sol) ).ravel()
+           #oct  = numpy.concatenate ( (o        ,  oct_sol) ).ravel()
+           #AAAA,A,B,C,D,E = clemtp.edmtpc(rdma,chg,dip,qad,oct,ndma,lwrite)
+           #print '0: ', AAAA
+        
+           # calculate the interaction energies 
+           for i in range(N_FD):
+               p    = PAR_FD[i]
+               q,o  = QO_FD[i]
+               ndma = [p['ndma'],] + ndma_sol
+               rdma = numpy.concatenate ( (p['rdma'], rdma_sol) ).ravel()
+               chg  = numpy.concatenate ( (p['dmac'],  chg_sol) ).ravel()
+               dip  = numpy.concatenate ( (p['dmad'],  dip_sol) ).ravel()
+               qad  = numpy.concatenate ( (q        ,  qad_sol) ).ravel()
+               oct  = numpy.concatenate ( (o        ,  oct_sol) ).ravel()
+               func_el[i],A,B,C,D,E = clemtp.edmtpc(rdma,chg,dip,qad,oct,ndma,lwrite=False)
+               #func_el[i] ,a,b,c,d,e,cctot,cdtot,cqtot,cttot,ddtot,dqtot = clemtp.clemtp(parc['rdma'],parc['dmac'],parc['dmad'],qadc,octc,
+               #                                                                     rdma_sol,chg_sol,dip_sol,qad_sol,oct_sol)
+           #print '1: ', func_el[0]
+           # differentiate and obtain forces f and hessian K
+           fx_1 = func_el[0:self.__nata*6+1]
+           fx_2 = func_el[  self.__nata*6+1: ]
+           fd_calc = utilities.diff(func=None, step=0.006*self.AngstromToBohr, DIM=self.__nata*3, scheme='3pt')
+           fi_cart, kij_cart = fd_calc.eval( (fx_1, fx_2), symm=True)
+           # transform the derivatives to normal coordinate space
+           l = self.__lvec.reshape(self.__nmodes, self.__nata*3)
+           fi_mode = numpy.dot(l, fi_cart)
+           kij_mode= numpy.dot( numpy.dot(l, kij_cart), l.transpose() )
+           # store forces and K-matrices
+           self.__fi_el  = fi_mode
+           self.__kij_el = kij_mode
+           #self.__kij_el.fill(0.)
+           # diagonalize the hessian
+           hess, freq, redmass, U = self._get_slv(type='e', theory=0)
+           utilities.PRINT(freq[::-1])
+           self.__hess_el = hess
+
+
+           e_dw_tot = 0.
+           e_dw_mea= 0.
+           e_dw_ea = 0.
+
+           # change units from A.U. to specific units
+           if self.__cunit:
+                 #eel  *= self.HartreeToKcalPerMole
+                 e_dw_mea *= self.HartreePerHbarToCmRec
+                 e_dw_ea  *= self.HartreePerHbarToCmRec
+                
+           shift_total    += e_dw_tot
+           self.__shift[0] = 0.
+           self.__shift[1] = 0.
+
+           if lwrite: 
+              print " Electrostatic  TOT frequency shift: %10.2f"% shift_total
+           del PAR_SOL, QO_SOL
+           # ------------------------------------- POL --------------------------------- #
+           if self.__eval_pol:
+              npolc = parc['npol']
+              ### central molecule
+              N = len(self.__ntp)
+              PAR_SOL = []
+              QO_SOL  = []
+              ### other molecules
+              for i in range(N):
+                  im = self.__mtp[i]
+                  nm_prev = sum(self.__ntp[:i])
+                  nm_curr = sum(self.__ntp[:i+1])
+                  #
+                  STR = self.__rcoordp[nm_prev:nm_curr]
+                  STR = numpy.dot(STR+transl_inv, rot_inv)
+                  frg = self.__bsm[im].copy()
+                  rms = frg.sup( STR, suplist= self.__suplist[self.__ind[im]] )
+                  #if lwrite: print "rms P: ",rms
+                  par = frg.get()
+                  PAR_SOL.append( par )
+                  QO_SOL.append( frg.get_traceless() )
+                  #
+              func_pol = numpy.zeros(N_FD, numpy.float64)
+              ndma_sol =                     [ x['ndma'] for x in PAR_SOL ]
+              npol_sol =                     [ x['npol'] for x in PAR_SOL ]
+              rdma_sol = numpy.concatenate  ([ x['rdma'] for x in PAR_SOL ])
+              rpol_sol = numpy.concatenate  ([ x['rpol'] for x in PAR_SOL ])
+              pol_sol  = numpy.concatenate  ([ x['dpol'] for x in PAR_SOL ])
+              chg_sol  = numpy.concatenate  ([ x['dmac'] for x in PAR_SOL ])
+              dip_sol  = numpy.concatenate  ([ x['dmad'] for x in PAR_SOL ])
+              qad_sol  = numpy.concatenate  ([ QO_SOL[x][0]  for x in range(N)   ])
+              oct_sol  = numpy.concatenate  ([ QO_SOL[x][1]  for x in range(N)   ])
+              #
+              npols= sum(npol_sol) + PAR_FD[0]['npol']
+              DIM  = npols*3
+              #
+              # calculate the interaction energies                                             
+              for i in range(N_FD):
+                  dmat = numpy.zeros((DIM,DIM), numpy.float64)
+                  flds = numpy.zeros( DIM, numpy.float64)
+                  dipind=numpy.zeros( DIM, numpy.float64)
+                  p    = PAR_FD[i]
+                  q,o  = QO_FD[i]
+                  ndma = [p['ndma'],] + ndma_sol
+                  npol = [p['npol'],] + npol_sol
+                  rdma = numpy.concatenate ( (p['rdma'], rdma_sol) ).ravel()
+                  chg  = numpy.concatenate ( (p['dmac'],  chg_sol) ).ravel()
+                  dip  = numpy.concatenate ( (p['dmad'],  dip_sol) ).ravel()
+                  qad  = numpy.concatenate ( (q        ,  qad_sol) ).ravel()
+                  oct  = numpy.concatenate ( (o        ,  oct_sol) ).ravel()
+                  rpol = numpy.concatenate ( (p['rpol'], rpol_sol) ).ravel()
+                  pol  = numpy.concatenate ( (p['dpol'],  pol_sol) ).ravel()
+
+                  func_pol[i] = solpol.solpol(rdma,chg,dip,qad,oct,
+                                              rpol,pol,dmat,
+                                              flds,dipind,
+                                              ndma,npol,lwrite=False)
+
+              # differentiate and obtain forces f and hessian K
+              fx_1 = func_pol[0:self.__nata*6+1]                                                                    
+              fx_2 = func_pol[  self.__nata*6+1: ]
+              fd_calc = utilities.diff(func=None, step=0.006*self.AngstromToBohr, DIM=self.__nata*3, scheme='3pt')
+              fi_cart, kij_cart = fd_calc.eval( (fx_1, fx_2), symm=True)
+              # transform the derivatives to normal coordinate space
+              l = self.__lvec.reshape(self.__nmodes, self.__nata*3)
+              fi_mode = numpy.dot(l, fi_cart)
+              kij_mode= numpy.dot( numpy.dot(l, kij_cart), l.transpose() )
+              # store forces and K-matrices
+              self.__fi_pol = fi_mode
+              self.__kij_pol = kij_mode
+              # diagonalize the hessian
+              hess, freq, redmass, U = self._get_slv(type='p', theory=0)
+              utilities.PRINT(freq[::-1])
+              self.__hess_pol = hess
+              # 
+              spol = 0.
+              if self.__cunit: 
+                 spol  *= self.HartreePerHbarToCmRec
+              shift_total += spol
+              self.__shift[2] = spol
+              if lwrite: 
+                 print " Polarization       frequency shift: %10.2f"%spol
+              del PAR_SOL, QO_SOL
+        # ---------------------------------- EX-REP --------------------------------- #
+        rms_max = 0.0
+        if  self.__eval_rep:
+            N = len(self.__nte)
+            PAR_SOL = []
+            ### other molecules
+            for i in range(N):
+                im = self.__mte[i]
+                nm_prev = sum(self.__nte[:i])
+                nm_curr = sum(self.__nte[:i+1])
+                #
+                STR = self.__rcoorde[nm_prev:nm_curr]
+                STR = numpy.dot(STR+transl_inv, rot_inv)
+                frg = self.__bsm[im].copy()
+                rms = frg.sup( STR , suplist= self.__suplist[self.__ind[im]])
+                if lwrite: print "rms E: ",rms
+                if rms > rms_max: rms_max = rms
+                par = frg.get()
+                PAR_SOL.append( par )
+                #
+            if self.__rms_solvent_max is None: self.__rms_solvent_max = rms_max
+
+            # compute interaction energies
+            func_rep = numpy.zeros(N_FD, numpy.float64)
+            for i in range(N_FD):
+                varA = PAR_FD[i]
+                e_rep  = 0.0
+                for j in range(len(PAR_SOL)):
+                    varB = PAR_SOL[j]
+                    e_rep += self._pair_rep(varA,varB)
+                func_rep[i] = e_rep
+            # differentiate and obtain forces f and hessian K
+            fx_1 = func_rep[0:self.__nata*6+1]
+            fx_2 = func_rep[  self.__nata*6+1: ]
+            fd_calc = utilities.diff(func=None, step=0.006*self.AngstromToBohr, DIM=self.__nata*3, scheme='3pt')
+            fi_cart, kij_cart = fd_calc.eval( (fx_1, fx_2), symm=True)
+            # transform the derivatives to normal coordinate space
+            l = self.__lvec.reshape(self.__nmodes, self.__nata*3)
+            fi_mode = numpy.dot(l, fi_cart)
+            kij_mode= numpy.dot( numpy.dot(l, kij_cart), l.transpose() )
+            # store forces and K-matrices
+            self.__fi_rep = fi_mode
+            self.__kij_rep = kij_mode
+            # diagonalize the Hessian
+            hess, freq, redmass, U = self._get_slv(type='x', theory=0)
+            utilities.PRINT(freq[::-1])
+            self.__hess_rep = hess
+
+            #
+            serp = 0.
+            if self.__cunit:
+               serp *= self.HartreePerHbarToCmRec
+            shift_total += serp
+            self.__shift[3] = serp
+            self.__shift[6] = shift_total
+            if lwrite: 
+               print " Exchange-repulsion frequency shift: %10.2f"%serp
+               print " ----------------------------------------------- "
+               print " TOTAL FREQUENCY SHIFT             : %10.2f"%shift_total
+       
+            # diagonalize the TOTAL Hessian
+            hess, freq, redmass, U = self._get_slv(type='exp', theory=0)
+            utilities.PRINT(freq[::-1])
+            self.__hess_tot = hess 
+            r,un = numpy.linalg.eig(hess)
+            self.__u = un
+        
+        return # ========================================================================== # 
+
+    def get_u(self):
+        """Returns unitary transformation matrix diagonalizing the Hessian"""
+        return self.__u
+
     def eval(self, lwrite=False, dxyz=None):
         """Evaluate the properties (interaction energies, frequency shifts or NLO properties -
 - the latter not implemented yet!)"""
