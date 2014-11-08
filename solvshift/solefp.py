@@ -260,6 +260,9 @@ of the structural distortion contributions. Returns everything in A.U. (Bohr)!""
         elif type=='exp':
              fi  = self.__fi_el + self.__fi_rep + self.__fi_pol 
              kij = self.__kij_el+ self.__kij_rep+ self.__kij_pol
+        elif type=='exp-app':
+             fi  = self.__fi_el + self.__fi_rep + self.__fi_pol
+             kij = self.__kij_el
 
         if not theory: dq= self._calc_dq(fi, theory, cart=False, kij=None)
         else:          dq= self._calc_dq(fi, theory, cart=False, kij=kij )
@@ -287,43 +290,20 @@ of the structural distortion contributions. Returns everything in A.U. (Bohr)!""
         """calculate structural distortions according to the level of SolX theory"""
         if not theory in [0,2]:
            raise Exception('Incorrect level of theory used! Possible are 0 and 2 (---> chosen %i)'%theory)
-        m = self.__redmss*self.__freq*self.__freq
-        dq = -fi/m
-        if theory==2: # requires kij matrix of size nmodes x nmodes
-           # 1 - good
-           #M = numpy.diag(1./m)
-           #g = self.__gijk
-           #a = numpy.tensordot(M,g,(1,1))
-           #b = numpy.tensordot(a,M,(2,0))
-           #c = numpy.tensordot(b,fi,(2,0))
-           #A = c/2.
-
-           # 2 - not good (slightly different result than in 1)
-           #A  = numpy.zeros((self.__nmodes, self.__nmodes), numpy.float64)
-           #for i in range(15):
-           #    for j in range(15):
-           #        gk = 0.0
-           #        for k in range(15):
-           #            gk+= self.__gijk[i,j,k] * fi[k]/m[k]
-           #        A[i,j] = gk/2.
-           #    A[i,j] /= m[i]
-
-           # 3 - incorrect, bad
-           #g  = (self.__gijk / m * fi).sum(axis=2)
-           #A  = g/m/2.
-           #dq = numpy.dot( numpy.linalg.inv(numpy.identity(self.__nmodes)-A), dq)
-
+        if not theory:
+           m = self.__redmss*self.__freq*self.__freq
+           dq = -fi/m
+        elif theory==2: # requires kij matrix of size nmodes x nmodes
+           m = self.__redmss*self.__freq*self.__freq
            N = self.__nmodes
            G = self.__gijk.copy()/2.
-           M = numpy.diag(self.__redmss*self.__freq**2) + kij
-           F = fi
-           M1= numpy.linalg.inv(M)
+           B = numpy.diag(m) + kij
+           B1= numpy.linalg.inv(B)
            I = numpy.identity(self.__nmodes, numpy.float64)
-           A = numpy.tensordot(M1,G,(1,1))
-           B = numpy.tensordot(A,M1,(1,0))
-           a = numpy.tensordot(B,F,(2,0))
-           #dQ = dot(linalg.inv(M-dot(M,a)),F)
-           dq = numpy.dot(numpy.dot(numpy.linalg.inv(I-a),M1),F)
+           a = numpy.tensordot(B1,G,(1,1))
+           b = numpy.tensordot(a,B1,(2,0))
+           A = numpy.tensordot(b,fi,(2,0))
+           dq =-numpy.dot(numpy.dot(numpy.linalg.inv(I-A),B1),fi)
 
         if cart:
            # transform to Cartesian coordinates                        
@@ -332,6 +312,23 @@ of the structural distortion contributions. Returns everything in A.U. (Bohr)!""
            #temp = numpy.sqrt(self.__atms)[:, numpy.newaxis]
            #dq/= temp
         return dq
+
+    def get_freq_approx(self,kij_el=False,diag=False):
+        """Evaluate approximate frequencies without Hessian diagonalization, 
+using appropriate level of SOL-X theory"""
+        if diag:
+           if kij_el: diag_hess,u = numpy.linalg.eig(self.__hess_tot_app)
+           else:      diag_hess,u = numpy.linalg.eig(self.__hess_tot)
+        else:
+           if kij_el: diag_hess = numpy.diag(self.__hess_tot_app)
+           else:      diag_hess = numpy.diag(self.__hess_tot)
+        print diag_hess
+        diag_hess = numpy.where(diag_hess>0,diag_hess,0)
+        #freq = where(diag_hess>0,sqrt(diag_hess),sqrt(-diag_hess) )
+        freq = numpy.sqrt(diag_hess)
+        if self.__cunit:
+           freq *= self.HartreePerHbarToCmRec
+        return freq
 
     def get_slv(self, theory=0):
         """Calculate the frequencies, reduced masses and transformation matrix"""
@@ -365,9 +362,13 @@ Now, only for exchange-repulsion layer"""
     def get_rc(self):
         """Return solute target structure (relevant if central molecule mode is ON)"""
         return self.__rc.copy()
-   
+
+    def get_u(self):
+        """Returns unitary transformation matrix diagonalizing the Hessian"""
+        return self.__u
+  
     #   OPERATIONAL METHODS
-    def eval_num(self, lwrite=False, dxyz=None):
+    def eval_num(self, lwrite=False, dxyz=None, theory=0):
         """Evaluate the properties numerically (interaction energies, frequency shifts or NLO properties -
 - the latter not implemented yet!)"""
         ### central molecule
@@ -449,7 +450,7 @@ Now, only for exchange-repulsion layer"""
             par = frg.get()
             PAR_SOL.append( par )
             #
-            qad, oct = efprot.tracls( par['dmaq'], par['dmao'] )
+            qad, oct = frg.get_traceless()
             QO_SOL.append( (qad,oct) )
             #
         self.__rms_solvent_max = rms_max
@@ -504,7 +505,7 @@ Now, only for exchange-repulsion layer"""
            self.__kij_el = kij_mode
            #self.__kij_el.fill(0.)
            # diagonalize the hessian
-           hess, freq, redmass, U = self._get_slv(type='e', theory=0)
+           hess, freq, redmass, U = self._get_slv(type='e', theory=theory)
            utilities.PRINT(freq[::-1])
            self.__hess_el = hess
 
@@ -596,8 +597,10 @@ Now, only for exchange-repulsion layer"""
               # store forces and K-matrices
               self.__fi_pol = fi_mode
               self.__kij_pol = kij_mode
+              #self.__kij_pol.fill(0.)
+
               # diagonalize the hessian
-              hess, freq, redmass, U = self._get_slv(type='p', theory=0)
+              hess, freq, redmass, U = self._get_slv(type='p', theory=theory)
               utilities.PRINT(freq[::-1])
               self.__hess_pol = hess
               # 
@@ -652,11 +655,11 @@ Now, only for exchange-repulsion layer"""
             # store forces and K-matrices
             self.__fi_rep = fi_mode
             self.__kij_rep = kij_mode
+            #self.__kij_rep.fill(0.)
             # diagonalize the Hessian
-            hess, freq, redmass, U = self._get_slv(type='x', theory=0)
+            hess, freq, redmass, U = self._get_slv(type='x', theory=theory)
             utilities.PRINT(freq[::-1])
             self.__hess_rep = hess
-
             #
             serp = 0.
             if self.__cunit:
@@ -668,19 +671,26 @@ Now, only for exchange-repulsion layer"""
                print " Exchange-repulsion frequency shift: %10.2f"%serp
                print " ----------------------------------------------- "
                print " TOTAL FREQUENCY SHIFT             : %10.2f"%shift_total
-       
+
+            # diagonalize the TOTAL Hessian - K-elect approximation
+            hess, freq, redmass, U = self._get_slv(type='exp-app', theory=theory)
+            utilities.PRINT(freq[::-1])
+            self.__hess_tot_app = hess 
+      
             # diagonalize the TOTAL Hessian
-            hess, freq, redmass, U = self._get_slv(type='exp', theory=0)
+            hess, freq, redmass, U = self._get_slv(type='exp', theory=theory)
             utilities.PRINT(freq[::-1])
             self.__hess_tot = hess 
             r,un = numpy.linalg.eig(hess)
+            #print func_el
+            #print func_pol
+            #print func_rep
             self.__u = un
+
+
         
         return # ========================================================================== # 
 
-    def get_u(self):
-        """Returns unitary transformation matrix diagonalizing the Hessian"""
-        return self.__u
 
     def eval(self, lwrite=False, dxyz=None):
         """Evaluate the properties (interaction energies, frequency shifts or NLO properties -
