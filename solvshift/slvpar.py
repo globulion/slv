@@ -1274,10 +1274,12 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         log   += '   nmodes     = %s\n'    % self.__nmodes
         if self.__mode is not None:
            log+= '   mode       = %s\n'    % self.__mode
-        log   += '   nmos       = %s\n'    % self.__nmos
-        log   += '   ncmos      = %s\n'    % self.__ncmos
         if self.__ndma is not None:
            log+= '   ndma       = %s\n'    % self.__ndma
+        if self.__npol is not None:
+           log+= '   npol       = %s\n'    % self.__npol
+        log   += '   nmos       = %s\n'    % self.__nmos
+        log   += '   ncmos      = %s\n'    % self.__ncmos
         log   += ' \n'
         file.write(log)
         return
