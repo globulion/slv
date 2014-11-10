@@ -114,6 +114,10 @@ Also set the BSM parameters if not done in set_bsm.
            self.__freq   = parc['freq']
            self.__mode   = parc['mode']
            self.__mol    = self.__bsm[0].get_mol()
+           self.__gijk[-7:,:,:].fill(0.0)
+           self.__gijk[:,-7:,:].fill(0.0)
+           self.__gijk[:,:,-7:].fill(0.0)
+
            # calculate M matrix                                                  
            N = len(self.__mol.atoms)
            M = numpy.zeros((N*3,N*3), dtype=numpy.float64)
@@ -187,6 +191,24 @@ Notes:
         if   tot: return self.__fi_el+ self.__fi_rep+ self.__fi_pol
         else    : return self.__fi_el, self.__fi_rep, self.__fi_pol
 
+    def get_kmatrix(self, tot=False):
+        """
+Return K-matrix from numerical calculation of derivatives. 
+Returns:
+  tot=False (default)    tuple of three numpy.ndarray's of size (nmodes x nmodes)
+                         corresponds to electrostatic, repulsion and polarization 
+                         K-matrix, respectively
+  tot=True               numpy.ndarray of size (nmodes x nmodes)
+                         which is the sum of all the three contributions to the 
+                         total K-matrix listed above
+
+Notes: 
+  o Dispersion and charge-gransfer forces are not implemented yet!
+  o Values are in A.U. units of [Hartree/Bohr**2]
+"""
+        if   tot: return self.__kij_el+ self.__kij_rep+ self.__kij_pol
+        else    : return self.__kij_el, self.__kij_rep, self.__kij_pol
+
     def get_hess(self, tot=False):
         """
 Return Hessian matrix from numerical calculation of derivatives. 
@@ -217,12 +239,84 @@ of the structural distortion contributions. Returns everything in A.U. (Bohr)!""
         if   tot: return dq_el+ dq_rep+ dq_pol
         else    : return dq_el, dq_rep, dq_pol
 
-    def get_shift_from_fi(self, fi):
+    def get_shift_from_fi(self, fi, kij=None, iter=False, K4=None):
         """Calculate frequency shift from forces (in normal coordinate space)"""
+        # approximate frequency shift based on (W^2 - w^2) \approx 2*w*(W-w)
+        mid = self.__mode-1
+        gijj = self.__gijk[:,mid,mid]                                   
+        if kij is None:
+           s = -numpy.sum(fi * gijj /(self.__redmss*self.__freq**2) ) / \
+                (2.*self.__redmss[mid]*self.__freq[mid]) 
+           if K4 is not None:
+              q = fi/(self.__redmss*self.__freq**2)
+              s+=  numpy.dot( numpy.dot(K4, q), q) [mid,mid]/ (4.*self.__redmss[mid]*self.__freq[mid]) 
+        elif not iter:
+           m = self.__redmss*self.__freq*self.__freq
+           N = self.__nmodes
+           G = self.__gijk.copy()/2.
+           #G.fill(0.0)
+           B = numpy.diag(m) + kij
+           B1= numpy.linalg.inv(B)
+           I = numpy.identity(self.__nmodes, numpy.float64)
+           a = numpy.tensordot(B1,G,(1,1))
+           b = numpy.tensordot(a,B1,(2,0))
+           A = numpy.tensordot(b,fi,(2,0))
+
+           D = numpy.dot( numpy.linalg.inv(I - A), B1)
+           dq= numpy.dot(D,fi)
+
+           T = numpy.tensordot(a, dq, (1,0))
+           #print T
+           #S = numpy.dot(self.__gijk, numpy.dot(D,fi))
+           
+           s =-numpy.sum(gijj*dq) / (2.*self.__redmss[mid]*self.__freq[mid])
+           if K4 is not None:
+              #q = fi/(self.__redmss*self.__freq**2)
+              q = dq
+              s+= numpy.dot( numpy.dot(K4, q), q) [mid,mid] / (4.*self.__redmss[mid]*self.__freq[mid]) 
+
+        else:
+           m = self.__redmss*self.__freq*self.__freq
+           N = self.__nmodes
+           G = self.__gijk.copy()/2.
+           B = numpy.diag(m) + kij
+           B1= numpy.linalg.inv(B)
+           I = numpy.identity(self.__nmodes, numpy.float64)
+
+           H = numpy.tensordot(B1,G,(1,0))
+           fip = numpy.dot(B1, fi)
+           dq_new =-fi/m
+           dq_old = numpy.zeros(15,numpy.float64)
+
+           while numpy.sum(numpy.abs(dq_old-dq_new)) > 0.001 :
+              dq_old = dq_new.copy()
+              dq_new =-fip - numpy.tensordot(H, numpy.outer(dq_old, dq_old), ((1,2),(0,1)) ) 
+              print dq_new
+              #A   = I + numpy.dot(B1, numpy.dot(G,dq_old))
+              #A   = numpy.linalg.inv(A)
+              #dq_new = -numpy.dot(A,fip)
+           s = numpy.sum(gijj*dq_new) / (2.*self.__redmss[mid]*self.__freq[mid])
+
+        if self.__cunit:
+           s*= self.HartreePerHbarToCmRec
+        return s
+
+    def get_shift_from_kii(self, kii):
+        """Calculate frequency shift from diagonal hessian (in normal coordinate space)"""
+        mid = self.__mode-1
+        s =  kii[mid,mid] / \
+             (2.*self.__redmss[mid]*self.__freq[mid])
+        if self.__cunit:
+           s*= self.HartreePerHbarToCmRec
+        return s
+
+    def get_shift_from_fi_kii(self, fi, kii):
+        """"""
         mid = self.__mode-1
         gijj = self.__gijk[:,mid,mid]
-        s = -numpy.sum(fi * gijj /(self.__redmss*self.__freq**2) ) / \
-             (2.*self.__redmss[mid]*self.__freq[mid]) 
+        fii = self.__redmss[mid] * self.__freq[mid]**2
+        s = ( fii + kii[mid,mid] - numpy.sum(fi * gijj /(self.__redmss*self.__freq**2) ) )/ self.__redmss[mid]
+        s = numpy.sqrt(s) - self.__freq[mid]
         if self.__cunit:
            s*= self.HartreePerHbarToCmRec
         return s
@@ -262,20 +356,23 @@ of the structural distortion contributions. Returns everything in A.U. (Bohr)!""
              kij = self.__kij_el+ self.__kij_rep+ self.__kij_pol
         elif type=='exp-app':
              fi  = self.__fi_el + self.__fi_rep + self.__fi_pol
-             kij = self.__kij_el
+             kij = self.__kij_el.copy()
+             #kij.fill(0.)
 
         if not theory: dq= self._calc_dq(fi, theory, cart=False, kij=None)
         else:          dq= self._calc_dq(fi, theory, cart=False, kij=kij )
         s = numpy.tensordot(self.__gijk, dq,(0,0))
-        t = numpy.outer(numpy.sqrt(self.__redmss), numpy.sqrt(self.__redmss))
-        h = (m + s + kij)/ t
+        #t = numpy.outer(numpy.sqrt(self.__redmss), numpy.sqrt(self.__redmss))
+        h = m + s + kij  #/ t
         h_w = None
         #h = numpy.diag(h.diagonal())
         if mwc:
+           t = numpy.outer(numpy.sqrt(self.__redmss), numpy.sqrt(self.__redmss))
+           h_w= h/t
            t = numpy.sqrt(self.__redmss)[:,numpy.newaxis]
            l = self.__lvec.reshape(self.__nmodes, self.__nata * 3) / t
            l = numpy.dot(self.__M, l.transpose() )
-           h_w = numpy.dot(l,numpy.dot(h,l.transpose()))
+           h_w = numpy.dot(l,numpy.dot(h_w,l.transpose()))
         return h, h_w
 
     def _get_slv(self, type='e', theory=0):
@@ -316,19 +413,35 @@ of the structural distortion contributions. Returns everything in A.U. (Bohr)!""
     def get_freq_approx(self,kij_el=False,diag=False):
         """Evaluate approximate frequencies without Hessian diagonalization, 
 using appropriate level of SOL-X theory"""
+        t = numpy.sqrt(numpy.outer(self.__redmss, self.__redmss))
+        hess_tot_app = self.__hess_tot_app / t
+        hess_tot     = self.__hess_tot     / t
         if diag:
-           if kij_el: diag_hess,u = numpy.linalg.eig(self.__hess_tot_app)
-           else:      diag_hess,u = numpy.linalg.eig(self.__hess_tot)
+           if kij_el: diag_hess,u = numpy.linalg.eig(hess_tot_app)
+           else:      diag_hess,u = numpy.linalg.eig(hess_tot)
         else:
-           if kij_el: diag_hess = numpy.diag(self.__hess_tot_app)
-           else:      diag_hess = numpy.diag(self.__hess_tot)
-        print diag_hess
-        diag_hess = numpy.where(diag_hess>0,diag_hess,0)
+           if kij_el: diag_hess = numpy.diag(hess_tot_app)
+           else:      diag_hess = numpy.diag(hess_tot)
+        #diag_hess = numpy.where(diag_hess>0,diag_hess,0)
         #freq = where(diag_hess>0,sqrt(diag_hess),sqrt(-diag_hess) )
         freq = numpy.sqrt(diag_hess)
         if self.__cunit:
            freq *= self.HartreePerHbarToCmRec
         return freq
+
+    def get_shift_approx(self,kij_el=False):
+        """Evaluate approximate frequencies without Hessian diagonalization, 
+using appropriate level of SOL-X theory"""
+        #t = numpy.sqrt(numpy.outer(self.__redmss, self.__redmss))
+        hess_tot_app = self.__hess_tot_app #/ t
+        hess_tot     = self.__hess_tot     #/ t
+        if kij_el: diag_hess = numpy.diag(hess_tot_app)
+        else:      diag_hess = numpy.diag(hess_tot)
+        diag_hess-= self.__redmss*self.__freq**2
+        shift = diag_hess / (2.*self.__freq*self.__redmss)
+        if self.__cunit:
+           shift *= self.HartreePerHbarToCmRec
+        return shift
 
     def get_slv(self, theory=0):
         """Calculate the frequencies, reduced masses and transformation matrix"""
@@ -391,7 +504,7 @@ Now, only for exchange-repulsion layer"""
         ### FD fragments
         _dir_ = frg.get_dir(); N_FD = 1 + 9*self.__nata**2 + 3*self.__nata
         #frg_fd= numpy.zeros( N_FD, dtype=object )
-        files = glob.glob(_dir_+'/num/*.frg')
+        files = glob.glob(_dir_+'/num_0.006/*.frg')
         files.sort()
         # read the FD *.frg files and superimpose them
         PAR_FD = numpy.zeros( N_FD, dtype=object )
