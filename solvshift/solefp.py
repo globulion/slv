@@ -114,9 +114,9 @@ Also set the BSM parameters if not done in set_bsm.
            self.__freq   = parc['freq']
            self.__mode   = parc['mode']
            self.__mol    = self.__bsm[0].get_mol()
-           self.__gijk[-7:,:,:].fill(0.0)
-           self.__gijk[:,-7:,:].fill(0.0)
-           self.__gijk[:,:,-7:].fill(0.0)
+           #self.__gijk[-7:,:,:].fill(0.0)
+           #self.__gijk[:,-7:,:].fill(0.0)
+           #self.__gijk[:,:,-7:].fill(0.0)
 
            # calculate M matrix                                                  
            N = len(self.__mol.atoms)
