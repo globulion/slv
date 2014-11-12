@@ -6,9 +6,9 @@
 #from numpy     import *
 #from units     import *
 #from dma       import *
-#from utilities import *
+#from libbbg.utilities import *
 #from solvshift.slvpar import Frag
-#import sys, copy, pp, utilities, re, \
+#import sys, copy, pp, libbbg.utilities, re, \
 #       units, numpy, time, dma, \
 #  	      MDAnalysis.coordinates.xdrfile.libxdrfile2
 #from MDAnalysis.coordinates.xdrfile.libxdrfile2 import xdrfile_open, xdrfile_close,\
@@ -16,7 +16,7 @@
 #                                                       read_xtc, DIM, exdrOK
 #from MDAnalysis.coordinates.TRJ import TRJReader, NCDFReader
 
-import numpy, units, dma, utilities, solvshift.slvpar, \
+import numpy, solvshift.slvpar, \
        sys, copy, pp, time, re, MDAnalysis.coordinates.xdrfile.libxdrfile2, \
        MDAnalysis.coordinates.TRJ
 
@@ -132,13 +132,13 @@ Usage:
        supl = None
        for line in lines:
            if 'supl' in line:
-               supl = utilities.text_to_list(line.split('supl')[-1])
+               supl = libbbg.utilities.text_to_list(line.split('supl')[-1])
 
        # parse atoms for (Sol)EFP fragment
        for line in lines:
            if 'atoms' in line:
                atoms, n_frags = line.split()[1:]
-               atoms   = utilities.text_to_list(atoms)
+               atoms   = libbbg.utilities.text_to_list(atoms)
                n_frags = int(n_frags)
                
                n_atoms = atoms[-1]-atoms[0]+1
@@ -170,7 +170,7 @@ Usage:
        return str(log)
 
 
-class layer(units.UNITS):
+class layer(libbbg.units.UNITS):
     """represents single layer in SLV-MD environment"""
     def __init__(self,charges,nmol=1,):
         self.nmol = nmol
@@ -315,7 +315,7 @@ def md_shifts_pp(frame,frame_idx,
     M = prot_no
     K = M+ion_no
     # eprotein
-    epframe = utilities.choose(frame,solute_atoms)[:N]
+    epframe = libbbg.utilities.choose(frame,solute_atoms)[:N]
     # ions
     iframe  = frame[M:M+ion_no]
     # waters
@@ -348,7 +348,7 @@ def md_shifts_pp(frame,frame_idx,
     if non_atomic:
        X = reference_structure[suplist]
        Y = solute_pos[suplist]
-       sup = utilities.SVDSuperimposer()
+       sup = libbbg.utilities.SVDSuperimposer()
        sup.set(Y,X)
        sup.run()
        rms = sup.get_rms()
@@ -362,10 +362,10 @@ def md_shifts_pp(frame,frame_idx,
     ### rotate the solute!
     if camm:
         ### control the rms of solute wrt reference (gas phase)
-        rot, rms_ref  = utilities.RotationMatrix(final=solute_pos[suplist],
+        rot, rms_ref  = libbbg.utilities.RotationMatrix(final=solute_pos[suplist],
                                                  initial=reference_structure[suplist])
         ### superimpose solute and parameters
-        rot, rms_inst = utilities.RotationMatrix(final=solute_pos[suplist],
+        rot, rms_inst = libbbg.utilities.RotationMatrix(final=solute_pos[suplist],
                                                  initial=solute_parameters.pos[suplist])
             
         ### rotate parameters
@@ -385,12 +385,12 @@ def md_shifts_pp(frame,frame_idx,
 
     # eprotein
     if prot_no-slt_no:
-       shift_e+= utilities.FrequencyShift(solute=solute_parameters,
+       shift_e+= libbbg.utilities.FrequencyShift(solute=solute_parameters,
                                           solvent=epdma,
                                           solute_structure=solute_parameters.get_origin())
     # ions
     if ion_no:
-       shift_i+= utilities.FrequencyShift(solute=solute_parameters,
+       shift_i+= libbbg.utilities.FrequencyShift(solute=solute_parameters,
                                           solvent=idma,
                                           solute_structure=solute_parameters.get_origin())
     # solvent molecules
@@ -398,7 +398,7 @@ def md_shifts_pp(frame,frame_idx,
         solcnt = numpy.sum(wdma_l[mol].get_pos(),axis=0)/numpy.float64(solvent_nat)
         R  = numpy.sqrt(numpy.sum((solcnt-sltcnt)**2))
         if R < threshold:
-            s = utilities.FrequencyShift(solute=solute_parameters,
+            s = libbbg.utilities.FrequencyShift(solute=solute_parameters,
                                          solvent=wdma_l[mol],
                                          solute_structure=solute_parameters.get_origin())
             #if R>50.: print " solvent-%4d  %36.4f %10.3f"%((mol+1),s[3],R)
@@ -429,7 +429,7 @@ def md_shifts_pp(frame,frame_idx,
            shift_i, report_line_i, \
            shift_w, report_line_w
 
-class SLV_MD(units.UNITS):
+class SLV_MD(libbbg.units.UNITS):
     """\
 Represents MD-derived frequency shift distribution.
 Calculates frequency shifts withdrawed from
@@ -524,20 +524,20 @@ Usage: will be added soon!"""
         """initialize DMA objects appropriately"""
         # protein environment
         if (self.prot_no-self.slt_no):
-           epdma = dma.DMA(nfrag=self.prot_no-self.slt_no)
+           epdma = libbbg.dma.DMA(nfrag=self.prot_no-self.slt_no)
            epdma.set_moments(charges=epcharges)
         else:
            epdma=None
         # ions environment
         if self.ion_no:
-           idma = dma.DMA(nfrag=self.ion_no)
+           idma = libbbg.dma.DMA(nfrag=self.ion_no)
            idma.set_moments(charges=icharges)
         else:
            idma=None
         # solvent environment
         wdma_l = []
         for mol in xrange(self.water_no):
-            dmai = dma.DMA(nfrag=self.solvent_atno)
+            dmai = libbbg.dma.DMA(nfrag=self.solvent_atno)
             dmai.set_moments(charges=wcharges)
             wdma_l.append(dmai)
  
@@ -655,7 +655,7 @@ Usage: will be added soon!"""
                             self.__rings),
                     depfuncs=(),
                     group=group,
-                    modules=("utilities","numpy","units","dma",
+                    modules=("libbbg.utilities","numpy","libbbg.units","libbbg.dma",
                              "MDAnalysis.coordinates.xdrfile.libxdrfile2","clemtp"),
                            ) )
                if (i%ncpus==0 and i!=0): self.job_server.wait()
@@ -684,7 +684,7 @@ Usage: will be added soon!"""
                             self.__rings),
                       depfuncs=(),
                       group=group,
-                      modules=("utilities","numpy","units","dma",
+                      modules=("libbbg.utilities","numpy","libbbg.units","libbbg.dma",
                                "MDAnalysis.coordinates.xdrfile.libxdrfile2","clemtp"),
                            ) )
                  if (i%ncpus==0 and i!=0): self.job_server.wait()
@@ -842,7 +842,7 @@ Usage: will be added soon!"""
         M = self.prot_no
         K = M+self.ion_no
         # eprotein
-        epframe = utilities.choose(frame,self.solute_atoms)[:N]
+        epframe = libbbg.utilities.choose(frame,self.solute_atoms)[:N]
         # ions
         iframe  = frame[M:M+self.ion_no]
         # waters
@@ -882,10 +882,10 @@ Usage: will be added soon!"""
         ### rotate the solute!
         if self.camm:
             ### control the rms of solute wrt reference (gas phase)
-            rot, rms_ref  = utilities.RotationMatrix(final=solute_pos[self.suplist],
+            rot, rms_ref  = libbbg.utilities.RotationMatrix(final=solute_pos[self.suplist],
                                                      initial=self.reference_structure[self.suplist])
             ### superimpose solute and parameters
-            rot, rms_inst = utilities.RotationMatrix(final=solute_pos[self.suplist],
+            rot, rms_inst = libbbg.utilities.RotationMatrix(final=solute_pos[self.suplist],
                                                      initial=self.solute_parameters.pos[self.suplist])
             
             ### rotate parameters
@@ -898,12 +898,12 @@ Usage: will be added soon!"""
         #sys.exit()       
         ### calculate frequency shifts!!!
         # eprotein
-        shift = utilities.FrequencyShift(solute=self.solute_parameters,
+        shift = libbbg.utilities.FrequencyShift(solute=self.solute_parameters,
                                          solvent=self.epdma,
                                          solute_structure=solute_pos,
                                          threshold=1e10)
         # ions
-        shift+= utilities.FrequencyShift(solute=self.solute_parameters,
+        shift+= libbbg.utilities.FrequencyShift(solute=self.solute_parameters,
                                          solvent=self.idma,
                                          solute_structure=solute_pos,
                                          threshold=1e10)
@@ -912,7 +912,7 @@ Usage: will be added soon!"""
             solcnt = numpy.sum(self.wdma_l[mol].get_pos(),axis=0)/3.
             R  = numpy.sqrt(numpy.sum((solcnt-sltcnt)**2))
             if R < self.threshold:
-               shift+= utilities.FrequencyShift(solute=self.solute_parameters,
+               shift+= libbbg.utilities.FrequencyShift(solute=self.solute_parameters,
                                                 solvent=self.wdma_l[mol],
                                                 solute_structure=solute_pos,
                                                 threshold=1e10)
