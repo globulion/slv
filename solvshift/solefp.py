@@ -600,7 +600,7 @@ Now, only for exchange-repulsion layer"""
                dip  = numpy.concatenate ( (p['dmad'],  dip_sol) ).ravel()
                qad  = numpy.concatenate ( (q        ,  qad_sol) ).ravel()
                oct  = numpy.concatenate ( (o        ,  oct_sol) ).ravel()
-               func_el[i],A,B,C,D,E = clemtp.edmtpc(rdma,chg,dip,qad,oct,ndma,lwrite=False)
+               func_el[i],A,B,C,D,E = libbbg.qm.clemtp.edmtpc(rdma,chg,dip,qad,oct,ndma,lwrite=False)
                #func_el[i] ,a,b,c,d,e,cctot,cdtot,cqtot,cttot,ddtot,dqtot = clemtp.clemtp(parc['rdma'],parc['dmac'],parc['dmad'],qadc,octc,
                #                                                                     rdma_sol,chg_sol,dip_sol,qad_sol,oct_sol)
            #print '1: ', func_el[0]
@@ -978,26 +978,26 @@ Now, only for exchange-repulsion layer"""
               oct  = numpy.concatenate  ([ QO[x][1]  for x in range(N+1)   ]).reshape(ndmas*10)
              
               # mechanical anharmonicity
-              mea,a,b,c,d,e,fi = clemtp.sdmtpm(rdma,ndma,chg,dip,qad,oct,
-                                               chgc1,dipc1,qadc1,octc1,
-                                               redmss,freq,gijj,
-                                               ndmac,self.__mode,lwrite)
+              mea,a,b,c,d,e,fi = libbbg.qm.clemtp.sdmtpm(rdma,ndma,chg,dip,qad,oct,
+                                                         chgc1,dipc1,qadc1,octc1,  
+                                                         redmss,freq,gijj,
+                                                         ndmac,self.__mode,lwrite)
 
               # store forces
               self.__fi_el = fi
 
               # electronic anharmonicity
-              ea ,a,b,c,d,e = clemtp.sdmtpe(rdma,ndma,chg,dip,qad,oct,
-                                              chgc2,dipc2,qadc2,octc2,
-                                              redmss,freq,
-                                              self.__mode,lwrite)
+              ea ,a,b,c,d,e = libbbg.qm.clemtp.sdmtpe(rdma,ndma,chg,dip,qad,oct,
+                                                      chgc2,dipc2,qadc2,octc2, 
+                                                      redmss,freq,
+                                                      self.__mode,lwrite)
               # correction terms
               if self.__eval_corr:
                  corr,rf2,rf3,rf4,rk2,rk3,rk4,corr_b,corr_c,corr_d = \
-                              clemtp.dmtcor(rdma,ndma,chg,dip,qad,oct,
-                                            chgc1,dipc1,qadc1,octc1,
-                                            redmss,freq,gijj,lvec,
-                                            ndmac,self.__mode,lwrite)
+                              libbbg.qm.clemtp.dmtcor(rdma,ndma,chg,dip,qad,oct,
+                                                      chgc1,dipc1,qadc1,octc1,  
+                                                      redmss,freq,gijj,lvec,
+                                                      ndmac,self.__mode,lwrite)
               # change units from A.U. to specific units
               if self.__cunit:
                     #eel  *= self.HartreeToKcalPerMole
