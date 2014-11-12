@@ -9,14 +9,13 @@
 #from dma        import *
 #from utilities  import *
 #from gaussfreq  import *
-import os, glob, PyQuante.Ints, coulomb.multip, numpy, units, \
-       dma, utilities, gaussfreq, sys
+import os, sys, glob, libbbg, numpy, PyQuante.Ints, coulomb.multip
 os.environ['__IMPORT__COULOMB__']='1'
 
 __all__ = ['DIFF',]
 __version__ = '5.2.1'
                 
-class DIFF(units.UNITS, gaussfreq.FREQ):
+class DIFF(libbbg.units.UNITS, libbbg.gaussfreq.FREQ):
     """contains usefull procedures for differentiation
 of DMA and molecular multipole moments in FFXpt-diag scheme
 where X=5,9"""
@@ -156,16 +155,16 @@ where X=5,9"""
         dPol = []
         r_ref = None
         for file in files:
-            r,a = utilities.ParseDistributedPolarizabilitiesFromGamessEfpFile(file)
+            r,a = libbbg.utilities.ParseDistributedPolarizabilitiesFromGamessEfpFile(file)
             if r_ref is None: r_ref = r
             #
-            r, sim = utilities.order(r_ref, r, start=0, lprint=self.__lprint)
+            r, sim = libbbg.utilities.order(r_ref, r, start=0, lprint=self.__lprint)
             if self.__lprint: print sim
-            a = utilities.reorder(a,sim)
+            a = libbbg.utilities.reorder(a,sim)
             dPos.append(r)
             dPol.append(a)
-        dPos = array(dPos,float64)
-        dPol = array(dPol,float64)
+        dPos = numpy.array(dPos,numpy.float64)
+        dPol = numpy.array(dPol,numpy.float64)
         return dPos, dPol
     
     def Parse_dpol(self,dir,sims):
@@ -175,10 +174,10 @@ where X=5,9"""
         dPos = []
         dPol = []
         for i,file in enumerate(files):
-            r,a=utilities.ParseDistributedPolarizabilitiesFromGamessEfpFile(file)
+            r,a=libbbg.utilities.ParseDistributedPolarizabilitiesFromGamessEfpFile(file)
             # reorder
-            a = utilities.reorder(a,sims[i])
-            r = utilities.reorder(r,sims[i])
+            a = libbbg.utilities.reorder(a,sims[i])
+            r = libbbg.utilities.reorder(r,sims[i])
             dPos.append(r)
             dPol.append(a)
         dPos = numpy.array(dPos,numpy.float64)
@@ -229,22 +228,22 @@ them to LMO space"""
         debug_wfn = open('debug_wfn','w')
         # evaluate transformation matrices and LMO centroids
         for I,fchk in enumerate(files_fchk):
-            mol  = utilities.Read_xyz_file(fchk,mol=True,
+            mol  = libbbg.utilities.Read_xyz_file(fchk,mol=True,
                                            mult=1,charge=0,
                                            name='happy dummy molecule')
             bfs        = PyQuante.Ints.getbasis(mol,basis)
             basis_size = len(bfs)
             natoms= len(mol.atoms)
             SAO   = PyQuante.Ints.getS(bfs)
-            dmat  = utilities.ParseDmatFromFchk(fchk,basis_size)
-            veccmo= utilities.ParseVecFromFchk(fchk)[:nae,:]
-            tran, veclmo = utilities.get_pmloca(natoms,mapi=bfs.LIST1,sao=SAO,
+            dmat  = libbbg.utilities.ParseDmatFromFchk(fchk,basis_size)
+            veccmo= libbbg.utilities.ParseVecFromFchk(fchk)[:nae,:]
+            tran, veclmo = libbbg.utilities.get_pmloca(natoms,mapi=bfs.LIST1,sao=SAO,
                                                 vecin=veccmo,nae=nae,
                                                 maxit=100000,conv=1.0E-6,
                                                 lprint=True,
                                                 freeze=None)
             if vec_ref is None: vec_ref = veclmo.copy()
-            veclmo, sim = utilities.order(vec_ref,veclmo,start=0)
+            veclmo, sim = libbbg.utilities.order(vec_ref,veclmo,start=0)
             print sim
             log_wfn += str(sim) + '\n'
             log_wfn += check_sim(sim) + '\n\n'
@@ -258,8 +257,8 @@ them to LMO space"""
             camm.camms()
             dma = camm.get()[0]
             lmoc= dma.get_origin()[natoms:]
-            lmoc_efp = utilities.ParseLmocFromGamessEfpFile(files_efp[I])
-            lll,sim_efp = utilities.order(lmoc,lmoc_efp,start=0)
+            lmoc_efp = libbbg.utilities.ParseLmocFromGamessEfpFile(files_efp[I])
+            lll,sim_efp = libbbg.utilities.order(lmoc,lmoc_efp,start=0)
             log_efp += str(sim_efp) + '\n'
             log_efp += check_sim(sim_efp) + '\n\n'
             #
@@ -299,7 +298,7 @@ them to LMO space"""
         files.sort()
         Fock = []
         for file in files:
-            Fock.append(utilities.ParseFockFromGamessLog(file,interpol=False))
+            Fock.append(libbbg.utilities.ParseFockFromGamessLog(file,interpol=False))
         Fock = numpy.array(Fock,numpy.float64)
         # transform from AO to LMO space
         I = Fock.shape[ 0]
@@ -631,10 +630,10 @@ type -3: transformation matrix from AO to LMO (nmos, nbasis)
 
 
         # transform to normal mode space  
-        Fder_DMA = utilities.DMAMadrixMultiply(numpy.transpose(self.L),Fder)
-        Sder_DMA = [ dma.DMA(nfrag=self.nfrags) for x in range(self.nModes) ]  
+        Fder_DMA = libbbg.utilities.DMAMadrixMultiply(numpy.transpose(self.L),Fder)
+        Sder_DMA = [ libbbg.dma.DMA(nfrag=self.nfrags) for x in range(self.nModes) ]  
         #FDip = dot( transpose(self.L) ,array( FDip ) )
-        Fder_MMM = utilities.DMAMadrixMultiply(numpy.transpose(self.L),Fmmm)
+        Fder_MMM = libbbg.utilities.DMAMadrixMultiply(numpy.transpose(self.L),Fmmm)
         Sder_MMM = numpy.zeros((self.nModes,3),numpy.float64)
         
         return Fder_DMA, Sder_DMA, Fder_MMM, Sder_MMM
@@ -662,7 +661,7 @@ type -3: transformation matrix from AO to LMO (nmos, nbasis)
             Fder.append( fder_DMA/self.AngstromToBohr )
             
         # transform to normal mode space  
-        Fder_DMA = utilities.DMAMadrixMultiply(numpy.transpose(self.L),Fder)
+        Fder_DMA = libbbg.utilities.DMAMadrixMultiply(numpy.transpose(self.L),Fder)
         #
         if sder:
            s2 = 1./(self.sderiv_step**2)
@@ -766,7 +765,7 @@ type -3: transformation matrix from AO to LMO (nmos, nbasis)
         DMA_set = []
         Overall_MM_set = []
         for file in files:
-            dma = utilities.ParseDMA ( file, type )
+            dma = libbbg.utilities.ParseDMA ( file, type )
             Fragment = dma.get_pos()
             DMA_set.append( dma )
             ###Fragments_set.append( Fragment )
@@ -781,7 +780,7 @@ type -3: transformation matrix from AO to LMO (nmos, nbasis)
                quadrupole = self.Quadrupole(file)
                octupole   = self.Octupole(file)
             
-               MM = dma.DMA(nfrag=1)
+               MM = libbbg.dma.DMA(nfrag=1)
                MM.pos = numpy.zeros(3,dtype=numpy.float64)
                MM.DMA[1][0] = numpy.array(dipole)
                MM.DMA[2][0] = numpy.array(quadrupole)
@@ -805,7 +804,7 @@ type -3: transformation matrix from AO to LMO (nmos, nbasis)
 
         set = []
         for file in files:
-            set.append(utilities.Parse_EDS_InteractionEnergies(dir+file))
+            set.append(libbbg.utilities.Parse_EDS_InteractionEnergies(dir+file))
             
         return numpy.array(set)
 
@@ -822,7 +821,7 @@ type -3: transformation matrix from AO to LMO (nmos, nbasis)
         files.sort()  
         set = []
         for file in files:
-            set.append(utilities.ParseEFPInteractionEnergies(dir+file))
+            set.append(libbbg.utilities.ParseEFPInteractionEnergies(dir+file))
             
         return numpy.array(set)
 
@@ -924,7 +923,7 @@ from a setup file slv.step"""
 ##############################################################################
 if __name__ == '__main__':
    #from head import *
-   import os, glob, pp, PyQuante, utilities, coulomb.multip
+   import os, glob, pp, PyQuante, libbbg.utilities, coulomb.multip
    
    def ParseDmatFromFchk(file,basis_size):
         """parses density matrix from Gaussian fchk file"""
@@ -962,7 +961,7 @@ if __name__ == '__main__':
 
        file_fchk = sys.argv[1]
        file_log  = sys.argv[2]
-       dma, fragment = utilities.ParseDMA( file_log, 'gaussian' )
+       dma, fragment = libbbg.utilities.ParseDMA( file_log, 'gaussian' )
        
        frag_file = open('slv.frags','r')
        frag_names = []
@@ -975,7 +974,7 @@ if __name__ == '__main__':
        ### create Molecule object
        structure = []
        for j in range(len(fragment)):
-           structure.append( (units.UNITS.atomic_numbers[frag_names[j]],
+           structure.append( (libbbg.units.UNITS.atomic_numbers[frag_names[j]],
                                     fragment[j]) ) 
        molecule = PyQuante.Molecule('mol',
                                      structure,
@@ -996,7 +995,7 @@ if __name__ == '__main__':
        CAMM.camms()
        #CAMM.__printCAMMs__()
        
-       result = dma.DMA(nfrag=12)
+       result = libbbg.dma.DMA(nfrag=12)
        result.DMA[0][:] = CAMM.Mon
        #
        result.DMA[1][:] = CAMM.Dip
@@ -1041,7 +1040,7 @@ using COULOMB.py routines"""
        print
        
        for i,file_log in enumerate(pliki_log):
-           dma = utilities.ParseDMA( file_log, 'gaussian' )
+           dma = libbbg.utilities.ParseDMA( file_log, 'gaussian' )
            fragment = dma.get_pos()
            
            ### read atomic symbols
@@ -1056,8 +1055,8 @@ using COULOMB.py routines"""
            ### create Molecule object
            structure = []
            for j in range(len(fragment)):
-               #structure.append( (units.UNITS.atomic_numbers[frag_names[j]],
-               structure.append( (units.Atom(frag_names[j]).atno,
+               #structure.append( (libbbg.units.UNITS.atomic_numbers[frag_names[j]],
+               structure.append( (libbbg.units.Atom(frag_names[j]).atno,
                                   fragment[j]) ) 
            molecule = Molecule('mol',
                                 structure,
@@ -1088,14 +1087,14 @@ using COULOMB.py routines"""
        print
 
    def bua(file_fchk,basis,bonds,vec,vec_ref):
-       molecule = utilities.Read_xyz_file(file_fchk,mol=True,
+       molecule = libbbg.utilities.Read_xyz_file(file_fchk,mol=True,
                                           mult=1,charge=0,
                                           name='happy dummy molecule')
        
        bfs        = PyQuante.Ints.getbasis(molecule,basis)
        basis_size = len(bfs)
        #print " - basis size= ", basis_size
-       dmat = utilities.ParseDmatFromFchk(file_fchk,basis_size)
+       dmat = libbbg.utilities.ParseDmatFromFchk(file_fchk,basis_size)
        def check_sim(l):
            """check the sim list"""
            for x,y in l:
@@ -1113,15 +1112,15 @@ using COULOMB.py routines"""
           SAO   = PyQuante.Ints.getS(bfs)
           print " - ovelrap AO matrix evaluation..."
           nae = vec
-          vec = utilities.ParseVecFromFchk(file_fchk)[:nae,:]
+          vec = libbbg.utilities.ParseVecFromFchk(file_fchk)[:nae,:]
           
           print " - Pipek-Mezey localization of %i orbitals..." %nae
-          tran, vec = utilities.get_pmloca(natoms,mapi=bfs.LIST1,sao=SAO,
+          tran, vec = libbbg.utilities.get_pmloca(natoms,mapi=bfs.LIST1,sao=SAO,
                                            vecin=vec,nae=nae,
                                            maxit=100000,conv=1.0E-10,
                                            lprint=False,
                                            freeze=None)
-          vec, sim = utilities.order(vec_ref,vec,start=0)
+          vec, sim = libbbg.utilities.order(vec_ref,vec,start=0)
           print sim
           check_sim(sim)
        ### calculate CAMMs
@@ -1143,7 +1142,7 @@ using COULOMB.py routines"""
        print " --- Writing file:  :", file_fchk[:-5]+'.camm'    
        return
 
-   def CalculateCAMM_(basis='6-311++G**',bonds=[],ncpus=2,
+   def CalculateCAMM_(basis='6-311++G**',bonds=[],ncpus=4,
                       vec=None,vec_ref=None,natoms=7): 
        """calculates CAMMs from density matrix from GAUSSIAN09
 using COULOMB.py routines"""
@@ -1160,7 +1159,7 @@ using COULOMB.py routines"""
        
        # compute reference vectors
        if vec is not None:
-          ref_mol = utilities.Read_xyz_file(pliki_fchk[0],mol=True,
+          ref_mol = libbbg.utilities.Read_xyz_file(pliki_fchk[0],mol=True,
                                             mult=1,charge=0,
                                             name='happy dummy molecule')
           bfs_ref    = PyQuante.Ints.getbasis(ref_mol,basis)
@@ -1168,8 +1167,9 @@ using COULOMB.py routines"""
           sao_ref    = PyQuante.Ints.getS(bfs_ref)
           print " - basis size= ", basis_size
           nae = vec
-          vec_ref = utilities.ParseVecFromFchk(pliki_fchk[0])[:nae,:]
-          t, vec_ref = utilities.get_pmloca(natoms,mapi=bfs_ref.LIST1,
+          print " - nae       = ", len(vec)
+          vec_ref = libbbg.utilities.ParseVecFromFchk(pliki_fchk[0])[:nae,:]
+          t, vec_ref = libbbg.utilities.get_pmloca(natoms,mapi=bfs_ref.LIST1,
                                             sao=sao_ref,
                                             vecin=vec_ref,nae=nae,
                                             maxit=100000,conv=1.0E-19,
@@ -1182,7 +1182,7 @@ using COULOMB.py routines"""
                                            (),
                                           #(Read_xyz_file,ParseDmatFromFchk,ParseDMA,ParseVecFromFchk,get_pmloca,),
                                           ("coulomb.multip","PyQuante",
-                                           "PyQuante.Ints","utilities","units","orbloc") ) )
+                                           "PyQuante.Ints","libbbg.utilities","libbbg.units","orbloc") ) )
            if (i%4==0 and i!=0): job_server.wait()
            i+=1
        print

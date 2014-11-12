@@ -5,7 +5,7 @@
 #from numpy     import tensordot, dot, transpose, array, float64, zeros, \
 #                      concatenate as con, where
 #from units     import *
-#from utilities import Read_xyz_file, get_pmloca, ParseFockFromGamessLog, \
+#from libbbg.utilities import Read_xyz_file, get_pmloca, ParseFockFromGamessLog, \
 #                      ParseDmatFromFchk, ParseVecFromFchk, MakeMol
 #from diff      import DIFF
 #from PyQuante.Ints import getT, getSAB, getTAB, getSA1B, getTA1B, getVEFP, \
@@ -15,15 +15,15 @@
 #from solpol import solpol, mollst, sftpol
 #from efprot import tracls
 #from exrep  import exrep
-import sys, copy, os, re, math, glob, PyQuante.Ints, coulomb.multip, clemtp,\
-       numpy, units, utilities, diff, shftex, shftce, solpol, solpol2, efprot, exrep,\
+import sys, copy, os, re, math, glob, PyQuante.Ints, coulomb.multip, libbbg.qm.clemtp,\
+       numpy, libbbg, diff, shftex, shftce, solpol, solpol2, efprot, exrep,\
        solvshift.slvpar
 sys.stdout.flush()
 
 __all__ = ['EFP','FragFactory',]
 __version__ = '1.0.2'
 
-class EFP(object, units.UNITS):
+class EFP(object, libbbg.units.UNITS):
     """"""
     def __init__(self,ccut=None,pcut=None,ecut=None,#pairwise_all=False,
                       elect=True,pol=False,rep=False,ct=False,disp=False,all=False,
@@ -378,7 +378,7 @@ of the structural distortion contributions. Returns everything in A.U. (Bohr)!""
     def _get_slv(self, type='e', theory=0):
         """Calculate the frequencies, reduced masses and transformation matrix from numerical derivatives"""
         hess, hess_w = self._calc_hess(type, mwc=True, theory=theory)
-        vib = utilities.VIB(self.__mol, hess_w, weight=False)
+        vib = libbbg.utilities.VIB(self.__mol, hess_w, weight=False)
         vib.eval()
         freq, redmss, U = vib.get()
         return hess, freq, redmss, U
@@ -446,7 +446,7 @@ using appropriate level of SOL-X theory"""
     def get_slv(self, theory=0):
         """Calculate the frequencies, reduced masses and transformation matrix"""
         h = self.get_hessian(theory=theory, mwc=True)
-        vib = utilities.VIB(self.__mol, h, weight=False)
+        vib = libbbg.utilities.VIB(self.__mol, h, weight=False)
         vib.eval()
         freq, redmss, U = vib.get()
         return freq, redmss, U
@@ -556,7 +556,7 @@ Now, only for exchange-repulsion layer"""
             STR = numpy.dot(STR+transl_inv, rot_inv)
             frg = self.__bsm[im].copy()
             if lwrite: print frg.get()['name']
-            if lwrite: utilities.PRINTL(STR * self.BohrToAngstrom, '', '')
+            if lwrite: libbbg.utilities.PRINTL(STR * self.BohrToAngstrom, '', '')
             rms = frg.sup( STR , suplist= self.__suplist[self.__ind[im]] )
             if lwrite: print "rms C: ",rms
             if rms > rms_max: rms_max = rms
@@ -607,7 +607,7 @@ Now, only for exchange-repulsion layer"""
            # differentiate and obtain forces f and hessian K
            fx_1 = func_el[0:self.__nata*6+1]
            fx_2 = func_el[  self.__nata*6+1: ]
-           fd_calc = utilities.diff(func=None, step=0.006*self.AngstromToBohr, DIM=self.__nata*3, scheme='3pt')
+           fd_calc = libbbg.utilities.diff(func=None, step=0.006*self.AngstromToBohr, DIM=self.__nata*3, scheme='3pt')
            fi_cart, kij_cart = fd_calc.eval( (fx_1, fx_2), symm=True)
            # transform the derivatives to normal coordinate space
            l = self.__lvec.reshape(self.__nmodes, self.__nata*3)
@@ -619,7 +619,7 @@ Now, only for exchange-repulsion layer"""
            #self.__kij_el.fill(0.)
            # diagonalize the hessian
            hess, freq, redmass, U = self._get_slv(type='e', theory=theory)
-           utilities.PRINT(freq[::-1])
+           libbbg.utilities.PRINT(freq[::-1])
            self.__hess_el = hess
 
 
@@ -701,7 +701,7 @@ Now, only for exchange-repulsion layer"""
               # differentiate and obtain forces f and hessian K
               fx_1 = func_pol[0:self.__nata*6+1]                                                                    
               fx_2 = func_pol[  self.__nata*6+1: ]
-              fd_calc = utilities.diff(func=None, step=0.006*self.AngstromToBohr, DIM=self.__nata*3, scheme='3pt')
+              fd_calc = libbbg.utilities.diff(func=None, step=0.006*self.AngstromToBohr, DIM=self.__nata*3, scheme='3pt')
               fi_cart, kij_cart = fd_calc.eval( (fx_1, fx_2), symm=True)
               # transform the derivatives to normal coordinate space
               l = self.__lvec.reshape(self.__nmodes, self.__nata*3)
@@ -714,7 +714,7 @@ Now, only for exchange-repulsion layer"""
 
               # diagonalize the hessian
               hess, freq, redmass, U = self._get_slv(type='p', theory=theory)
-              utilities.PRINT(freq[::-1])
+              libbbg.utilities.PRINT(freq[::-1])
               self.__hess_pol = hess
               # 
               spol = 0.
@@ -759,7 +759,7 @@ Now, only for exchange-repulsion layer"""
             # differentiate and obtain forces f and hessian K
             fx_1 = func_rep[0:self.__nata*6+1]
             fx_2 = func_rep[  self.__nata*6+1: ]
-            fd_calc = utilities.diff(func=None, step=0.006*self.AngstromToBohr, DIM=self.__nata*3, scheme='3pt')
+            fd_calc = libbbg.utilities.diff(func=None, step=0.006*self.AngstromToBohr, DIM=self.__nata*3, scheme='3pt')
             fi_cart, kij_cart = fd_calc.eval( (fx_1, fx_2), symm=True)
             # transform the derivatives to normal coordinate space
             l = self.__lvec.reshape(self.__nmodes, self.__nata*3)
@@ -771,7 +771,7 @@ Now, only for exchange-repulsion layer"""
             #self.__kij_rep.fill(0.)
             # diagonalize the Hessian
             hess, freq, redmass, U = self._get_slv(type='x', theory=theory)
-            utilities.PRINT(freq[::-1])
+            libbbg.utilities.PRINT(freq[::-1])
             self.__hess_rep = hess
             #
             serp = 0.
@@ -787,12 +787,12 @@ Now, only for exchange-repulsion layer"""
 
             # diagonalize the TOTAL Hessian - K-elect approximation
             hess, freq, redmass, U = self._get_slv(type='exp-app', theory=theory)
-            utilities.PRINT(freq[::-1])
+            libbbg.utilities.PRINT(freq[::-1])
             self.__hess_tot_app = hess 
       
             # diagonalize the TOTAL Hessian
             hess, freq, redmass, U = self._get_slv(type='exp', theory=theory)
-            utilities.PRINT(freq[::-1])
+            libbbg.utilities.PRINT(freq[::-1])
             self.__hess_tot = hess 
             r,un = numpy.linalg.eig(hess)
             #print func_el
@@ -954,7 +954,7 @@ Now, only for exchange-repulsion layer"""
                STR = self.__rcoordc[nm_prev:nm_curr]
                frg = self.__bsm[im].copy()
                if lwrite: print frg.get()['name']
-               if lwrite: utilities.PRINTL(STR * self.BohrToAngstrom, '', '')
+               if lwrite: libbbg.utilities.PRINTL(STR * self.BohrToAngstrom, '', '')
                rms = frg.sup( STR , suplist= self.__suplist[self.__ind[im]] )
                if lwrite: print "rms C: ",rms
                if rms > rms_max: rms_max = rms
@@ -1139,7 +1139,7 @@ Now, only for exchange-repulsion layer"""
                serp = 0
                #for par in PAR: shift += self._pair_rep_freq(parc,par)
                # basis sets
-               molA = utilities.MakeMol(parc['atno'],parc['pos'])
+               molA = libbbg.utilities.MakeMol(parc['atno'],parc['pos'])
                bfsA = PyQuante.Ints.getbasis(molA,parc['basis'])
                nbsa = parc['nbasis']
                nmosa= parc['nmos']
@@ -1161,7 +1161,7 @@ Now, only for exchange-repulsion layer"""
                #
                RNB = list()
                for par in PAR:
-                   molB = utilities.MakeMol(par['atno'],par['pos'])
+                   molB = libbbg.utilities.MakeMol(par['atno'],par['pos'])
                    bfsB = PyQuante.Ints.getbasis(molB,par['basis'])
                    nbsb = par['nbasis']
                    nmosb = par['nmos']
@@ -1363,8 +1363,8 @@ Now, only for exchange-repulsion layer"""
     def _pair_rep(self,varA,varB):
         """exchange-repulsion pair energy"""
         # basis sets
-        molA = utilities.MakeMol(varA['atno'],varA['pos'])
-        molB = utilities.MakeMol(varB['atno'],varB['pos'])
+        molA = libbbg.utilities.MakeMol(varA['atno'],varA['pos'])
+        molB = libbbg.utilities.MakeMol(varB['atno'],varB['pos'])
         bfsA = PyQuante.Ints.getbasis(molA,varA['basis'])
         bfsB = PyQuante.Ints.getbasis(molB,varB['basis'])
         # instantaneous integrals
@@ -1390,8 +1390,8 @@ Now, only for exchange-repulsion layer"""
     def _pair_rep_freq(self,varA,varB):
         """exchange-repulsion pair frequency shift"""
         # basis sets
-        molA = utilities.MakeMol(varA['atno'],varA['pos'])
-        molB = utilities.MakeMol(varB['atno'],varB['pos'])
+        molA = libbbg.utilities.MakeMol(varA['atno'],varA['pos'])
+        molB = libbbg.utilities.MakeMol(varB['atno'],varB['pos'])
         bfsA = PyQuante.Ints.getbasis(molA,varA['basis'])
         bfsB = PyQuante.Ints.getbasis(molB,varB['basis'])
         # instantaneous integrals
@@ -1431,7 +1431,7 @@ Now, only for exchange-repulsion layer"""
         
 
 
-class EFP_pair(object,units.UNITS):
+class EFP_pair(object,libbbg.units.UNITS):
     """
 =============================================================================
               EFFECTIVE FRAGMENT POTENTIAL METHOD FOR A DIMER                
@@ -1690,10 +1690,10 @@ the canonical Fock matrix and vectors will be saved."""
         assert self.__mol is not None, 'molecule not specified! (no fchk file)'
         # evaluate transformation matrices and LMO centroids
         SAO   = PyQuante.Ints.getS(self.__bfs)
-        dmat  = utilities.ParseDmatFromFchk(self.__fchk,self.__basis_size)
-        vecc  = utilities.ParseVecFromFchk(self.__fchk)
+        dmat  = libbbg.utilities.ParseDmatFromFchk(self.__fchk,self.__basis_size)
+        vecc  = libbbg.utilities.ParseVecFromFchk(self.__fchk)
         veccocc= vecc[:self.__nae,:]
-        tran, veclmo = utilities.get_pmloca(self.__natoms,mapi=self.__bfs.LIST1,sao=SAO,
+        tran, veclmo = libbbg.utilities.get_pmloca(self.__natoms,mapi=self.__bfs.LIST1,sao=SAO,
                                             vecin=veccocc,nae=self.__nae,
                                             maxit=100000,conv=cvgloc, 
                                             lprint=True,
@@ -1708,7 +1708,7 @@ the canonical Fock matrix and vectors will be saved."""
         camm.camms()
         dma = camm.get()[0]
         # parse Fock matrix
-        Fock = utilities.ParseFockFromGamessLog(self.__gmslog,interpol=False)
+        Fock = libbbg.utilities.ParseFockFromGamessLog(self.__gmslog,interpol=False)
         fock = numpy.tensordot(veclmo,numpy.tensordot(veclmo,Fock,(1,0)),(1,1))
         if ct: fckc = numpy.tensordot(vecc  ,numpy.tensordot(vecc  ,Fock,(1,0)),(1,1))
         # save
@@ -1740,7 +1740,7 @@ the canonical Fock matrix and vectors will be saved."""
     def _create(self):
         """creates the molecule"""
         if self.__fchk is not None:
-           mol  = utilities.Read_xyz_file(self.__fchk,mol=True,
+           mol  = libbbg.utilities.Read_xyz_file(self.__fchk,mol=True,
                                           mult=1,charge=0,
                                           name='happy dummy molecule')
            bfs        = PyQuante.Ints.getbasis(mol,self.__basis)

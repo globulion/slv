@@ -9,17 +9,17 @@
 #                      concatenate as con
 #from units     import *
 #from dma       import DMA
-#from utilities import order, reorder, SVDSuperimposer as svd_sup, MakeMol
+#from libbbg.utilities import order, reorder, SVDSuperimposer as svd_sup, MakeMol
 #from efprot    import vecrot, vc1rot, tracls, rotdma, tracl1, rotdm1
 #from PyQuante.Ints import getbasis
-import sys, copy, os, re, math, numpy, units, dma, utilities, efprot, \
+import sys, copy, os, re, math, numpy, libbbg, efprot, \
        PyQuante.Ints
 sys.stdout.flush()
 
 __all__     = ['Frag',]
 __version__ = '2.0.1'
 
-class Frag(object, units.UNITS):
+class Frag(object, libbbg.units.UNITS):
     """
  =============================================================================
                  Effective Fragment Parameter Format System                   
@@ -412,12 +412,12 @@ class Frag(object, units.UNITS):
    
     def get_mol(self):
         """return PyQuante.Molecule object"""
-        mol = utilities.MakeMol(self.__atno, self.__pos, name=self.__name)
+        mol = libbbg.utilities.MakeMol(self.__atno, self.__pos, name=self.__name)
         return mol
 
     def get_bfs(self):
         """return basis set object"""
-        mol = utilities.MakeMol(self.__atno, self.__pos, name=self.__name)
+        mol = libbbg.utilities.MakeMol(self.__atno, self.__pos, name=self.__name)
         bfs = PyQuante.Ints.getbasis(mol, self.__basis)
         return bfs
    
@@ -565,7 +565,7 @@ and RMS from the last superimposition"""
         # superimposition
         if rotran is None:
            if len(xyz)!=1:                                                             
-              s = utilities.SVDSuperimposer()
+              s = libbbg.utilities.SVDSuperimposer()
               if dxyz is None:
                  if suplist is None: s.set(xyz,self.__pos)
                  else:               s.set(xyz[suplist],self.__pos[suplist])
@@ -573,14 +573,14 @@ and RMS from the last superimposition"""
                  rms         = s.get_rms()
                  rot, transl = s.get_rotran()
               else:
-                 #utilities.PRINTL(self.__pos*self.BohrToAngstrom,'','')
+                 #libbbg.utilities.PRINTL(self.__pos*self.BohrToAngstrom,'','')
                  if suplist is None: s.set( xyz-dxyz,self.__pos )
                  else:               s.set((xyz-dxyz)[suplist],(self.__pos)[suplist])
                  s.run()
                  rms         = s.get_rms()
                  rot, transl = s.get_rotran()
                  #pos = numpy.dot(self.__pos , rot) + transl
-                 #s = utilities.SVDSuperimposer()
+                 #s = libbbg.utilities.SVDSuperimposer()
                  #if suplist is None: s.set(pos ,self.__pos + dxyz )
                  #else:               s.set(pos[suplist],(self.__pos + dxyz)[suplist])
                  #s.run()
@@ -658,32 +658,32 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         sim[:,0] = numpy.arange(1, self.__natoms+1, 1)
         sim[:,1] = ord
         # reorder atomic positions
-        self.__pos = utilities.reorder(self.__pos,  sim)
-        self.__atno= utilities.reorder(self.__atno, sim)
-        self.__atms= utilities.reorder(self.__atms, sim)
+        self.__pos = libbbg.utilities.reorder(self.__pos,  sim)
+        self.__atno= libbbg.utilities.reorder(self.__atno, sim)
+        self.__atms= libbbg.utilities.reorder(self.__atms, sim)
         # reorder multipole moments
         if dma:
            if self.__rdma is not None:
-              self.__rdma[:self.__natoms] = utilities.reorder(self.__rdma[:self.__natoms], sim)
+              self.__rdma[:self.__natoms] = libbbg.utilities.reorder(self.__rdma[:self.__natoms], sim)
            if self.__dmac is not None:
-              self.__dmac[:self.__natoms] = utilities.reorder(self.__dmac[:self.__natoms], sim)
-              self.__dmad[:self.__natoms] = utilities.reorder(self.__dmad[:self.__natoms], sim)
-              self.__dmaq[:self.__natoms] = utilities.reorder(self.__dmaq[:self.__natoms], sim)
-              self.__dmao[:self.__natoms] = utilities.reorder(self.__dmao[:self.__natoms], sim)
+              self.__dmac[:self.__natoms] = libbbg.utilities.reorder(self.__dmac[:self.__natoms], sim)
+              self.__dmad[:self.__natoms] = libbbg.utilities.reorder(self.__dmad[:self.__natoms], sim)
+              self.__dmaq[:self.__natoms] = libbbg.utilities.reorder(self.__dmaq[:self.__natoms], sim)
+              self.__dmao[:self.__natoms] = libbbg.utilities.reorder(self.__dmao[:self.__natoms], sim)
            #
            if self.__dmac1 is not None:
-              self.__dmac1[:self.__natoms] = utilities.reorder(self.__dmac1[:self.__natoms], sim, axis=1)
-              self.__dmad1[:self.__natoms] = utilities.reorder(self.__dmad1[:self.__natoms], sim, axis=1)
-              self.__dmaq1[:self.__natoms] = utilities.reorder(self.__dmaq1[:self.__natoms], sim, axis=1)
-              self.__dmao1[:self.__natoms] = utilities.reorder(self.__dmao1[:self.__natoms], sim, axis=1)
+              self.__dmac1[:self.__natoms] = libbbg.utilities.reorder(self.__dmac1[:self.__natoms], sim, axis=1)
+              self.__dmad1[:self.__natoms] = libbbg.utilities.reorder(self.__dmad1[:self.__natoms], sim, axis=1)
+              self.__dmaq1[:self.__natoms] = libbbg.utilities.reorder(self.__dmaq1[:self.__natoms], sim, axis=1)
+              self.__dmao1[:self.__natoms] = libbbg.utilities.reorder(self.__dmao1[:self.__natoms], sim, axis=1)
               #
-              self.__dmac2[:self.__natoms] = utilities.reorder(self.__dmac2[:self.__natoms], sim, axis=0)
-              self.__dmad2[:self.__natoms] = utilities.reorder(self.__dmad2[:self.__natoms], sim, axis=0)
-              self.__dmaq2[:self.__natoms] = utilities.reorder(self.__dmaq2[:self.__natoms], sim, axis=0)
-              self.__dmao2[:self.__natoms] = utilities.reorder(self.__dmao2[:self.__natoms], sim, axis=0)
+              self.__dmac2[:self.__natoms] = libbbg.utilities.reorder(self.__dmac2[:self.__natoms], sim, axis=0)
+              self.__dmad2[:self.__natoms] = libbbg.utilities.reorder(self.__dmad2[:self.__natoms], sim, axis=0)
+              self.__dmaq2[:self.__natoms] = libbbg.utilities.reorder(self.__dmaq2[:self.__natoms], sim, axis=0)
+              self.__dmao2[:self.__natoms] = libbbg.utilities.reorder(self.__dmao2[:self.__natoms], sim, axis=0)
         # reorder eigenvectors
         if self.__lvec is not None: 
-           self.__lvec = utilities.reorder(self.__lvec, sim, axis=1)
+           self.__lvec = libbbg.utilities.reorder(self.__lvec, sim, axis=1)
         # reorder the wavefunction
         if self.__vecl is not None:
            self._reorder_wfn(sim, LIST1)

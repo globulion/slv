@@ -8,17 +8,19 @@ autor wzorował się skryptem
 Roberta W. Góry (dodaj źródła)
 """
 
-from numpy  import array, float64, zeros
-from string import Template
-import re, os
+#from numpy  import numpy.array, float64, numpy.zeros
+#from string import Template
+#import re, os
+#reflags = re.DOTALL
+#from ff import *
+#from math import ceil
+#from units import *
+#from utilities import Periodic
+import re, os, ff, math, numpy, libbbg
 reflags = re.DOTALL
-from ff import *
-from math import ceil
-from units import *
-from utilities import Periodic
 
 __all__ = ['GAUSSIAN_INPUTS','GAMESS_INPUTS',]
-__version__ = '3.3.4'
+__version__ = '3.3.5'
 
 class INPUT_TEMPLATE(Template):
       """for easy handling input files from 
@@ -105,24 +107,24 @@ class INPUTS_FACTORY(FF,object):
           Note that translation is made in Angstroms!
           """
           
-          translation_vector = zeros(3,dtype=float64)
-          solute_structure = array(self.atoms[:,1:],dtype=float64)
-          atoms = array(self.atoms[:,0])
+          translation_vector = numpy.zeros(3,dtype=float64)
+          solute_structure = numpy.array(self.atoms[:,1:],dtype=float64)
+          atoms = numpy.array(self.atoms[:,0])
           
           if self.translation.lower() == 'com':
              ### calculate center of mass in Angstrom
              mass_sum = 0
              for atom in range(len(atoms)):
-                 #translation_vector+= UNITS.mass[ UNITS.atomic_numbers [atoms[atom]]  ] *\
+                 #translation_vector+= libbbg.units.UNITS.mass[ libbbg.units.UNITS.atomic_numbers [atoms[atom]]  ] *\
                  translation_vector+= Atom([atoms[atom]]).mass *\
                                        solute_structure[atom]
-                 #mass_sum+= UNITS.mass[ UNITS.atomic_numbers [atoms[atom]]  ]
+                 #mass_sum+= libbbg.units.UNITS.mass[ libbbg.units.UNITS.atomic_numbers [atoms[atom]]  ]
                  mass_sum+= Atom([atoms[atom]]).mass
              translation_vector/=mass_sum
           elif self.translation.lower() == 'coe':
              ### calculate coe in Angstrom
              l_sum = 0
-             vec = self.L[:,self.mode_id].reshape(len(atoms),3) * UNITS.BohrToAngstrom
+             vec = self.L[:,self.mode_id].reshape(len(atoms),3) * libbbg.units.UNITS.BohrToAngstrom
              for atom in range(len(atoms)):
                  translation_vector+= vec[atom]**2 * solute_structure[atom]
                  l_sum+= sum(vec[atom]**2)
@@ -178,17 +180,17 @@ Finite Field computations
        # FRAGMENT FILE (COORDS IN AU!!!!!)
        data_frag=[]
        for i in range(len(frag)): data_frag.append(frag[i].split())
-       inp_frag = array(data_frag[:])
+       inp_frag = numpy.array(data_frag[:])
        f_inp_frag = inp_frag[:,1:]
-       f_inp_frag = array([ map( float, x ) for x in f_inp_frag ])
+       f_inp_frag = numpy.array([ map( float, x ) for x in f_inp_frag ])
        
        ### translate the structure (if wanted)
        #f_inp_frag += self.Translate()
        
        FFFF  = f_inp_frag.copy()
-       f_inp_frag*= UNITS.AngstromToBohr
+       f_inp_frag*= libbbg.units.UNITS.AngstromToBohr
        #f_inp_frag+= (self.displacements[i] )
-       s_inp_frag = array([ map( str  , x ) for x in f_inp_frag ])
+       s_inp_frag = numpy.array([ map( str  , x ) for x in f_inp_frag ])
        inp_frag = inp_frag.tolist()
        kupa = inp_frag[:]
        for j in range(nFrags):
@@ -206,7 +208,7 @@ Finite Field computations
        data=[]
        for i in range(len(xyz)): data.append(xyz[i].split())
        ### atom's list
-       self.atoms = array(data)
+       self.atoms = numpy.array(data)
        
        data_frag=[]
        for i in range(len(frag)): data_frag.append(frag[i].split())
@@ -217,15 +219,15 @@ Finite Field computations
            else:
               displ_id = i%4 + 4*int(not(i%4))
          #if i==self.mode_id:
-           inp = array(data[:])
+           inp = numpy.array(data[:])
            f_inp = inp[:,1:]
-           f_inp = array([ map( float, x ) for x in f_inp ])
-           f_inp+=(self.displacements[i] * UNITS.BohrToAngstrom)
+           f_inp = numpy.array([ map( float, x ) for x in f_inp ])
+           f_inp+=(self.displacements[i] * libbbg.units.UNITS.BohrToAngstrom)
            
            ### translate the structure (if wanted)
            f_inp += self.Translate()
            
-           s_inp = array([ map( str  , x ) for x in f_inp ])
+           s_inp = numpy.array([ map( str  , x ) for x in f_inp ])
            inp = inp.tolist()
            for j in range(nAtoms):
                inp[j] = "%-3s %16.10f %16.10f %16.10f\n"\
@@ -233,12 +235,12 @@ Finite Field computations
                     f_inp[j][0], f_inp[j][1], f_inp[j][2] )
            XYZ=''.join(inp)
            
-           inp_frag = array(data_frag[:])
+           inp_frag = numpy.array(data_frag[:])
            f_inp_frag = inp_frag[:,1:]
-           f_inp_frag = array([ map( float, x ) for x in f_inp_frag ])
+           f_inp_frag = numpy.array([ map( float, x ) for x in f_inp_frag ])
 
            #KKKK  = f_inp.copy()###################
-           #KKKK*= UNITS.AngstromToBohr################
+           #KKKK*= libbbg.units.UNITS.AngstromToBohr################
            #for j in range(self.nAtoms):#################
            #    dupa[j] = "POINT %16.10f %16.10f %16.10f %9s\n"\
            #       % ( KKKK[j][0], KKKK[j][1], KKKK[j][2], 
@@ -252,16 +254,16 @@ Finite Field computations
            #f_inp += self.Translate()
 
            #################################zdbgiSGfeosahgeasgaweg
-           s_inp_frag = array([ map( str  , x ) for x in f_inp_frag ])
+           s_inp_frag = numpy.array([ map( str  , x ) for x in f_inp_frag ])
            for j in range(nFrags):
                kupa[j] = "%-3s %16.10f %16.10f %16.10f\n"\
                   % ( data_frag[j][0] , FFFF[j][0], FFFF[j][1], FFFF[j][2], )
            BULA=''.join(kupa)
            BULA= BULA[:-1] # without blank line!  
                   
-           f_inp_frag*= UNITS.AngstromToBohr
+           f_inp_frag*= libbbg.units.UNITS.AngstromToBohr
            #f_inp_frag+= (self.displacements[i] )
-           s_inp_frag = array([ map( str  , x ) for x in f_inp_frag ])
+           s_inp_frag = numpy.array([ map( str  , x ) for x in f_inp_frag ])
            inp_frag = inp_frag.tolist()
            for j in range(nFrags):
                inp_frag[j] = "POINT %16.10f %16.10f %16.10f %9s\n"\
@@ -311,17 +313,17 @@ Finite Field computations
        # FRAGMENT FILE (COORDS IN AU!!!!!)
        data_frag=[]
        for i in range(len(frag)): data_frag.append(frag[i].split())
-       inp_frag = array(data_frag[:])
+       inp_frag = numpy.array(data_frag[:])
        f_inp_frag = inp_frag[:,1:]
-       f_inp_frag = array([ map( float, x ) for x in f_inp_frag ])
+       f_inp_frag = numpy.array([ map( float, x ) for x in f_inp_frag ])
        
        ### translate the structure (if wanted)
        #f_inp_frag += self.Translate()
        
        FFFF  = f_inp_frag.copy()
-       f_inp_frag*= UNITS.AngstromToBohr
+       f_inp_frag*= libbbg.units.UNITS.AngstromToBohr
        #f_inp_frag+= (self.displacements[i] )
-       s_inp_frag = array([ map( str  , x ) for x in f_inp_frag ])
+       s_inp_frag = numpy.array([ map( str  , x ) for x in f_inp_frag ])
        inp_frag = inp_frag.tolist()
        kupa = inp_frag[:]
        for j in range(nFrags):
@@ -336,7 +338,7 @@ Finite Field computations
        
        
        #################################zdbgiSGfeosahgeasgaweg
-       s_inp_frag = array([ map( str  , x ) for x in f_inp_frag ])
+       s_inp_frag = numpy.array([ map( str  , x ) for x in f_inp_frag ])
        for j in range(nFrags):
            kupa[j] = "%-3s %16.10f %16.10f %16.10f\n"\
               % ( data_frag[j][0] , FFFF[j][0], FFFF[j][1], FFFF[j][2], )
@@ -350,7 +352,7 @@ Finite Field computations
        for i in range(len(xyz)): data.append(xyz[i].split())
 
        # zero displacement file
-       inp = array(data[:])
+       inp = numpy.array(data[:])
        dupa = inp[:]
        dupa = dupa.tolist()       
        ### atom's list 
@@ -358,10 +360,10 @@ Finite Field computations
        #print inp
        
        f_inp = inp[:,1:]
-       f_inp = array([ map( float, x ) for x in f_inp ])
+       f_inp = numpy.array([ map( float, x ) for x in f_inp ])
        
        KKKK  = f_inp.copy()###################
-       KKKK*= UNITS.AngstromToBohr################
+       KKKK*= libbbg.units.UNITS.AngstromToBohr################
        for j in range(self.nAtoms):#################
            dupa[j] = "POINT %16.10f %16.10f %16.10f %9s\n"\
               % ( KKKK[j][0], KKKK[j][1], KKKK[j][2], 
@@ -375,7 +377,7 @@ Finite Field computations
        ### translate the structure (if wanted)
        #f_inp += self.Translate()
        
-       s_inp = array([ map( str  , x ) for x in f_inp ])
+       s_inp = numpy.array([ map( str  , x ) for x in f_inp ])
        inp = inp.tolist()
        for j in range(self.nAtoms):
            inp[j] = "%-3s %16.10f %16.10f %16.10f\n"\
@@ -394,9 +396,9 @@ Finite Field computations
        # DISPLACEMENTS
        for i in range(self.nAtoms):
          for d in range(len(self.DisplCart)):
-           inp = array(data[:])
+           inp = numpy.array(data[:])
            f_inp = inp[:,1:]
-           f_inp = array([ map( float, x ) for x in f_inp ])
+           f_inp = numpy.array([ map( float, x ) for x in f_inp ])
            
            ### translate the structure (if wanted)
            #f_inp += self.Translate()
@@ -405,7 +407,7 @@ Finite Field computations
                if i==j:
                   f_inp[j,:] += self.DisplCart[d,:]
 
-           s_inp = array([ map( str  , x ) for x in f_inp ])
+           s_inp = numpy.array([ map( str  , x ) for x in f_inp ])
            inp = inp.tolist()
            for j in range(self.nAtoms):
                inp[j] = "%-3s %16.10f %16.10f %16.10f\n"\
@@ -497,25 +499,25 @@ C1 0
            else:
               displ_id = i%4 + 4*int(not(i%4))
          #if i==self.mode_id:
-           inp = array(data[:])
+           inp = numpy.array(data[:])
            f_inp = inp[:,1:]
-           f_inp = array([ map( float, x ) for x in f_inp ])
-           f_inp+= (self.displacements[i] * UNITS.BohrToAngstrom)
-           s_inp = array([ map( str  , x ) for x in f_inp ])
+           f_inp = numpy.array([ map( float, x ) for x in f_inp ])
+           f_inp+= (self.displacements[i] * libbbg.units.UNITS.BohrToAngstrom)
+           s_inp = numpy.array([ map( str  , x ) for x in f_inp ])
            inp = inp.tolist()
            for j in range(nAtoms):
                inp[j] = "%-3s %7.1f %16.10f %16.10f %16.10f\n"\
                   % (data[j][0], Atom(data[j][0]).atno,
                     f_inp[j][0], f_inp[j][1], f_inp[j][2] )
            XYZ=''.join(inp); XYZ=XYZ[:-1]
-                             #% (data[j][0], UNITS.atomic_numbers[data[j][0]],
+                             #% (data[j][0], libbbg.units.UNITS.atomic_numbers[data[j][0]],
            
-           inp_frag = array(data_frag[:])
+           inp_frag = numpy.array(data_frag[:])
            f_inp_frag = inp_frag[:,1:]
-           f_inp_frag = array([ map( float, x ) for x in f_inp_frag ])
-           f_inp_frag*= UNITS.AngstromToBohr
+           f_inp_frag = numpy.array([ map( float, x ) for x in f_inp_frag ])
+           f_inp_frag*= libbbg.units.UNITS.AngstromToBohr
            #f_inp_frag+= (self.displacements[i] )
-           s_inp_frag = array([ map( str  , x ) for x in f_inp_frag ])
+           s_inp_frag = numpy.array([ map( str  , x ) for x in f_inp_frag ])
            inp_frag = inp_frag.tolist()
            for j in range(nFrags):
                inp_frag[j] = "POINT %16.10f %16.10f %16.10f %9s\n"\
@@ -564,12 +566,12 @@ C1 0
        # FRAGMENT FILE (COORDS IN AU!!!!!)
        data_frag=[]
        for i in range(len(frag)): data_frag.append(frag[i].split())       
-       inp_frag = array(data_frag[:])
+       inp_frag = numpy.array(data_frag[:])
        f_inp_frag = inp_frag[:,1:]
-       f_inp_frag = array([ map( float, x ) for x in f_inp_frag ])
-       f_inp_frag*= UNITS.AngstromToBohr
+       f_inp_frag = numpy.array([ map( float, x ) for x in f_inp_frag ])
+       f_inp_frag*= libbbg.units.UNITS.AngstromToBohr
        #f_inp_frag+= (self.displacements[i] )
-       s_inp_frag = array([ map( str  , x ) for x in f_inp_frag ])
+       s_inp_frag = numpy.array([ map( str  , x ) for x in f_inp_frag ])
        inp_frag = inp_frag.tolist()
        for j in range(nFrags):
            inp_frag[j] = "POINT %16.10f %16.10f %16.10f %9s\n"\
@@ -586,14 +588,14 @@ C1 0
        data=[]
        for i in range(len(xyz)): data.append(xyz[i].split())
        # zero displacement file
-       inp = array(data[:])
+       inp = numpy.array(data[:])
        f_inp = inp[:,1:]
-       f_inp = array([ map( float, x ) for x in f_inp ])
-       s_inp = array([ map( str  , x ) for x in f_inp ])
+       f_inp = numpy.array([ map( float, x ) for x in f_inp ])
+       s_inp = numpy.array([ map( str  , x ) for x in f_inp ])
        inp = inp.tolist()
        for j in range(self.nAtoms):
            inp[j] = "%-3s %7.1f %16.10f %16.10f %16.10f\n"\
-              % (data[j][0], UNITS.atomic_numbers[data[j][0]],
+              % (data[j][0], libbbg.units.UNITS.atomic_numbers[data[j][0]],
                 f_inp[j][0], f_inp[j][1], f_inp[j][2] )
        XYZ=''.join(inp); XYZ=XYZ[:-1]
        inpfile = self.xyz_file[:-4] + "_A%03.d"% (0) +"_D%02.d" % (0) + "_.inp"  
@@ -607,18 +609,18 @@ C1 0
        # DISPLACEMENTS       
        for i in range(self.nAtoms):
          for d in range(len(self.DisplCart)):
-           inp = array(data[:])
+           inp = numpy.array(data[:])
            f_inp = inp[:,1:]
-           f_inp = array([ map( float, x ) for x in f_inp ])
+           f_inp = numpy.array([ map( float, x ) for x in f_inp ])
            for j in range(nAtoms):
                if i==j:
                   f_inp[j,:] += self.DisplCart[d,:]
 
-           s_inp = array([ map( str  , x ) for x in f_inp ])
+           s_inp = numpy.array([ map( str  , x ) for x in f_inp ])
            inp = inp.tolist()
            for j in range(self.nAtoms):
                inp[j] = "%-3s %7.1f %16.10f %16.10f %16.10f\n"\
-                  % (data[j][0], UNITS.atomic_numbers[data[j][0]],
+                  % (data[j][0], libbbg.units.UNITS.atomic_numbers[data[j][0]],
                      f_inp[j][0], f_inp[j][1], f_inp[j][2] )
            XYZ=''.join(inp)
            XYZ=XYZ[:-1]
