@@ -16,7 +16,7 @@
 #                                                       read_xtc, DIM, exdrOK
 #from MDAnalysis.coordinates.TRJ import TRJReader, NCDFReader
 
-import numpy, solvshift.slvpar, \
+import numpy, libbbg, solvshift.slvpar, \
        sys, copy, pp, time, re, MDAnalysis.coordinates.xdrfile.libxdrfile2, \
        MDAnalysis.coordinates.TRJ
 
