@@ -25,7 +25,7 @@ EFPROT = Extension(name='efprot',
 ### install
 
 setup(name='SOLVSHIFT',
-      version='27.4',
+      version='1.0.1',
       description='Solvatochromic shifts from M.CHOs coarse-grained model',
       author='Bartosz Błasiak',
       author_email='globula@o2.pl',
