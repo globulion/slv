@@ -33,10 +33,10 @@ from MDAnalysis.coordinates.DCD import DCDReader
 from MDAnalysis.coordinates.xdrfile.libxdrfile2 import xdrfile_open, xdrfile_close,\
                                                        read_xtc_natoms, read_xtc  ,\
                                                        read_xtc, DIM, exdrOK
-from utilities import dihedral
-from units import UNITS as u
+from libbbg.utilities import dihedral
+from libbbg.units import UNITS as u
 from numpy import array, zeros, arange, float64, float32
-import pp, units, utilities, gaussfreq,\
+import pp, libbbg, libbbg.units, libbbg.utilities, libbbg.gaussfreq,\
        solvshift.diff, solvshift.solefp, solvshift.slvpar
 # -----------------------------------------------------------------------------------------------------
 stdout.flush()
@@ -62,7 +62,7 @@ def eval_parall(efp, idx, args, frame, frame_idx):
     efp.eval(0)
     rms_c = efp.get_rms()
     rms_s = efp.get_rms_sol()
-    shifts = efp.get_shift()
+    shifts = efp.get_shifts()
     # line of output frequencies and misc data
     log = " %7d" % frame_idx
     log+= 7*"%10.2f" % tuple(shifts[:7])
@@ -152,7 +152,7 @@ for i in range(NFRAMES):
          frame = array(md.next()) * u.AngstromToBohr
 
     jobs.append( job_server.submit(eval_parall,(efp, idx, args, frame, frame_idx+1), (solvshift.slvpar.Frag, solvshift.solefp.EFP),
-                                   ('units','utilities','numpy','solvshift','solvshift.solefp','solvshift.slvpar','efprot','PyQuante.Ints','dma'),
+                                   ('libbbg.units','libbbg.utilities','numpy','solvshift','solvshift.solefp','solvshift.slvpar','efprot','PyQuante.Ints','libbbg.dma'),
                                    ) )
     if (frame_idx%ncpus==0 and frame_idx!=0):
        job_server.wait()
