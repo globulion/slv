@@ -146,13 +146,7 @@
                                                                                                                                    
          ./install -p $HOME/lib64/
                                                                                                                                    
-      3) compile libbbg/qm/solpol2.f and move the library file to the installation path for python:
-                                                                                                                                   
-         cd libbbg/qm/                                                  
-         f2py -c --link-lapack_opt --link-blas_opt -m solpol2 solpol2.f
-         mv solpol2.so  $HOME/lib64/python2.6/
-                                                                                                                                   
-      4) check if it works. On epsilon it should give this message:
+      3) check if it works. On epsilon it should give this message:
          
          python                                                                                                                          
          >>> import libbbg                                                                                                             
@@ -206,9 +200,9 @@
 
          ./install -p $HOME/lib64/
 
-      2) set the $SLV_DAT variable in your $HOME/.bashrc file
+      3) set the $SLV_DAT variable in your $HOME/.bashrc file
 
-      3) check if it works:
+      4) check if it works:
      
          python
          >>> import solvshift
