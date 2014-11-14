@@ -198,11 +198,17 @@
 
  II.9 SLV
 
-      1) install
+      1) modify install (bash script)                                                                                              
+                                                                                                                                   
+         Set the appropriate directories for prefix. 
 
-         python setup.py install --prefix=$HOME/lib64/
+      2) install
 
-      2) check if it works:
+         ./install -p $HOME/lib64/
+
+      2) set the $SLV_DAT variable in your $HOME/.bashrc file
+
+      3) check if it works:
      
          python
          >>> import solvshift

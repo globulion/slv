@@ -63,7 +63,7 @@
 """
 from sys import argv, exit
 from utilities import Read_xyz_file, MakeMol, ParseDMA, \
-                      PUPA, text_to_list
+                      PUPA, text_to_list, PRINTL
 from units import UNITS as u
 from time import time
 from solvshift.solefp import EFP
@@ -71,7 +71,6 @@ from solvshift.slvpar import Frag
 from numpy import float64 as f64, array, zeros, linalg, \
                   transpose, int64, concatenate as con, \
                   asfortranarray as farray, dot
-
 print __doc__
 if len(argv)==1: exit()
 
@@ -149,6 +148,11 @@ efp = EFP(elect=elect,pol=pol,rep=rep,corr=corr,freq=True,
 t2 = time()
 efp.set(xyz,ind,nmol,bsm,supl)
 efp.eval(lprint)
+dq = efp.get_dq(theory=2)
+PRINTL(dq[0],'','') 
+PRINTL(dq[1],'','')
+PRINTL(dq[2],'','')
+PRINTL(dq[0]+dq[1]+dq[2],'','')
 t3 = time()
 print
 print " Read_xyz_file TIME: %10.6f seconds" % (t1-t0)
