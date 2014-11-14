@@ -70,19 +70,20 @@ fi
 python setup.py install --prefix=$PREFIX --exec-prefix=$EXEC_PREFIX
 
 # copy the shared libraries
-export SLV_LIB=$PREFIX/lib/python2.7/site-packages/solvshift/
+export SLV_LIB=$PREFIX/lib/python2.7/dist-packages/solvshift/
 
-#cp $SLV_LIB/fourier/ft.so ./libbbg/fourier
-#cp $SLV_LIB/qm/clemtp.so ./libbbg/qm
-#cp $SLV_LIB/qm/pmloca.so ./libbbg/qm
-#cp $SLV_LIB/qm/gentcf.so ./libbbg/qm
+echo Copying shared libraries
+cp -v $SLV_LIB/shftce.so ./solvshift
+cp -v $SLV_LIB/shftex.so ./solvshift
+cp -v $SLV_LIB/efprot.so ./solvshift
+cp -v $SLV_LIB/exrep.so ./solvshift
 
 echo --- INFO ---------------------------------------------------------------------------
 echo
 echo Modify your $HOME/.bashrc script adding the following lines:
 echo
-echo export PYTHONPATH=$PREFIX/lib/python2.7/site-packages/:'$PYTHONPATH'
-echo export SLV_DATA=$PREFIX/lib/python2.7/site-packages/solvshift-dat
+echo export PYTHONPATH=$PREFIX/lib/python2.7/dist-packages/:'$PYTHONPATH'
+echo export SLV_DATA=$PREFIX/lib/python2.7/dist-packages/solvshift-dat
 echo
 echo Then, type in the terminal
 echo
