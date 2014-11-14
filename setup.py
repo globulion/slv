@@ -3,6 +3,8 @@
 
 # -----------------------------------------------
 from numpy.distutils.core import setup, Extension
+from glob import glob
+import sys
 # -----------------------------------------------
 
 ### extension module specifications
@@ -22,17 +24,41 @@ EFPROT = Extension(name='efprot',
                    sources=['solvshift/src/efprot.f'],)
 
 
+# data files: BSM fragment files
+molecules = ['water', 'water2', 'dmso'   , 'meoh' , 'chcl3',
+             'dcm'  , 'na+'   , 'me-so3-', 'so3--', 'meoac',
+             'nma'  , 'nma-d7', 'mescn' ] 
+
+numerical = { 'mescn': ('num_0.006','num_0.025') , }
+
+frg_files = list()
+
+for mol in molecules:
+    files = ('solvshift-dat/frg/%s' % mol , [ i for i in glob('frg/%s/*.frg' % mol) ] +
+                                            [ i for i in glob('frg/%s/*.xyz' % mol) ] +
+                                            [ i for i in glob('frg/%s/*.efp' % mol) ] )
+
+    frg_files.append(files)
+
+    if mol in numerical.keys():
+       dirs = numerical[mol]
+       for dir in dirs:
+           files = ('solvshift-dat/frg/%s/%s' % (mol,dir), [ i for i in glob('frg/%s/%s/*.frg' % (mol, dir)) ] )
+           frg_files.append(files)
+       
+
 ### install
 
 setup(name='SOLVSHIFT',
       version='1.0.1',
-      description='Solvatochromic shifts from M.CHOs coarse-grained model',
+      description='Solvatochromic shifts from coarse-grained SolEFP theory',
       author='Bartosz Błasiak',
-      author_email='globula@o2.pl',
-      url='http://www.ex.no/pymod/m1',
+      author_email='blasiak.bartosz@gmail.com',
+      url='no-page-yet',
       packages=['solvshift',
                 #'solvshift.util',
                 #'solvshift.diff',
                ],
-      ext_modules=[SHFTEX,EFPROT,SHFTCE,EXREP,]
+      ext_modules=[SHFTEX,EFPROT,SHFTCE,EXREP,],
+      data_files=frg_files,
      )

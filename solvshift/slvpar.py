@@ -268,12 +268,12 @@ class Frag(object, libbbg.units.UNITS):
     def __call__(self, file):
         """parse the parameters from a file"""
         if file in self.params:
-           self.__file = os.environ['SLV_PATH'] + '/frg/%s/%s.frg' % (file, file)
-           self.__dir  = os.environ['SLV_PATH'] + '/frg/%s/'       % file 
+           self.__file = os.environ['SLV_DATA'] + '/frg/%s/%s.frg' % (file, file)
+           self.__dir  = os.environ['SLV_DATA'] + '/frg/%s/'       % file 
            if not os.path.isfile(self.__file):
               message = " No such file: <%s>. There is no *.frg file for that molecule,\n" % self.__file
-              message+= " the name is misspelled or check if the $SLV_PATH variable is set properly\n"
-              message+= " (echo $SLV_PATH)" 
+              message+= " the name is misspelled or check if the $SLV_DATA variable is set properly\n"
+              message+= " (echo $SLV_DATA)" 
               raise IOError, message
         else: self.__file = file
         filef = open(self.__file,'r')
