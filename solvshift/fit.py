@@ -5,10 +5,10 @@
 from numpy import array, float64, zeros, sqrt, \
                   sum, transpose, linalg, ones, \
                   dot, average, roll, concatenate
-from units import *
-from dma   import *
+from libbbg.units import *
+from libbbg.dma   import *
 from diff  import *
-from utilities import QMFile, ModifyStruct
+from libbbg.utilities import QMFile, ModifyStruct
 import os, glob
 
 __all__ = ['FIT','LxFit',]
