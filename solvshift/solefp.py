@@ -16,7 +16,8 @@
 #from efprot import tracls
 #from exrep  import exrep
 import sys, copy, os, re, math, glob, PyQuante.Ints, coulomb.multip, libbbg.qm.clemtp,\
-       numpy, libbbg, diff, shftex, shftce, solpol, solpol2, efprot, exrep,\
+       numpy, libbbg.units, libbbg.utilities, diff, solvshift.shftex, solvshift.shftce,\
+       solvshift.solpol, solvshift.solpol2, solvshift.efprot, solvshift.exrep,\
        solvshift.slvpar
 sys.stdout.flush()
 
@@ -693,7 +694,7 @@ Now, only for exchange-repulsion layer"""
                   rpol = numpy.concatenate ( (p['rpol'], rpol_sol) ).ravel()
                   pol  = numpy.concatenate ( (p['dpol'],  pol_sol) ).ravel()
 
-                  func_pol[i] = solpol.solpol(rdma,chg,dip,qad,oct,
+                  func_pol[i] = solvshift.solpol.solpol(rdma,chg,dip,qad,oct,
                                               rpol,pol,dmat,
                                               flds,dipind,
                                               ndma,npol,lwrite=False)
@@ -832,7 +833,7 @@ Now, only for exchange-repulsion layer"""
                par = frg.get()
                PAR.append( par )
                #
-               qad, oct = efprot.tracls( par['dmaq'], par['dmao'] )
+               qad, oct = solvshift.efprot.tracls( par['dmaq'], par['dmao'] )
                QO.append( (qad,oct) )
            #
            self.__rms_solvent_max = rms_max
@@ -865,7 +866,7 @@ Now, only for exchange-repulsion layer"""
                  flds = numpy.zeros( DIM,numpy.float64)
                  dipind=numpy.zeros( DIM,numpy.float64)
                  #
-                 e_pol = solpol.solpol(rdma,chg,dip,qad,oct,
+                 e_pol = solvshift.solpol.solpol(rdma,chg,dip,qad,oct,
                                        rpol,pol,dmat,
                                        flds,dipind,
                                        ndma,npol,lwrite=False)
@@ -961,7 +962,7 @@ Now, only for exchange-repulsion layer"""
                par = frg.get()
                PAR.append( par )
                #
-               qad, oct = efprot.tracls( par['dmaq'], par['dmao'] )
+               qad, oct = solvshift.efprot.tracls( par['dmaq'], par['dmao'] )
                QO.append( (qad,oct) )
                #
            self.__rms_solvent_max = rms_max
@@ -1050,7 +1051,7 @@ Now, only for exchange-repulsion layer"""
                      par = frg.get()
                      PAR.append( par )
                      #
-                     qad, oct = efprot.tracls( par['dmaq'], par['dmao'] )
+                     qad, oct = solvshift.efprot.tracls( par['dmaq'], par['dmao'] )
                      QO.append( (qad,oct) )
                      #
                  ndma = [ x['ndma'] for x in PAR ]
@@ -1097,7 +1098,7 @@ Now, only for exchange-repulsion layer"""
                  #                           sdipnd, avec, vec1, mat1,
                  #                           redmss, freq, gijj, rpol1, pol1, lvec,
                  #                           ndma, npol, self.__mode, ndmac, npolc, lwrite=False)
-                 epol, spol, fi, avec = solpol2.sftpli(rdma, chg, dip, qad, oct, 
+                 epol, spol, fi, avec = solvshift.solpol2.sftpli(rdma, chg, dip, qad, oct, 
                                                        chgc1, dipc1, qadc1, octc1,
                                                        rpol, polinv, mivec, dmat, flds, dimat, fivec,
                                                        vec1, vec2, mat1, redmss, freq, gijj, 
@@ -1191,7 +1192,7 @@ Now, only for exchange-repulsion layer"""
                    tmij= numpy.zeros(nmodes*nmosa*nmosb, numpy.float64)
                    fi  = numpy.zeros(nmodes            , numpy.float64)
                    #
-                   sma, shftea = shftex.shftex(redmss, freq, gijj, lvec,
+                   sma, shftea = solvshift.shftex.shftex(redmss, freq, gijj, lvec,
                                                ria, rib, rna, rnb, ria1,
                                                cika, cikb, cika1,
                                                skm, tkm, sk1m, tk1m,
@@ -1269,7 +1270,7 @@ Now, only for exchange-repulsion layer"""
            iem = numpy.zeros(nm        , dtype=bool)
            #
            nccut, npcut, necut, mccut, mpcut, mecut = \
-                                        solpol.mollst(rc,rm,ic,ip,ie,icm,ipm,iem,
+                                        solvshift.solpol.mollst(rc,rm,ic,ip,ie,icm,ipm,iem,
                                                       self.__nmol[1:],
                                                       self.__ccut,
                                                       self.__pcut,
@@ -1384,7 +1385,7 @@ Now, only for exchange-repulsion layer"""
         rnb  = varB['pos']
         rib  = varB['lmoc']
         # calculate the properties!
-        eint = exrep.exrep(ria,rib,rna,rnb,faij,fbij,cika,cikb,skm,tkm,za,zb)
+        eint = solvshift.exrep.exrep(ria,rib,rna,rnb,faij,fbij,cika,cikb,skm,tkm,za,zb)
         return eint
 
     def _pair_rep_freq(self,varA,varB):
@@ -1421,7 +1422,7 @@ Now, only for exchange-repulsion layer"""
         rnb  = varB['pos']
         rib  = varB['lmoc']
         # calculate the properties!
-        shift ,shftea = shftex.shftex(redmss,freq,gijj,lvec,
+        shift ,shftea = solvshift.shftex.shftex(redmss,freq,gijj,lvec,
                                       ria,rib,rna,rnb,ria1,
                                       cika,cikb,cika1,
                                       skm,tkm,sk1m,tk1m,
@@ -1549,7 +1550,7 @@ Notes:
         #print "TOTL %.2f" % (t3-t0)
         #print "DUPA %.2f" % (t4-t3)
         # calculate the properties!
-        shftma,shftea = shftce.shftce(redmss,freq,gijj,eiglvc,
+        shftma,shftea = solvshift.shftce.shftce(redmss,freq,gijj,eiglvc,
                                       rna,rnb,ria,rib,ria1,                      
                                       cika,cikb,cikca,cikcb,cika1,
                                       skm,tkm,tkk,tll,vkm,vkl,vlk,vln,sk1m,tk1m,
@@ -1596,7 +1597,7 @@ Notes:
         rnb  = varB['pos']
         rib  = varB['lmoc']
         # calculate the properties!
-        shftma,shftea = shftex.shftex(redmss,freq,gijj,lvec,
+        shftma,shftea = solvshift.shftex.shftex(redmss,freq,gijj,lvec,
                                       ria,rib,rna,rnb,ria1,  
                                       cika,cikb,cika1,
                                       skm,tkm,sk1m,tk1m,

@@ -2,9 +2,9 @@
 #           ONSAGER-CHO MODEL FOR FREQUENCY SHIFT PREDICTION            #
 # --------------------------------------------------------------------- #
 
-from units import *
+from libbbg.units import *
 from numpy import *
-from dma   import *
+from libbbg.dma   import *
 
 __all__ = ['ONSAGER','BlasiakIterator',]
 __version__ = '2.0.1'

@@ -43,7 +43,10 @@ Usage:
         """create obvolutkis in the benchmark set of clusters"""
         # create temporary folder
         path = self.__dat_path
-        os.system('mkdir ./new')
+        if os.path.isdir('new'):
+           os.system('rm -r ./new && mkdir ./new' )
+        else: 
+           os.system('mkdir ./new')
         # create rings
         self._rings(self.__dat_path,self.__ext,self.__atoms,
                     self.__rings,self.__exclude_atoms)

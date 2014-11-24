@@ -2,9 +2,9 @@
 #           MINHAENG CHO's SOLVATOCHROMIC MODEL MODULE            #
 # --------------------------------------------------------------- #
 
-from units    import *
+from libbbg.units    import *
 from numpy    import *
-from dma      import *
+from libbbg.dma      import *
 from dipderiv import *
 from onsager  import *
 

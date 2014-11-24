@@ -10,11 +10,11 @@ import re, os, getopt, sys, pylab
 reflags = re.DOTALL
 
 # ---- import BBG library
-from dma        import *
-from units      import *
-from utilities  import *
-from utilities2 import *
-from gaussfreq  import *
+from libbbg.dma        import *
+from libbbg.units      import *
+from libbbg.utilities  import *
+from libbbg.utilities2 import *
+from libbbg.gaussfreq  import *
 
 # ---- import Coulomb.py and PyQuante packages
 if os.environ['__IMPORT__COULOMB__']:

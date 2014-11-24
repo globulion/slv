@@ -12,7 +12,7 @@
 #from libbbg.utilities import order, reorder, SVDSuperimposer as svd_sup, MakeMol
 #from efprot    import vecrot, vc1rot, tracls, rotdma, tracl1, rotdm1
 #from PyQuante.Ints import getbasis
-import sys, copy, os, re, math, numpy, libbbg, efprot, \
+import sys, copy, os, re, math, numpy, libbbg, solvshift.efprot, \
        PyQuante.Ints
 sys.stdout.flush()
 

@@ -3,9 +3,9 @@
 # ------------------------------------------------------------------------- #
 
 from numpy     import *
-from units     import *
-from dma       import *
-from utilities import *
+from libbbg.units     import *
+from libbbg.dma       import *
+from libbbg.utilities import *
 from slvcor    import SLVCOR
 from hessian   import HESSIAN
 import sys, copy

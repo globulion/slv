@@ -16,13 +16,14 @@ Roberta W. Góry (dodaj źródła)
 #from math import ceil
 #from units import *
 #from utilities import Periodic
-import re, os, ff, math, numpy, libbbg
+import re, os, ff, math, numpy, libbbg, string
+from ff import *
 reflags = re.DOTALL
 
 __all__ = ['GAUSSIAN_INPUTS','GAMESS_INPUTS',]
 __version__ = '3.3.5'
 
-class INPUT_TEMPLATE(Template):
+class INPUT_TEMPLATE(string.Template):
       """for easy handling input files from 
          template file stored on disk. 
          From ff.py of R. W. Góra"""
