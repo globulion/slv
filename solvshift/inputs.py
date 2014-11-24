@@ -108,8 +108,8 @@ class INPUTS_FACTORY(FF,object):
           Note that translation is made in Angstroms!
           """
           
-          translation_vector = numpy.zeros(3,dtype=float64)
-          solute_structure = numpy.array(self.atoms[:,1:],dtype=float64)
+          translation_vector = numpy.zeros(3,dtype=numpy.float64)
+          solute_structure = numpy.array(self.atoms[:,1:],dtype=numpy.float64)
           atoms = numpy.array(self.atoms[:,0])
           
           if self.translation.lower() == 'com':
@@ -159,7 +159,7 @@ Finite Field computations
 
    def WriteInputs(self):
        """writes gaussian inputs on disk"""
-       p=Periodic(0)
+       p=libbbg.utilities.Periodic(0)
        try:
           xyz=open(self.xyz_file,'r').readlines()
           nAtoms = int(xyz[0])
@@ -214,7 +214,7 @@ Finite Field computations
        data_frag=[]
        for i in range(len(frag)): data_frag.append(frag[i].split())
        for i in range(len(self.displacements)):
-           atom_id = ceil( i/4. )
+           atom_id = math.ceil( i/4. )
            if i==0:
               displ_id = 0
            else:
@@ -292,7 +292,7 @@ Finite Field computations
 
    def WriteInputsCartesian(self):
        """writes gaussian cartesian inputs on disk"""
-       p=Periodic(0)
+       p=libbbg.utilities.Periodic(0)
        try:
           xyz=open(self.xyz_file,'r').readlines()
           nAtoms = int(xyz[0])
@@ -468,7 +468,7 @@ C1 0
 
    def WriteInputs(self):
        """writes gaussian inputs on disk"""
-       p=Periodic(0)
+       p=libbbg.utilities.Periodic(0)
        try:
           xyz=open(self.xyz_file,'r').readlines()
           nAtoms = int(xyz[0])
@@ -494,7 +494,7 @@ C1 0
        data_frag=[]
        for i in range(len(frag)): data_frag.append(frag[i].split())
        for i in range(len(self.displacements)):
-           atom_id = ceil( i/4. )
+           atom_id = math.ceil( i/4. )
            if i==0:
               displ_id = 0
            else:
@@ -545,7 +545,7 @@ C1 0
 
    def WriteInputsCartesian(self):
        """writes gaussian cartesian inputs on disk"""
-       p=Periodic(0)
+       p=libbbg.utilities.Periodic(0)
        try:
           xyz=open(self.xyz_file,'r').readlines()
           nAtoms = int(xyz[0])
