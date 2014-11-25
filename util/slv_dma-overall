@@ -1,0 +1,38 @@
+#!/usr/bin/python
+"""
+ Calculate the total molecular multipole moments (MMM)
+ and the invariants of them
+
+ Usage:
+   [par]
+"""
+print __doc__
+from sys import argv, exit
+if len(argv)==1: exit()
+from libbbg.dma import DMA
+import numpy as np
+
+origin = np.zeros(3,np.float64)
+#origin = np.array([3333,4444,5555],np.float64)
+
+# open DMA file
+dma = DMA(argv[1])
+
+# withdraw the position
+pos = dma.get_pos()
+
+# calculate the total moments
+tot = dma.get_mult(origin)
+
+c, mu, qad, oct = dma.get_const()
+
+print tot
+
+log = ' INVARIANTS OF THE MULTIPOLE DISTRIBUTION\n\n'
+log+= '%15.5E\n' % c
+log+= '%15.5E\n' % mu
+log+= 3*'%15.5E' % tuple(qad); log+= '\n'
+log+= 5*'%15.5E' % tuple(oct); log+= '\n\n'
+
+print log
+
