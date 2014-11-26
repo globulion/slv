@@ -30,8 +30,10 @@ Usage:
         self.__unique_idx = unique_idx
         self.__exclude_atoms = exclude_atoms
         if rings is not None:
-           for ring in rings:
-               ring.insert(2,0)
+           # insert the 3-rd point (p3) specifying chyba-x axis
+           # apply it only in the case when p3 is not provided!
+              for ring in rings:
+                  if len(ring)==5: ring.insert(2,0)
         #       self.__atoms += ring[3]
         self.__rings = rings
 
