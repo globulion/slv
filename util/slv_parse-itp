@@ -12,7 +12,7 @@
 """
 from sys import argv
 from numpy import *
-from utilities import text_to_list
+from libbbg.utilities import text_to_list
 print __doc__
 if len(argv)==1:exit()
 
