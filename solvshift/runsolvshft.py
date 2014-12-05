@@ -228,6 +228,7 @@ def Main(argv):
     charges        = {'H': 0.34242, 'O': -0.777834, 'Na': 1.00}        # BSM charges
     zero_camm      = ''                                                # for correction terms: moments
     fderiv_j       = ''                                                # for correction terms: fderivs of moments
+    qm_method      = 'SCF'                                             # QM method for density matrix (Default: RHF, DFT)
     
     ### checking and troubleshooting
     print_derivatives = False                                          # prints derivatives of DMTP
@@ -267,7 +268,7 @@ def Main(argv):
     ## --------------------------- ##
     
     try:
-        opts, args = getopt.getopt(argv, "hi:a:s:cF:n:gx:fM:ot:m:T:OC:ydu:b:pW:A:B:kQj:l:e:D:w:PN:SR:GEV:z:Z:XU:H:L:T:TO:" ,
+        opts, args = getopt.getopt(argv, "hi:a:s:cF:n:gx:fM:ot:m:T:OC:ydu:b:pW:A:B:kQj:l:e:D:w:PN:SR:GEV:z:Z:XU:H:L:T:TO:O:" ,
                                         ["help"      ,
                                          "inputs="   ,
                                          "anh="      ,
@@ -315,7 +316,8 @@ def Main(argv):
                                          "suplist="   ,
                                          "sol-supl"   ,
                                          "hessian"    ,
-                                         "nframes="   ,]    )
+                                         "nframes="   ,
+                                         "qm-method="]    )
     except getopt.GetoptError, error:  
         print "\n   SLV: Error in command line! Quitting...\n"
         exit()
@@ -441,6 +443,8 @@ def Main(argv):
               sol_suplist = map(int,arg.split(','))
               sol_suplist = map(m1 ,sol_suplist)
            else: sol_suplist = [x for x in range(int(arg))]
+        if opt in ("--qm_method",):
+           qm_method = arg
                     
     ### --- choose the task --------------------------------------------------
     
@@ -527,7 +531,8 @@ def Main(argv):
                         cartesian=cartesian,
                         L=ANH.L,
                         camm=SolCAMM,
-                        eds=eds)
+                        eds=eds,
+                        method=qm_method)
               fderiv = CALC.Fder
               fdip=0;sdip=0;dipole=0
 
@@ -668,7 +673,8 @@ def Main(argv):
                     dir='.',
                     cartesian=cartesian,
                     L=ANH.L,
-                    camm=SolCAMM)
+                    camm=SolCAMM,
+                    method=qm_method)
 
           PARAM = MCHO(fderiv=fdip,sderiv=0,
                        gijj=ANH.K3,freq=freq,redmass=redmass,

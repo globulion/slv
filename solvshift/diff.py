@@ -24,7 +24,7 @@ where X=5,9"""
                  dir="",cartesian=False,L=0,
                  camm=False,pol=False,eds=False,efp=False,
                  solefp=False,nae=0,basis='6-311++G**',
-                 dpol=False,lprint=True,sims=None):
+                 dpol=False,lprint=True,sims=None,method='SCF'):
 
         self.camm = camm
         # number of normal modes
@@ -98,7 +98,7 @@ where X=5,9"""
            self.__sim_gms = list()
            fdir = solefp
            print " PIPEK-MEZEY LOCALIZATION AND LMTP EVALUATION..."
-           self.tran_set_1, self.lmoc_set_1, self.vecl_set_1 = self.Parse_tran(dir+fdir,nae,basis)
+           self.tran_set_1, self.lmoc_set_1, self.vecl_set_1 = self.Parse_tran(dir+fdir,nae,basis,method)
            self.U = self.vecl_set_1[0]
            self.rLMO = self.lmoc_set_1[0]
            print " PARSING FOCK MATRICES..."
@@ -205,7 +205,7 @@ where X=5,9"""
         return first_der_dpol_mode.reshape(self.nAtoms*3-6,N,3,3)
         #return first_der_dpol_cart.reshape(self.nAtoms*3,N,3,3)
     
-    def Parse_tran(self,dir,nae,basis):
+    def Parse_tran(self,dir,nae,basis,method):
         """parses CMO transformation matrices from fchk files and transforms
 them to LMO space"""
         files_fchk = glob.glob('%s/*_.fchk' % dir)
@@ -235,7 +235,7 @@ them to LMO space"""
             basis_size = len(bfs)
             natoms= len(mol.atoms)
             SAO   = PyQuante.Ints.getS(bfs)
-            dmat  = libbbg.utilities.ParseDmatFromFchk(fchk,basis_size)
+            dmat  = libbbg.utilities.ParseDmatFromFchk(fchk,basis_size,type=method)
             veccmo= libbbg.utilities.ParseVecFromFchk(fchk)[:nae,:]
             tran, veclmo = libbbg.utilities.get_pmloca(natoms,mapi=bfs.LIST1,sao=SAO,
                                                 vecin=veccmo,nae=nae,
@@ -474,12 +474,13 @@ type -3: transformation matrix from AO to LMO (nmos, nbasis)
 
         return second_der_pol_mode
 
-    def ParseDmatFromFchk(self,file,basis_size):
+    def ParseDmatFromFchk(self,file,basis_size,type):
         """parses density matrix from Gaussian fchk file"""
         
         data = open(file)
         line = data.readline()
-        querry = "Total SCF Density"
+        #querry = "Total SCF Density"
+        querry = "Total MP2 Density"
         while 1:
             if querry in line: break
             line = data.readline()
@@ -925,12 +926,15 @@ if __name__ == '__main__':
    #from head import *
    import os, glob, pp, PyQuante, libbbg.utilities, coulomb.multip
    
-   def ParseDmatFromFchk(file,basis_size):
+   def ParseDmatFromFchk(file,basis_size,type):
         """parses density matrix from Gaussian fchk file"""
         
         data = open(file)
         line = data.readline()
-        querry = "Total SCF Density"
+        if   type.lower()=='scf': querry = "Total SCF Density" 
+        elif type.lower()=='mp2': querry = "Total MP2 Density"
+        elif type.lower()=='cc' : querry = "Total CC Density"
+        else: raise Exception(" Type <%s> is invalid" % type)
         while 1:
             if querry in line: break
             line = data.readline()
@@ -983,7 +987,7 @@ if __name__ == '__main__':
                                      units='Bohr')
                             
        basis_size = len(PyQuante.Ints.getbasis(molecule,'6-311++G**'))
-       dmat = ParseDmatFromFchk(file_fchk,basis_size)
+       dmat = ParseDmatFromFchk(file_fchk,basis_size,type)
        
        ### calculate CAMMs                    
        CAMM = coulomb.multip.MULTIP(molecule=molecule,
@@ -1066,7 +1070,7 @@ using COULOMB.py routines"""
                             
            basis_size = len(PyQuante.Ints.getbasis(molecule,basis))
            print " - basis size= ",basis_size
-           dmat = ParseDmatFromFchk(pliki_fchk[i],basis_size)
+           dmat = ParseDmatFromFchk(pliki_fchk[i],basis_size,type)
        
            ### calculate CAMMs                    
            camm = coulomb.multip.MULTIP(molecule=molecule,
@@ -1086,7 +1090,7 @@ using COULOMB.py routines"""
            print " Writing file:  :", file_log[:-4]+'.camm'
        print
 
-   def bua(file_fchk,basis,bonds,vec,vec_ref):
+   def bua(file_fchk,basis,bonds,vec,vec_ref,method):
        molecule = libbbg.utilities.Read_xyz_file(file_fchk,mol=True,
                                           mult=1,charge=0,
                                           name='happy dummy molecule')
@@ -1094,7 +1098,8 @@ using COULOMB.py routines"""
        bfs        = PyQuante.Ints.getbasis(molecule,basis)
        basis_size = len(bfs)
        #print " - basis size= ", basis_size
-       dmat = libbbg.utilities.ParseDmatFromFchk(file_fchk,basis_size)
+       print " - parsing %s density matrix" % method
+       dmat = libbbg.utilities.ParseDmatFromFchk(file_fchk,basis_size,method)
        def check_sim(l):
            """check the sim list"""
            for x,y in l:
@@ -1143,7 +1148,7 @@ using COULOMB.py routines"""
        return
 
    def CalculateCAMM_(basis='6-311++G**',bonds=[],ncpus=4,
-                      vec=None,vec_ref=None,natoms=7): 
+                      vec=None,vec_ref=None,natoms=7,method='SCF'): 
        """calculates CAMMs from density matrix from GAUSSIAN09
 using COULOMB.py routines"""
 
@@ -1178,11 +1183,11 @@ using COULOMB.py routines"""
        # submit the jobs!
        i=0
        for file_fchk in pliki_fchk:
-           jobs.append( job_server.submit(bua, (file_fchk,basis,bonds,vec,vec_ref),
+           jobs.append( job_server.submit(bua, (file_fchk,basis,bonds,vec,vec_ref,method),
                                            (),
                                           #(Read_xyz_file,ParseDmatFromFchk,ParseDMA,ParseVecFromFchk,get_pmloca,),
                                           ("coulomb.multip","PyQuante",
-                                           "PyQuante.Ints","libbbg.utilities","libbbg.units","orbloc") ) )
+                                           "PyQuante.Ints","libbbg.utilities","libbbg.units","libbbg.qm.pmloca" )))
            if (i%4==0 and i!=0): job_server.wait()
            i+=1
        print
@@ -1199,9 +1204,11 @@ using COULOMB.py routines"""
    #bonds=[(1,0),(2,1),(3,2),(4,2)] # NMA
    bonds = None
    vec = None
+   basis = argv[1]
+   method = argv[2]
    #for i in range(len(bonds)): bonds[i]=tuple(bonds[i])
    #print bonds
    #os.environ['__IMPORT__COULOMB__']=1
-   CalculateCAMM_(basis=argv[1],bonds=bonds,vec=vec)
+   CalculateCAMM_(basis=basis,bonds=bonds,vec=vec,method=method)
 
    
