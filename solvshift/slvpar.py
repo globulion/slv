@@ -428,7 +428,7 @@ and RMS from the last superimposition"""
 
     def get_traceless(self):
         """return traceless quadrupoles and octupoles"""
-        dmaq, dmao = efprot.tracls(self.__dmaq.copy(), self.__dmao.copy())
+        dmaq, dmao = solvshift.efprot.tracls(self.__dmaq.copy(), self.__dmao.copy())
         return dmaq, dmao
     
 #    def get_traceless_1(self, ravel=False):
@@ -436,7 +436,7 @@ and RMS from the last superimposition"""
         """return traceless 1st derivatives wrt modes of quadrupoles and octupoles"""
         dmaq1 = self.__dmaq1.ravel()
         dmao1 = self.__dmao1.ravel()
-        dmaq1, dmao1 = efprot.tracl1(dmaq1.copy(), dmao1.copy(), self.__nmodes, self.__ndma)
+        dmaq1, dmao1 = solvshift.efprot.tracl1(dmaq1.copy(), dmao1.copy(), self.__nmodes, self.__ndma)
         #if not ravel:
         #   self.__dmaq1 = self.__dmaq1.reshape(self.__nmodes, self.__ndma, 6)
         #   self.__dmao1 = self.__dmao1.reshape(self.__nmodes, self.__ndma, 10)
@@ -445,7 +445,7 @@ and RMS from the last superimposition"""
     
     def get_traceless_2(self):
         """return traceless  2nd derivatives wrt modes of quadrupoles and octupoles"""
-        dmaq2, dmao2 = efprot.tracls(self.__dmaq2.copy(), self.__dmao2.copy())
+        dmaq2, dmao2 = solvshift.efprot.tracls(self.__dmaq2.copy(), self.__dmao2.copy())
         return dmaq2, dmao2
    
     # UTILITY METHODS
@@ -525,20 +525,20 @@ and RMS from the last superimposition"""
         # transform dipoles, quadrupoles and octupoles!
         if self.__dmac  is not None:
            self.__dmad, self.__dmaq, self.__dmao = \
-           efprot.rotdma(self.__dmad, self.__dmaq, self.__dmao,rot)
+           solvshift.efprot.rotdma(self.__dmad, self.__dmaq, self.__dmao,rot)
         if self.__dmac1 is not None:
            self.__dmad1 = self.__dmad1.ravel()
            self.__dmaq1 = self.__dmaq1.ravel()
            self.__dmao1 = self.__dmao1.ravel()
            self.__dmad1, self.__dmaq1, self.__dmao1 = \
-           efprot.rotdm1(self.__dmad1, self.__dmaq1, self.__dmao1, rot,
+           solvshift.efprot.rotdm1(self.__dmad1, self.__dmaq1, self.__dmao1, rot,
                         self.__nmodes, self.__ndma)
            self.__dmad1 = self.__dmad1.reshape(self.__nmodes, self.__ndma, 3)
            self.__dmaq1 = self.__dmaq1.reshape(self.__nmodes, self.__ndma, 6)
            self.__dmao1 = self.__dmao1.reshape(self.__nmodes, self.__ndma, 10)
         if self.__dmac2 is not None:
            self.__dmad2, self.__dmaq2, self.__dmao2 = \
-           efprot.rotdma(self.__dmad2, self.__dmaq2, self.__dmao2,rot)
+           solvshift.efprot.rotdma(self.__dmad2, self.__dmaq2, self.__dmao2,rot)
         # transform distributed polarizabilities!
         if self.__dpol   is not None:
            for i in xrange(self.__npol):
@@ -551,13 +551,13 @@ and RMS from the last superimposition"""
         if self.__vecl  is not None:
            bfs = self.get_bfs()
            typs= bfs.get_bfst().sum(axis=1)
-           self.__vecl = efprot.vecrot(self.__vecl, rot, typs)
+           self.__vecl = solvshift.efprot.vecrot(self.__vecl, rot, typs)
            if self.__vecc  is not None:
-              self.__vecc  = efprot.vecrot(self.__vecc, rot, typs)
+              self.__vecc  = solvshift.efprot.vecrot(self.__vecc, rot, typs)
            if self.__vecl1 is not None:
-              self.__vecl1 = efprot.vc1rot(self.__vecl1, rot, typs)
+              self.__vecl1 = solvshift.efprot.vc1rot(self.__vecl1, rot, typs)
            if self.__vecc1 is not None:
-              self.__vecc1 = efprot.vc1rot(self.__vecc1, rot, typs)
+              self.__vecc1 = solvshift.efprot.vc1rot(self.__vecc1, rot, typs)
         return
     
     def sup(self, xyz, suplist=None, dxyz=None, rotran=None):
@@ -610,20 +610,20 @@ and RMS from the last superimposition"""
         # transform dipoles, quadrupoles and octupoles!
         if self.__dmac  is not None:
            self.__dmad, self.__dmaq, self.__dmao = \
-           efprot.rotdma(self.__dmad, self.__dmaq, self.__dmao, rot)
+           solvshift.efprot.rotdma(self.__dmad, self.__dmaq, self.__dmao, rot)
         if self.__dmac1 is not None:
            self.__dmad1 = self.__dmad1.ravel()
            self.__dmaq1 = self.__dmaq1.ravel()
            self.__dmao1 = self.__dmao1.ravel()
            self.__dmad1, self.__dmaq1, self.__dmao1 = \
-           efprot.rotdm1(self.__dmad1, self.__dmaq1, self.__dmao1, rot,
+           solvshift.efprot.rotdm1(self.__dmad1, self.__dmaq1, self.__dmao1, rot,
                         self.__nmodes, self.__ndma)
            self.__dmad1 = self.__dmad1.reshape(self.__nmodes, self.__ndma, 3)
            self.__dmaq1 = self.__dmaq1.reshape(self.__nmodes, self.__ndma, 6)
            self.__dmao1 = self.__dmao1.reshape(self.__nmodes, self.__ndma, 10)
         if self.__dmac2 is not None:
            self.__dmad2, self.__dmaq2, self.__dmao2 = \
-           efprot.rotdma(self.__dmad2, self.__dmaq2, self.__dmao2, rot)
+           solvshift.efprot.rotdma(self.__dmad2, self.__dmaq2, self.__dmao2, rot)
         # transform distributed polarizabilities!
         if self.__dpol   is not None:
            for i in xrange(self.__npol):
@@ -636,13 +636,13 @@ and RMS from the last superimposition"""
         if self.__vecl  is not None:
            bfs = self.get_bfs()
            typs= bfs.get_bfst().sum(axis=1)
-           self.__vecl = efprot.vecrot(self.__vecl, rot, typs)
+           self.__vecl = solvshift.efprot.vecrot(self.__vecl, rot, typs)
            if self.__vecc  is not None:
-              self.__vecc  = efprot.vecrot(self.__vecc, rot, typs)
+              self.__vecc  = solvshift.efprot.vecrot(self.__vecc, rot, typs)
            if self.__vecl1 is not None:
-              self.__vecl1 = efprot.vc1rot(self.__vecl1, rot, typs)
+              self.__vecl1 = solvshift.efprot.vc1rot(self.__vecl1, rot, typs)
            if self.__vecc1 is not None:
-              self.__vecc1 = efprot.vc1rot(self.__vecc1, rot, typs)
+              self.__vecc1 = solvshift.efprot.vc1rot(self.__vecc1, rot, typs)
         return rms
     
     def copy(self):

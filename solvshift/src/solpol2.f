@@ -121,7 +121,7 @@ C-----|--|---------|---------|---------|---------|---------|---------|--|------|
      *                  MAT1,REDMSS,FREQ,GIJJ,RPOL1,POL1,LVEC,
      *                  NMOLS,NDMA,NPOL,NDIM,NDMAS,MODE,NMODES,NDMAC,
      *                  NPOLC,MDIP,MQAD,MOCT,MRPOL,MPOL,LWRITE,
-     *                  EPOL,SHIFT,FI,AVEC)
+     *                  EPOL,SHIFT,FI,AVEC,DIPIND)
 C
 C -----------------------------------------------------------------------------
 C
@@ -158,7 +158,8 @@ C
      &          POL1(NMODES*NPOLC*9),
      &          NDMA(NMOLS),NPOL(NMOLS),
      &          RPOL1(NMODES*NPOLC*3),FI(NMODES),
-     &          IPIV(10000),WORK(5000000),VEC1(NDIM),VEC2(NDIM)
+     &          IPIV(10000),WORK(5000000),VEC1(NDIM),VEC2(NDIM),
+     &          DIPIND(NDIM)
       PARAMETER (ZERO=0.0D+00,HALF=0.50D+00,ONE=1.00D+00,TWO=2.00D+00)
       DOUBLE PRECISION DDOT
       DOUBLE PRECISION MAT1(NDIM,NDIM)
@@ -166,7 +167,7 @@ C
       LOGICAL LWRITE
       EXTERNAL ILAENV,DGETRF,DGETRI,DDOT,DGEMM
 C
-Cf2py INTENT(OUT) EPOL, SHIFT, FI, AVEC
+Cf2py INTENT(OUT) EPOL, SHIFT, FI, AVEC, DIPIND
 C
       DATA IPIV/10000*0/
       DATA WORK/5000000*0.0D+00/
@@ -199,7 +200,7 @@ C
 C
 C     CALCULATE INDUCED DIPOLES (-VEC2-) AND POLARIZATION ENERGY
 C
-C      CALL DGMV('N',DMAT,FLDS,VEC2,NDIM)
+      CALL DGMV('N',DMAT,FLDS,DIPIND,NDIM)
 C      EPOL = - DDOT(NDIM,FLDS,1,VEC2,1) * HALF
        EPOL = ZERO
 C

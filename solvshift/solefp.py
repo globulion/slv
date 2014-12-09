@@ -102,6 +102,7 @@ Also set the BSM parameters if not done in set_bsm.
            self.__suplist = supl
            self.__suplist_c = supl[0]
         else: self.__suplist_c = None
+        self.__flds = None
         self._update(pos)
         # store the information about central molecule
         if self.__eval_freq and bsm is not None:
@@ -115,6 +116,12 @@ Also set the BSM parameters if not done in set_bsm.
            self.__freq   = parc['freq']
            self.__mode   = parc['mode']
            self.__mol    = self.__bsm[0].get_mol()
+           self.__avec   = None
+           # correct the erroneous signs for MeSCN molecule
+           #for i in [2-1,5-1,7-1,10-1]:
+           #    self.__gijk[i,3,3]*= -1.000
+           #    self.__gijk[3,i,3]*= -1.000
+           #    self.__gijk[3,3,i]*= -1.000
            #self.__gijk[-7:,:,:].fill(0.0)
            #self.__gijk[:,-7:,:].fill(0.0)
            #self.__gijk[:,:,-7:].fill(0.0)
@@ -173,6 +180,18 @@ are counted."""
     def get_shifts(self):
         """Return frequency shift data"""
         return self.__shift.copy()
+
+    def get_fields(self):
+        """Return the electric fields at all distributed polarizability sites as a tuple (Fields,r)"""
+        return self.__flds
+
+    def get_dipind(self):
+        """Return the induced dipoles at all distributed polarizability sites as a tuple (Dip,r)"""
+        return self.__dipind
+
+    def get_avec(self):
+        """Return the solvatochromic induced dipoles at all distributed polarizability sites as a tuple (Dip,r)"""
+        return self.__avec
 
     def get_forces(self, tot=False):
         """
@@ -1083,12 +1102,9 @@ Now, only for exchange-repulsion layer"""
                  mat1 = numpy.zeros((DIM,DIM), numpy.float64)
                  #
                  flds = numpy.zeros( DIM, numpy.float64)
-                 dipind=numpy.zeros( DIM, numpy.float64)
-                 sdipnd=numpy.zeros( DIM, numpy.float64)
                  vec1  =numpy.zeros( DIM, numpy.float64)
                  vec2  =numpy.zeros( DIM, numpy.float64)
                  fivec =numpy.zeros( DIM, numpy.float64)
-                 avec  =numpy.zeros( DIM, numpy.float64)
                  mivec =numpy.zeros( DIM, numpy.float64)
                  #
                  #pol1.fill(0.0)
@@ -1098,7 +1114,7 @@ Now, only for exchange-repulsion layer"""
                  #                           sdipnd, avec, vec1, mat1,
                  #                           redmss, freq, gijj, rpol1, pol1, lvec,
                  #                           ndma, npol, self.__mode, ndmac, npolc, lwrite=False)
-                 epol, spol, fi, avec = solvshift.solpol2.sftpli(rdma, chg, dip, qad, oct, 
+                 epol, spol, fi, avec, dipind = solvshift.solpol2.sftpli(rdma, chg, dip, qad, oct, 
                                                        chgc1, dipc1, qadc1, octc1,
                                                        rpol, polinv, mivec, dmat, flds, dimat, fivec,
                                                        vec1, vec2, mat1, redmss, freq, gijj, 
@@ -1106,6 +1122,12 @@ Now, only for exchange-repulsion layer"""
                                                        ndma, npol, self.__mode, ndmac, npolc, lwrite=False)
                  # store the forces
                  self.__fi_pol = fi
+                 # store field values at all polarizable centers
+                 self.__flds   =(flds  .reshape(npols,3), rpol.reshape(npols,3))
+                 # store induced dipole moments at all polarizable centers
+                 self.__dipind =(dipind.reshape(npols,3), rpol.reshape(npols,3))
+                 # store solvatochromic induced dipole moments at all polarizable centers
+                 self.__avec   =(avec  .reshape(npols,3), rpol.reshape(npols,3))
                  #
                  if self.__cunit: 
                     epol  *= self.HartreeToKcalPerMole
