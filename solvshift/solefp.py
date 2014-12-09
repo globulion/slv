@@ -102,11 +102,12 @@ Also set the BSM parameters if not done in set_bsm.
            self.__suplist = supl
            self.__suplist_c = supl[0]
         else: self.__suplist_c = None
-        self.__flds = None
         self._update(pos)
+        self.__flds = None
         # store the information about central molecule
         if self.__eval_freq and bsm is not None:
            parc = self.__bsm[0].get()
+           self.__pos_ref= parc['pos']
            self.__nmodes = parc['nmodes']
            self.__nata   = parc['natoms']
            self.__atno   = parc['atno']
@@ -484,6 +485,58 @@ This structure has identical internal coordinates as fragment BSM gas-phase stru
         c = 1.0000
         if units.lower().startswith('ang'): c = self.BohrToAngstrom
         return self.__pos_c.copy() * c
+  
+    def get_pos_ref(self, units='bohr'):
+        """Return solute reference structure (relevant if central molecule is ON). 
+This structure has identical internal coordinates as fragment BSM gas-phase structure.
+Note that this structure is the one BEFORE performing superimposition (while get_pos_c is AFTER), 
+and if there is no copying of __bsm[0] object the get_pos_ref orientation and position will be different than the original
+BSM structure from SLV parameter file library."""
+        c = 1.0000
+        if units.lower().startswith('ang'): c = self.BohrToAngstrom
+        return self.__pos_ref.copy() * c
+
+    def get_rot_transl(self):
+        """Return the rotation matrix and translation vector defining the translation:
+   pos_ref = numpy.dot(pos_c,rot) + transl
+Note that the RMS of superimposition is always exactly ZERO in this case.
+See also: get_pos_c, get_pos_ref"""
+        s = libbbg.utilities.SVDSuperimposer()
+        s.set(self.__pos_ref, self.__pos_c)
+        s.run()
+        rms         = s.get_rms()
+        rot, transl = s.get_rotran()
+        return rot, transl
+
+    def get_center_c(self,r1,r2=None):
+        """Return a center [x,y,z]
+Usage:
+ get_center_c(r1)    - [r1+1]-th atomic centre in __pos_c
+ get_center_c(r1,r2) - midbond point between [r1+1]-th and [r2+1]-th centres in __pos_c.
+See also: get_pos_c, get_pos_ref"""
+        if r2 is None: return self.__pos_c[r1]
+        else: return 0.500*(self.__pos_c[r1] + self.__pos_c[r2])
+
+    def get_center_ref(self,r1,r2=None):
+        """Return a center [x,y,z]
+Usage:
+ get_center_c(r1)    - [r1+1]-th atomic centre in __pos_ref
+ get_center_c(r1,r2) - midbond point between [r1+1]-th and [r2+1]-th centres in __pos_ref.
+See also: get_pos_c, get_pos_ref"""
+        if r2 is None: return self.__pos_ref[r1]
+        else: return 0.500*(self.__pos_ref[r1] + self.__pos_ref[r2])
+
+    def transform_vec_to_bsm_orientation(self, vec, t=False):
+        """Transforms the vectors to the BSM molecule orientation (if __bsm[0] is copied in eval).
+vec can be a single array of size 3 or a set of N vectors in array of size N x 3.
+Usage:
+      vec = transform_vec_to_bsm_orientation(vec, t=False)
+ if t=True: then perform also translation; otherwise only rotation is performed.
+See also: get_rot_transl, get_pos_c, get_pos_ref"""
+        rot, transl = self.get_rot_transl()
+        vec = numpy.dot(vec, rot)
+        if t: vec += transl
+        return vec
 
     def get_pos_sol(self, units='bohr'):
         """Return solvent superimposed structure (relevant if central molecule is ON).
@@ -924,7 +977,7 @@ Now, only for exchange-repulsion layer"""
            PAR = []
            QO  = []
            ### central molecule
-           frg = self.__bsm[0]#.copy()
+           frg = self.__bsm[0].copy()
            self.__rms_central = frg.sup( self.__rc, self.__suplist_c, dxyz=dxyz )
            # store actual position of the fragment
            self.__pos_c = frg.get_pos()
@@ -1292,7 +1345,7 @@ Now, only for exchange-repulsion layer"""
            iem = numpy.zeros(nm        , dtype=bool)
            #
            nccut, npcut, necut, mccut, mpcut, mecut = \
-                                        solvshift.solpol.mollst(rc,rm,ic,ip,ie,icm,ipm,iem,
+                                        solvshift.solpol2.mollst(rc,rm,ic,ip,ie,icm,ipm,iem,
                                                       self.__nmol[1:],
                                                       self.__ccut,
                                                       self.__pcut,
