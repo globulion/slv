@@ -1019,6 +1019,7 @@ Now, only for exchange-repulsion layer"""
            self.__dq_rep = numpy.zeros((self.__nata,3), dtype=numpy.float64)
            ### other molecules
            rms_max = 0.0
+           if lwrite: print " %10d molecules in the ELECT layer" % N
            for i in range(N):
                im = self.__mtc[i]
                nm_prev = sum(self.__ntc[:i])
@@ -1111,6 +1112,7 @@ Now, only for exchange-repulsion layer"""
                  PAR.append( parc )
                  QO.append( (qadc, octc) )
                  ### other molecules
+                 if lwrite: print " %10d molecules in the POL layer" % N
                  for i in range(N):
                      im = self.__mtp[i]
                      nm_prev = sum(self.__ntp[:i])
@@ -1197,6 +1199,7 @@ Now, only for exchange-repulsion layer"""
                N = len(self.__nte)
                PAR = []
                ### other molecules
+               if lwrite: print " %10d molecules in the EX-REP layer" % N
                for i in range(N):
                    im = self.__mte[i]
                    nm_prev = sum(self.__nte[:i])
