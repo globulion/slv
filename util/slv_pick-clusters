@@ -29,8 +29,8 @@ from MDAnalysis.coordinates.xdrfile.libxdrfile2 import xdrfile_open, xdrfile_clo
                                                        read_xtc_natoms, read_xtc  ,\
                                                        read_xtc, DIM, exdrOK
 from MDAnalysis.coordinates.TRJ import TRJReader, NCDFReader
-from units import UNITS as u
-import glob, os, utilities
+from libbbg.units import UNITS as u
+import glob, os, libbbg.utilities
 
 # GAMESS input template
 t_1 = """\
@@ -67,14 +67,14 @@ thr        = float(argv[4]) * u.AngstromToBohr
 name_1     =       argv[5]
 n_1        =   int(argv[6])
 a_1        =       argv[7].split(',')
-atoms_1    = array(utilities.text_to_list(argv[8],delimiter=','),int)-1
+atoms_1    = array(libbbg.utilities.text_to_list(argv[8],delimiter=','),int)-1
 if len(argv)>9 : name_2     =     argv[9]
 else:            name_2     = 'water'
 if len(argv)>10: n_2       = int(argv[10])
 else:            n_2        = 3 # water as default
 if len(argv)>11: a_2        =     argv[11].split(',')
 else:            a_2        = ['O','H','H']
-if len(argv)>12: atoms_2    = array(utilities.text_to_list(argv[12],delimiter=','),int)-1
+if len(argv)>12: atoms_2    = array(libbbg.utilities.text_to_list(argv[12],delimiter=','),int)-1
 else:            atoms_2    = array([1,2,3],int)-1
 
 natoms  = read_xtc_natoms(trajectory)
