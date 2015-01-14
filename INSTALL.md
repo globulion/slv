@@ -85,7 +85,9 @@
                                                                                                                                                 
              2) Modify cc_exe in numpy/distutils/intelccompiler.py
                                                                                                                                                 
-                self.cc_exe = 'icc -O3 -g -fPIC -fp-model strict -fomit-frame-pointer -openmp -xhost -DMKL_ILP64' 
+                self.cc_exe = 'icc -O3 -g -fPIC -fp-model strict -fomit-frame-pointer -openmp -xhost' 
+                
+                In the case of ILP64 interface add also -DMKL_ILP64 to these options
                                                                                                                                                 
              3) Modify file numpy/distutils/fcompiler/intel.py
                                                                                                                                                 
