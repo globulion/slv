@@ -87,8 +87,8 @@ XTC = xdrfile_open(trajectory,'r')
 a_1 = array(a_1)[atoms_1]; a_2 = array(a_2)[atoms_2]
 sym_c  = [ 'A%02i%s' % (x+1,a_1[x]) for x in range(len(a_1)) ]
 sym_s  = [ 'A%02i%s' % (x+1,a_2[x]) for x in range(len(a_2)) ]
-file_c = os.environ['SLV_PATH'] + '/frg/%s/%s.efp' % (name_1,name_1)
-file_s = os.environ['SLV_PATH'] + '/frg/%s/%s.efp' % (name_2,name_2)
+file_c = os.environ['SLV_DATA'] + '/frg/%s/%s.efp' % (name_1,name_1)
+file_s = os.environ['SLV_DATA'] + '/frg/%s/%s.efp' % (name_2,name_2)
 
 o  = open(file_c); par_c = o.read(); o.close()
 o  = open(file_s); par_s = o.read(); o.close()
