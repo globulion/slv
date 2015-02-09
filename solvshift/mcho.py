@@ -7,6 +7,7 @@ from numpy    import *
 from libbbg.dma      import *
 from dipderiv import *
 from onsager  import *
+import os
 
 __all__ = ['MCHO',]
 __version__ = '3.0.0'
@@ -654,9 +655,10 @@ class MCHO(UNITS):
                 self.gijj[i,i,i]*sqrt(self.redmass[i]*self.redmass[i]**2)) 
                 
          print >> out, "SEMI-OFFDIAGONALS"
+         print " WARNING: SLV_MODE_ID for report generation is set to %d (Python convention)" % int(os.environ['SLV_MODE_ID'])
          for i in range(   self.nModes): 
              for j in range(   self.nModes):
-                if j==3: 
+                if j==int(os.environ['SLV_MODE_ID']): 
                  print >> out, "%d %d %d %14.6f"%(i+1,j+1,j+1,
                 self.gijj[i,j,j]*sqrt(self.redmass[i]*self.redmass[j]**2)) 
         return
