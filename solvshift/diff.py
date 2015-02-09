@@ -246,7 +246,7 @@ them to LMO space"""
             veclmo, sim = libbbg.utilities.order(vec_ref,veclmo,start=0)
             print sim
             log_wfn += str(sim) + '\n'
-            log_wfn += check_sim(sim) + '\n\n'
+            log_wfn += libbbg.utilities.check_sim(sim) + '\n\n'
             # calculate LMTPs
             camm = coulomb.multip.MULTIP(molecule=mol,
                                          basis=basis,
@@ -260,7 +260,7 @@ them to LMO space"""
             lmoc_efp = libbbg.utilities.ParseLmocFromGamessEfpFile(files_efp[I])
             lll,sim_efp = libbbg.utilities.order(lmoc,lmoc_efp,start=0)
             log_efp += str(sim_efp) + '\n'
-            log_efp += check_sim(sim_efp) + '\n\n'
+            log_efp += libbbg.utilities.check_sim(sim_efp) + '\n\n'
             #
             ### here store the sim lists for DPOL reordering
             self.__sim_gms.append(sim_efp)
@@ -924,7 +924,7 @@ from a setup file slv.step"""
 ##############################################################################
 if __name__ == '__main__':
    #from head import *
-   import os, glob, pp, PyQuante, libbbg.utilities, coulomb.multip
+   import os, glob, pp, PyQuante, libbbg.utilities, coulomb.multip, libbbg
    
    def ParseDmatFromFchk(file,basis_size,type):
         """parses density matrix from Gaussian fchk file"""
@@ -1032,7 +1032,7 @@ if __name__ == '__main__':
    def CalculateCAMM(basis='6-311++G**',bonds=[],ncpus=1): 
        """calculates CAMMs from density matrix from GAUSSIAN09
 using COULOMB.py routines"""
-       job_server = pp.Server(ncpus)
+       #job_server = pp.Server(ncpus)
        
        pliki_fchk  = glob.glob('./*_.fchk')
        pliki_fchk.sort()
@@ -1151,7 +1151,6 @@ using COULOMB.py routines"""
                       vec=None,vec_ref=None,natoms=7,method='SCF'): 
        """calculates CAMMs from density matrix from GAUSSIAN09
 using COULOMB.py routines"""
-
        job_server = pp.Server(ncpus)
        jobs = []
        
@@ -1185,9 +1184,10 @@ using COULOMB.py routines"""
        for file_fchk in pliki_fchk:
            jobs.append( job_server.submit(bua, (file_fchk,basis,bonds,vec,vec_ref,method),
                                            (),
+                                          ("coulomb.multip","PyQuante","libbbg",
+                                           "PyQuante.Ints","libbbg.utilities", )))
+
                                           #(Read_xyz_file,ParseDmatFromFchk,ParseDMA,ParseVecFromFchk,get_pmloca,),
-                                          ("coulomb.multip","PyQuante",
-                                           "PyQuante.Ints","libbbg.utilities","libbbg.units","libbbg.qm.pmloca" )))
            if (i%4==0 and i!=0): job_server.wait()
            i+=1
        print
@@ -1197,6 +1197,42 @@ using COULOMB.py routines"""
            
        job_server.print_stats()
        return
+
+   def CalculateCAMM_not_pp(basis='6-311++G**',bonds=[],ncpus=4,
+                      vec=None,vec_ref=None,natoms=7,method='SCF'): 
+       """calculates CAMMs from density matrix from GAUSSIAN09
+using COULOMB.py routines"""
+       pliki_fchk  = glob.glob('./*_.fchk')
+       pliki_fchk.sort()
+       print "\n Kolejność plików. Sprawdź czy się zgadzają!\n"  
+       for i in range(len(pliki_fchk)):
+           print pliki_fchk[i]
+       print
+       
+       # compute reference vectors
+       if vec is not None:
+          ref_mol = libbbg.utilities.Read_xyz_file(pliki_fchk[0],mol=True,
+                                            mult=1,charge=0,
+                                            name='happy dummy molecule')
+          bfs_ref    = PyQuante.Ints.getbasis(ref_mol,basis)
+          basis_size = len(bfs_ref)
+          sao_ref    = PyQuante.Ints.getS(bfs_ref)
+          print " - basis size= ", basis_size
+          nae = vec
+          print " - nae       = ", len(vec)
+          vec_ref = libbbg.utilities.ParseVecFromFchk(pliki_fchk[0])[:nae,:]
+          t, vec_ref = libbbg.utilities.get_pmloca(natoms,mapi=bfs_ref.LIST1,
+                                            sao=sao_ref,
+                                            vecin=vec_ref,nae=nae,
+                                            maxit=100000,conv=1.0E-19,
+                                            lprint=False,
+                                            freeze=None)
+       # submit the jobs!
+       for file_fchk in pliki_fchk:
+           bua (file_fchk,basis,bonds,vec,vec_ref,method)
+       print
+       return
+
                  
    ### calculate camms!
    from sys  import argv
@@ -1209,6 +1245,6 @@ using COULOMB.py routines"""
    #for i in range(len(bonds)): bonds[i]=tuple(bonds[i])
    #print bonds
    #os.environ['__IMPORT__COULOMB__']=1
-   CalculateCAMM_(basis=basis,bonds=bonds,vec=vec,method=method)
-
+   #CalculateCAMM_(basis=basis,bonds=bonds,vec=vec,method=method)
+   CalculateCAMM_not_pp(basis=basis,bonds=bonds,vec=vec,method=method)
    
