@@ -34,9 +34,9 @@
                                          Last revision: 11 Sep 2014
 """
 from sys import argv, exit
-from gaussfreq import FREQ
+from libbbg.gaussfreq import FREQ
 from solvshift.diff import DIFF
-from utilities import PRINTL, ParseDMA, Read_xyz_file
+from libbbg.utilities import PRINTL, ParseDMA, Read_xyz_file
 from numpy import shape
 from solvshift.slvpar import Frag
 

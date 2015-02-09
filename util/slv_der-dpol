@@ -12,9 +12,9 @@ from numpy import array, float64
 if len(argv)==1: exit()
 # --------------------------------------
 from solvshift.diff import DIFF as diff
-from gaussfreq import FREQ
+from libbbg.gaussfreq import FREQ
 from solvshift.slvpar import Frag
-from utilities import order,reorder
+from libbbg.utilities import order,reorder
 from scitools import filetable as ft
 # --------------------------------------
 
