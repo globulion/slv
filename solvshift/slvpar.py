@@ -92,6 +92,7 @@ class Frag(object, libbbg.units.UNITS):
      o meoh       Methanol                YES    NO     NO                                         
      o chcl3      Chloroform              YES    NO     NO                                         
      o dcm        Dichloromethane         YES    NO     NO  
+     o li+        Lithium cation          YES    NO     NO
      o na+        Sodium cation           YES    NO     NO
      o me-so3-    Methyl sulphonate (-1)  YES    NO     NO
      o so3--      SO3 (2-) anion          YES    NO     NO
@@ -99,7 +100,8 @@ class Frag(object, libbbg.units.UNITS):
      o nma        N-methyl acetamide      YES    YES    NO       amide I mode                      
      o nma-d7     NMA-D7                  YES    YES    NO       amide I' mode
                                                                 (all H deuterated)
-     o mescn      Methyl thiocyanide      YES    YES             C=N stretch
+     o mescn      Methyl thiocyanide      YES    YES    NO       C=N stretch
+     o et2coo     Diethyl carbonate       YES    YES    NO       C=O stretch
                                                                             
     ----------------------------------------------------------------------------                   
      frag = Frag(file)   where file is the Frag format file (*.frg) with parame
@@ -252,8 +254,8 @@ class Frag(object, libbbg.units.UNITS):
     ### built-in parameters
     params = ['water'  ,'water2' ,'nma'     ,'nma-d7'  ,'mescn'   ,'meoac'   ,
               'meoh'   ,'dmso'   ,'dcm'     ,'chcl3'   ,'na+'     ,'so3--'   ,
-              'me-so3-',]
-              
+              'me-so3-','li+'    ,'et2coo', ]
+               
     def __init__(self, file=None):
         self.__file = file
         self.__dir  = None
