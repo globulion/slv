@@ -508,7 +508,7 @@ C1 0
            inp = inp.tolist()
            for j in range(nAtoms):
                inp[j] = "%-3s %7.1f %16.10f %16.10f %16.10f\n"\
-                  % (data[j][0], Atom(data[j][0]).atno,
+                  % (data[j][0], libbbg.units.Atom(data[j][0]).atno,
                     f_inp[j][0], f_inp[j][1], f_inp[j][2] )
            XYZ=''.join(inp); XYZ=XYZ[:-1]
                              #% (data[j][0], libbbg.units.UNITS.atomic_numbers[data[j][0]],
