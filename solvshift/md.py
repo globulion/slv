@@ -51,7 +51,7 @@ class MDInput:
 
  <args> is a list and contains the following information:
 
-   args = [ ind, nmol, bsm, supl ]
+   args = [ ind, nmol, bsm, supl, reord ]
 
  For the details about these memorials read Frag class documentation
  by typing 
@@ -60,14 +60,15 @@ class MDInput:
    help(Frag)
 
  -------------------------------------------------------------------
-                                                         @Globulion
+                              Last Revision: 18 Feb 2015 @Globulion
 """
    def __init__(self,file):
        self.__file_name = file
        self.__bsm  = list()
-       self.__supl = list()
        self.__nmol = list()
        self.__ind  = list()
+       self.__supl = list()
+       self.__reord= list()
        self.__frag_idx = 0
        self.__frame_slice = list()
 
@@ -81,7 +82,7 @@ Usage:
 
     args, idx = MDInputInstance.get()
 """
-       args = [ self.__ind, self.__nmol, self.__bsm, self.__supl ]
+       args = [ self.__ind, self.__nmol, self.__bsm, self.__supl, self.__reord ]
        idx  = self.__frame_slice
        return args, idx
 
@@ -92,7 +93,7 @@ Usage:
    
    def get_args(self):
        """get arguments for Frag.set method"""
-       args = [ self.__ind, self.__nmol, self.__bsm, self.__supl ]
+       args = [ self.__ind, self.__nmol, self.__bsm, self.__supl, self.__reord ]
        return args
 
    def get_efp(self,frame):
@@ -122,17 +123,18 @@ Usage:
        frag = solvshift.slvpar.Frag(lines[0].split()[1])
 
        # reorder the fragment
+       reord = None
        for line in lines:
            if 'reorder' in line:
-               ord_list = map(int,line.split()[1:])
-       if b_reorder:
-          frag.reorder(ord_list)
+               reord = numpy.array( map(int,line.split()[1:]), int ) - 1
+       #if b_reorder:   # deprecated! Now reordering applies to MD structure
+       #   frag.reorder(reord)
 
        # add superimpositon list
        supl = None
        for line in lines:
            if 'supl' in line:
-               supl = libbbg.utilities.text_to_list(line.split('supl')[-1])
+               supl = libbbg.utilities.text_to_list(line.split('supl')[-1]) - 1
 
        # parse atoms for (Sol)EFP fragment
        for line in lines:
@@ -152,9 +154,14 @@ Usage:
                atoms = list(numpy.array(atoms)-1)
                self.__frame_slice += atoms
 
+       # --- in the case of no reordering, set the appropriate list
+       if reord is None:
+          reord = numpy.array( [ i for i in range(n_atoms_per_mol) ], int)
+
        # --- append to bsm and supl memorial lists
        self.__bsm.append(frag)
        self.__supl.append(supl)
+       self.__reord.append(reord)
       
        # go to the next fragment
        self.__frag_idx += 1 

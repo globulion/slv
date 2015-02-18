@@ -87,21 +87,25 @@ all          - evaluate all these interactions"""
 
     #   SET METHODS
 
-    def set(self, pos, ind, nmol, bsm=None, supl=None):
+    def set(self, pos, ind, nmol, bsm=None, supl=None, reord=None):
         """Set the initial molecular coordinates and the moltype index list. 
 Also set the BSM parameters if not done in set_bsm. 
 <pos>     -  an 2D array of atomic coordinates of dimension natoms, 3
 <ind>     -  a list of moltype ids in bsm list. Has length equal to the 
           -  total number of molecules
 <nmol>    - a list of number of atoms (integers) in each molecule
-<bsm>     - a list of a form: bsm = list(<Frag object>)"""
+<bsm>     - a list of a form: bsm = list(<Frag object>)
+<supl>    - a list of superimposition lists
+<reord>   - a list of reordering lists"""
         self.__ind = numpy.array(ind,int)
         self.__nmol= numpy.array(nmol,int)
         if bsm is not None: self.__bsm = bsm
         if supl is not None: 
            self.__suplist = supl
            self.__suplist_c = supl[0]
-        else: self.__suplist_c = None
+        if reord is not None:
+           self.__reordlist = reord
+           self.__reordlist_c = reord[0]
         self._update(pos)
         self.__flds = None
         # store the information about central molecule
@@ -978,7 +982,7 @@ Now, only for exchange-repulsion layer"""
            QO  = []
            ### central molecule
            frg = self.__bsm[0].copy()
-           self.__rms_central = frg.sup( self.__rc, self.__suplist_c, dxyz=dxyz )
+           self.__rms_central = frg.sup( self.__rc[self.__reordlist_c], self.__suplist_c, dxyz=dxyz )
            # store actual position of the fragment
            self.__pos_c = frg.get_pos()
            if lwrite: print "Central rms: ",self.__rms_central
@@ -1024,8 +1028,8 @@ Now, only for exchange-repulsion layer"""
                im = self.__mtc[i]
                nm_prev = sum(self.__ntc[:i])
                nm_curr = sum(self.__ntc[:i+1])
-               #
-               STR = self.__rcoordc[nm_prev:nm_curr]
+               #                                         reorder to BSM-FRG atom order
+               STR = self.__rcoordc[nm_prev:nm_curr]    [self.__reordlist[self.__ind[im]]]
                frg = self.__bsm[im].copy()
                if lwrite: print frg.get()['name']
                if lwrite: libbbg.utilities.PRINTL(STR * self.BohrToAngstrom, '', '')
@@ -1117,8 +1121,8 @@ Now, only for exchange-repulsion layer"""
                      im = self.__mtp[i]
                      nm_prev = sum(self.__ntp[:i])
                      nm_curr = sum(self.__ntp[:i+1])
-                     #
-                     STR = self.__rcoordp[nm_prev:nm_curr]
+                     #                                           reorder to BSM-FRG atom order
+                     STR = self.__rcoordp[nm_prev:nm_curr]      [self.__reordlist[self.__ind[im]]]
                      frg = self.__bsm[im].copy()
                      rms = frg.sup( STR, suplist= self.__suplist[self.__ind[im]] )
                      #if lwrite: print "rms P: ",rms
@@ -1204,8 +1208,8 @@ Now, only for exchange-repulsion layer"""
                    im = self.__mte[i]
                    nm_prev = sum(self.__nte[:i])
                    nm_curr = sum(self.__nte[:i+1])
-                   #
-                   STR = self.__rcoorde[nm_prev:nm_curr]
+                   #                                        reorder to BSM-FRG atom order
+                   STR = self.__rcoorde[nm_prev:nm_curr]   [self.__reordlist[self.__ind[im]]]
                    frg = self.__bsm[im].copy()
                    rms = frg.sup( STR , suplist= self.__suplist[self.__ind[im]])
                    if lwrite: print "rms E: ",rms
@@ -1322,7 +1326,10 @@ Now, only for exchange-repulsion layer"""
         self.__shift             = numpy.zeros(9,dtype=numpy.float64)
         self.__rms_central       = None
         self.__suplist           = None
+        self.__reordlist         = None
         self.__rms_solvent_max   = None
+        self.__suplist_c         = None
+        self.__reordlist_c       = None
         # current position of solute superimposed
         self.__pos_c             = None
         # current position of solvent superimposed

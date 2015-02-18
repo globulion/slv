@@ -9,7 +9,7 @@
 
  Usage:
  
-    [frg_1] [frg_2] [xyz] cutoffs <type> <supl_1> <supl_2>
+    [frg_1] [frg_2] [xyz] cutoffs <type> <supl_1> <supl_2> <reord_1> <reord_2>
  
  Notes: 
  
@@ -124,6 +124,20 @@ if supl is not None:
    for i in range(n_solvent_mol): 
        supl.append(supl_sol)
 
+# --- solute reordlist
+if len(argv)>8:
+   reord = [ array( text_to_list( argv[6], delimiter=',', dtype=int, dt=1 ) , int) , ]
+   for i in range(len(reord)): reord[i]-=1
+else: reord = None
+
+# solvent reordlist
+if len(argv)>9:
+   reord_sol = array( text_to_list( argv[7], delimiter=',', dtype=int, dt=1 ), int) - 1
+else: reord_sol = None
+if reord is not None:
+   for i in range(n_solvent_mol):
+       reord.append(reord_sol)
+
 # --- additional printout
 if len(argv)>8: lprint = bool(argv[8])
 else:           lprint = True
@@ -146,7 +160,7 @@ efp = EFP(elect=elect,pol=pol,rep=rep,corr=corr,freq=True,
 
 # --- evaluate the shifts
 t2 = time()
-efp.set(xyz,ind,nmol,bsm,supl)
+efp.set(xyz,ind,nmol,bsm,supl,reord)
 efp.eval(lprint)
 dq = efp.get_dq(theory=2)
 PRINTL(dq[0],'','') 
