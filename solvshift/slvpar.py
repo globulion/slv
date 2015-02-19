@@ -101,6 +101,7 @@ class Frag(object, libbbg.units.UNITS):
      o nma-d7     NMA-D7                  YES    YES    NO       amide I' mode
                                                                 (all H deuterated)
      o mescn      Methyl thiocyanide      YES    YES    NO       C=N stretch
+     o mecn       Methyl nitrile          YES    YES    NO       C=N stretch
      o et2coo     Diethyl carbonate       YES    YES    NO       C=O stretch
                                                                             
     ----------------------------------------------------------------------------                   
@@ -254,7 +255,7 @@ class Frag(object, libbbg.units.UNITS):
     ### built-in parameters
     params = ['water'  ,'water2' ,'nma'     ,'nma-d7'  ,'mescn'   ,'meoac'   ,
               'meoh'   ,'dmso'   ,'dcm'     ,'chcl3'   ,'na+'     ,'so3--'   ,
-              'me-so3-','li+'    ,'et2coo', ]
+              'me-so3-','li+'    ,'et2coo'  ,'mecn'    ,  ]
                
     def __init__(self, file=None):
         self.__file = file

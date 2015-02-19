@@ -27,7 +27,8 @@ EFPROT = Extension(name='solvshift.efprot',
 # data files: BSM fragment files
 molecules = ['water', 'water2', 'dmso'   , 'meoh' , 'chcl3',
              'dcm'  , 'na+'   , 'me-so3-', 'so3--', 'meoac',
-             'nma'  , 'nma-d7', 'mescn'  , 'li+'  , 'et2coo', ] 
+             'nma'  , 'nma-d7', 'mescn'  , 'li+'  , 'et2coo', 
+             'mecn' , ] 
 
 numerical = { 'mescn': ('num_0.006', 'num_0.025') , }
 
