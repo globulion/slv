@@ -134,7 +134,9 @@ Usage:
        supl = None
        for line in lines:
            if 'supl' in line:
-               supl = libbbg.utilities.text_to_list(line.split('supl')[-1]) - 1
+               ll = line.split('supl')[-1]
+               if ',' in ll: supl = libbbg.utilities.text_to_list(ll, delimiter=',') - 1
+               else:         supl = libbbg.utilities.text_to_list(ll) - 1
 
        # parse atoms for (Sol)EFP fragment
        for line in lines:
