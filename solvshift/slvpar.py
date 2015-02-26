@@ -83,28 +83,37 @@ class Frag(object, libbbg.units.UNITS):
      frag = Frag(name)   where name is the name of molecule or fragment writte
                          n in SLV standard fragment library $SLV_PATH/frg
                          The following are possible:
-    ----------------------------------------------------------------------------                   
-       name       molecule                EINT   FREQ   NLO      comment                           
-    ----------------------------------------------------------------------------                   
-     o water      H2O                     YES    NO     NO       with DMA-5                        
-     o water2     H2O                     YES    NO     NO       with CAMM-3                       
-     o dmso       DMSO                    YES    NO     NO                                         
-     o meoh       Methanol                YES    NO     NO                                         
-     o chcl3      Chloroform              YES    NO     NO                                         
-     o dcm        Dichloromethane         YES    NO     NO  
-     o li+        Lithium cation          YES    NO     NO
-     o na+        Sodium cation           YES    NO     NO
-     o me-so3-    Methyl sulphonate (-1)  YES    NO     NO
-     o so3--      SO3 (2-) anion          YES    NO     NO
-     o meoac      Methyl acetate          YES    YES    NO       C=O stretch                       
-     o nma        N-methyl acetamide      YES    YES    NO       amide I mode                      
-     o nma-d7     NMA-D7                  YES    YES    NO       amide I' mode
-                                                                (all H deuterated)
-     o mescn      Methyl thiocyanide      YES    YES    NO       C=N stretch
-     o mecn       Methyl nitrile          YES    YES    NO       C=N stretch
-     o et2coo     Diethyl carbonate       YES    YES    NO       C=O stretch
-                                                                            
-    ----------------------------------------------------------------------------                   
+    -----------------------------------------------------------------------------------------------
+       name             molecule                        EINT   FREQ   NLO      comment                           
+    -----------------------------------------------------------------------------------------------                   
+     o water            H2O                             YES    NO     NO       with DMA-5                        
+     o water2           H2O                             YES    NO     NO       with CAMM-3                       
+     o dmso             DMSO                            YES    NO     NO                                         
+     o meoh             Methanol                        YES    NO     NO                                         
+     o chcl3            Chloroform                      YES    NO     NO                                         
+     o dcm              Dichloromethane                 YES    NO     NO  
+     o li+              Lithium Cation                  YES    NO     NO
+     o na+              Sodium Cation                   YES    NO     NO
+     o me-so3-          Methyl Sulphonate (-1)          YES    NO     NO
+     o so3--            SO3 (2-) anion                  YES    NO     NO
+     o meoac            Methyl acetate                  YES    YES    NO       C=O stretch                       
+     o nma              N-Methyl Acetamide              YES    YES    NO       amide I mode                      
+     o nma-d7           NMA-D7                          YES    YES    NO       amide I' mode
+                                                                              (all H deuterated)
+     o mescn            Methyl Thiocyanide              YES    YES    NO       C=N stretch
+     o mecn             Methyl Nitrile                  YES    YES    NO       C=N stretch
+     o et2coo           Diethyl Carbonate               YES    YES    NO       C=O stretch
+     o 4-me-imidazole   4-Methyl Imidazole              YES    NO     NO
+     o 4-me-phenol      4-Methyl Phenol                 YES    NO     NO
+     o chonh2           Formamide                       YES    NO     NO
+     o chonhme          N-Methyl Formamide              YES    NO     NO
+     o comenh2          Acetamide                       YES    NO     NO
+     o mecoo-           Acetate (-1) Anion              YES    NO     NO
+     o menh3+           Methyl Ammonium (+1) Cation     YES    NO     NO
+     o methane          Methane                         YES    NO     NO
+     o ethane           Ethane                          YES    NO     NO
+     o n-propane        n-Propane                       YES    NO     NO
+    -----------------------------------------------------------------------------------------------
      frag = Frag(file)   where file is the Frag format file (*.frg) with parame
                          ters created by a user. See slv_der-* for fragment par
                          ameter generators
@@ -253,9 +262,11 @@ class Frag(object, libbbg.units.UNITS):
   Globulion@                                                                  
 """
     ### built-in parameters
-    params = ['water'  ,'water2' ,'nma'     ,'nma-d7'  ,'mescn'   ,'meoac'   ,
-              'meoh'   ,'dmso'   ,'dcm'     ,'chcl3'   ,'na+'     ,'so3--'   ,
-              'me-so3-','li+'    ,'et2coo'  ,'mecn'    ,  ]
+    params = ['water'  ,'water2' ,'nma'     ,'nma-d7'   ,'mescn'   ,'meoac'   ,
+              'meoh'   ,'dmso'   ,'dcm'     ,'chcl3'    ,'na+'     ,'so3--'   ,
+              'me-so3-','li+'    ,'et2coo'  ,'mecn'     ,'4-me-imidazole'     , 
+              '4-me-phenol'      ,'chonh2'  ,'chonhme'  ,'comenh2' ,'ethane'  ,
+              'mecoo-' ,'menh3+' ,'methane' ,'n-propane',                     ] 
                
     def __init__(self, file=None):
         self.__file = file
