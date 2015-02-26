@@ -9,9 +9,9 @@ Usage:
 from sys import argv, exit
 from solvshift.slvpar import *
 from solvshift.solefp import *
-from utilities import Read_xyz_file, ParseLmocFromGamessEfpFile as Parse_lmoc_efpgms, \
+from libbbg.utilities import Read_xyz_file, ParseLmocFromGamessEfpFile as Parse_lmoc_efpgms, \
                       ParseDistributedPolarizabilitiesFromGamessEfpFile as Parse_dpol_efpgms
-from dma import DMA
+from libbbg.dma import DMA
 print __doc__
 if len(argv)==1: exit()
 
