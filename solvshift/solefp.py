@@ -76,6 +76,7 @@ all          - evaluate all these interactions"""
         if nlo: 
            self.__eval_nlo = True
         #
+        self.__debug = None
         return
     
     def __call__(self,lwrite=False):
@@ -633,9 +634,10 @@ Now, only for exchange-repulsion layer"""
             STR = numpy.dot(STR+transl_inv, rot_inv)
             frg = self.__bsm[im].copy()
             if lwrite: print frg.get()['name']
-            if lwrite: libbbg.utilities.PRINTL(STR * self.BohrToAngstrom, '', '')
-            rms = frg.sup( STR , suplist= self.__suplist[self.__ind[im]] )
+            #if lwrite: libbbg.utilities.PRINTL(STR * self.BohrToAngstrom, '', '')
+            rms = frg.sup( STR , suplist= self.__suplist[im] )
             if lwrite: print "rms C: ",rms
+            if lwrite: print frg.xyz(units='angs')
             if rms > rms_max: rms_max = rms
             par = frg.get()
             PAR_SOL.append( par )
@@ -733,7 +735,7 @@ Now, only for exchange-repulsion layer"""
                   STR = self.__rcoordp[nm_prev:nm_curr]
                   STR = numpy.dot(STR+transl_inv, rot_inv)
                   frg = self.__bsm[im].copy()
-                  rms = frg.sup( STR, suplist= self.__suplist[self.__ind[im]] )
+                  rms = frg.sup( STR, suplist= self.__suplist[im] )
                   #if lwrite: print "rms P: ",rms
                   par = frg.get()
                   PAR_SOL.append( par )
@@ -816,7 +818,7 @@ Now, only for exchange-repulsion layer"""
                 STR = self.__rcoorde[nm_prev:nm_curr]
                 STR = numpy.dot(STR+transl_inv, rot_inv)
                 frg = self.__bsm[im].copy()
-                rms = frg.sup( STR , suplist= self.__suplist[self.__ind[im]])
+                rms = frg.sup( STR , suplist= self.__suplist[im])
                 if lwrite: print "rms E: ",rms
                 if rms > rms_max: rms_max = rms
                 par = frg.get()
@@ -882,9 +884,16 @@ Now, only for exchange-repulsion layer"""
         return # ========================================================================== # 
 
 
+    def close(self):
+        """Close the debug files if any (if lwrite in eval was True it has to be called at the end of working of EFP object).
+Otherwise self.__debug file won't be closed."""
+        if self.__debug is not None: self.__debug.close()
+        return
+
     def eval(self, lwrite=False, dxyz=None):
         """Evaluate the properties (interaction energies, frequency shifts or NLO properties -
 - the latter not implemented yet!)"""
+        if lwrite: self.__debug = open('__debug_file__','w')
         if self.__pairwise_all:
         # ============================================================================== #
         #                                                                                #
@@ -982,14 +991,16 @@ Now, only for exchange-repulsion layer"""
            QO  = []
            ### central molecule
            frg = self.__bsm[0].copy()
-           print "FFF", self.__suplist_c
-           print self._reorder_xyz( self.__rc, self.__reordlist_c)
            self.__rms_central = frg.sup( self._reorder_xyz( self.__rc, self.__reordlist_c), self.__suplist_c, dxyz=dxyz )
            # store actual position of the fragment
            self.__pos_c = frg.get_pos()
            if lwrite: print frg.get()['name']
            if lwrite: print "Central molecule rms: ",self.__rms_central
-           if lwrite: libbbg.utilities.PRINTL(self.__pos_c * self.BohrToAngstrom, '', '')
+           if lwrite: 
+              xx = frg.xyz(units='angs')
+              print xx
+              self.__debug.write(xx)
+
            # get the dictionary of the parameters
            parc= frg.get()
            self.__lvec = parc['lvec']
@@ -1033,12 +1044,15 @@ Now, only for exchange-repulsion layer"""
                nm_prev = sum(self.__ntc[:i])
                nm_curr = sum(self.__ntc[:i+1])
                #                                                             reorder to BSM-FRG atom order
-               STR = self._reorder_xyz( self.__rcoordc[nm_prev:nm_curr]    , self.__reordlist[self.__ind[im]] )
+               STR = self._reorder_xyz( self.__rcoordc[nm_prev:nm_curr]    , self.__reordlist[im] )
                frg = self.__bsm[im].copy()
-               rms = frg.sup( STR , suplist= self.__suplist[self.__ind[im]] )
+               rms = frg.sup( STR , suplist= self.__suplist[im] )
                if lwrite: print frg.get()['name']
                if lwrite: print "rms C: ",rms
-               if lwrite: libbbg.utilities.PRINTL(frg.get()['pos'] * self.BohrToAngstrom, '', '')
+               if lwrite: 
+                  xx = frg.xyz(units='angs')
+                  print xx
+                  self.__debug.write(xx)
                if rms > rms_max: rms_max = rms
                par = frg.get()
                PAR.append( par )
@@ -1126,9 +1140,9 @@ Now, only for exchange-repulsion layer"""
                      nm_prev = sum(self.__ntp[:i])
                      nm_curr = sum(self.__ntp[:i+1])
                      #                                                               reorder to BSM-FRG atom order
-                     STR = self._reorder_xyz( self.__rcoordp[nm_prev:nm_curr]      , self.__reordlist[self.__ind[im]] )
+                     STR = self._reorder_xyz( self.__rcoordp[nm_prev:nm_curr]      , self.__reordlist[im] )
                      frg = self.__bsm[im].copy()
-                     rms = frg.sup( STR, suplist= self.__suplist[self.__ind[im]] )
+                     rms = frg.sup( STR, suplist= self.__suplist[im] )
                      #if lwrite: print "rms P: ",rms
                      par = frg.get()
                      PAR.append( par )
@@ -1213,9 +1227,9 @@ Now, only for exchange-repulsion layer"""
                    nm_prev = sum(self.__nte[:i])
                    nm_curr = sum(self.__nte[:i+1])
                    #                                                            reorder to BSM-FRG atom order
-                   STR = self._reorder_xyz( self.__rcoorde[nm_prev:nm_curr]   , self.__reordlist[self.__ind[im]] )
+                   STR = self._reorder_xyz( self.__rcoorde[nm_prev:nm_curr]   , self.__reordlist[im] )
                    frg = self.__bsm[im].copy()
-                   rms = frg.sup( STR , suplist= self.__suplist[self.__ind[im]])
+                   rms = frg.sup( STR , suplist= self.__suplist[im])
                    if lwrite: print "rms E: ",rms
                    if rms > rms_max: rms_max = rms
                    par = frg.get()
@@ -1294,7 +1308,7 @@ Now, only for exchange-repulsion layer"""
                    #dq = numpy.dot(l.transpose(), dq).reshape(7,3)
                    #print dq
                    #
-               self.__solvent_exrep = numpy.array(RNB, numpy.float64)
+               self.__solvent_exrep = RNB#numpy.array(RNB, numpy.float64)
                if self.__cunit:
                   serp *= self.HartreePerHbarToCmRec
                shift_total += serp

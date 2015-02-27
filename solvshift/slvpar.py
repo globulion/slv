@@ -315,7 +315,7 @@ class Frag(object, libbbg.units.UNITS):
         log+= ' nmodes   %s    \n' %  self.__nmodes
         log+= ' \n'
         return str(log)
-    
+   
     # --- public
     # SET METHODS
     
@@ -703,7 +703,18 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
            self._reorder_wfn(sim, LIST1)
         return
     
-    
+    def xyz(self, units='Angstrom'):
+        """generate the xyz file contents (without 2 first lines)"""
+        log = ''
+        r = self.__pos.copy()
+        Z = self.__atno
+        if units.lower().startswith('angs'): r *= self.BohrToAngstrom
+        for i,x in enumerate(r):
+            log += '%3s' % self.__atomic_symbols[Z[i]]
+            log += 3*'%16.6f' % tuple(x)
+            log += '\n'
+        return log 
+   
     # --- protected
     
     def _create(self):
@@ -774,6 +785,7 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
                      'vecc1': '[ AO->CMO matrix - first derivatives ]'              ,}
         self.__mol_names = mol_names
         self.__sec_names = sec_names
+        self.__atomic_symbols = {1: 'H', 2: 'He', 3: 'Li', 6:'C', 7:'N', 8:'O', 9:'F', 11:'Na',16:'S', 17:'Cl'}
         return
 
     def _parse_dict(self,par):
