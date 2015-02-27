@@ -982,10 +982,14 @@ Now, only for exchange-repulsion layer"""
            QO  = []
            ### central molecule
            frg = self.__bsm[0].copy()
-           self.__rms_central = frg.sup( self.__rc[self.__reordlist_c], self.__suplist_c, dxyz=dxyz )
+           print "FFF", self.__suplist_c
+           print self._reorder_xyz( self.__rc, self.__reordlist_c)
+           self.__rms_central = frg.sup( self._reorder_xyz( self.__rc, self.__reordlist_c), self.__suplist_c, dxyz=dxyz )
            # store actual position of the fragment
            self.__pos_c = frg.get_pos()
-           if lwrite: print "Central rms: ",self.__rms_central
+           if lwrite: print frg.get()['name']
+           if lwrite: print "Central molecule rms: ",self.__rms_central
+           if lwrite: libbbg.utilities.PRINTL(self.__pos_c * self.BohrToAngstrom, '', '')
            # get the dictionary of the parameters
            parc= frg.get()
            self.__lvec = parc['lvec']
@@ -1028,13 +1032,13 @@ Now, only for exchange-repulsion layer"""
                im = self.__mtc[i]
                nm_prev = sum(self.__ntc[:i])
                nm_curr = sum(self.__ntc[:i+1])
-               #                                         reorder to BSM-FRG atom order
-               STR = self.__rcoordc[nm_prev:nm_curr]    [self.__reordlist[self.__ind[im]]]
+               #                                                             reorder to BSM-FRG atom order
+               STR = self._reorder_xyz( self.__rcoordc[nm_prev:nm_curr]    , self.__reordlist[self.__ind[im]] )
                frg = self.__bsm[im].copy()
-               if lwrite: print frg.get()['name']
-               if lwrite: libbbg.utilities.PRINTL(STR * self.BohrToAngstrom, '', '')
                rms = frg.sup( STR , suplist= self.__suplist[self.__ind[im]] )
+               if lwrite: print frg.get()['name']
                if lwrite: print "rms C: ",rms
+               if lwrite: libbbg.utilities.PRINTL(frg.get()['pos'] * self.BohrToAngstrom, '', '')
                if rms > rms_max: rms_max = rms
                par = frg.get()
                PAR.append( par )
@@ -1121,8 +1125,8 @@ Now, only for exchange-repulsion layer"""
                      im = self.__mtp[i]
                      nm_prev = sum(self.__ntp[:i])
                      nm_curr = sum(self.__ntp[:i+1])
-                     #                                           reorder to BSM-FRG atom order
-                     STR = self.__rcoordp[nm_prev:nm_curr]      [self.__reordlist[self.__ind[im]]]
+                     #                                                               reorder to BSM-FRG atom order
+                     STR = self._reorder_xyz( self.__rcoordp[nm_prev:nm_curr]      , self.__reordlist[self.__ind[im]] )
                      frg = self.__bsm[im].copy()
                      rms = frg.sup( STR, suplist= self.__suplist[self.__ind[im]] )
                      #if lwrite: print "rms P: ",rms
@@ -1208,8 +1212,8 @@ Now, only for exchange-repulsion layer"""
                    im = self.__mte[i]
                    nm_prev = sum(self.__nte[:i])
                    nm_curr = sum(self.__nte[:i+1])
-                   #                                        reorder to BSM-FRG atom order
-                   STR = self.__rcoorde[nm_prev:nm_curr]   [self.__reordlist[self.__ind[im]]]
+                   #                                                            reorder to BSM-FRG atom order
+                   STR = self._reorder_xyz( self.__rcoorde[nm_prev:nm_curr]   , self.__reordlist[self.__ind[im]] )
                    frg = self.__bsm[im].copy()
                    rms = frg.sup( STR , suplist= self.__suplist[self.__ind[im]])
                    if lwrite: print "rms E: ",rms
@@ -1387,6 +1391,20 @@ Now, only for exchange-repulsion layer"""
         else:
            self.__rcoordc = pos
         return
+
+    def _reorder_xyz(self, xyz, reord_list):
+        """Reorder the coordinates of MD atoms to EFP order. 
+Keep track of unequal number of atoms between MD target and 
+EFP parameter BSM (missing atoms in case of fragmented EFP superposition).
+The convention is to place -1 in the reord_list for atoms that have to be removed""" 
+        n = len(reord_list)
+        xyz_ = numpy.zeros((n,3),numpy.float64)
+        i = -1
+        for I in reord_list:
+            i+=1
+            if I>-1: xyz_[i] = xyz[I].copy() 
+            else:    xyz_[i] = numpy.zeros((1,3),numpy.float64)
+        return xyz_
 
     # STRUCTURAL DISTORTIONS
 
