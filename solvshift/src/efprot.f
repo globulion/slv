@@ -66,7 +66,7 @@ C        D-SHELL
 C
          ELSE IF (ITYPK.EQ.2) THEN
              ND = ND + 1
-             IF ((MOD((NP+5),6)).EQ.0) THEN
+             IF ((MOD((ND+5),6)).EQ.0) THEN
                 DO 3010 I=1,NMOS
                    XXO = VEC(I,K  )
                    YYO = VEC(I,K+1)
@@ -197,7 +197,7 @@ C        D-SHELL
 C
          ELSE IF (ITYPK.EQ.2) THEN
              ND = ND + 1
-             IF ((MOD((NP+5),6)).EQ.0) THEN
+             IF ((MOD((ND+5),6)).EQ.0) THEN
                 DO 3010 M=1,NMODES
                 DO 3010 I=1,NMOS
                    XXO = VEC1(M,I,K  )
