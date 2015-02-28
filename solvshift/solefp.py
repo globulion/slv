@@ -887,7 +887,15 @@ Now, only for exchange-repulsion layer"""
     def close(self):
         """Close the debug files if any (if lwrite in eval was True it has to be called at the end of working of EFP object).
 Otherwise self.__debug file won't be closed."""
-        if self.__debug is not None: self.__debug.close()
+        if self.__debug is not None: 
+           self.__debug.close()
+           os.system('mv __debug_file__ __73nfbod783748x__')
+           debg = open('__debug_file__','w')
+           temp = open('__73nfbod783748x__'); d = temp.readlines() ; temp.close()
+           os.system('rm __73nfbod783748x__')
+           debg.write('%d\n\n' % len(d))
+           debg.write(''.join(d))
+           debg.close()
         return
 
     def eval(self, lwrite=False, dxyz=None):
