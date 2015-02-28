@@ -266,7 +266,7 @@ class Frag(object, libbbg.units.UNITS):
               'meoh'   ,'dmso'   ,'dcm'     ,'chcl3'    ,'na+'     ,'so3--'   ,
               'me-so3-','li+'    ,'et2coo'  ,'mecn'     ,'4-me-imidazole'     , 
               '4-me-phenol'      ,'chonh2'  ,'chonhme'  ,'comenh2' ,'ethane'  ,
-              'mecoo-' ,'menh3+' ,'methane' ,'n-propane',                     ] 
+              'mecoo-' ,'menh3+' ,'methane' ,'n-propane','me-guanidinium+'    ] 
                
     def __init__(self, file=None):
         self.__file = file

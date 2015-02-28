@@ -30,7 +30,7 @@ molecules = ['water'            , 'water2'           , 'dmso'                , '
              'nma'              , 'nma-d7'           , 'mescn'               , 'li+'       ,       'et2coo' , 
              'mecn'             , '4-me-imidazole'   , '4-me-phenol'         , 
              'chonh2'           ,'chonhme'           , 'comenh2'             , 'ethane'    ,'mecoo-'        ,
-             'menh3+'           ,'methane'           ,'n-propane'            ,                              ] 
+             'menh3+'           ,'methane'           ,'n-propane'            , 'me-guanidinium+'            ] 
 
 numerical = { 'mescn': ('num_0.006', 'num_0.025') , }
 
