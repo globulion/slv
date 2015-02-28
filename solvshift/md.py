@@ -118,6 +118,7 @@ Usage:
        if 'reorder' in section: b_reorder = True
        if 'supl'    in section: b_supl    = True
        lines = section.split('\n')[1:]
+       if lines[0].startswith('!'): return
 
        # read the fragment parameters
        frag = solvshift.slvpar.Frag(lines[0].split()[1])
@@ -125,6 +126,7 @@ Usage:
        # reorder the fragment
        reord = None
        for line in lines:
+           if line.startswith('!'):continue
            if 'reorder' in line:
                reord = numpy.array( map(int,line.split()[1:]), int ) - 1
        #if b_reorder:   # deprecated! Now reordering applies to MD structure
@@ -133,6 +135,7 @@ Usage:
        # add superimpositon list
        supl = None
        for line in lines:
+           if line.startswith('!'):continue
            if 'supl' in line:
                ll = line.split('supl')[-1]
                if ',' in ll: supl = libbbg.utilities.text_to_list(ll, delimiter=',') - 1
@@ -140,6 +143,7 @@ Usage:
 
        # parse atoms for (Sol)EFP fragment
        for line in lines:
+           if line.startswith('!'):continue
            if 'atoms' in line:
                atoms, n_frags = line.split()[1:]
                atoms   = libbbg.utilities.text_to_list(atoms)
