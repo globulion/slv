@@ -1834,7 +1834,11 @@ the canonical Fock matrix and vectors will be saved."""
         camm.camms()
         dma = camm.get()[0]
         # parse Fock matrix
-        Fock = libbbg.utilities.ParseFockFromGamessLog(self.__gmslog,interpol=False)
+        if self.__gmslog is not None:
+           Fock = libbbg.utilities.ParseFockFromGamessLog(self.__gmslog,interpol=False)
+        else:
+           epsi = numpy.diag(libbbg.utilities.ParseAlphaOrbitalEnergiesFromFchk(self.__fchk)[:self.__nae])
+           Fock = numpy.dot(veccocc.T, numpy.dot(epsi,veccocc))
         fock = numpy.tensordot(veclmo,numpy.tensordot(veclmo,Fock,(1,0)),(1,1))
         if ct: fckc = numpy.tensordot(vecc  ,numpy.tensordot(vecc  ,Fock,(1,0)),(1,1))
         # save

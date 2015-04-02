@@ -5,6 +5,8 @@ Computes the SolEFP parameters for BSM solvent molecule
 Usage:
 
   slv_make-frg [fchk] [camm] [Gamess log] [Gamess efp] [output file] [nae]
+
+Notes: 1. If Gamess log = none then Fock matrix will be parsed from g09 FCHK file
 """
 from sys import argv, exit
 from solvshift.slvpar import *
@@ -23,7 +25,7 @@ outfile = argv[5]
 nae = int(argv[6])
 
 # parse basic data, multipoles and WFN
-sefp = FragFactory(fchk=fchk,gmslog=glog,basis='6-311++G**',nae=nae)
+sefp = FragFactory(fchk=fchk,gmslog=glog if glog.lower()!='none' else None,basis='6-311++G**',nae=nae)
 sefp.eval(ct=False, cvgloc=1.0E-14)
 par = sefp.get()
 
