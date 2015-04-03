@@ -1818,7 +1818,7 @@ the canonical Fock matrix and vectors will be saved."""
         SAO   = PyQuante.Ints.getS(self.__bfs)
         dmat  = libbbg.utilities.ParseDmatFromFchk(self.__fchk,self.__basis_size)
         vecc  = libbbg.utilities.ParseVecFromFchk(self.__fchk)
-        veccocc= vecc[:self.__nae,:]
+        veccocc= vecc.copy()[:self.__nae,:]
         tran, veclmo = libbbg.utilities.get_pmloca(self.__natoms,mapi=self.__bfs.LIST1,sao=SAO,
                                             vecin=veccocc,nae=self.__nae,
                                             maxit=100000,conv=cvgloc, 
@@ -1837,8 +1837,9 @@ the canonical Fock matrix and vectors will be saved."""
         if self.__gmslog is not None:
            Fock = libbbg.utilities.ParseFockFromGamessLog(self.__gmslog,interpol=False)
         else:
-           epsi = numpy.diag(libbbg.utilities.ParseAlphaOrbitalEnergiesFromFchk(self.__fchk)[:self.__nae])
-           Fock = numpy.dot(veccocc.T, numpy.dot(epsi,veccocc))
+           epsi = numpy.diag(libbbg.utilities.ParseAlphaOrbitalEnergiesFromFchk(self.__fchk))
+           Fock = numpy.dot(vecc.T, numpy.dot(epsi, vecc))
+           Fock = numpy.dot(numpy.dot(SAO, Fock), SAO)
         fock = numpy.tensordot(veclmo,numpy.tensordot(veclmo,Fock,(1,0)),(1,1))
         if ct: fckc = numpy.tensordot(vecc  ,numpy.tensordot(vecc  ,Fock,(1,0)),(1,1))
         # save
