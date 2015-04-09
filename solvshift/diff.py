@@ -292,14 +292,32 @@ them to LMO space"""
         #
         return Tran, Lmoc, VecL
     
-    def Parse_fock(self,dir,Tran):
+    def Parse_fock(self,dir,Tran,old=False):
         """parse directory to look for Fock matrices for ff procedure"""
-        files = glob.glob('%s/*_.log' % dir)
-        files.sort()
-        Fock = []
-        for file in files:
-            Fock.append(libbbg.utilities.ParseFockFromGamessLog(file,interpol=False))
-        Fock = numpy.array(Fock,numpy.float64)
+        # OLD CODE: PARSING FROM GAMESS LOG FILES
+        if old:
+           files = glob.glob('%s/*_.log' % dir)                                          
+           files.sort()
+           Fock = []
+           for file in files:
+               Fock.append(libbbg.utilities.ParseFockFromGamessLog(file,interpol=False))
+           Fock = numpy.array(Fock,numpy.float64)
+        # NEW CODE: COMPUTING FOCK MATRICES FROM FCHK FILES
+        else:
+           files = glob.glob('%s/*_.fchk' % dir)
+           files.sort()
+           Fock = []
+           for file in files:
+               bfs  = libbbg.utilities.QMFile(file, mol=True, basis='6-311++G**').get_bfs()
+               epsi = numpy.diag(libbbg.utilities.ParseAlphaOrbitalEnergiesFromFchk(file))
+               vecc = libbbg.utilities.ParseVecFromFchk(file)
+               SAO  = PyQuante.Ints.getS(bfs)
+               # compute Fock matrix in AO space from SAO, vecc and epsi
+               Fock_i = numpy.dot(vecc.T, numpy.dot(epsi, vecc))
+               Fock_i = numpy.dot(numpy.dot(SAO, Fock_i), SAO)
+               Fock.append(Fock_i)
+           Fock = numpy.array(Fock,numpy.float64)
+
         # transform from AO to LMO space
         I = Fock.shape[ 0]
         N = Tran.shape[-2]
