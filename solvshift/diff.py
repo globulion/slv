@@ -24,7 +24,8 @@ where X=5,9"""
                  dir="",cartesian=False,L=0,
                  camm=False,pol=False,eds=False,efp=False,
                  solefp=False,nae=0,basis='6-311++G**',
-                 dpol=False,lprint=True,sims=None,method='SCF'):
+                 dpol=False,lprint=True,sims=None,method='SCF',
+                 eds_method='HF'):
 
         self.camm = camm
         # number of normal modes
@@ -121,8 +122,8 @@ where X=5,9"""
         # EDS
         elif eds:
            fdir,sdir = eds.split(':')
-           self.EDS_set_1 = self.Parse_EDS(dir+fdir)
-           self.EDS_set_2 = self.Parse_EDS(dir+sdir)
+           self.EDS_set_1 = self.Parse_EDS(dir+fdir, eds_method)
+           self.EDS_set_2 = self.Parse_EDS(dir+sdir, eds_method)
            self.fEDS = self.get_EDS_fder()
            self.sEDS = self.get_EDS_sder()
         # EFP
@@ -809,8 +810,8 @@ type -3: transformation matrix from AO to LMO (nmos, nbasis)
         
         return DMA_set, Overall_MM_set ###array(Fragments_set), as a second thing
 
-    def Parse_EDS(self,dir):
-        """parses files to collect polarisabilities"""
+    def Parse_EDS(self,dir,eds_method):
+        """parse GAMEES-RWG log files to extract EDS energies"""
         
         files2= os.listdir(dir)
         files = [ ]
@@ -823,12 +824,12 @@ type -3: transformation matrix from AO to LMO (nmos, nbasis)
 
         set = []
         for file in files:
-            set.append(libbbg.utilities.Parse_EDS_InteractionEnergies(dir+file))
+            set.append(libbbg.utilities.Parse_EDS_InteractionEnergies(dir+file, eds_method))
             
         return numpy.array(set)
 
     def Parse_EFP(self,dir):
-        """parses EFP energies"""
+        """parses EFP energies from GAMESS log files"""
         
         files2= os.listdir(dir)
         files = [ ]
