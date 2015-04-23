@@ -1,0 +1,75 @@
+#!/usr/bin/python
+"""
+ ------------------------------------------------------------------------------------
+ Generate starting structure for SolEDS calculation
+
+ Usage: 
+ 
+        [full opt xyz] [gas phase xyz] <n>
+
+ where: 
+
+  o full opt xyz  - xyz file with fully optimized solute-solvent cluster
+  o gas phase xyz - xyz file with solute in gas-phase (anharmonic file orientation)
+  o n             - the number of solvent atoms (default 3 - one water molecule)
+
+ Warning: the turn of solute atoms need to be identical in both files provided!
+
+ The result will be written to __out__.xyz file.
+ ------------------------------------------------------------------------------------
+"""
+print __doc__
+from sys import argv, exit
+if len(argv)==1: exit()
+from libbbg.utilities import QMFile, SVDSuperimposer
+from libbbg.units import UNITS
+
+# read the molecules
+full_xyz = QMFile(argv[1])
+ref_xyz  = QMFile(argv[2])
+n = 3
+if len(argv)>3: n = int(argv[3])
+
+# check the input variables
+merror = """
+ Error: The number of cluster atoms (%s) is not equal to the sum of solute atoms (%s) and solvent atoms (n = %d).
+        Probably number of solvent atoms is set incorrectly. Quitting...
+""" % (argv[1], argv[2], n)
+if (len(ref_xyz .get_pos()) != len(full_xyz.get_pos()) - n): 
+   print merror 
+   exit(1)
+
+# extract the solute coordinates
+r_0    = ref_xyz .get_pos()[:,:3]
+r_save = full_xyz.get_pos()[:,:3]
+r      = r_save[:-n]
+
+# get rotation and translation matrices
+sup = SVDSuperimposer()
+sup.set(r_0,r)
+sup.run()
+rot, tran = sup.get_rotran()
+
+# rotate and translate the full optimized structure
+full_xyz.rotate(rot)
+full_xyz.translate(tran)
+
+# replace solute coordinates with gas-phase ones
+r_new = full_xyz.get_pos()[:,:3]
+r_new[:-n] = r_0
+full_xyz.set_pos(r_new)
+
+# write the output
+full_xyz.write('__out__.xyz')
+
+# compute RMS of constrained cluster wrt full-QM-optimized cluster
+sup.set(r_save,full_xyz.get_pos()[:,:3])
+sup.run()
+rms = sup.get_rms()
+
+print """
+ Constrained cluster was succesfully made! 
+ 
+ RMS between full-QM and constrained cluster: %10.6f Angstrom
+                                              %10.6f Bohr
+""" % (rms * UNITS.BohrToAngstrom, rms)
