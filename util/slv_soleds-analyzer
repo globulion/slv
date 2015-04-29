@@ -1,0 +1,146 @@
+#!/usr/bin/python
+"""
+ This tool automatizes the generation of SolEDS inputs and its further analysis
+ for SolEDS computation.
+
+ It has two modes of operation: 
+
+  1) generate the analyzer           - make appropriate directories with input files for GAMESS-EDS
+  2) compute SolEDS frequency shifts - apply SolEDS theory
+
+ Usage:
+
+  Mode 1)
+
+      1  [full opt xyz] [gas phase xyz] [anh] [mode] [line] <n> <step-cart> <step-mode>
+
+  Mode 2)
+
+      2  --- NOT IMPLEMENTED YET ---
+
+ where: 
+
+  o full opt xyz  - xyz file with fully optimized solute-solvent cluster
+  o gas phase xyz - xyz file with solute in gas-phase (anharmonic file orientation)
+  o anh           - g09 anharmonic file with CUBIC (remember to change the wrong signs!)
+  o mode          - normal mode number (in Helico, normal numbers - not in Python convention)
+  o line          - line number in gamess.py in which wstawiacz.py has to insert solvent molecule
+  o n             - the number of solvent atoms (default 3 - one water molecule)
+  o step-cart     - differentiation step in cartesian coordinates (default 0.006 Angs)
+  o step-mode     - differentiation step in normal coordinates (default 15.0)
+
+ Warning: the turn of solute atoms need to be identical in all files provided!
+"""
+print __doc__
+from  sys import argv, exit
+if len(argv)==1: exit()
+import os
+from libbbg.utilities import QMFile
+from libbbg.units import Atom
+from string import Template
+
+class LocalTemplate(Template): delimiter='@'
+
+def wstawiacz(m,n,l):
+    lines = open('soleds.xyz').readlines()[2:m+n+2]
+    w = ''
+    i = l
+    for line in lines:
+        a = line.split()
+        a.insert(1,Atom(a[0]).atno)
+        w += 'wstawiacz.py  "'
+        w += '%2s  %4.1f' % (a[0], a[1])
+        w += '%15.8f' * 3 % tuple(map(float,a[2:]))
+        w += '"%4d   *.inp' % i
+        w += '\n'
+        i += 1
+    out = open('__wstawiacz__.sh','w')
+    out.write(w)
+    out.close()
+    return 1
+
+def inputs(ref_xyz, anh, mode, step_cart, step_mode):
+    w = """\
+#!/bin/bash
+export SLV_MODE_ID=@MODE
+cd soleds
+   slv -i @REF -a @ANH -m @MODE -s @STEPCART -x 1 --sder-work=./sder/15/
+   mv ../*_.inp .
+   cp ../__wstawiacz__.sh .
+   bash __wstawiacz__.sh
+   rm __wstawiacz__.sh
+   cd sder/15
+      cp ../../../__wstawiacz__.sh .
+      slv -i @REF -a @ANH -m @MODE -s @STEPMODE -x 0
+      mv ../../../*_.inp .
+      bash __wstawiacz__.sh
+      rm __wstawiacz__.sh
+   cd ../..
+cd ..
+
+tar cfj inp.tar.bz2 soleds
+echo " Compressed file with SolEDS inputs inp.tar.bz2 is written in $PWD"
+echo
+
+"""
+    w = LocalTemplate(w)
+    out=open('__inputs__.sh','w')
+    out.write(w.substitute(REF=ref_xyz, ANH=anh, MODE=mode-1, STEPCART=step_cart, STEPMODE=step_mode))
+    out.close()
+    
+    os.system('bash __inputs__.sh')
+    return 1
+
+# [0] input variables
+mode_of_action = int(argv[1])
+if mode_of_action==1:
+   full_xyz = os.path.abspath(argv[2])
+   ref_xyz  = os.path.abspath(argv[3])
+   m = len(QMFile(ref_xyz).get_pos())    # number of solute atoms
+   anh      = os.path.abspath(argv[4])
+   mode     = int(argv[5])
+   line     = int(argv[6])
+   # defaults
+   n = 3
+   step_cart= '0.006'
+   step_mode= '15.0'
+   if len(argv)>7: n = int(argv[7])
+   if len(argv)>8: step_cart = argv[8]
+   if len(argv)>9: step_mode = argv[9]
+else:
+   pass
+
+# GENERATION MODE
+if mode_of_action==1:
+   # [1] check the input variables
+   merror = """
+    Error: gamess.templ file not found! Quitting...
+   """
+   if not os.path.isfile('gamess.templ'):
+      print merror
+      exit(1)
+   
+   # [2] generate soleds.xyz file
+   os.system('slv_make-soleds-xyz %s %s %d' % (full_xyz, ref_xyz, n))
+   os.system('mv __out__.xyz soleds.xyz')
+   
+   # [3] create soleds directory
+   if os.path.isdir('soleds'): 
+      if input(' The <soleds> directory is already created in the current location. Do you want to remove it? (1/0): '):
+         os.system('rm -fr soleds')
+         print
+      else: exit()
+   os.system('mkdir -p soleds/sder/15')
+   
+   # [4] copy templates to the appropriate directories
+   os.system('cp gamess.templ soleds && cp gamess.templ soleds/sder/15')
+   
+   # [5] generate the __wstawiacz__.sh file
+   wstawiacz(m,n,line)
+   
+   # [6] 
+   inputs(ref_xyz, anh, mode, step_cart, step_mode)
+
+# CALCULATION MODE
+else:
+   raise NotImplementedError, 'Operation Mode is not yet implemented!'
