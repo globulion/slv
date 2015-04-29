@@ -463,7 +463,7 @@ C1 0
 """ 
        super(GAMESS_INPUTS, self).__init__(xyz_file,frag_file,
                                            k,L,redmass,n_point,
-                                           cartesian,mode_id,
+                                           cartesian,mode_id,translation,
                                            sder_work_dir)
 
    def WriteInputs(self):
