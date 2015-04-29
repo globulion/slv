@@ -30,6 +30,9 @@
   o step-mode     - differentiation step in normal coordinates (default 15.0)
 
  Warning: the turn of solute atoms need to be identical in all files provided!
+
+ Warning: when using Mode 2) you MUST change the step in slv.step file
+          SECOND DERIVATIVE DIFFERENIATION STEP (DIMENSIONLESS): [provide here correct value]
 """
 print __doc__
 from  sys import argv, exit
@@ -42,7 +45,7 @@ from string import Template
 class LocalTemplate(Template): delimiter='@'
 
 def wstawiacz(m,n,l):
-    lines = open('soleds.xyz').readlines()[2:m+n+2]
+    lines = open('soleds.xyz').readlines()[2+m:m+n+2]
     w = ''
     i = l
     for line in lines:
