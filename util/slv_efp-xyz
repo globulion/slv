@@ -154,7 +154,7 @@ bsm  = ( frg_solute, frg_solvent )
 # [2] Calculate the frequency shifts!
 
 # --- set the EFP environment
-efp = EFP(elect=elect,pol=pol,rep=rep,corr=corr,freq=True,
+efp = EFP(elect=elect,pol=pol,disp=pol,rep=rep,corr=corr,freq=True,
           ccut=ccut,pcut=pcut,ecut=ecut,
           cunit=True)
 

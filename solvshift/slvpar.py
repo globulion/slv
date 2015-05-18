@@ -198,13 +198,16 @@ class Frag(object, libbbg.units.UNITS):
      : DMTP quadrupoles fder             dmaq1           nmodes, ndma ,6      
      : DMTP octupoles fder               dmao1           nmodes, ndma ,10     
      : DMTP charges sder                 dmac2           ndma                 
-     : DMTP dipoles sder                 dmad2           ndma ,3              
-     : DMTP quadrupoles sder             dmad2           ndma ,6              
-     : DMTP octupoles sder               dmad2           ndma ,10             
+     : DMTP dipoles sder                 dmad2           ndma  , 3              
+     : DMTP quadrupoles sder             dmad2           ndma  , 6              
+     : DMTP octupoles sder               dmad2           ndma  , 10             
      : Polarizable centers               rpol            npol  , 3            
      : Distributed polarizabilities      dpol            npol  , 9            
      : Distributed polarizabilities      dpol1           nmodes, npol, 9      
      : - first derivatives                                                    
+     : Dist. pol. wrt imaginary freq     dpoli           npol  , 12  , 9
+     : Dist. pol. wrt imaginary freq 
+     : - first derivatives               dpoli1          nmodes, npol, 12, 9
  - - : - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      : Harmonic frequencies              freq            nmodes               
      : Reduced masses                    redmass         nmodes               
@@ -321,7 +324,7 @@ class Frag(object, libbbg.units.UNITS):
     # --- public
     # SET METHODS
     
-    def set(self, mol=None, anh=None, frag=None, dma=None,**kwargs):
+    def set(self, mol=None, anh=None, frag=None, dma=None, **kwargs):
         """set the parameters providing appropriate objects"""
         # molecular structure
         if mol is not None:
@@ -373,6 +376,8 @@ class Frag(object, libbbg.units.UNITS):
             if key == 'dmao'   : self.__dmao  = arg
             if key == 'dpol'   : self.__dpol  = arg
             if key == 'dpol1'  : self.__dpol1 = arg
+            if key == 'dpoli'  : self.__dpoli = arg
+            if key == 'dpoli1' : self.__dpoli1= arg
             if key == 'fock'   : self.__fock  = arg
             if key == 'fock1'  : self.__fock1 = arg
             if key == 'vecl'   : self.__vecl  = arg
@@ -496,6 +501,8 @@ and RMS from the last superimposition"""
         if self.__rpol       is not None: self._write_rpol(f)
         if self.__dpol       is not None: self._write_dpol(f)
         if self.__dpol1      is not None: self._write_dpol1(f)
+        if self.__dpoli      is not None: self._write_dpoli(f)
+        if self.__dpoli1     is not None: self._write_dpoli1(f)
         # frequency analysis
         if self.__redmass    is not None: self._write_redmass(f) 
         if self.__freq       is not None: self._write_freq(f)
@@ -563,6 +570,15 @@ and RMS from the last superimposition"""
            for i in xrange(self.__nmodes):
                for j in xrange(self.__npol):
                    self.__dpol1[i,j]  = numpy.dot(numpy.transpose(rot), numpy.dot(self.__dpol1[i,j], rot))
+        if self.__dpoli  is not None:
+           for i in xrange(self.__npol):
+               for j in xrange(12):
+                   self.__dpoli[i,j] = numpy.dot(numpy.transpose(rot), numpy.dot(self.__dpoli[i,j], rot))
+        if self.__dpoli1 is not None:
+           for i in xrange(self.__nmodes):
+               for j in xrange(self.__npol):
+                   for k in xrange(12):
+                       self.__dpoli1[i,j,k]  = numpy.dot(numpy.transpose(rot), numpy.dot(self.__dpoli1[i,j,k], rot))
         # transform the wave function!
         if self.__vecl  is not None:
            bfs = self.get_bfs()
@@ -648,6 +664,15 @@ and RMS from the last superimposition"""
            for i in xrange(self.__nmodes):
                for j in xrange(self.__npol):
                    self.__dpol1[i,j]  = numpy.dot(numpy.transpose(rot),numpy.dot(self.__dpol1[i,j],rot))
+        if self.__dpoli  is not None:
+           for i in xrange(self.__npol):
+               for j in xrange(12):
+                   self.__dpoli[i,j] = numpy.dot(numpy.transpose(rot), numpy.dot(self.__dpoli[i,j], rot))
+        if self.__dpoli1 is not None:
+           for i in xrange(self.__nmodes):
+               for j in xrange(self.__npol):
+                   for k in xrange(12):
+                       self.__dpoli1[i,j,k]  = numpy.dot(numpy.transpose(rot), numpy.dot(self.__dpoli1[i,j,k], rot))
         # - wave function
         if self.__vecl  is not None:
            bfs = self.get_bfs()
@@ -737,6 +762,7 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         #                                                            
         self.__esp  ,self.__chlpg,self.__npol     = None, None, None
         self.__dpol ,self.__dpol1,self.__rpol     = None, None, None
+        self.__dpoli,self.__dpoli1                = None, None
         #                                                            
         self.__rdma, self.__dmac, self.__dmad     = None, None, None
         self.__dmaq, self.__dmao, self.__ndma     = None, None, None
@@ -775,6 +801,8 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
                       'rpol': '[ Polarizable centers ]'                             ,
                       'dpol': '[ Distributed polarizabilities ]'                    ,
                      'dpol1': '[ Distributed polarizabilities - first derivatives ]',
+                     'dpoli': '[ Distr. pol. wrt imaginary freq ]'                  ,
+                    'dpoli1': '[ Distr. pol. wrt imaginary freq - 1st derivatives ]',
                      'lmoc' : '[ LMO centroids ]'                                   ,
                      'lmoc1': '[ LMO centroids - first derivatives ]'               ,
                      'fock' : '[ Fock matrix ]'                                     ,
@@ -787,7 +815,7 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
                      'vecc1': '[ AO->CMO matrix - first derivatives ]'              ,}
         self.__mol_names = mol_names
         self.__sec_names = sec_names
-        self.__atomic_symbols = {1: 'H', 2: 'He', 3: 'Li', 6:'C', 7:'N', 8:'O', 9:'F', 11:'Na',16:'S', 17:'Cl'}
+        self.__atomic_symbols = {1: 'H', 2: 'He', 3: 'Li', 6:'C', 7:'N', 8:'O', 9:'F', 11:'Na', 12:'Mg', 16:'S', 17:'Cl'}
         return
 
     def _parse_dict(self,par):
@@ -857,6 +885,8 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         if self.__rpol  is not None: par['rpol' ] = self.__rpol
         if self.__dpol  is not None: par['dpol' ] = self.__dpol
         if self.__dpol1 is not None: par['dpol1'] = self.__dpol1
+        if self.__dpoli  is not None: par['dpoli' ] = self.__dpoli
+        if self.__dpoli1 is not None: par['dpoli1'] = self.__dpoli1
         #
         return par
         
@@ -1122,6 +1152,18 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
                  self.__dpol1 = data.reshape(self.__nmodes, self.__npol, 3, 3)
                  temp = numpy.sqrt(self.__redmass)[:, numpy.newaxis, numpy.newaxis, numpy.newaxis]
                  self.__dpol1 = temp * self.__dpol1
+            elif key == 'dpoli':
+                 merror = 'npol in section [ molecule ] '
+                 merror+= 'is not consistent with section [ Distr. pol. wrt imaginary freq ]'
+                 assert self.__npol == (N/(9*12)), merror
+                 self.__dpoli = data.reshape(self.__npol, 12, 3, 3)
+            elif key == 'dpoli1':
+                 merror = 'npol and nmodes in section [ molecule ] '
+                 merror+= 'is not consistent with section [ Distr. pol. wrt imaginary freq - 1st derivatives ]'
+                 assert self.__npol == (N/(9*12*self.__nmodes)), merror
+                 self.__dpoli1 = data.reshape(self.__nmodes, self.__npol, 12, 3, 3)
+                 temp = numpy.sqrt(self.__redmass)[:, numpy.newaxis, numpy.newaxis, numpy.newaxis, numpy.newaxis]
+                 self.__dpoli1 = temp * self.__dpoli1
             # ------------------------------------ FREQ -------------------------------------------
             # Harmonic frequencies
             elif key == 'freq':
@@ -1160,7 +1202,7 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
                               gijk[k,j,i] = d
                               K += 1                
                   self.__gijk = gijk
-            # ------------------------------------ EFP --------------------------------------------
+            # ------------------------------------ WFN --------------------------------------------
             # LMO centroids
             elif  key == 'lmoc':
                   merror = 'nmos in section [ molecule ] '
@@ -1664,7 +1706,45 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         if N%5: log+= '\n'
         file.write(log)
         return
-    
+
+    def _write_dpoli(self, file):
+        """write distributed polarizabilities wrt imaginary frequencies"""
+        nmos = self.__dpol.shape[0]
+        N = nmos*9*12
+        log = ' %s %s= %d\n' % (self.__sec_names['dpoli'].ljust(40), 'N'.rjust(10), N)
+        n = 1
+        for i in xrange(nmos):
+            for j in xrange(12):
+                for k in [0,1,2]:
+                    for l in [0,1,2]:
+                        log+= "%20.10E" % self.__dpoli[i,j,k,l]
+                        if not n%5: log+= '\n'
+                        n+=1
+        log+= '\n'
+        if N%5: log+= '\n'
+        file.write(log)
+        return
+
+    def _write_dpoli1(self, file):
+        """write distributed polarizabilities wrt imag freq - first derivatives wrt modes"""
+        nmodes = self.__dpol1.shape[0]
+        nmos   = self.__dpol1.shape[1]
+        N = nmodes*nmos*9*12
+        log = ' %s %s= %d\n' % (self.__sec_names['dpoli1'].ljust(40), 'N'.rjust(10), N)
+        n = 1
+        for i in xrange(nmodes):
+            for j in xrange(nmos):
+                for k in xrange(12):
+                    for l in [0,1,2]:
+                        for m in [0,1,2]:
+                            log+= "%20.10E" % self.__dpoli1[i,j,k,l,m]
+                            if not n%5: log+= '\n'
+                            n+=1
+        log+= '\n'
+        if N%5: log+= '\n'
+        file.write(log)
+        return
+   
     def _write_freq(self, file):
         """write harmonic frequencies"""
         nmodes = self.__freq.shape[0]

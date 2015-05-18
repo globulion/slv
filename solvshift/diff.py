@@ -118,7 +118,9 @@ where X=5,9"""
         # Distributed polarizabilities
         elif dpol:
            self.dpos_set_1, self.dpol_set_1 = self.Parse_dpol(dir+dpol,sims=sims)
+           self.dpoli_set_1                 = self.Parse_dpoli(dir+dpol,sims=sims)
            self.dpol1 = self.get_dpol_fder()
+           self.dpoli1= self.get_dpoli_fder()
         # EDS
         elif eds:
            fdir,sdir = eds.split(':')
@@ -184,6 +186,19 @@ where X=5,9"""
         dPos = numpy.array(dPos,numpy.float64)
         dPol = numpy.array(dPol,numpy.float64)
         return dPos, dPol
+
+    def Parse_dpoli(self,dir,sims):
+        """"""
+        files = glob.glob('%s/*_.efp' % dir)
+        files.sort()
+        dPoli = []
+        for i,file in enumerate(files):
+            a = libbbg.utilities.ParseDistributedPolarizabilitiesWrtImFreqFromGamessEfpFile(file)
+            a = libbbg.utilities.reorder(a,sims[i])
+            dPoli.append(a)
+        dPoli = numpy.array(dPoli,numpy.float64)
+        return dPoli
+
     
     def get_dpol_fder(self):
         """calculate first derivatives wrt normal coordinates 
@@ -205,6 +220,26 @@ where X=5,9"""
 
         return first_der_dpol_mode.reshape(self.nAtoms*3-6,N,3,3)
         #return first_der_dpol_cart.reshape(self.nAtoms*3,N,3,3)
+
+    def get_dpoli_fder(self):
+        """calculate first derivatives wrt normal coordinates 
+        of polarizability tensor wrt imaginary frequency. Returned in AU unit"""
+        first_der_dpoli_cart = []
+        N = self.dpoli_set_1.shape[1]
+        for i in range(self.nAtoms*3):
+            K = 1 + 4*i
+            fd   = (1./12.) *  (\
+                       (self.dpoli_set_1[K+3] - self.dpoli_set_1[K+0] ) \
+                 + 8*  (self.dpoli_set_1[K+1] - self.dpoli_set_1[K+2] ))\
+                 /(self.step* self.AngstromToBohr)
+                 
+            first_der_dpoli_cart.append( fd )
+        first_der_dpoli_cart = numpy.array(first_der_dpoli_cart,numpy.float64).reshape(self.nAtoms*3,N*12*3*3)
+
+        ### TRANSFORM FIRST DERIVATIVES TO NORMAL MODE SPACE
+        first_der_dpoli_mode = numpy.tensordot(self.L,first_der_dpoli_cart,(0,0))
+
+        return first_der_dpoli_mode.reshape(self.nAtoms*3-6,N,12,3,3)
     
     def Parse_tran(self,dir,nae,basis,method):
         """parses CMO transformation matrices from fchk files and transforms

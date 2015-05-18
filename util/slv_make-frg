@@ -12,7 +12,8 @@ from sys import argv, exit
 from solvshift.slvpar import *
 from solvshift.solefp import *
 from libbbg.utilities import Read_xyz_file, ParseLmocFromGamessEfpFile as Parse_lmoc_efpgms, \
-                      ParseDistributedPolarizabilitiesFromGamessEfpFile as Parse_dpol_efpgms
+                      ParseDistributedPolarizabilitiesFromGamessEfpFile as Parse_dpol_efpgms,\
+                      ParseDistributedPolarizabilitiesWrtImFreqFromGamessEfpFile as Parse_dpoli_efpgms
 from libbbg.dma import DMA
 print __doc__
 if len(argv)==1: exit()
@@ -32,6 +33,9 @@ par = sefp.get()
 # parse rpol and dpol from EFP
 rpol, dpol = Parse_dpol_efpgms(gefp)
 
+# parsr dpoli
+dpoli = Parse_dpoli_efpgms(gefp)
+
 # parse DMA file
 dma = DMA(camm)
 
@@ -45,6 +49,7 @@ out.set(frag=sefp,
         mol=mol,
         dma=dma,
         rpol=rpol,
-        dpol=dpol)
+        dpol=dpol,
+        dpoli=dpoli)
 #        chlpg=q)
 out.write(outfile)

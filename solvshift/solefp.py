@@ -1223,6 +1223,51 @@ Otherwise self.__debug file won't be closed."""
                     print " Polarization       frequency shift: %10.2f"%spol
                     #print " Polarization energy         : %10.6f"%epol
                  del PAR, QO
+              # ---------------------------------- DISP --------------------------------- #
+              if self.__eval_disp:
+                 npolc = parc['npol']
+                 ### central molecule
+                 N = len(self.__ntp)
+                 PAR = []
+                 PAR.append( parc )
+                 ### other molecules
+                 if lwrite: print " %10d molecules in the DISP layer" % N
+                 for i in range(N):
+                     im = self.__mtp[i]
+                     nm_prev = sum(self.__ntp[:i])
+                     nm_curr = sum(self.__ntp[:i+1])
+                     #                                                               reorder to BSM-FRG atom order
+                     STR = self._reorder_xyz( self.__rcoordp[nm_prev:nm_curr]      , self.__reordlist[im] )
+                     frg = self.__bsm[im].copy()
+                     rms = frg.sup( STR, suplist= self.__suplist[im] )
+                     #if lwrite: print "rms P: ",rms
+                     par = frg.get()
+                     PAR.append( par )
+                     #
+                 npol = [ x['npol'] for x in PAR ]
+                 npols= sum(npol)
+                 #
+                 rpol = numpy.concatenate  ([ x['rpol'] for x in PAR ]).reshape(npols*3)
+                 pol  = numpy.concatenate  ([ x['dpoli'] for x in PAR ])#.reshape(npols*9)
+                 pol  = pol.ravel()
+                 #
+                 rpol1= parc['lmoc1'].reshape(nmodes*npolc*3)
+                 pol1 = parc['dpoli1'].reshape(nmodes*npolc*12*9)
+                 nmaax = 1.0
+                 pol1 = numpy.where(pol1>nmaax,0.00,pol1)
+                 pol1 = numpy.where(pol1<-nmaax,0.00,pol1)
+                 #
+                 # store the forces
+                 #self.__fi_disp = fi
+                 disp = libbbg.qm.clemtp.sdisp6(rpol,rpol1,pol,npol,pol1,gijj,redmss,freq,npolc,self.__mode)
+                 if self.__cunit:
+                    disp *= self.HartreePerHbarToCmRec
+
+                 self.__shift[4] = disp
+                 if lwrite: 
+                    print " Dispersion         frequency shift: %10.2f"%disp
+                    #print " Dispersion   energy         : %10.6f"%edisp
+                 del PAR
            # ---------------------------------- EX-REP --------------------------------- #
            rms_max = 0.0
            if  self.__eval_rep:
