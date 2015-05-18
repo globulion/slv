@@ -1253,7 +1253,7 @@ Otherwise self.__debug file won't be closed."""
                  #
                  rpol1= parc['lmoc1'].reshape(nmodes*npolc*3)
                  pol1 = parc['dpoli1'].reshape(nmodes*npolc*12*9)
-                 nmaax = 1.0
+                 nmaax = 0.001
                  pol1 = numpy.where(pol1>nmaax,0.00,pol1)
                  pol1 = numpy.where(pol1<-nmaax,0.00,pol1)
                  #
