@@ -193,7 +193,10 @@ where X=5,9"""
         files.sort()
         dPoli = []
         for i,file in enumerate(files):
-            a = libbbg.utilities.ParseDistributedPolarizabilitiesWrtImFreqFromGamessEfpFile(file)
+            r,a = libbbg.utilities.ParseDistributedPolarizabilitiesWrtImFreqFromGamessEfpFile(file)
+            r = r.transpose((1,0,2))                        # transpose to NMOS x 12 x 3
+            a = a.transpose((1,0,2,3))                      # transpose to NMOS x 12 x 3 x 3
+            r = libbbg.utilities.reorder(a,sims[i])
             a = libbbg.utilities.reorder(a,sims[i])
             dPoli.append(a)
         dPoli = numpy.array(dPoli,numpy.float64)
