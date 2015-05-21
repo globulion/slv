@@ -1260,14 +1260,16 @@ Otherwise self.__debug file won't be closed."""
                  #
                  # store the forces
                  #self.__fi_disp = fi
-                 disp = libbbg.qm.clemtp .sdisp6(rpol,rpol1,pol,npol,pol1,gijj,redmss,freq,npolc,self.__mode)
-                 #disp = libbbg.qm.clemtp2.tdisp6(rpol,rpol1,pol,npol,pol1,gijj,redmss,freq,npolc,self.__mode)
+                 disp_iso = libbbg.qm.clemtp .sdisp6(rpol,rpol1,pol,npol,pol1,gijj,redmss,freq,npolc,self.__mode)
+                 disp_ani = libbbg.qm.clemtp2.tdisp6(rpol,rpol1,pol,npol,pol1,gijj,redmss,freq,npolc,self.__mode)
                  if self.__cunit:
-                    disp *= self.HartreePerHbarToCmRec
+                    disp_iso *= self.HartreePerHbarToCmRec
+                    disp_ani *= self.HartreePerHbarToCmRec
 
-                 self.__shift[4] = disp
+                 self.__shift[4] = disp_iso
+                 self.__shift[5] = disp_ani
                  if lwrite: 
-                    print " Dispersion         frequency shift: %10.2f"%disp
+                    print " Dispersion         frequency shift: %10.2f  %10.2f"%(disp_iso,disp_ani)
                     #print " Dispersion   energy         : %10.6f"%edisp
                  del PAR
            # ---------------------------------- EX-REP --------------------------------- #
