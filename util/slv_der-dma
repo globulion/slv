@@ -11,11 +11,12 @@ The parameter file will be saved
 
 Usage:
 
-./dma_der.py [anh] [fchk] [dma] [outname]
+./dma_der.py [anh] [fchk] [dma] [step] [outname]
 
 Note:
 
 anh - amharmonic file
+step- step in Angstroms for 1-st derivatives
 
 Warning: 
 
@@ -33,11 +34,12 @@ print __doc__
 if len(argv)==1: exit()
 anh    = argv[1]
 mol    = Read_xyz_file(argv[2],mol=True)
-name   = argv[4]
 Dma    = ParseDMA(argv[3])
+step   = float(argv[4])
+name   = argv[5]
 
 a = FREQ(anh)
-c = DIFF(freq=a.freq,step=0.006,dir='./',cartesian=True,L=a.L,camm=True)
+c = DIFF(freq=a.freq,step=step,dir='./',cartesian=True,L=a.L,camm=True)
 dma1 = c.Fder
 dma2 = c.Sder
 

@@ -20,7 +20,7 @@
  
  Usage:
  
-          [anh] [fchk] [dma] [nae] [basis] [outname]
+          [anh] [fchk] [dma] [nae] [basis] [step] [outname]
  
  Notes:
  
@@ -29,6 +29,7 @@
   o dma     - DMA file in Coulomb format
   o nae     - number of alpha electrons
   o basis   - basis set
+  o step    - step of differentiation (Angstroms)
   o outname - output name of *.frg file with SolEFP parameters 
  --------------------------------------------------------------------
                                          Last revision: 11 Sep 2014
@@ -47,10 +48,11 @@ mol    = Read_xyz_file(argv[2],mol=True)
 dma    = ParseDMA(argv[3],'c')
 nae    = int(argv[4])
 basis  = argv[5]
-name   = argv[6]
+step   = float(argv[6])
+name   = argv[7]
 
 a = FREQ(anh)
-c = DIFF(freq=a.freq,step=0.006,
+c = DIFF(freq=a.freq,step=step,
          dir="./",L=a.L,
          solefp='./',nae=nae,basis=basis)
 
