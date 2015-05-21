@@ -1709,7 +1709,7 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
 
     def _write_dpoli(self, file):
         """write distributed polarizabilities wrt imaginary frequencies"""
-        nmos = self.__dpol.shape[0]
+        nmos = self.__dpoli.shape[0]
         N = nmos*9*12
         log = ' %s %s= %d\n' % (self.__sec_names['dpoli'].ljust(40), 'N'.rjust(10), N)
         n = 1
@@ -1727,8 +1727,8 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
 
     def _write_dpoli1(self, file):
         """write distributed polarizabilities wrt imag freq - first derivatives wrt modes"""
-        nmodes = self.__dpol1.shape[0]
-        nmos   = self.__dpol1.shape[1]
+        nmodes = self.__dpoli1.shape[0]
+        nmos   = self.__dpoli1.shape[1]
         N = nmodes*nmos*9*12
         log = ' %s %s= %d\n' % (self.__sec_names['dpoli1'].ljust(40), 'N'.rjust(10), N)
         n = 1

@@ -26,21 +26,23 @@ outfile = argv[5]
 nae = int(argv[6])
 
 # parse basic data, multipoles and WFN
-sefp = FragFactory(fchk=fchk,gmslog=glog if glog.lower()!='none' else None,basis='6-311++G**',nae=nae)
+sefp = FragFactory(fchk=fchk, gmslog=glog if glog.lower()!='none' else None, basis='6-311++G**', nae=nae)
 sefp.eval(ct=False, cvgloc=1.0E-14)
 par = sefp.get()
 
 # parse rpol and dpol from EFP
 rpol, dpol = Parse_dpol_efpgms(gefp)
 
-# parsr dpoli
-dpoli = Parse_dpoli_efpgms(gefp)
+# parse dpoli
+rpoli, dpoli = Parse_dpoli_efpgms(gefp)
+rpoli = rpoli.transpose((1,0,2  ))   # transpose to NMOS x 12 x 3
+dpoli = dpoli.transpose((1,0,2,3))   # transpose to NMOS x 12 x 3 x 3
 
 # parse DMA file
 dma = DMA(camm)
 
 # PyQuante.Molecule object
-mol = Read_xyz_file(fchk,mol=1)
+mol = Read_xyz_file(fchk, mol=True)
 q = None
 
 # create fragment and write to the output file
