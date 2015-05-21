@@ -1,0 +1,37 @@
+#!/usr/bin/python
+"""
+ Compare FRG files
+
+ Usage: [frg1] [frg2]
+"""
+print __doc__
+from sys import argv
+if len(argv)==1: exit()
+from solvshift.slvpar import Frag
+f1 = argv[1]        ;  f2 = argv[2]
+a1 = Frag(f1).get() ;  a2 = Frag(f2).get()
+
+comps = ['fock','fock1','pos','lmoc', 'lmoc1', 'vecl','vecl1','dpol','dpol1','dpoli','dpoli1','dmac1','dmad1','dmaq1','dmao1','gijk']
+
+# compare Frag's
+print " FRAGMENT DIFFERENCES\n"
+print "%8s  %11s  %11s" %  ('Quant', 'Diff.min', 'Diff.max')
+print "%8s  %11s  %11s" % ('------', '--------', '--------')
+for i in comps:
+    try:
+       d = a1[i] - a2[i]
+       print "%8s  %11.5f  %11.5f" % (i,d.min(),d.max())
+    except KeyError:
+       print "%8s not found." % i
+print
+
+# Show each fragment maxima and minima
+print " FRAGMENT EXTREME VALUES\n"
+print "%8s  %11s  %11s  %11s  %11s" % ('Quant','Min','Max','Min','Max')
+print "%8s  %11s  %11s  %11s  %11s" % ('------', '--------', '--------', '--------', '--------')
+for i in comps:
+    try:
+       d1 = a1[i]; d2 = a2[i]
+       print "%8s  %11.5f  %11.5f  %11.5f  %11.5f" % (i,d1.min(),d1.max(),d2.min(),d2.max())
+    except KeyError: print "%8s not found." % i
+print

@@ -1,0 +1,128 @@
+#!/usr/bin/python
+#*-* coding: utf-8 *-*
+"""
+Calculate g)ijk tensor from Hessians parsed from FCHK files. Uses 5-point
+central Stencil formulas for 1-st derivatives. Can be used for files generated
+to create SolCAMM models.
+
+Usage:
+ [freq] [dx] [j_mode] 
+Notes: 
+  dx - finite difference cartesian displacement
+       given in Angstroms!
+  j_mode - mode of interest (normal numbers, not Python convention)
+"""
+print __doc__
+from sys import argv, exit
+if len(argv)==1: exit()
+from glob import glob
+from libbbg.utilities import ParseFCFromFchk as P, QMFile as QMF, VIB, PRINT
+from libbbg.units import UNITS
+from libbbg.gaussfreq import FREQ
+from numpy import zeros, float64, sqrt, array, newaxis, dot, tensordot, linalg
+
+plik_freq = argv[1]
+dx = float64(argv[2])
+j_mode = int(argv[3])-1
+step = dx * UNITS.AngstromToBohr
+
+# extract the frequency analysis
+a = QMF()
+a.open(plik_freq,freq=True)
+freq, redmass, forc, ints, L = a.get_freq()
+a.close()
+
+# Calculate dipole derivatives using transformation by mass-weighted L matrix 
+a = FREQ(plik_freq)
+L = a.L
+r = a.redmass
+n_atoms, n_modes = L.shape
+n_atoms/=3
+print " There is %d atoms and %d normal modes" % (n_atoms, n_modes)
+
+def write_gijk(gijk, out):
+    """write cubic anharmonic constants"""
+    nmodes = gijk.shape[0]
+    N = nmodes*(nmodes+1)*(nmodes+2)/6
+    log = ' %s %s= %d\n' % ('[ Cubic anharmonic constants ]'.ljust(40), 'N'.rjust(10), N)
+    n = 1
+    for i in xrange(nmodes):
+        for j in xrange(i+1):
+            for k in xrange(j+1):
+                log+= "%20.10E" % gijk[i,j,k]
+                if not n%5: log+= '\n'
+                n+=1
+    log+= '\n'
+    if N%5: log+= '\n'
+    print " Writing file : %40s" % out
+    out = open(out,'w')
+    out.write(log)
+    out.close()
+    return
+
+# utilities
+def calc_gijk(en,step,n_atoms,n_modes):
+    """calculate g_ijk tensor"""
+    e1 = en[:n_atoms*3*4]
+    n3 = 3*n_atoms
+    g = zeros((n3,n3,n3), float64)
+    for i in range(n3):
+        K1 = i*4 
+        #
+        val = (e1[K1+3] - e1[K1+0]) - 8.*(e1[K1+2] - e1[K1+1])
+        val/= 12.00 * step
+        g[i] = val
+    return g
+
+def pr(g): print len(g) * '%13.5f' % tuple(g)
+
+fchk = glob('*_.fchk')
+fchk.sort()
+
+en = list(); mol = list()
+for i in fchk: 
+    hess = P(i)
+    m    = QMF(i,mol=True).get_mol()
+    en.append(hess)
+    mol.append(m)
+
+en = array(en,float64)
+g_ijk = calc_gijk(en[1:],step,n_atoms,n_modes) 
+print g_ijk.shape
+
+# transform to the full normal mode space
+g_ijk = tensordot(g_ijk, L, (2,0))
+g_ijk = tensordot(g_ijk, L, (1,0))
+g_ijk = tensordot(g_ijk, L, (0,0))
+print g_ijk.shape
+
+g_ijk /= sqrt(UNITS.ElectronMassToAmu**3)
+
+# Units Eh/ao³
+g_ijk_c  = g_ijk.copy()
+g_ijk_c *= sqrt(r[:,newaxis,newaxis])
+g_ijk_c *= sqrt(r[newaxis,:,newaxis])
+g_ijk_c *= sqrt(r[newaxis,newaxis,:])
+
+j = j_mode
+
+#pr( g_ijk[j,j,:] )
+#pr( g_ijk[j,:,j] ) 
+#pr( g_ijk[:,j,j] )
+
+#print g_ijk[7-1,5-1,7-1]
+
+# pring G_IJJ
+log = '%3s %3s %3s '% ('I'.rjust(3),'J'.rjust(3),'J'.rjust(3))
+log+= '%26s ' % '[Eh/ao³/AMU^3/2]'.rjust(26)
+log+= '%26s ' % '[Eh/ao³]'.rjust(26)
+log+= '\n'
+for i in range(n_modes): 
+    log+= '%3d %3d %3d'%  (i+1,j+1,j+1)
+    log+= '%26.5f' % g_ijk[i,j,j]
+    log+= '%26.5f' % g_ijk_c[i,j,j]
+    log+= '\n' 
+print log
+
+# write the correct cubic anharmonic constants to SLV *.frg file
+write_gijk(g_ijk_c, 'gijk.par')

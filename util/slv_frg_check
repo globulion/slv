@@ -1,0 +1,16 @@
+#!/usr/bin/python
+"""
+ Check the fragment
+
+ Usage: [frg]
+"""
+print __doc__
+from sys import argv, exit
+if len(argv)==1: exit()
+from solvshift.slvpar import Frag
+
+# read the (Sol)EFP parameters
+frag = Frag(argv[1])
+
+print frag
+
