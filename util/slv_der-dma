@@ -42,6 +42,7 @@ a = FREQ(anh)
 c = DIFF(freq=a.freq,step=step,dir='./',cartesian=True,L=a.L,camm=True)
 dma1 = c.Fder
 dma2 = c.Sder
+mode = c.mode_id+1
 
 nmodes = len(dma1)
 ndma   = dma1[0][0].shape[0]
@@ -62,7 +63,7 @@ param = Frag()
 param.set(mol=mol,anh=a.w(),dmac1=C,dmad1=D,dmaq1=Q,dmao1=O,
                             dmac2=dma2[0],dmad2=dma2[1],
                             dmaq2=dma2[2],dmao2=dma2[3],
-                            dma=Dma)
+                            dma=Dma,mode=mode)
 param.write(file=name)
 
 print 'QUITTING...'

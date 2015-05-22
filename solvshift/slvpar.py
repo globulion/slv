@@ -111,6 +111,7 @@ class Frag(object, libbbg.units.UNITS):
      o comenh2          Acetamide                       YES    NO     NO
      o mecoo-           Acetate (-1) Anion              YES    NO     NO
      o menh3+           Methyl Ammonium (+1) Cation     YES    NO     NO
+     o me-guanidinium+  Methyl Guanidinium (+1) Cation  YES    NO     NO
      o methane          Methane                         YES    NO     NO
      o ethane           Ethane                          YES    NO     NO
      o n-propane        n-Propane                       YES    NO     NO
@@ -194,9 +195,9 @@ class Frag(object, libbbg.units.UNITS):
  II  : DMTP quadrupoles                  dmaq            ndma  , 6            
      : DMTP octupoles                    dmao            ndma  , 10           
      : DMTP charges fder                 dmac1           nmodes, ndma         
-     : DMTP dipoles fder                 dmad1           nmodes, ndma ,3      
-     : DMTP quadrupoles fder             dmaq1           nmodes, ndma ,6      
-     : DMTP octupoles fder               dmao1           nmodes, ndma ,10     
+     : DMTP dipoles fder                 dmad1           nmodes, ndma , 3      
+     : DMTP quadrupoles fder             dmaq1           nmodes, ndma , 6      
+     : DMTP octupoles fder               dmao1           nmodes, ndma , 10     
      : DMTP charges sder                 dmac2           ndma                 
      : DMTP dipoles sder                 dmad2           ndma  , 3              
      : DMTP quadrupoles sder             dmad2           ndma  , 6              
@@ -288,7 +289,7 @@ class Frag(object, libbbg.units.UNITS):
         """parse the parameters from a file"""
         if file in self.params:
            self.__file = os.environ['SLV_DATA'] + '/frg/%s/%s.frg' % (file, file)
-           self.__dir  = os.environ['SLV_DATA'] + '/frg/%s/'       % file 
+           self.__dir  = os.environ['SLV_DATA'] + '/frg/%s/'       %  file 
            if not os.path.isfile(self.__file):
               message = " No such file: <%s>. There is no *.frg file for that molecule,\n" % self.__file
               message+= " the name is misspelled or check if the $SLV_DATA variable is set properly\n"
@@ -395,6 +396,7 @@ class Frag(object, libbbg.units.UNITS):
             if key == 'dmaq2'  : self.__dmaq2 = arg
             if key == 'dmao2'  : self.__dmao2 = arg
             if key == 'lvec'   : self.__lvec  = arg
+            if key == 'mode'   : self.__mode  = arg
             if key == 'freq'   : self.__freq  = arg
             if key == 'redmass': self.__redmass = arg
             if key == 'redmss' : self.__redmass = arg
@@ -482,6 +484,11 @@ and RMS from the last superimposition"""
         if self.__origin     is not None: self._write_origin(f)
         if self.__atno       is not None: self._write_atno(f)
         if self.__atms       is not None: self._write_atms(f)
+        # frequency analysis
+        if self.__redmass    is not None: self._write_redmass(f) 
+        if self.__freq       is not None: self._write_freq(f)
+        if self.__lvec       is not None: self._write_lvec(f)
+        if self.__gijk       is not None: self._write_gijk(f)
         # population analysis
         if self.__esp        is not None: self._write_esp(f)   
         if self.__chlpg      is not None: self._write_chlpg(f)
@@ -503,11 +510,6 @@ and RMS from the last superimposition"""
         if self.__dpol1      is not None: self._write_dpol1(f)
         if self.__dpoli      is not None: self._write_dpoli(f)
         if self.__dpoli1     is not None: self._write_dpoli1(f)
-        # frequency analysis
-        if self.__redmass    is not None: self._write_redmass(f) 
-        if self.__freq       is not None: self._write_freq(f)
-        if self.__lvec       is not None: self._write_lvec(f)
-        if self.__gijk       is not None: self._write_gijk(f)
         # EFP parameters
         if self.__lmoc       is not None: self._write_lmoc(f)  
         if self.__lmoc1      is not None: self._write_lmoc1(f)
@@ -1342,14 +1344,14 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
         log   += '   natoms     = %s\n'    % self.__natoms
         log   += '   nbasis     = %s\n'    % self.__nbasis
         log   += '   nmodes     = %s\n'    % self.__nmodes
-        if self.__mode is not None:
-           log+= '   mode       = %s\n'    % self.__mode
         if self.__ndma is not None:
            log+= '   ndma       = %s\n'    % self.__ndma
         if self.__npol is not None:
            log+= '   npol       = %s\n'    % self.__npol
         log   += '   nmos       = %s\n'    % self.__nmos
         log   += '   ncmos      = %s\n'    % self.__ncmos
+        if self.__mode is not None:
+           log+= '   mode       = %s\n'    % self.__mode
         log   += ' \n'
         file.write(log)
         return
