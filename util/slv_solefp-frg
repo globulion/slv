@@ -1,0 +1,204 @@
+#!/usr/bin/python
+#*-* coding=utf-8 *-*
+"""
+ Make SolEFP fragment file (*.frg)
+
+ Usage:
+
+   -i [anh] -s [step] -m [mode] -x [xyz]
+
+   -c [anh] -s [step] -m [mode] -f [fchk] -d [dma] -e [efp] -o [frg]
+"""
+from sys import argv, exit
+from string import Template
+from getopt import getopt, GetoptError
+import os, re
+from time import time
+from libbbg.utilities import TIMER, ParseElectronsFromFchk
+
+# ----------------------------------------------------------------------------------------------------
+__authors__         = " Bartosz Błasiak (blasiak.bartosz@gmai.com) "
+__version__         = " 1.0.1"
+# ----------------------------------------------------------------------------------------------------
+
+def Usage():
+    print __doc__
+    exit()
+def Main(argv):
+    # defaults
+    Calc           = True                                              # calculation mode
+    step           = 0.006                                             # step of 1st derivative differentiation (Angstrom)
+    basis          ='6-311++G**'                                       # basis set (6D)
+    xyz            ='xyz'                                              # structure of IR active molecule
+    fchk           ='fchk'                                             # G09 FCHK file
+    efp            ='efp'                                              # GMS EFP file
+    anh            ='anh'                                              # G09 ANH file
+    dma            ='dma'                                              # COULOMB DMA file
+    frg            ='frg'                                              # SLV FRG FILE (Output)
+    mode           = None                                              # MODE (helico, normal numbers)
+    #
+    try:
+       opts, args = getopt(argv, "hi:c:m:x:d:f:e:o:s:" , ["help" , "inputs=", "calc="
+                                                          "mode=", "xyz="    , "dma=", 
+                                                          "fchk=", "efp="    , "out=", "step="])
+    except GetoptError, error:
+        print "\n Invalid option. Please refer to the usage below:" 
+        print __doc__
+        exit()
+    if not argv: exit()
+    for opt, arg in opts:
+        if opt in ("-h", "--help"): Usage()
+        if opt in ("-i", "--inputs"): 
+           Calc = False
+           anh  = arg
+        if opt in ("-c", "--calc"):
+           Calc = True
+           anh  = arg
+        if opt in ("-x", "--xyz"):  xyz = arg
+        if opt in ("-e", "--efp"):  efp = arg
+        if opt in ("-f", "--fchk"): fchk = arg
+        if opt in ("-d", "--dma"):  dma = arg
+        if opt in ("-o", "--out"):  frg = arg
+        if opt in ("-m", "--mode"): mode = int(arg)
+        if opt in ("-s", "--step"): step = float(arg)
+
+    run(Calc, anh, mode, step, basis, xyz, dma, fchk, efp, frg)
+    return
+
+
+
+# Templates for commands
+t_inp1= Template("slv -m $MODE -a $ANH -gi $XYZ -x 1 -s $STEP")
+t_inp2= Template("slv -m $MODE -a $ANH -i  $XYZ -x 1 -s $STEP")
+t_tar1= Template('tar cfj inp_g09.tar.bz2 g09_*.inp')
+t_tar2= Template('tar cfj inp_gms.tar.bz2 gms_*.inp')
+t_camm= Template("python ~/programs/solvshift/solvshift/diff.py $BASIS SCF")
+t_dma = Template("slv_der-dma $ANH $FCHK $CAMM $STEP __out_dma__.frg")
+t_wfn = Template("slv_der-wfn $ANH $FCHK $CAMM $NAE $BASIS $STEP __out_wfn__.frg")
+t_pol = Template("slv_der-dpol $ANH __out_wfn__.frg $STEP __out_pol__.frg")
+t_gijk= Template("slv_calc-gijk-from-hessians $ANH $STEP $MODE")
+
+def run(Calc, anh, mode, step, basis, xyz, dma, fchk, efp, frg):
+    """Main routine for generating of SolEFP parameters"""
+    if mode is None:
+       print "\n Set the mode number!\n"
+       exit()
+    # start making the parameters
+    clock = TIMER('SolEFP parameter evaluation for %s' % xyz)
+    # Input mode
+    if not Calc:
+
+       print 
+       # [1] Gaussian input files
+       g09_xyz = 'g09_'+xyz
+       os.system('cp %s %s' % (xyz, g09_xyz))
+       os.system(t_inp1.substitute(MODE=mode-1, ANH=anh, XYZ=g09_xyz, STEP=step))
+       os.system('rm %s' % g09_xyz)
+       clock.actualize(' Making G09    input files')
+
+       # [2] GAMESS input files
+       gms_xyz = 'gms_'+xyz
+       os.system('cp %s %s' % (xyz, gms_xyz))
+       os.system(t_inp2.substitute(MODE=mode-1, ANH=anh, XYZ=gms_xyz, STEP=step))
+       os.system('rm %s' % gms_xyz)
+       clock.actualize(' Making GAMESS input files')
+
+       # [3] Compressing the input files
+       os.system(t_tar1.substitute())
+       os.system(t_tar2.substitute())
+       clock.actualize(' Making compressed input files')
+
+    # Calculation mode  
+    else: 
+
+       nae, nbe = ParseElectronsFromFchk(fchk)
+       assert nae==nbe, 'NAE is not equal to NBE!'
+
+       # [1] Calculation of CAMMs
+       os.system(t_camm.substitute(BASIS=basis))
+       clock.actualize('Computation of CAMM')
+
+       # [2] Calculation of DMA derivatives
+       os.system(t_dma.substitute(ANH=anh, FCHK=fchk, CAMM=dma, STEP=step))
+       clock.actualize('Computation of Coulomb parameters')
+
+       # [3] Calculation of WFN derivatives
+       os.system(t_wfn.substitute(ANH=anh, FCHK=fchk, CAMM=dma, NAE=nae, BASIS=basis, STEP=step))
+       clock.actualize('Computaton of repulsion parameters')
+
+       # [4] Calculation of POL derivatives
+       os.system(t_pol.substitute(ANH=anh, STEP=step))
+       clock.actualize('Computaton of polarization and dispersion parameters')
+
+       # [5] Calculation of cubic anharmonic constants
+       os.system(t_gijk.substitute(ANH=anh, STEP=step, MODE=mode))
+       os.system('mv -v gijk.par __out_gijk__.frg')
+       clock.actualize('Computaton of cubic anharmonic constants')
+
+       # [6] Forming of the final FRG file
+       form_frg(mode, frg)
+       replace_gijk('__out_gijk__.frg', frg)
+       clock.actualize('Forming the final FRG file')
+
+       # [7] Check the FRG file
+       os.system('slv_frg_check %s' % frg)
+       clock.actualize('Checking the final FRG file')
+     
+    # print the timing information
+    print clock
+    return
+
+def replace_gijk(gijk, out):
+    # read parameters
+    frg = open(out)
+    par_old = frg.read()
+    frg.close()
+    # read correct gijk
+    frg = open(gijk)
+    gijk_text = frg.read()
+    frg.close()
+    # replace gijk
+    templ = re.compile(r'\[',re.DOTALL)
+    sections = re.split(templ,par_old)
+    for section in sections:
+        if 'Cubic' in section: 
+            section = gijk_text 
+            break
+    # write the new frg file 
+    os.system('mv %s old.frg' % out)
+    par = '['.join(sections)
+    frg = open(out,'w')
+    frg.write(par)
+    frg.close() 
+    return
+
+def form_frg(mode,out):
+    """Combines 3 partial parameter files into one final"""
+    frg = open(out, 'w')
+
+    # copy DMA parameters
+    dma = open('__out_dma__.frg', 'r')
+    par = dma.read()
+    dma.close()
+    frg.write(par)
+
+    # copy POL parameters
+    pol = open('__out_pol__.frg', 'r')
+    par = pol.read()
+    pol.close()
+    frg.write(par)
+
+    # copy WFN parameters
+    wfn = open('__out_wfn__.frg', 'r')
+    par = wfn.readlines()
+    n = 0
+    for line in par:
+        if '[ LMO' in line: break 
+        n += 1
+    par = ''.join(par[n:])
+    wfn.close()
+    frg.write(par)
+    # close the final parameter file
+    frg.close()
+    return
+if __name__=='__main__': Main(argv[1:])

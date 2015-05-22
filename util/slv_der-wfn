@@ -79,18 +79,18 @@ param.write(file=name)
 par = Frag()
 par(name)
 pars = par.get()
-print 'LMOC '
-print pars['lmoc' ] - lmoc
-print 
-print pars['lmoc1'] - lmoc1
-print 'FOCK '
-print pars['fock' ] - fock
-print
-print pars['fock1'] - fock1
-print 'VECL '
-print pars['vecl' ] - vecl
-print
-print pars['vecl1'] - vecl1
+#print 'LMOC '
+#print pars['lmoc' ] - lmoc
+#print 
+#print pars['lmoc1'] - lmoc1
+#print 'FOCK '
+#print pars['fock' ] - fock
+#print
+#print pars['fock1'] - fock1
+#print 'VECL '
+#print pars['vecl' ] - vecl
+#print
+#print pars['vecl1'] - vecl1
 
 print 'QUITTING...'
 
