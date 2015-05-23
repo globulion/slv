@@ -1268,6 +1268,7 @@ Otherwise self.__debug file won't be closed."""
 
                  self.__shift[4] = disp_iso
                  self.__shift[5] = disp_ani
+                 shift_total    += disp_ani
                  if lwrite: 
                     print " Dispersion         frequency shift: %10.2f  %10.2f"%(disp_iso,disp_ani)
                     #print " Dispersion   energy         : %10.6f"%edisp
