@@ -24,6 +24,7 @@ __version__         = " 1.0.1"
 def Usage():
     print __doc__
     exit()
+
 def Main(argv):
     # defaults
     Calc           = True                                              # calculation mode
@@ -66,7 +67,6 @@ def Main(argv):
     return
 
 
-
 # Templates for commands
 t_inp1= Template("slv -m $MODE -a $ANH -gi $XYZ -x 1 -s $STEP")
 t_inp2= Template("slv -m $MODE -a $ANH -i  $XYZ -x 1 -s $STEP")
@@ -77,6 +77,7 @@ t_dma = Template("slv_der-dma $ANH $FCHK $CAMM $STEP __out_dma__.frg")
 t_wfn = Template("slv_der-wfn $ANH $FCHK $CAMM $NAE $BASIS $STEP __out_wfn__.frg")
 t_pol = Template("slv_der-dpol $ANH __out_wfn__.frg $STEP __out_pol__.frg")
 t_gijk= Template("slv_calc-gijk-from-hessians $ANH $STEP $MODE")
+
 
 def run(Calc, anh, mode, step, basis, xyz, dma, fchk, efp, frg):
     """Main routine for generating of SolEFP parameters"""
@@ -160,9 +161,9 @@ def replace_gijk(gijk, out):
     # replace gijk
     templ = re.compile(r'\[',re.DOTALL)
     sections = re.split(templ,par_old)
-    for section in sections:
+    for i, section in enumerate(sections):
         if 'Cubic' in section: 
-            section = gijk_text 
+            sections[i] = gijk_text[2:] 
             break
     # write the new frg file 
     os.system('mv %s old.frg' % out)
@@ -201,4 +202,5 @@ def form_frg(mode,out):
     # close the final parameter file
     frg.close()
     return
+
 if __name__=='__main__': Main(argv[1:])
