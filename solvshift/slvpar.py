@@ -443,7 +443,69 @@ class Frag(object, libbbg.units.UNITS):
         mol = libbbg.utilities.MakeMol(self.__atno, self.__pos, name=self.__name)
         bfs = PyQuante.Ints.getbasis(mol, self.__basis)
         return bfs
-   
+
+    def get_property(self, property, **kwargs):
+        """
+Evaluate various fragment-derived properties.
+Available properties:
+
+ Dispersion coefficients
+ o C6    (LMO-distr)     property='c6d'    , frag=<frg>
+ o C6    (total)         property='c6'     , frag=<frg>
+
+ Solvatochromic properties
+ o SolCAMM               property='solcamm', ea=True/False
+ o SolC6 (LMO-distr)     property='solc6d' , frag=<frg>
+ o SolC6 (total)         property='solc6'  , frag=<frg>
+"""
+        if property.lower() == 'c6d'    : prop = self._get_property_c6d    (self, **kwargs)
+        if property.lower() == 'c6'     : prop = self._get_property_c6     (self, **kwargs)
+
+        if property.lower() == 'solcamm': prop = self._get_property_solcamm(self, **kwargs)
+        if property.lower() == 'solc6d' : prop = self._get_property_solc6d (self, **kwargs)
+        if property.lower() == 'solc6'  : prop = self._get_property_solc6  (self, **kwargs)
+        return prop
+
+    # --------------------------------------------------------- #
+    #            P R O P E R T Y   E V A L U A T O R S          #
+    # --------------------------------------------------------- #
+
+    def _get_property_c6d(self, frag):
+        """Compute LMO distributed isotropic (scalar) C6 coefficients between self and frag"""
+        return
+ 
+    def _get_property_c6(self, frag):
+        """Compute LMO total isotropic (scalar) C6 coefficient between self and frag"""
+        c6 = self._get_property_c6d(self, frag).sum()
+        return c6
+
+    def _get_property_solcamm(self, ea=True):  # in the future add mode=... keyword
+        """Compute SolCAMM parameters"""
+        #assert mode is None, " You must specify mode to compute solvatochromic parameters (in normal numbers, helico)"
+        par    = self.get()
+        redmss = par['redmass']
+        freq   = par['freq']
+        mode   = par['mode']
+        gijj   = par['gijk'][:,mode-1,mode-1]
+        dmac1  = par['dmac1']; dmad1  = par['dmad1']
+        dmaq1  = par['dmaq1']; dmao1  = par['dmao1']
+        if ea:
+           dmac2  = par['dmac2']; dmad2  = par['dmad2']
+           dmaq2  = par['dmaq2']; dmao2  = par['dmao2']
+        # mechanical approximation
+        for i in range(len(freq)): pass
+            #solcamm_mea = - (gijj/(redmass*freq**2)*dmai1).sum()
+        return solcamm
+
+    def _get_property_solc6d(self, frag):  # in the future add mode=... keyword
+        """Compute solvatochromic LMO distributed isotropic (scalar) C6 coefficients between self and frag"""
+        return 
+
+    def _get_property_solc6(self, frag):  # in the future add mode=... keyword
+        """Compute solvatochromic total isotropic (scalar) C6 coefficient between self and frag"""
+        solc6 = self._get_property_solc6d(self, frag).sum()
+        return solc6
+  
     def get_rotranrms(self):
         """Return rotation matrix, translation vector
 and RMS from the last superimposition"""
