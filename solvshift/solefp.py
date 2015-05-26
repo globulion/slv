@@ -1923,7 +1923,8 @@ the canonical Fock matrix and vectors will be saved."""
         if self.__fchk is not None:
            mol  = libbbg.utilities.Read_xyz_file(self.__fchk,mol=True,
                                           mult=1,charge=0,
-                                          name='happy dummy molecule')
+                                          name='happy dummy molecule',
+                                          basis=self.__basis)
            bfs        = PyQuante.Ints.getbasis(mol,self.__basis)
            basis_size = len(bfs)
            natoms= len(mol.atoms)
