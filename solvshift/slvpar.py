@@ -449,6 +449,9 @@ class Frag(object, libbbg.units.UNITS):
 Evaluate various fragment-derived properties.
 Available properties:
 
+ Interaction energies
+ o Dispersion            property='edisp6' , frag=<frg>
+
  Dispersion coefficients
  o C6    (LMO-distr)     property='c6d'    , frag=<frg>
  o C6    (total)         property='c6'     , frag=<frg>
@@ -458,12 +461,12 @@ Available properties:
  o SolC6 (LMO-distr)     property='solc6d' , frag=<frg>
  o SolC6 (total)         property='solc6'  , frag=<frg>
 """
-        if property.lower() == 'c6d'    : prop = self._get_property_c6d    (self, **kwargs)
-        if property.lower() == 'c6'     : prop = self._get_property_c6     (self, **kwargs)
-
-        if property.lower() == 'solcamm': prop = self._get_property_solcamm(self, **kwargs)
-        if property.lower() == 'solc6d' : prop = self._get_property_solc6d (self, **kwargs)
-        if property.lower() == 'solc6'  : prop = self._get_property_solc6  (self, **kwargs)
+        if property.lower() == 'c6d'    : prop = self._get_property_c6d    (**kwargs)
+        if property.lower() == 'c6'     : prop = self._get_property_c6     (**kwargs)
+        if property.lower() == 'edisp6' : prop = self._get_property_edisp6 (**kwargs)
+        if property.lower() == 'solcamm': prop = self._get_property_solcamm(**kwargs)
+        if property.lower() == 'solc6d' : prop = self._get_property_solc6d (**kwargs)
+        if property.lower() == 'solc6'  : prop = self._get_property_solc6  (**kwargs)
         return prop
 
     # --------------------------------------------------------- #
@@ -472,17 +475,49 @@ Available properties:
 
     def _get_property_c6d(self, frag):
         """Compute LMO distributed isotropic (scalar) C6 coefficients between self and frag"""
-        return
+        par_self   = self.get()        ; par_frag   = frag.get()
+        dpoli_self = par_self['dpoli'] ; dpoli_frag = par_frag['dpoli']
+        nmos_self  = par_self['nmos' ] ; nmos_frag  = par_frag['nmos']
+        c6d = numpy.zeros((nmos_self, nmos_frag), numpy.float64)
+        for i in range(nmos_self):
+            a_i = dpoli_self[i]
+            a_oi= a_i.trace(axis1=1,axis2=2)/3.000
+            for j in range(nmos_frag):
+                a_j = dpoli_frag[j]
+                a_oj= a_j.trace(axis1=1,axis2=2)/3.000
+                c   = self._gauss_legendre_12(a_oi * a_oj) * 3.00 / math.pi
+                c6d[i,j] = c
+        return c6d
  
     def _get_property_c6(self, frag):
         """Compute LMO total isotropic (scalar) C6 coefficient between self and frag"""
-        c6 = self._get_property_c6d(self, frag).sum()
+        c6 = self._get_property_c6d(frag).sum()
         return c6
 
-    def _get_property_solcamm(self, ea=True):  # in the future add mode=... keyword
+    def _get_property_edisp6(self, frag):
+        """Computes dispersion energy between self and frag"""
+        lmoc_self = self.get()['lmoc']
+        lmoc_frag = frag.get()['lmoc']
+        c6d = self._get_property_c6d(frag)
+        E = 0
+        nmosa, nmosb = c6d.shape
+        R = lmoc_self[:,:,numpy.newaxis] - lmoc_frag.T[numpy.newaxis,:,:]
+        R = R*R; R = numpy.sum(R, axis=1)
+        R = numpy.sqrt(R)
+        R6= R**6
+        E = - numpy.sum( c6d / R6, axis=None)
+        #for i in range(nmosa):
+        #    for j in range(nmodb):
+        #        r6  = (lmoc_self[i] - lmoc_frag[j])**6
+        #        E  -= c6d[i,j] / r6
+        return E
+
+    def _get_property_solcamm(self, ea=True, dma=True):  # in the future add mode=... keyword
         """Compute SolCAMM parameters"""
         #assert mode is None, " You must specify mode to compute solvatochromic parameters (in normal numbers, helico)"
         par    = self.get()
+        pos    = par['pos']
+        rdma   = par['rdma']
         redmss = par['redmass']
         freq   = par['freq']
         mode   = par['mode']
@@ -493,18 +528,71 @@ Available properties:
            dmac2  = par['dmac2']; dmad2  = par['dmad2']
            dmaq2  = par['dmaq2']; dmao2  = par['dmao2']
         # mechanical approximation
-        for i in range(len(freq)): pass
+        for i in range(self.__nmodes): pass
             #solcamm_mea = - (gijj/(redmass*freq**2)*dmai1).sum()
         return solcamm
 
     def _get_property_solc6d(self, frag):  # in the future add mode=... keyword
         """Compute solvatochromic LMO distributed isotropic (scalar) C6 coefficients between self and frag"""
-        return 
+        par_self   = self.get()        ; par_frag   = frag.get()
+        dpoli_self = par_self['dpoli1']; dpoli_frag = par_frag['dpoli']
+        nmos_self  = par_self['nmos' ] ; nmos_frag  = par_frag['nmos']
+        nmodes     = par_self['nmodes']
+        redmass= par_self['redmass']
+        freq   = par_self['freq']
+        gijk   = par_self['gijk']
+        c6d = numpy.zeros((nmodes, nmos_self, nmos_frag), numpy.float64)
+        for M in range(nmodes):
+            vib_m = 1./(2.0 * redmass[M] * freq[M])
+            for i in range(nmos_self):                                              
+                 for j in range(nmos_frag):
+                    c = 0.0
+                    for k in range(nmodes):
+                        a_i = dpoli_self[k,i]
+                        a_oi= a_i.trace(axis1=1,axis2=2)/3.000
+                        a_j = dpoli_frag[j]
+                        a_oj= a_j.trace(axis1=1,axis2=2)/3.000
+                        vib_w = gijk[k,M,M] / (redmass[k] * freq[k]**2)
+                        c  -= self._gauss_legendre_12(a_oi * a_oj) * 3.00 / math.pi
+                    c6d[M,i,j] = c * vib_m
+        return c6d
 
     def _get_property_solc6(self, frag):  # in the future add mode=... keyword
         """Compute solvatochromic total isotropic (scalar) C6 coefficient between self and frag"""
-        solc6 = self._get_property_solc6d(self, frag).sum()
+        solc6 = self._get_property_solc6d(self, frag).sum(axis=1).sum(axis=1)
         return solc6
+
+    def _gauss_legendre_12(self, f, v=0.3000):
+        """Gauss-Legendre quadrature in 12 points (numerical) from 0 to infinity:
+
+\int_0^{\infty} f dq = \sum_{i=1}^{12} w_i * 2v/(1-t_i)**2 * f_i
+
+It uses the substitution of variables:
+
+              q = v(1+t)/(1-t)   dq = 2v dt / (1-t)**2
+
+Argument f is an array with the first dimension equal to 12
+"""
+        g_12 = """\
+        11      0.0471753363865118     -0.9815606342467192
+        9       0.1069393259953184     -0.9041172563704749
+        7       0.1600783285433462     -0.7699026741943047
+        5       0.2031674267230659     -0.5873179542866175
+        3       0.2334925365383548     -0.3678314989981802
+        1       0.2491470458134028     -0.1252334085114689
+        2       0.2491470458134028      0.1252334085114689
+        4       0.2334925365383548      0.3678314989981802
+        6       0.2031674267230659      0.5873179542866175
+        8       0.1600783285433462      0.7699026741943047
+        10      0.1069393259953184      0.9041172563704749
+        12      0.0471753363865118      0.9815606342467192
+        """
+        g_12 = numpy.array(g_12.split(), numpy.float64).reshape(12,3)
+        w_12 = g_12[:,1]
+        t_12 = g_12[:,2]
+        integral = numpy.zeros(list(f.shape)[1:], numpy.float64)
+        for i in xrange(12): integral += w_12[i] * f[i] / (1.0 - t_12[i])**2
+        return 2.0 * v * integral
   
     def get_rotranrms(self):
         """Return rotation matrix, translation vector
