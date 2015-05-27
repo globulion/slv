@@ -4,14 +4,6 @@
 #             EFFECTIVE FRAGMENT PARAMETER FORMAT MODULE                #
 # --------------------------------------------------------------------- #
 
-#from numpy     import array, float64, zeros, newaxis, sqrt,  \
-#                      dot, asfortranarray, transpose, arange,\
-#                      concatenate as con
-#from units     import *
-#from dma       import DMA
-#from libbbg.utilities import order, reorder, SVDSuperimposer as svd_sup, MakeMol
-#from efprot    import vecrot, vc1rot, tracls, rotdma, tracl1, rotdm1
-#from PyQuante.Ints import getbasis
 import sys, copy, os, re, math, numpy, libbbg, solvshift.efprot, \
        PyQuante.Ints
 sys.stdout.flush()
@@ -468,131 +460,6 @@ Available properties:
         if property.lower() == 'solc6d' : prop = self._get_property_solc6d (**kwargs)
         if property.lower() == 'solc6'  : prop = self._get_property_solc6  (**kwargs)
         return prop
-
-    # --------------------------------------------------------- #
-    #            P R O P E R T Y   E V A L U A T O R S          #
-    # --------------------------------------------------------- #
-
-    def _get_property_c6d(self, frag):
-        """Compute LMO distributed isotropic (scalar) C6 coefficients between self and frag"""
-        par_self   = self.get()        ; par_frag   = frag.get()
-        dpoli_self = par_self['dpoli'] ; dpoli_frag = par_frag['dpoli']
-        nmos_self  = par_self['nmos' ] ; nmos_frag  = par_frag['nmos']
-        c6d = numpy.zeros((nmos_self, nmos_frag), numpy.float64)
-        for i in range(nmos_self):
-            a_i = dpoli_self[i]
-            a_oi= a_i.trace(axis1=1,axis2=2)/3.000
-            for j in range(nmos_frag):
-                a_j = dpoli_frag[j]
-                a_oj= a_j.trace(axis1=1,axis2=2)/3.000
-                c   = self._gauss_legendre_12(a_oi * a_oj) * 3.00 / math.pi
-                c6d[i,j] = c
-        return c6d
- 
-    def _get_property_c6(self, frag):
-        """Compute LMO total isotropic (scalar) C6 coefficient between self and frag"""
-        c6 = self._get_property_c6d(frag).sum()
-        return c6
-
-    def _get_property_edisp6(self, frag):
-        """Computes dispersion energy between self and frag"""
-        lmoc_self = self.get()['lmoc']
-        lmoc_frag = frag.get()['lmoc']
-        c6d = self._get_property_c6d(frag)
-        E = 0
-        nmosa, nmosb = c6d.shape
-        R = lmoc_self[:,:,numpy.newaxis] - lmoc_frag.T[numpy.newaxis,:,:]
-        R = R*R; R = numpy.sum(R, axis=1)
-        R = numpy.sqrt(R)
-        R6= R**6
-        E = - numpy.sum( c6d / R6, axis=None)
-        #for i in range(nmosa):
-        #    for j in range(nmodb):
-        #        r6  = (lmoc_self[i] - lmoc_frag[j])**6
-        #        E  -= c6d[i,j] / r6
-        return E
-
-    def _get_property_solcamm(self, ea=True, dma=True):  # in the future add mode=... keyword
-        """Compute SolCAMM parameters"""
-        #assert mode is None, " You must specify mode to compute solvatochromic parameters (in normal numbers, helico)"
-        par    = self.get()
-        pos    = par['pos']
-        rdma   = par['rdma']
-        redmss = par['redmass']
-        freq   = par['freq']
-        mode   = par['mode']
-        gijj   = par['gijk'][:,mode-1,mode-1]
-        dmac1  = par['dmac1']; dmad1  = par['dmad1']
-        dmaq1  = par['dmaq1']; dmao1  = par['dmao1']
-        if ea:
-           dmac2  = par['dmac2']; dmad2  = par['dmad2']
-           dmaq2  = par['dmaq2']; dmao2  = par['dmao2']
-        # mechanical approximation
-        for i in range(self.__nmodes): pass
-            #solcamm_mea = - (gijj/(redmass*freq**2)*dmai1).sum()
-        return solcamm
-
-    def _get_property_solc6d(self, frag):  # in the future add mode=... keyword
-        """Compute solvatochromic LMO distributed isotropic (scalar) C6 coefficients between self and frag"""
-        par_self   = self.get()        ; par_frag   = frag.get()
-        dpoli_self = par_self['dpoli1']; dpoli_frag = par_frag['dpoli']
-        nmos_self  = par_self['nmos' ] ; nmos_frag  = par_frag['nmos']
-        nmodes     = par_self['nmodes']
-        redmass= par_self['redmass']
-        freq   = par_self['freq']
-        gijk   = par_self['gijk']
-        c6d = numpy.zeros((nmodes, nmos_self, nmos_frag), numpy.float64)
-        for M in range(nmodes):
-            vib_m = 1./(2.0 * redmass[M] * freq[M])
-            for i in range(nmos_self):                                              
-                 for j in range(nmos_frag):
-                    c = 0.0
-                    for k in range(nmodes):
-                        a_i = dpoli_self[k,i]
-                        a_oi= a_i.trace(axis1=1,axis2=2)/3.000
-                        a_j = dpoli_frag[j]
-                        a_oj= a_j.trace(axis1=1,axis2=2)/3.000
-                        vib_w = gijk[k,M,M] / (redmass[k] * freq[k]**2)
-                        c  -= self._gauss_legendre_12(a_oi * a_oj) * 3.00 / math.pi
-                    c6d[M,i,j] = c * vib_m
-        return c6d
-
-    def _get_property_solc6(self, frag):  # in the future add mode=... keyword
-        """Compute solvatochromic total isotropic (scalar) C6 coefficient between self and frag"""
-        solc6 = self._get_property_solc6d(self, frag).sum(axis=1).sum(axis=1)
-        return solc6
-
-    def _gauss_legendre_12(self, f, v=0.3000):
-        """Gauss-Legendre quadrature in 12 points (numerical) from 0 to infinity:
-
-\int_0^{\infty} f dq = \sum_{i=1}^{12} w_i * 2v/(1-t_i)**2 * f_i
-
-It uses the substitution of variables:
-
-              q = v(1+t)/(1-t)   dq = 2v dt / (1-t)**2
-
-Argument f is an array with the first dimension equal to 12
-"""
-        g_12 = """\
-        11      0.0471753363865118     -0.9815606342467192
-        9       0.1069393259953184     -0.9041172563704749
-        7       0.1600783285433462     -0.7699026741943047
-        5       0.2031674267230659     -0.5873179542866175
-        3       0.2334925365383548     -0.3678314989981802
-        1       0.2491470458134028     -0.1252334085114689
-        2       0.2491470458134028      0.1252334085114689
-        4       0.2334925365383548      0.3678314989981802
-        6       0.2031674267230659      0.5873179542866175
-        8       0.1600783285433462      0.7699026741943047
-        10      0.1069393259953184      0.9041172563704749
-        12      0.0471753363865118      0.9815606342467192
-        """
-        g_12 = numpy.array(g_12.split(), numpy.float64).reshape(12,3)
-        w_12 = g_12[:,1]
-        t_12 = g_12[:,2]
-        integral = numpy.zeros(list(f.shape)[1:], numpy.float64)
-        for i in xrange(12): integral += w_12[i] * f[i] / (1.0 - t_12[i])**2
-        return 2.0 * v * integral
   
     def get_rotranrms(self):
         """Return rotation matrix, translation vector
@@ -1090,7 +957,159 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
     def _tr_lvec(self, lvec, nmodes, natoms):
         """Transpose axes and reshape the L-matrix from FREQ instance"""
         return lvec.transpose().reshape(nmodes,natoms,3)
-    
+
+    def _gauss_legendre_12(self, f, v=0.3000):
+        """Gauss-Legendre quadrature in 12 points (numerical) from 0 to infinity:
+
+\int_0^{\infty} f dq = \sum_{i=1}^{12} w_i * 2v/(1-t_i)**2 * f_i
+
+It uses the substitution of variables:
+
+              q = v(1+t)/(1-t)   dq = 2v dt / (1-t)**2
+
+where v=0.3. Argument f is an array with the first dimension equal to 12
+"""
+        g_12 = """\
+        11      0.0471753363865118     -0.9815606342467192
+        9       0.1069393259953184     -0.9041172563704749
+        7       0.1600783285433462     -0.7699026741943047
+        5       0.2031674267230659     -0.5873179542866175
+        3       0.2334925365383548     -0.3678314989981802
+        1       0.2491470458134028     -0.1252334085114689
+        2       0.2491470458134028      0.1252334085114689
+        4       0.2334925365383548      0.3678314989981802
+        6       0.2031674267230659      0.5873179542866175
+        8       0.1600783285433462      0.7699026741943047
+        10      0.1069393259953184      0.9041172563704749
+        12      0.0471753363865118      0.9815606342467192
+        """
+        g_12 = numpy.array(g_12.split(), numpy.float64).reshape(12,3)
+        w_12 = g_12[:,1]
+        t_12 = g_12[:,2]
+        integral = numpy.zeros(list(f.shape)[1:], numpy.float64)
+        for i in xrange(12): integral += w_12[i] * f[i] / (1.0 - t_12[i])**2
+        return 2.0 * v * integral
+
+    # --------------------------------------------------------- #
+    #            P R O P E R T Y   E V A L U A T O R S          #
+    # --------------------------------------------------------- #
+
+    def _get_property_c6d(self, frag):
+        """Compute LMO distributed isotropic (scalar) C6 coefficients between self and frag"""
+        par_self   = self.get()        ; par_frag   = frag.get()
+        dpoli_self = par_self['dpoli'] ; dpoli_frag = par_frag['dpoli']
+        nmos_self  = par_self['nmos' ] ; nmos_frag  = par_frag['nmos']
+        c6d = numpy.zeros((nmos_self, nmos_frag), numpy.float64)
+        for i in range(nmos_self):
+            a_i = dpoli_self[i]
+            a_oi= a_i.trace(axis1=1,axis2=2)/3.000
+            for j in range(nmos_frag):
+                a_j = dpoli_frag[j]
+                a_oj= a_j.trace(axis1=1,axis2=2)/3.000
+                c   = self._gauss_legendre_12(a_oi * a_oj) * 3.00 / math.pi
+                c6d[i,j] = c
+        return c6d
+ 
+    def _get_property_c6(self, frag):
+        """Compute LMO total isotropic (scalar) C6 coefficient between self and frag"""
+        c6 = self._get_property_c6d(frag).sum()
+        return c6
+
+    def _get_property_edisp6(self, frag):
+        """Computes dispersion energy between self and frag"""
+        lmoc_self = self.get()['lmoc']
+        lmoc_frag = frag.get()['lmoc']
+        c6d = self._get_property_c6d(frag)
+        E = 0
+        nmosa, nmosb = c6d.shape
+        R = lmoc_self[:,:,numpy.newaxis] - lmoc_frag.T[numpy.newaxis,:,:]
+        R = R*R; R = numpy.sum(R, axis=1)
+        R = numpy.sqrt(R)
+        R6= R**6
+        E = - numpy.sum( c6d / R6, axis=None)
+        #for i in range(nmosa):
+        #    for j in range(nmodb):
+        #        r6  = (lmoc_self[i] - lmoc_frag[j])**6
+        #        E  -= c6d[i,j] / r6
+        return E
+
+    def _get_property_solcamm(self, ea=True, dma=True):  # in the future add mode=... keyword
+        """
+Compute SolCAMM parameters. If dma=False it returns a tuple:
+
+rdma, pos, solcamm_c, solcamm_d, solcamm_q, solcamm_o
+
+If dma=True it returns Coulomb.py DMA object
+"""
+        #assert mode is None, " You MUST specify <mode> to compute solvatochromic parameters (in normal numbers, helico)"
+        par    = self.get()
+        pos    = par['pos']
+        rdma   = par['rdma']
+        redmass= par['redmass']
+        freq   = par['freq']
+        mode   = par['mode']
+        gijj   = par['gijk'][:,mode-1,mode-1]
+        dmac1  = par['dmac1']; dmad1  = par['dmad1']
+        dmaq1  = par['dmaq1']; dmao1  = par['dmao1']
+        if ea:
+           dmac2  = par['dmac2']; dmad2  = par['dmad2']
+           dmaq2  = par['dmaq2']; dmao2  = par['dmao2']
+
+        # vibrational weights
+        g_wi= gijj/(redmass*freq**2)
+        g_wj= 2.00 * redmass[mode-1] * freq[mode-1]
+
+        # mechanical anharmonicity approximation
+        solcamm_c = -numpy.tensordot( g_wi, dmac1, (0,0))
+        solcamm_d = -numpy.tensordot( g_wi, dmad1, (0,0))
+        solcamm_q = -numpy.tensordot( g_wi, dmaq1, (0,0))
+        solcamm_o = -numpy.tensordot( g_wi, dmao1, (0,0))
+        # electronic anharmonicity
+        if ea:
+           solcamm_c += dmac2; solcamm_d += dmad2
+           solcamm_q += dmaq2; solcamm_o += dmao2
+        solcamm_c /= g_wj; solcamm_d /= g_wj
+        solcamm_q /= g_wj; solcamm_o /= g_wj
+
+        if dma:
+           name = '%s - SolCAMM parameters for mode %d' % (self.__name, mode)
+           if ea: name+= ' (MEA+EA approximation)'
+           else : name+= ' (MEA approximation)'
+           solcamm = libbbg.dma.DMA(name=name, pos=pos, origin=rdma, traceless=False, atoms=None,
+                                    q=solcamm_c, m=solcamm_d, T=solcamm_q, O=solcamm_o, H=None)
+           return solcamm
+        else:  return rdma, pos, solcamm_c, solcamm_d, solcamm_q, solcamm_o
+
+    def _get_property_solc6d(self, frag):  # in the future add mode=... keyword
+        """Compute solvatochromic LMO distributed isotropic (scalar) C6 coefficients between self and frag"""
+        par_self   = self.get()        ; par_frag   = frag.get()
+        dpoli_self = par_self['dpoli1']; dpoli_frag = par_frag['dpoli']
+        nmos_self  = par_self['nmos' ] ; nmos_frag  = par_frag['nmos']
+        nmodes     = par_self['nmodes']
+        redmass= par_self['redmass']
+        freq   = par_self['freq']
+        gijk   = par_self['gijk']
+        c6d = numpy.zeros((nmodes, nmos_self, nmos_frag), numpy.float64)
+        for M in range(nmodes):
+            vib_m = 1./(2.0 * redmass[M] * freq[M])
+            for i in range(nmos_self):                                              
+                 for j in range(nmos_frag):
+                    c = 0.0
+                    for k in range(nmodes):
+                        a_i = dpoli_self[k,i]
+                        a_oi= a_i.trace(axis1=1,axis2=2)/3.000
+                        a_j = dpoli_frag[j]
+                        a_oj= a_j.trace(axis1=1,axis2=2)/3.000
+                        vib_w = gijk[k,M,M] / (redmass[k] * freq[k]**2)
+                        c  -= self._gauss_legendre_12(a_oi * a_oj) * 3.00 / math.pi
+                    c6d[M,i,j] = c * vib_m
+        return c6d
+
+    def _get_property_solc6(self, frag):  # in the future add mode=... keyword
+        """Compute solvatochromic total isotropic (scalar) C6 coefficient between self and frag"""
+        solc6 = self._get_property_solc6d(frag).sum(axis=1).sum(axis=1)
+        return solc6
+   
     # --------------------------------------------------------- #
     #            R E A D I N G    P R O C E D U R E S           #
     # --------------------------------------------------------- #
