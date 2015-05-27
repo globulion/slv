@@ -174,6 +174,7 @@ class Frag(object, libbbg.units.UNITS):
      :                             L      npol                                
      :                             E      nmos                                
      :                             ·      ncmos                               
+     :                             ·      mode
      :                             · · ·  nmodes                              
      : Atomic numbers                    atno            natoms               
      : Atomic masses                     atms            natoms               
@@ -190,10 +191,10 @@ class Frag(object, libbbg.units.UNITS):
      : DMTP dipoles fder                 dmad1           nmodes, ndma , 3      
      : DMTP quadrupoles fder             dmaq1           nmodes, ndma , 6      
      : DMTP octupoles fder               dmao1           nmodes, ndma , 10     
-     : DMTP charges sder                 dmac2           ndma                 
-     : DMTP dipoles sder                 dmad2           ndma  , 3              
-     : DMTP quadrupoles sder             dmad2           ndma  , 6              
-     : DMTP octupoles sder               dmad2           ndma  , 10             
+     : DMTP charges sder                 dmac2           nmodes_sder, ndma                 
+     : DMTP dipoles sder                 dmad2           nmodes_sder, ndma  , 3              
+     : DMTP quadrupoles sder             dmad2           nmodes_sder, ndma  , 6              
+     : DMTP octupoles sder               dmao2           nmodes_sder, ndma  , 10             
      : Polarizable centers               rpol            npol  , 3            
      : Distributed polarizabilities      dpol            npol  , 9            
      : Distributed polarizabilities      dpol1           nmodes, npol, 9      
@@ -388,11 +389,13 @@ class Frag(object, libbbg.units.UNITS):
             if key == 'dmaq2'  : self.__dmaq2 = arg
             if key == 'dmao2'  : self.__dmao2 = arg
             if key == 'lvec'   : self.__lvec  = arg
-            if key == 'mode'   : self.__mode  = arg
             if key == 'freq'   : self.__freq  = arg
             if key == 'redmass': self.__redmass = arg
             if key == 'redmss' : self.__redmass = arg
             if key == 'gijk'   : self.__gijk  = gijk
+            if key == 'mode'   : 
+               self.__mode  = arg
+               self.__nmodes_sder = len(arg)
         return
 
     # GET METHODS
@@ -483,9 +486,10 @@ and RMS from the last superimposition"""
         #print self.__dmao1.shape
         return dmaq1, dmao1
     
-    def get_traceless_2(self):
+    def get_traceless_2(self, mode):
         """return traceless  2nd derivatives wrt modes of quadrupoles and octupoles"""
-        dmaq2, dmao2 = solvshift.efprot.tracls(self.__dmaq2.copy(), self.__dmao2.copy())
+        mode_sder_index = list(self.__mode).index(mode-1)
+        dmaq2, dmao2 = solvshift.efprot.tracls(self.__dmaq2[mode_sder_index].copy(), self.__dmao2[mode_sder_index].copy())
         return dmaq2, dmao2
    
     # UTILITY METHODS
@@ -579,8 +583,9 @@ and RMS from the last superimposition"""
            self.__dmaq1 = self.__dmaq1.reshape(self.__nmodes, self.__ndma, 6)
            self.__dmao1 = self.__dmao1.reshape(self.__nmodes, self.__ndma, 10)
         if self.__dmac2 is not None:
-           self.__dmad2, self.__dmaq2, self.__dmao2 = \
-           solvshift.efprot.rotdma(self.__dmad2, self.__dmaq2, self.__dmao2,rot)
+           for i in xrange(self.__nmodes_sder):
+               self.__dmad2[i], self.__dmaq2[i], self.__dmao2[i] = \
+               solvshift.efprot.rotdma(self.__dmad2[i], self.__dmaq2[i], self.__dmao2[i],rot)
         # transform distributed polarizabilities!
         if self.__dpol   is not None:
            for i in xrange(self.__npol):
@@ -673,8 +678,9 @@ and RMS from the last superimposition"""
            self.__dmaq1 = self.__dmaq1.reshape(self.__nmodes, self.__ndma, 6)
            self.__dmao1 = self.__dmao1.reshape(self.__nmodes, self.__ndma, 10)
         if self.__dmac2 is not None:
-           self.__dmad2, self.__dmaq2, self.__dmao2 = \
-           solvshift.efprot.rotdma(self.__dmad2, self.__dmaq2, self.__dmao2, rot)
+           for i in xrange(self.__nmodes_sder):
+               self.__dmad2[i], self.__dmaq2[i], self.__dmao2[i] = \
+               solvshift.efprot.rotdma(self.__dmad2[i], self.__dmaq2[i], self.__dmao2[i], rot)
         # transform distributed polarizabilities!
         if self.__dpol   is not None:
            for i in xrange(self.__npol):
@@ -737,10 +743,10 @@ In other words - dma=True if DMA, CAMM and CBAMM are used. False if LMTP and oth
               self.__dmaq1[:self.__natoms] = libbbg.utilities.reorder(self.__dmaq1[:self.__natoms], sim, axis=1)
               self.__dmao1[:self.__natoms] = libbbg.utilities.reorder(self.__dmao1[:self.__natoms], sim, axis=1)
               #
-              self.__dmac2[:self.__natoms] = libbbg.utilities.reorder(self.__dmac2[:self.__natoms], sim, axis=0)
-              self.__dmad2[:self.__natoms] = libbbg.utilities.reorder(self.__dmad2[:self.__natoms], sim, axis=0)
-              self.__dmaq2[:self.__natoms] = libbbg.utilities.reorder(self.__dmaq2[:self.__natoms], sim, axis=0)
-              self.__dmao2[:self.__natoms] = libbbg.utilities.reorder(self.__dmao2[:self.__natoms], sim, axis=0)
+              self.__dmac2[:self.__natoms] = libbbg.utilities.reorder(self.__dmac2[:self.__natoms], sim, axis=1)
+              self.__dmad2[:self.__natoms] = libbbg.utilities.reorder(self.__dmad2[:self.__natoms], sim, axis=1)
+              self.__dmaq2[:self.__natoms] = libbbg.utilities.reorder(self.__dmaq2[:self.__natoms], sim, axis=1)
+              self.__dmao2[:self.__natoms] = libbbg.utilities.reorder(self.__dmao2[:self.__natoms], sim, axis=1)
         # reorder eigenvectors
         if self.__lvec is not None: 
            self.__lvec = libbbg.utilities.reorder(self.__lvec, sim, axis=1)
@@ -994,6 +1000,56 @@ where v=0.3. Argument f is an array with the first dimension equal to 12
     #            P R O P E R T Y   E V A L U A T O R S          #
     # --------------------------------------------------------- #
 
+    def _get_property_solcamm(self, mode, ea=True, dma=True):  # in the future add mode=... keyword
+        """
+Compute SolCAMM parameters. If dma=False it returns a tuple:
+
+rdma, pos, solcamm_c, solcamm_d, solcamm_q, solcamm_o
+
+If dma=True it returns Coulomb.py DMA object
+"""
+        assert mode is not None, " You MUST specify <mode> to compute solvatochromic parameters (in normal numbers, helico)"
+        if ea: assert (mode in self.__mode+1), " The second derivatives wrt mode %d are not evaluated for %s!" % (mode, self.__name)
+
+        par    = self.get()
+        pos    = par['pos']
+        rdma   = par['rdma']
+        redmass= par['redmass']
+        freq   = par['freq']
+        gijj   = par['gijk'][:,mode-1,mode-1]
+        dmac1  = par['dmac1']; dmad1  = par['dmad1']
+        dmaq1  = par['dmaq1']; dmao1  = par['dmao1']
+        if ea:
+           dmac2  = par['dmac2']; dmad2  = par['dmad2']
+           dmaq2  = par['dmaq2']; dmao2  = par['dmao2']
+
+        # vibrational weights
+        g_wi= gijj/(redmass*freq**2)
+        g_wj= 2.00 * redmass[mode-1] * freq[mode-1]
+
+        # mechanical anharmonicity approximation
+        solcamm_c = -numpy.tensordot( g_wi, dmac1, (0,0))
+        solcamm_d = -numpy.tensordot( g_wi, dmad1, (0,0))
+        solcamm_q = -numpy.tensordot( g_wi, dmaq1, (0,0))
+        solcamm_o = -numpy.tensordot( g_wi, dmao1, (0,0))
+
+        # electronic anharmonicity
+        if ea:
+           m = list(self.__mode).index(mode-1)
+           solcamm_c += dmac2[m]; solcamm_d += dmad2[m]
+           solcamm_q += dmaq2[m]; solcamm_o += dmao2[m]
+        solcamm_c /= g_wj; solcamm_d /= g_wj
+        solcamm_q /= g_wj; solcamm_o /= g_wj
+
+        if dma:
+           name = '%s - SolCAMM parameters for mode %d' % (self.__name, mode)
+           if ea: name+= ' (MEA+EA approximation)'
+           else : name+= ' (MEA approximation)'
+           solcamm = libbbg.dma.DMA(name=name, pos=pos, origin=rdma, traceless=False, atoms=None,
+                                    q=solcamm_c, m=solcamm_d, T=solcamm_q, O=solcamm_o, H=None)
+           return solcamm
+        else:  return rdma, pos, solcamm_c, solcamm_d, solcamm_q, solcamm_o
+
     def _get_property_c6d(self, frag):
         """Compute LMO distributed isotropic (scalar) C6 coefficients between self and frag"""
         par_self   = self.get()        ; par_frag   = frag.get()
@@ -1032,53 +1088,6 @@ where v=0.3. Argument f is an array with the first dimension equal to 12
         #        r6  = (lmoc_self[i] - lmoc_frag[j])**6
         #        E  -= c6d[i,j] / r6
         return E
-
-    def _get_property_solcamm(self, ea=True, dma=True):  # in the future add mode=... keyword
-        """
-Compute SolCAMM parameters. If dma=False it returns a tuple:
-
-rdma, pos, solcamm_c, solcamm_d, solcamm_q, solcamm_o
-
-If dma=True it returns Coulomb.py DMA object
-"""
-        #assert mode is None, " You MUST specify <mode> to compute solvatochromic parameters (in normal numbers, helico)"
-        par    = self.get()
-        pos    = par['pos']
-        rdma   = par['rdma']
-        redmass= par['redmass']
-        freq   = par['freq']
-        mode   = par['mode']
-        gijj   = par['gijk'][:,mode-1,mode-1]
-        dmac1  = par['dmac1']; dmad1  = par['dmad1']
-        dmaq1  = par['dmaq1']; dmao1  = par['dmao1']
-        if ea:
-           dmac2  = par['dmac2']; dmad2  = par['dmad2']
-           dmaq2  = par['dmaq2']; dmao2  = par['dmao2']
-
-        # vibrational weights
-        g_wi= gijj/(redmass*freq**2)
-        g_wj= 2.00 * redmass[mode-1] * freq[mode-1]
-
-        # mechanical anharmonicity approximation
-        solcamm_c = -numpy.tensordot( g_wi, dmac1, (0,0))
-        solcamm_d = -numpy.tensordot( g_wi, dmad1, (0,0))
-        solcamm_q = -numpy.tensordot( g_wi, dmaq1, (0,0))
-        solcamm_o = -numpy.tensordot( g_wi, dmao1, (0,0))
-        # electronic anharmonicity
-        if ea:
-           solcamm_c += dmac2; solcamm_d += dmad2
-           solcamm_q += dmaq2; solcamm_o += dmao2
-        solcamm_c /= g_wj; solcamm_d /= g_wj
-        solcamm_q /= g_wj; solcamm_o /= g_wj
-
-        if dma:
-           name = '%s - SolCAMM parameters for mode %d' % (self.__name, mode)
-           if ea: name+= ' (MEA+EA approximation)'
-           else : name+= ' (MEA approximation)'
-           solcamm = libbbg.dma.DMA(name=name, pos=pos, origin=rdma, traceless=False, atoms=None,
-                                    q=solcamm_c, m=solcamm_d, T=solcamm_q, O=solcamm_o, H=None)
-           return solcamm
-        else:  return rdma, pos, solcamm_c, solcamm_d, solcamm_q, solcamm_o
 
     def _get_property_solc6d(self, frag):  # in the future add mode=... keyword
         """Compute solvatochromic LMO distributed isotropic (scalar) C6 coefficients between self and frag"""
@@ -1152,7 +1161,8 @@ If dma=True it returns Coulomb.py DMA object
                     if name == 'ndma':
                         self.__ndma = int(arg)
                     if name == 'mode':
-                        self.__mode = int(arg)
+                        self.__mode = libbbg.utilities.text_to_list(arg, delimiter=',') - 1
+                        self.__nmodes_sder = len(self.__mode)
                 
         ### more advanced information
         else:
@@ -1272,34 +1282,35 @@ If dma=True it returns Coulomb.py DMA object
             # second derivatives
             # distributed charges 2nd derivatives
             elif key == 'dmac2':
-                 merror = 'ndma in section [ molecule ] '
+                 merror = 'ndma and mode in section [ molecule ] '
                  merror+= 'is not consistent with section [ DMTP charges ]!'
-                 assert self.__ndma == N, merror
-                 temp = self.__redmass[self.__mode-1]
+                 assert self.__ndma == N/self.__nmodes_sder, merror
+                 data = data.reshape(self.__nmodes_sder, self.__ndma)
+                 temp = self.__redmass[self.__mode][:, numpy.newaxis]
                  self.__dmac2 = temp * data
             # distributed dipoles 2nd derivatives
             elif key == 'dmad2':
-                 merror = 'ndma in section [ molecule ] '
+                 merror = 'ndma and mode in section [ molecule ] '
                  merror+= 'is not consistent with section [ DMTP dipoles ]!'
-                 assert self.__ndma == N/3, merror
-                 data = data.reshape(self.__ndma, 3)
-                 temp = self.__redmass[self.__mode-1]
+                 assert self.__ndma == N/(3*self.__nmodes_sder), merror
+                 data = data.reshape(self.__nmodes_sder, self.__ndma, 3)
+                 temp = self.__redmass[self.__mode][:, numpy.newaxis, numpy.newaxis]
                  self.__dmad2 = temp * data
             # distributed quadrupoles 2nd derivatives
             elif key == 'dmaq2':
-                 merror = 'ndma in section [ molecule ] '
+                 merror = 'ndma and mode in section [ molecule ] '
                  merror+= 'is not consistent with section [ DMTP quadrupoles ]!'
-                 assert self.__ndma == N/6, merror
-                 data = data.reshape(self.__ndma, 6)
-                 temp = self.__redmass[self.__mode-1]
+                 assert self.__ndma == N/(6*self.__nmodes_sder), merror
+                 data = data.reshape(self.__nmodes_sder, self.__ndma, 6)
+                 temp = self.__redmass[self.__mode][:, numpy.newaxis, numpy.newaxis]
                  self.__dmaq2 = temp * data
             # distributed octupoles 2nd derivatives
             elif key == 'dmao2':
-                 merror = 'ndma in section [ molecule ] '
+                 merror = 'ndma and mode in section [ molecule ] '
                  merror+= 'is not consistent with section [ DMTP octupoles ]!'
-                 assert self.__ndma == N/10, merror
-                 data = data.reshape(self.__ndma, 10)
-                 temp = self.__redmass[self.__mode-1]
+                 assert self.__ndma == N/(10*self.__nmodes_sder), merror
+                 data = data.reshape(self.__nmodes_sder, self.__ndma, 10)
+                 temp = self.__redmass[self.__mode][:, numpy.newaxis, numpy.newaxis]
                  self.__dmao2 = temp * data
             # CABMM
             elif key == 'cabmm':
@@ -1520,7 +1531,7 @@ If dma=True it returns Coulomb.py DMA object
         log   += '   nmos       = %s\n'    % self.__nmos
         log   += '   ncmos      = %s\n'    % self.__ncmos
         if self.__mode is not None:
-           log+= '   mode       = %s\n'    % self.__mode
+           log+= '   mode       = %s\n'    % ','.join(['%3d' % x for x in self.__mode])
         log   += ' \n'
         file.write(log)
         return
@@ -1665,15 +1676,16 @@ If dma=True it returns Coulomb.py DMA object
         return
     
     def _write_dmac2(self, file):
-        """write DMTP charges 2nd derivatives wrt <mode>"""
-        ndma = self.__dmac2.shape[0]
-        N = ndma
+        """write DMTP charges 2nd derivatives wrt <self.__mode> 1D array"""
+        ndma = self.__dmac2.shape[1]
+        N = self.__nmodes_sder * ndma
         log = ' %s %s= %d\n' % (self.__sec_names['dmac2'].ljust(40), 'N'.rjust(10), N)
         n = 1
-        for i in xrange(ndma):
-            log+= "%20.10E" % self.__dmac2[i]
-            if not n%5: log+= '\n'
-            n+=1
+        for m in xrange(self.__nmodes_sder):
+            for i in xrange(ndma):                
+                log+= "%20.10E" % self.__dmac2[m,i]
+                if not n%5: log+= '\n'
+                n+=1
         log+= '\n'
         if N%5: log+= '\n'
         file.write(log)
@@ -1714,15 +1726,16 @@ If dma=True it returns Coulomb.py DMA object
     
     def _write_dmad2(self, file):
         """write DMTP dipoles 2nd derivatives wrt <mode>"""
-        ndma = self.__dmad2.shape[0]
-        N = ndma * 3
+        ndma = self.__dmad2.shape[1]
+        N = self.__nmodes_sder * ndma * 3
         log = ' %s %s= %d\n' % (self.__sec_names['dmad2'].ljust(40), 'N'.rjust(10), N)
         n = 1
-        for i in xrange(ndma):
-            for j in xrange(3):
-                log+= "%20.10E" % self.__dmad2[i,j]
-                if not n%5: log+= '\n'
-                n+=1
+        for m in xrange(self.__nmodes_sder):
+            for i in xrange(ndma):                      
+                for j in xrange(3):
+                    log+= "%20.10E" % self.__dmad2[m,i,j]
+                    if not n%5: log+= '\n'
+                    n+=1
         log+= '\n'
         if N%5: log+= '\n'
         file.write(log)
@@ -1763,15 +1776,16 @@ If dma=True it returns Coulomb.py DMA object
     
     def _write_dmaq2(self, file):
         """write DMTP quadrupoles 2nd derivatives wrt <mode>"""
-        ndma = self.__dmaq2.shape[0]
-        N = ndma * 6
+        ndma = self.__dmaq2.shape[1]
+        N = self.__nmodes_sder * ndma * 6
         log = ' %s %s= %d\n' % (self.__sec_names['dmaq2'].ljust(40), 'N'.rjust(10), N)
         n = 1
-        for i in xrange(ndma):
-            for j in xrange(6):
-                log+= "%20.10E" % self.__dmaq2[i,j]
-                if not n%5: log+= '\n'
-                n+=1
+        for m in xrange(self.__nmodes_sder):
+            for i in xrange(ndma):                      
+                for j in xrange(6):
+                    log+= "%20.10E" % self.__dmaq2[m,i,j]
+                    if not n%5: log+= '\n'
+                    n+=1
         log+= '\n'
         if N%5: log+= '\n'
         file.write(log)
@@ -1812,15 +1826,16 @@ If dma=True it returns Coulomb.py DMA object
     
     def _write_dmao2(self, file):
         """write DMTP octupoles 2nd derivatives wrt <mode>"""
-        ndma = self.__dmao2.shape[0]
-        N = ndma * 10
+        ndma = self.__dmao2.shape[1]
+        N = self.__nmodes_sder * ndma * 10
         log = ' %s %s= %d\n' % (self.__sec_names['dmao2'].ljust(40), 'N'.rjust(10), N)
         n = 1
-        for i in xrange(ndma):
-            for j in xrange(10):
-                log+= "%20.10E" % self.__dmao2[i,j]
-                if not n%5: log+= '\n'
-                n+=1
+        for m in xrange(self.__nmodes_sder):
+            for i in xrange(ndma):                      
+                for j in xrange(10):
+                    log+= "%20.10E" % self.__dmao2[m,i,j]
+                    if not n%5: log+= '\n'
+                    n+=1
         log+= '\n'
         if N%5: log+= '\n'
         file.write(log)

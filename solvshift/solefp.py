@@ -25,11 +25,11 @@ __all__ = ['EFP','FragFactory',]
 __version__ = '1.0.2'
 
 class EFP(object, libbbg.units.UNITS):
-    """"""
+    """TO BE ADDED SOON"""
     def __init__(self,ccut=None,pcut=None,ecut=None,#pairwise_all=False,
                       elect=True,pol=False,rep=False,ct=False,disp=False,all=False,
                       corr=False,
-                      nlo=False,freq=False,cunit=False):
+                      nlo=False,freq=False,cunit=False,mode=None):
         """The global settings for a computation:
 ccut         - Coulomb cutoff
 pcut         - Polarization cutoff
@@ -58,7 +58,7 @@ all          - evaluate all these interactions"""
            self.__eval_rep   = True
            self.__eval_ct    = True
            self.__eval_disp  = True
-           self.__eval_corr  = True
+           self.__eval_corr  = False
         else:
            self.__eval_elect = elect
            self.__eval_pol   = pol
@@ -70,6 +70,7 @@ all          - evaluate all these interactions"""
         if freq: 
            self.__pairwise_all = False
            self.__eval_freq = True
+           self.__mode = mode
 
         else: self.__pairwise_all = True
         #
@@ -120,7 +121,8 @@ Also set the BSM parameters if not done in set_bsm.
            self.__gijk   = parc['gijk']
            self.__redmss = parc['redmass']
            self.__freq   = parc['freq']
-           self.__mode   = parc['mode']
+           #self.__mode   = parc['mode']
+           self.__mode_sder_index = list(parc['mode']).index(self.__mode-1)
            self.__mol    = self.__bsm[0].get_mol()
            self.__avec   = None
            # correct the erroneous signs for MeSCN molecule
@@ -1023,9 +1025,9 @@ Otherwise self.__debug file won't be closed."""
            #qadc1, octc1 = frg.get_traceless_1(ravel=True)
            qadc1, octc1 = frg.get_traceless_1()
            #
-           chgc2 = parc['dmac2'].ravel()
-           dipc2 = parc['dmad2'].ravel()
-           qadc2, octc2 = frg.get_traceless_2()
+           chgc2 = parc['dmac2'][self.__mode_sder_index].ravel()
+           dipc2 = parc['dmad2'][self.__mode_sder_index].ravel()
+           qadc2, octc2 = frg.get_traceless_2(self.__mode)
            qadc2 = qadc2.ravel()
            octc2 = octc2.ravel()
            #
@@ -1396,6 +1398,7 @@ Otherwise self.__debug file won't be closed."""
     
     def _create(self):
         """namespace of objects"""
+        self.__mode              = None
         self.__bsm               = None
         self.__eval_freq         = False
         self.__eval_nlo          = None

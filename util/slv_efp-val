@@ -10,12 +10,14 @@
 
  Usage:
  
-    [frg_1] [frg_2] [target] cutoffs <type> <supl_1> <supl_2>
+    [frg_1] [frg_2] [mode] [target] cutoffs <type> <supl_1> <supl_2>
  
  Notes: 
  
    1) frg_1/frg_2 - name of solute/solvent molecules or parameter file(s) 
                     (*.frg format)
+
+   2) mode        - number of mode of solute (normal numbers, helico)
                     
    2) xyz_list    - list of xyz files. Format: 
                     1st and 2nd lines: description
@@ -89,7 +91,8 @@ t0 = time()
 # --- read the parameter files
 frg_solute    = Frag(argv[1])
 frg_solvent   = Frag(argv[2])
-target        =      argv[3]
+mode          =  int(argv[3])
+target        =      argv[4]
 
 # --- read the number of solvent molecules
 n_solute_atoms  = frg_solute.get_natoms()
@@ -97,15 +100,15 @@ n_solvent_atoms = frg_solvent.get_natoms()
 
 # --- read cutoffs
 ccut, pcut, ecut = 1000000.00, 1000000.00, 1000000.00
-if argv[4].lower() == 'none': pass
+if argv[5].lower() == 'none': pass
 else:
-   c = text_to_list( argv[4], delimiter=',', dtype=f64 )
+   c = text_to_list( argv[5], delimiter=',', dtype=f64 )
    if   len(c)==3: ccut, pcut, ecut = c
    elif len(c)==2: pcut, ecut       = c
    elif len(c)==1: ecut,            = c
 
 # --- provide terms to be evaluated
-if len(argv)>5: typ = argv[5]
+if len(argv)>6: typ = argv[6]
 else:           typ = 'exp'
 elect,rep,pol,corr = True, False, False, False
 if 'e' in typ: elect= True
@@ -116,31 +119,31 @@ if typ.lower() == 'all':
    elect,rep,pol,corr = True, True, True, True
 
 # --- solute suplist
-if len(argv)>6: 
-   supl = [ array( text_to_list( argv[6], delimiter=',', dtype=int, dt=1 ), int) , ]
+if len(argv)>7: 
+   supl = [ array( text_to_list( argv[7], delimiter=',', dtype=int, dt=1 ), int) , ]
    for i in range(len(supl)): supl[i]-=1
 else: supl = None
 
 # --- solvent suplist
-if len(argv)>7: 
-   supl_sol = array( text_to_list( argv[7], delimiter=',', dtype=int, dt=1 ), int)
+if len(argv)>8: 
+   supl_sol = array( text_to_list( argv[8], delimiter=',', dtype=int, dt=1 ), int)
    supl_sol-=1
 else: supl_sol = None
 
 # --- solute reordlist
-if len(argv)>8:
-   reord = [ array( text_to_list( argv[6], delimiter=',', dtype=int, dt=1 ) , int) , ]
+if len(argv)>9:
+   reord = [ array( text_to_list( argv[9], delimiter=',', dtype=int, dt=1 ) , int) , ]
    for i in range(len(reord)): reord[i]-=1
 else: reord = None
 
 # solvent reordlist
-if len(argv)>9:
-   reord_sol = array( text_to_list( argv[7], delimiter=',', dtype=int, dt=1 ), int) - 1
+if len(argv)>10:
+   reord_sol = array( text_to_list( argv[10], delimiter=',', dtype=int, dt=1 ), int) - 1
 else: reord_sol = None
 
 
 # --- additional printout
-if len(argv)>8: lprint = bool(argv[8])
+if len(argv)>11: lprint = bool(argv[11])
 else:           lprint = True
 
 # [5] create report file
@@ -162,7 +165,7 @@ out.write(t+'\n')
 out.flush()
 
 # --- set the EFP environment
-efp = EFP(elect=elect,pol=pol,rep=rep,corr=corr,freq=True,
+efp = EFP(elect=elect,pol=pol,rep=rep,corr=corr,freq=True,mode=mode,
           ccut=ccut,pcut=pcut,ecut=ecut,
           cunit=True)
 

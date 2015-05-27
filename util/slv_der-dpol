@@ -44,7 +44,7 @@ step   = float(argv[3])
 out_par= open(argv[4],'w')
 
 c = diff(freq=anh.freq,step=step,dir='.',L=anh.L,dpol='./',lprint=False,sims=sims)
-print c.dpol1.sum(axis=1)
+#print c.dpol1.sum(axis=1)
 dpol1 = c.dpol1
 nmos  = dpol1.shape[1]
 rpol  = c.dpos_set_1[0]
