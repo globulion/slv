@@ -13,7 +13,7 @@ from numpy import abs
 f1 = argv[1]        ;  f2 = argv[2]
 a1 = Frag(f1).get() ;  a2 = Frag(f2).get()
 
-comps = ['fock','fock1','pos','lmoc', 'lmoc1', 'vecl','vecl1','dpol','dpol1','dpoli','dpoli1','dmac1','dmad1','dmaq1','dmao1','gijk']
+comps = ['fock','fock1','pos','lmoc', 'lmoc1', 'vecl','vecl1','dpol','dpol1','dpoli','dpoli1','dmac1','dmad1','dmaq1','dmao1','dmac2','dmad2','dmaq2','dmao2','gijk']
 
 # compare Frag's
 print " FRAGMENT DIFFERENCES\n"

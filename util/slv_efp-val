@@ -10,7 +10,7 @@
 
  Usage:
  
-    [frg_1] [frg_2] [mode] [target] cutoffs <type> <supl_1> <supl_2>
+    [frg_1] [frg_2] [mode] [target] cutoffs <type> <supl_1> <supl_2> <reord_1> <reord_2> <ea>
  
  Notes: 
  
@@ -143,8 +143,12 @@ else: reord_sol = None
 
 
 # --- additional printout
-if len(argv)>11: lprint = bool(argv[11])
-else:           lprint = True
+if len(argv)>11: 
+   lprint = bool(argv[11])
+   ea = True
+else:           
+   lprint = True
+   ea = False
 
 # [5] create report file
 out = open('shifts.dat', 'w')
@@ -165,7 +169,7 @@ out.write(t+'\n')
 out.flush()
 
 # --- set the EFP environment
-efp = EFP(elect=elect,pol=pol,rep=rep,corr=corr,freq=True,mode=mode,
+efp = EFP(elect=elect,pol=pol,rep=rep,corr=corr,disp=True,ea=ea,freq=True,mode=mode,
           ccut=ccut,pcut=pcut,ecut=ecut,
           cunit=True)
 
