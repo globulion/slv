@@ -1104,13 +1104,13 @@ If dma=True it returns Coulomb.py DMA object
             for i in range(nmos_self):                                              
                  for j in range(nmos_frag):
                     c = 0.0
+                    a_j = dpoli_frag[j]
+                    a_oj= a_j.trace(axis1=1,axis2=2)/3.000
                     for k in range(nmodes):
                         a_i = dpoli_self[k,i]
                         a_oi= a_i.trace(axis1=1,axis2=2)/3.000
-                        a_j = dpoli_frag[j]
-                        a_oj= a_j.trace(axis1=1,axis2=2)/3.000
                         vib_w = gijk[k,M,M] / (redmass[k] * freq[k]**2)
-                        c  -= self._gauss_legendre_12(a_oi * a_oj) * 3.00 / math.pi
+                        c  -= vib_w * self._gauss_legendre_12(a_oi * a_oj) * 3.00 / math.pi
                     c6d[M,i,j] = c * vib_m
         return c6d
 
