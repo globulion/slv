@@ -28,7 +28,7 @@ class EFP(object, libbbg.units.UNITS):
     """TO BE ADDED SOON"""
     def __init__(self,ccut=None,pcut=None,ecut=None,#pairwise_all=False,
                       elect=True,pol=False,rep=False,ct=False,disp=False,all=False,
-                      corr=False,
+                      corr=False,ea=True,
                       nlo=False,freq=False,cunit=False,mode=None):
         """The global settings for a computation:
 ccut         - Coulomb cutoff
@@ -59,6 +59,7 @@ all          - evaluate all these interactions"""
            self.__eval_ct    = True
            self.__eval_disp  = True
            self.__eval_corr  = False
+           self.__eval_elect_ea = True
         else:
            self.__eval_elect = elect
            self.__eval_pol   = pol
@@ -66,6 +67,7 @@ all          - evaluate all these interactions"""
            self.__eval_ct    = ct
            self.__eval_disp  = disp
            self.__eval_corr  = corr
+           self.__eval_elect_ea = ea
         #
         if freq: 
            self.__pairwise_all = False
@@ -1092,11 +1094,13 @@ Otherwise self.__debug file won't be closed."""
               # store forces
               self.__fi_el = fi
 
-              # electronic anharmonicity
-              ea ,a,b,c,d,e = libbbg.qm.clemtp.sdmtpe(rdma,ndma,chg,dip,qad,oct,
-                                                      chgc2,dipc2,qadc2,octc2, 
-                                                      redmss,freq,
-                                                      self.__mode,lwrite)
+              # electronic anharmonicity                                         
+              ea = 0.00
+              if self.__eval_elect_ea:
+                 ea ,a,b,c,d,e = libbbg.qm.clemtp.sdmtpe(rdma,ndma,chg,dip,qad,oct,
+                                                         chgc2,dipc2,qadc2,octc2, 
+                                                         redmss,freq,
+                                                         self.__mode,lwrite)
               # correction terms
               if self.__eval_corr:
                  corr,rf2,rf3,rf4,rk2,rk3,rk4,corr_b,corr_c,corr_d = \

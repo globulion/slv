@@ -44,7 +44,7 @@ where X=5,9"""
         # step of differentiation and differentiation mode (pointity)
         self.step, self.n_point, self.file_type, self.mode_id, \
         self.sderiv_wrk, self.sderiv_step = self.ReadStep(dir)
-        if self.mode_id>0: self.calculate_sder=True
+        if self.mode_id>-1: self.calculate_sder=True
         else:              self.calculate_sder=False
         
         if (not eds  and not efp and not solefp and not dpol):
@@ -1192,7 +1192,7 @@ using COULOMB.py routines"""
                                     method='b3lyp',
                                     matrix=dmat,
                                     transition=False,
-                                    bonds=bonds,vec=vec)
+                                    bonds=bonds,vec=vec,hexadecapoles=False)
        print " - calculation of %s"%camm.operation
        camm.camms()
        #camm.mmms()
