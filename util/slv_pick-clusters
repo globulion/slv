@@ -36,7 +36,7 @@ import glob, os, libbbg.utilities
 t_1 = """\
  $system mwords=5 memddi=12 parall=.t. $end
  $contrl scftyp=rhf runtyp=optimize icharg=0 mult=1 units=angs
-         maxit=100 exetyp=run ispher=-1 coord=fragonly
+         maxit=200 exetyp=run ispher=-1 coord=fragonly
          icut=20 itol=30 local=pop $end
 !$globop rndini=.true. riord=rand mcmin=.true.
 !        mctyp=4 nblock=0 $end
