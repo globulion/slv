@@ -8,7 +8,7 @@
  
  Usage:
  
- ./md.py [mdinput] [traj] ncpus <natoms>
+ ./md.py [mdinput] [traj] [mode] ncpus <natoms>
  
  Notes:
  
@@ -49,7 +49,7 @@ NFRAMES = 10
 #     cutoffs [Bohr]  ; Terms
 ccut= 40              ; elect = True ; correc = False
 pcut= 17              ; repul = True
-ecut= 10              ; polar = True
+ecut= 11              ; polar = True ; disp = polar
 
 #     output file name
 report = 'report.dat'
@@ -72,9 +72,10 @@ def eval_parall(efp, idx, args, frame, frame_idx):
 # [2] gather the arguments
 inp        =     argv[1]
 trajectory =     argv[2]
-ncpus      = int(argv[3])
+mode       = int(argv[3])
+ncpus      = int(argv[4])
 try:
-  numatoms = int(argv[4])
+  numatoms = int(argv[5])
 except IndexError:
   numatoms = None
 
@@ -98,9 +99,9 @@ input = MDInput(inp)
 args, idx = input.get()
 
 # [6] initialize EFP object
-efp = EFP(elect=elect, pol=polar, rep=repul, corr=correc,
-          ccut=ccut, pcut=pcut, ecut=ecut,
-          freq=True, cunit=True,)
+efp = EFP(elect=elect, pol=polar, rep=repul, disp=disp, corr=correc,
+          ccut=ccut, pcut=pcut, ecut=ecut, 
+          freq=True, cunit=True, mode=mode)
 
 # [7] initiate the report file
 out = open(report, 'w')
@@ -150,12 +151,17 @@ for i in range(NFRAMES):
          frame = array(md[i]) * u.AngstromToBohr
     else: 
          frame = array(md.next()) * u.AngstromToBohr
+                                 # ('libbbg.units','libbbg.utilities','numpy','solvshift','solvshift.solefp','solvshift.slvpar','PyQuante.Ints','libbbg.dma'),
+                                 #  ('libbbg', 'numpy', 'solvshift', 'solefp', 'PyQuante','coulomb'),
 
-    jobs.append( job_server.submit(eval_parall,(efp, idx, args, frame, frame_idx+1), (solvshift.slvpar.Frag, solvshift.solefp.EFP),
-                                   ('libbbg.units','libbbg.utilities','numpy','solvshift','solvshift.solefp','solvshift.slvpar','efprot','PyQuante.Ints','libbbg.dma'),
-                                   ) )
+    jobs.append( job_server.submit(eval_parall,(efp, idx, args, frame, frame_idx+1), (), #(solvshift.slvpar.Frag, solvshift.solefp.EFP),
+                                   ('PyQuante.Ints', 'coulomb.multip', 'libbbg.qm.clemtp',\
+       'numpy', 'libbbg.units', 'libbbg.utilities', 'solvshift.shftex', 'solvshift.shftce',\
+       'solvshift.solpol', 'solvshift.solpol2', 'solvshift.efprot', 'solvshift.exrep',\
+       'solvshift.slvpar','sys', 'copy', 'os', 're', 'math', 'glob','libbbg'),
+                                  ) )
     if (frame_idx%ncpus==0 and frame_idx!=0):
-       job_server.wait()
+       #job_server.wait()
        K = arange(frame_idx-ncpus,frame_idx)
        for j in K:
            log = jobs[j]()
