@@ -1,0 +1,27 @@
+#!/usr/bin/python
+"""
+ Converts the gijj slice of gijk tensor for all i and given mode j
+ to units in the output of g09 CUBIC output (Eh/Bohr**3/AMU**3/2)
+
+ Usage: [frg] [j_mode]  # normal numbers; helico
+
+ Example: nma 8         # NMA Amide I mode gi88 for i=1---30
+"""
+print __doc__
+from sys import argv, exit
+if len(argv)==1: exit()
+from solvshift.slvpar import Frag
+from libbbg.units import UNITS as u
+from numpy import sqrt
+conv = u.ElectronMassToAmu**(-3./2.)
+j    = int(argv[2])-1
+
+nma = Frag(argv[1])
+gijj= nma.get()['gijk'][j,j]
+redm= nma.get()['redmass']
+
+gijj_c = gijj/sqrt(redm)
+gijj_c/= redm[j]
+gijj_c*= conv
+for i in range(len(gijj_c)):
+    print "%2d %2d %2d %10.6f" % (i+1,j+1,j+1,gijj_c[i])
