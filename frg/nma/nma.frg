@@ -34,6 +34,8 @@
 !        * DMTP type: CAMM-12
 !        * DPOL type: GMS DPOL-20
 !        * LMO  type: Pipek-Mezey (20 vectors)
+!        * FDER     : 0.010 Angstrom
+!        * SDER     : 20 (I mode), 10 (II mode), 5 (A mode)
 !
 !                                           Mar 2013
 !                              Modified: 28 May 2015   
