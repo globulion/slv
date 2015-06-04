@@ -152,7 +152,7 @@ else:
 
 # [5] create report file
 out = open('shifts.dat', 'w')
-t = '%8s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s' % ('# Frame'.ljust(8),
+t = '%8s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s' % ('# Frame'.ljust(8),
                                                                      'Exact'  .rjust(10),  
                                                                      'EL-TOT' .rjust(10),
                                                                      'EL-MEA' .rjust(10),
@@ -163,7 +163,8 @@ t = '%8s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s' % ('# Frame'.lj
                                                                      'EL-EA-C' .rjust(10),
                                                                      'TOTAL'   .rjust(10),
                                                                      'RMS_C'   .rjust(10),
-                                                                     'RMS_S'   .rjust(10))
+                                                                     'RMS_S'   .rjust(10),
+                                                                     'NSOLV'   .rjust(10))
 
 out.write(t+'\n')
 out.flush()
@@ -179,10 +180,11 @@ l   = t_f.readlines(); t_f.close()
 freq_0  = f64(l[2].split()[-1])
 target = list()
 for i in range(len(l)-3):
-    xyz, freq = l[i+3].split()
-    xyz = Read_xyz_file(xyz+'.xyz',mol=True,units='Angstrom').get_pos()
-    freq = f64(freq)
-    target.append( ( xyz, freq ) )
+    if not l[i+3].startswith('#'):
+       xyz, freq = l[i+3].split()                                          
+       xyz = Read_xyz_file(xyz+'.xyz',mol=True,units='Angstrom').get_pos()
+       freq = f64(freq)
+       target.append( ( xyz, freq ) )
 
 # [2] Calculate the frequency shifts!
 I = 1
@@ -225,7 +227,8 @@ for xyz, freq in target:
     log+= " %10.2f"   % (shifts[0]+shifts[1])
     log+= 7*" %10.2f" %  tuple(shifts[:7])
     log+= " %10.5f"   %  rms_c
-    log+= " %10.5f\n" %  rms_s
+    log+= " %10.5f"   %  rms_s
+    log+= " %10d\n"   % n_solvent_mol
     out.write(log)
     out.flush()
     #

@@ -12,7 +12,7 @@
 
   Mode 1)
 
-      1  [full opt xyz] [gas phase xyz] [anh] [mode] [line] <n> <step-cart> <step-mode>
+      1  [full opt xyz] [gas phase xyz] [anh] [mode] [line] [suplist] <n> <step-cart> <step-mode> 
 
   Mode 2)
 
@@ -38,7 +38,7 @@ print __doc__
 from  sys import argv, exit
 if len(argv)==1: exit()
 import os
-from libbbg.utilities import QMFile
+from libbbg.utilities import QMFile, text_to_list
 from libbbg.units import Atom
 from string import Template
 
@@ -103,13 +103,14 @@ if mode_of_action==1:
    anh      = os.path.abspath(argv[4])
    mode     = int(argv[5])
    line     = int(argv[6])
+   suplist  = argv[7]
    # defaults
    n = 3
    step_cart= '0.006'
    step_mode= '15.0'
-   if len(argv)>7: n = int(argv[7])
-   if len(argv)>8: step_cart = argv[8]
-   if len(argv)>9: step_mode = argv[9]
+   if len(argv)>8 : n = int(argv[8])
+   if len(argv)>9 : step_cart = argv[9]
+   if len(argv)>10: step_mode = argv[10]
 else:
    pass
 
@@ -124,7 +125,7 @@ if mode_of_action==1:
       exit(1)
    
    # [2] generate soleds.xyz file
-   os.system('slv_make-soleds-xyz %s %s %d' % (full_xyz, ref_xyz, n))
+   os.system('slv_make-soleds-xyz %s %s %s %d' % (full_xyz, ref_xyz, suplist, n))
    os.system('mv __out__.xyz soleds.xyz')
    
    # [3] create soleds directory

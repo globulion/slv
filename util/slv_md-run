@@ -44,7 +44,7 @@ stdout.flush()
 # -----------------------------------------------------------------------------------------------------
 # [1] INPUT VARIABLES
 #     number of frames to be considered
-NFRAMES = 10
+NFRAMES = 5000
 
 #     cutoffs [Bohr]  ; Terms
 ccut= 40              ; elect = True ; correc = False
@@ -52,7 +52,7 @@ pcut= 17              ; repul = True
 ecut= 11              ; polar = True ; disp = polar
 
 #     output file name
-report = 'report.dat'
+report = 'md.shifts.amide-I.pea.dat'
 
 # --- you don't need to change anything else below ----------------------------------------------------
 def eval_parall(efp, idx, args, frame, frame_idx):
@@ -100,7 +100,7 @@ args, idx = input.get()
 
 # [6] initialize EFP object
 efp = EFP(elect=elect, pol=polar, rep=repul, disp=disp, corr=correc,
-          ccut=ccut, pcut=pcut, ecut=ecut, 
+          ccut=ccut, pcut=pcut, ecut=ecut, ea=True,
           freq=True, cunit=True, mode=mode)
 
 # [7] initiate the report file
