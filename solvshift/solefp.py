@@ -1129,8 +1129,8 @@ Otherwise self.__debug file won't be closed."""
               self.__shift[1] =  ea
               #self.__shift[7] = rf2+rf3+rf4
               #self.__shift[8] = rk2+rk3+rk4
-              self.__shift[4] = rf2+rf3+rf4
-              self.__shift[5] = rk2+rk3+rk4
+              self.__shift[4] = rf2#+rf3#+rf4
+              self.__shift[5] = rk2#+rk3#+rk4
 
               if lwrite: 
                  print " Electrostatic  MEA frequency shift: %10.2f"%mea
