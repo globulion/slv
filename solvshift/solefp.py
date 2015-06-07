@@ -543,7 +543,7 @@ Now, only for exchange-repulsion layer"""
         self.__bsm               = None
         self.__eval_freq         = False
         self.__eval_nlo          = None
-        self.__shift             = numpy.zeros(9,dtype=numpy.float64)
+        self.__shift             = dict() # numpy.zeros(9,dtype=numpy.float64)
         self.__rms_central       = None
         self.__suplist           = None
         self.__reordlist         = None
@@ -1084,6 +1084,24 @@ Now, only for exchange-repulsion layer"""
            self.__hess_tot = hess
            r,un = numpy.linalg.eig(hess)
            self.__u = un
+
+        # update frequency shift dictionary
+        self.__shift['ele_mea'  ] = shift_ele_mea
+        self.__shift['ele_ea'   ] = shift_ele_ea     
+        self.__shift['cor_mea'  ] = shift_ele_corr_mea
+        self.__shift['cor_ea'   ] = shift_ele_corr_ea    ; self.__shift['ele_tot'] = shift_ele_mea + shift_ele_ea + shift_ele_corr_mea + shift_ele_corr_ea
+        self.__shift['pol_mea'  ] = shift_pol_mea
+        self.__shift['pol_ea'   ] = shift_pol_ea         ; self.__shift['pol_tot'] = shift_pol_mea + shift_pol_ea
+        self.__shift['rep_mea'  ] = shift_rep_mea
+        self.__shift['rep_ea'   ] = shift_rep_ea         ; self.__shift['rep_tot'] = shift_rep_mea + shift_rep_ea
+        self.__shift['dis_mea'  ] = shift_dis_mea
+        self.__shift['dis_ea'   ] = shift_dis_ea         ; self.__shift['dis_tot'] = shift_dis_mea + shift_dis_ea
+        self.__shift['total'    ] = shift_total
+        self.__shift['total_ele'] = shift_total - shift_rep_mea - shift_rep_ea
+        self.__shift['total_mea'] = shift_ele_mea + shift_ele_corr_mea + shift_pol_mea + shift_rep_mea + shift_dis_mea
+        self.__shift['total_ea' ] = shift_ele_ea  + shift_ele_corr_ea  + shift_pol_ea  + shift_rep_ea  + shift_dis_ea
+        self.__shift['solcamm'  ] = shift_ele_mea + shift_ele_ea 
+        self.__shift['total_cor'] = shift_ele_corr_mea + shift_ele_corr_ea
     
         # final printout
         if lwrite:
