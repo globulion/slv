@@ -32,7 +32,8 @@ molecules = ['water'            , 'water2'           , 'dmso'                , '
              'chonh2'           ,'chonhme'           , 'comenh2'             , 'ethane'    ,'mecoo-'        ,
              'menh3+'           ,'methane'           ,'n-propane'            , 'me-guanidinium+'            ] 
 
-numerical = { 'mescn': ('num_0.006', 'num_0.025') , }
+numerical = { 'mescn': ('num_0.006', 'num_0.025') , 
+              'nma'  : ('num_0.006',            ) , }
 
 frg_files = list()
 
