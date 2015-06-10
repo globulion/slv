@@ -1083,6 +1083,8 @@ Now, only for exchange-repulsion layer"""
            shift_pol_mea *= self.HartreePerHbarToCmRec; shift_pol_ea  *= self.HartreePerHbarToCmRec
            shift_dis_mea *= self.HartreePerHbarToCmRec; shift_dis_ea  *= self.HartreePerHbarToCmRec
            shift_rep_mea *= self.HartreePerHbarToCmRec; shift_rep_ea  *= self.HartreePerHbarToCmRec
+           shift_ele_corr_mea *= self.HartreePerHbarToCmRec; shift_ele_corr_ea *= self.HartreePerHbarToCmRec
+           shift_dis_mea_iso  *= self.HartreePerHbarToCmRec
            shift_total   *= self.HartreePerHbarToCmRec
     
         # diagonalize total Hessians
