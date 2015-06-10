@@ -508,6 +508,12 @@ If central molecule mode is ON, rms_central is not included. Otherwise, all supe
 are counted."""
         return self.__rms_solvent_max
 
+    def get_rms_ave(self):
+        """
+Return average RMS over all molecules (including central molecule if any)
+"""
+        return self.__rms_ave
+
     def get_rms_max(self):
         """Return maximal RMS"""
         rms_c = self.__rms_central
@@ -545,6 +551,7 @@ Now, only for exchange-repulsion layer"""
         self.__eval_nlo          = None
         self.__shift             = dict() # numpy.zeros(9,dtype=numpy.float64)
         self.__rms_central       = None
+        self.__rms_ave           = None
         self.__suplist           = None
         self.__reordlist         = None
         self.__rms_solvent_max   = None
@@ -611,7 +618,7 @@ Now, only for exchange-repulsion layer"""
     # PROPERTY EVALUATORS
 
     def _eval(self, lwrite, num, step, theory):
-        if lwrite: self.__debug = open('__debug_file__','w')
+        if lwrite>1: self.__debug = open('__debug_file__','w')
         if self.__pairwise_all:  self._eval_mode_global (lwrite, num, step, theory)
         else:                    self._eval_mode_central(lwrite, num, step, theory) 
         return
@@ -629,6 +636,7 @@ Now, only for exchange-repulsion layer"""
         shift_ele_mea= 0.0; shift_pol_mea = 0.0; shift_rep_mea = 0.0; shift_dis_mea = 0.0
         shift_ele_ea = 0.0; shift_pol_ea  = 0.0; shift_rep_ea  = 0.0; shift_dis_ea  = 0.0
         shift_ele_corr_mea = 0.0 ; shift_ele_corr_ea = 0.0
+        shift_dis_mea_iso = 0.0
     
         # central molecule
         frg = self.__bsm[0].copy(); parc= frg.copy().get()
@@ -643,7 +651,8 @@ Now, only for exchange-repulsion layer"""
         if lwrite:
            print " %s" % frg.get()['name']
            print " Central molecule rms: %10.5f" % self.__rms_central
-           xx = frg.xyz(units='angs'); print xx; self.__debug.write(xx)
+           xx = frg.xyz(units='angs'); print xx
+        if lwrite>1: self.__debug.write(xx)
     
         # properties of central molecule
         if not num:
@@ -700,6 +709,7 @@ Now, only for exchange-repulsion layer"""
     
         # loop over other molecules
         rms_max = 0.0 
+        rms_ave = self.__rms_central
         if lwrite: print " ELECT LAYER: %10d molecules" % N
         for i in xrange(N):
             im = self.__mtc[i]
@@ -708,11 +718,12 @@ Now, only for exchange-repulsion layer"""
             STR = self._reorder_xyz( self.__rcoordc[nm_prev:nm_curr]    , self.__reordlist[im] )  # reorder to BSM-FRG atom order
             if num: STR = numpy.dot(STR+transl_inv, rot_inv)
             frg = self.__bsm[im].copy()
-            rms = frg.sup( STR , suplist= self.__suplist[im] )
+            rms = frg.sup( STR , suplist= self.__suplist[im] ); rms_ave += rms
             if lwrite: print " %s" % frg.get()['name']
             if lwrite: print " rms C: ",rms
             if lwrite:
-               xx = frg.xyz(units='angs'); print xx; self.__debug.write(xx)
+               xx = frg.xyz(units='angs'); print xx
+            if lwrite>1: self.__debug.write(xx)
             if rms > rms_max: rms_max = rms
             par = frg.get()
             qad, oct = frg.get_traceless()
@@ -724,7 +735,8 @@ Now, only for exchange-repulsion layer"""
                #qad, oct = solvshift.efprot.tracls( par['dmaq'], par['dmao'] )
                QO.append( (qad, oct) )
             self.__rms_solvent_max = rms_max
-    
+        self.__rms_ave = rms_ave / numpy.float64(N+1) 
+
         # ELECTROSTATICS
         if self.__eval_elect:
            # COULOMB
@@ -780,19 +792,19 @@ Now, only for exchange-repulsion layer"""
               oct  = numpy.concatenate  ([ QO[x][1]  for x in range(N+1)   ]).reshape(ndmas*10)
               # mechanical anharmonicity
               mea,a,b,c,d,e,fi = libbbg.qm.clemtp.sdmtpm(rdma,ndma,chg,dip,qad,oct,
-                                 chgc1,dipc1,qadc1,octc1,redmss,freq,gijj,ndmac,self.__mode,lwrite)
+                                 chgc1,dipc1,qadc1,octc1,redmss,freq,gijj,ndmac,self.__mode,lwrite=False)
               self.__fi_el = fi
               shift_ele_mea= mea
               # electronic anharmonicity
               if self.__eval_elect_ea:
                  ea ,a,b,c,d,e = libbbg.qm.clemtp.sdmtpe(rdma,ndma,chg,dip,qad,oct,
-                                 chgc2,dipc2,qadc2,octc2,redmss,freq,self.__mode,lwrite)
+                                 chgc2,dipc2,qadc2,octc2,redmss,freq,self.__mode,lwrite=False)
                  shift_ele_ea  = ea
               # potential-derivative correction terms
               if self.__eval_corr:
                  corr,rf2,rf3,rf4,rk2,rk3,rk4,corr_b,corr_c,corr_d = \
                               libbbg.qm.clemtp.dmtcor(rdma,ndma,chg,dip,qad,oct,
-                              chgc1,dipc1,qadc1,octc1,redmss,freq,gijj,lvec,ndmac,self.__mode,lwrite)
+                              chgc1,dipc1,qadc1,octc1,redmss,freq,gijj,lvec,ndmac,self.__mode,lwrite=False)
                  shift_ele_corr_mea = rf2#+rf3#+rf4
                  shift_ele_corr_ea  = rk2#+rk3#+rk4
               #
@@ -944,6 +956,7 @@ Now, only for exchange-repulsion layer"""
                  disp_ani = libbbg.qm.clemtp2.tdisp6(rpol,rpol1,pol,npol,pol1,gijj,redmss,freq,npolc,self.__mode)
                  self.__fi_disp = None
                  shift_dis_mea = disp_ani
+                 shift_dis_mea_iso = disp_iso
                  shift_dis_ea  = 0.0
                  #
                  del PAR
@@ -1095,7 +1108,7 @@ Now, only for exchange-repulsion layer"""
         self.__shift['rep_mea'  ] = shift_rep_mea
         self.__shift['rep_ea'   ] = shift_rep_ea         ; self.__shift['rep_tot'] = shift_rep_mea + shift_rep_ea
         self.__shift['dis_mea'  ] = shift_dis_mea
-        self.__shift['dis_ea'   ] = shift_dis_ea         ; self.__shift['dis_tot'] = shift_dis_mea + shift_dis_ea
+        self.__shift['dis_ea'   ] = shift_dis_ea         ; self.__shift['dis_tot'] = shift_dis_mea + shift_dis_ea ; self.__shift['dis_mea_iso'] = shift_dis_mea_iso
         self.__shift['total'    ] = shift_total
         self.__shift['total_ele'] = shift_total - shift_rep_mea - shift_rep_ea
         self.__shift['total_mea'] = shift_ele_mea + shift_ele_corr_mea + shift_pol_mea + shift_rep_mea + shift_dis_mea
@@ -1109,9 +1122,9 @@ Now, only for exchange-repulsion layer"""
            print    "                MEA           : %10.2f" % shift_ele_mea
            print    "                 EA           : %10.2f" % shift_ele_ea
            print    "               CORR           : %10.2f" %(shift_ele_corr_mea + shift_ele_corr_ea)
-           print    " Polarization       frequency shift: %10.2f" % (shift_pol+mea + shift_pol_ea)
+           print    " Polarization       frequency shift: %10.2f" % (shift_pol_mea + shift_pol_ea)
            if not num: 
-              print " Dispersion         frequency shift: %10.2f  %10.2f" % (disp_iso,disp_ani)
+              print " Dispersion         frequency shift: %10.2f  %10.2f" % (shift_dis_mea_iso, shift_dis_mea)
            print    " Exchange-repulsion frequency shift: %10.2f" % (shift_rep_mea + shift_rep_ea)
            print    " ----------------------------------------------- "
            print    " TOTAL FREQUENCY SHIFT             : %10.2f" %  shift_total
