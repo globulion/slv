@@ -29,8 +29,9 @@ molecules = ['water'            , 'water2'           , 'dmso'                , '
              'dcm'              , 'na+'              , 'me-so3-'             , 'so3--'     ,       'meoac'  ,
              'nma'              , 'nma-d7'           , 'mescn'               , 'li+'       ,       'et2coo' , 
              'mecn'             , '4-me-imidazole'   , '4-me-phenol'         , 'ccl4'      ,
-             'chonh2'           ,'chonhme'           , 'comenh2'             , 'ethane'    ,'mecoo-'        ,
-             'menh3+'           ,'methane'           ,'n-propane'            , 'me-guanidinium+'            ] 
+             'chonh2'           , 'chonhme'          , 'comenh2'             , 'ethane'    ,       'mecoo-' ,
+             'menh3+'           , 'methane'          , 'n-propane'           , 'me-guanidinium+'            ,
+             'thf'              , 'dmf'              , 'cyclohexane'         , 'benzene'   ,                ] 
 
 numerical = { 'mescn': ('num_0.006', 'num_0.025') , 
               'nma'  : ('num_0.006',            ) , }
