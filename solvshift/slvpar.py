@@ -107,6 +107,10 @@ class Frag(object, libbbg.units.UNITS):
      o methane          Methane                         YES    NO     NO
      o ethane           Ethane                          YES    NO     NO
      o n-propane        n-Propane                       YES    NO     NO
+     o cyclohexane      Cyclohexane                     YES    NO     NO
+     o benzene          Benzene                         YES    NO     NO
+     o dmf              Dimethylformamide               YES    NO     NO
+     o thf              Tetrahydrofurane                YES    NO     NO
     -----------------------------------------------------------------------------------------------
      frag = Frag(file)   where file is the Frag format file (*.frg) with parame
                          ters created by a user. See slv_der-* for fragment par
