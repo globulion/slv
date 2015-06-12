@@ -28,7 +28,7 @@ EFPROT = Extension(name='solvshift.efprot',
 molecules = ['water'            , 'water2'           , 'dmso'                , 'meoh'      ,       'chcl3'  ,     
              'dcm'              , 'na+'              , 'me-so3-'             , 'so3--'     ,       'meoac'  ,
              'nma'              , 'nma-d7'           , 'mescn'               , 'li+'       ,       'et2coo' , 
-             'mecn'             , '4-me-imidazole'   , '4-me-phenol'         , 'ccl4'      ,
+             'mecn'             , '4-me-imidazole'   , '4-me-phenol'         , 'ccl4'      ,         'etoh' ,
              'chonh2'           , 'chonhme'          , 'comenh2'             , 'ethane'    ,       'mecoo-' ,
              'menh3+'           , 'methane'          , 'n-propane'           , 'me-guanidinium+'            ,
              'thf'              , 'dmf'              , 'cyclohexane'         , 'benzene'   ,                ] 

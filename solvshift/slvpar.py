@@ -82,6 +82,7 @@ class Frag(object, libbbg.units.UNITS):
      o water2           H2O                             YES    NO     NO       with CAMM-3                       
      o dmso             DMSO                            YES    NO     NO                                         
      o meoh             Methanol                        YES    NO     NO                                         
+     o etoh             Ethanol                         YES    NO     NO
      o ccl4             Tetrachloromethane              YES    NO     NO                                         
      o chcl3            Chloroform                      YES    NO     NO                                         
      o dcm              Dichloromethane                 YES    NO     NO  
@@ -269,7 +270,8 @@ class Frag(object, libbbg.units.UNITS):
               'me-so3-','li+'    ,'et2coo'  ,'mecn'     ,'4-me-imidazole'     , 
               '4-me-phenol'      ,'chonh2'  ,'chonhme'  ,'comenh2' ,'ethane'  ,
               'mecoo-' ,'menh3+' ,'methane' ,'n-propane','me-guanidinium+'    ,
-              'ccl4'   ,'benzene','dmf'     ,'thf'      ,'cyclohexane'        ] 
+              'ccl4'   ,'benzene','dmf'     ,'thf'      ,'cyclohexane'        ,
+              'etoh'                                                          ] 
                
     def __init__(self, file=None):
         self.__file = file
