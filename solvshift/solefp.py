@@ -912,10 +912,12 @@ Now, only for exchange-repulsion layer"""
                  vec2  =numpy.zeros( DIM, numpy.float64)
                  fivec =numpy.zeros( DIM, numpy.float64)
                  mivec =numpy.zeros( DIM, numpy.float64)
+                 #dipind= flds.copy(); avec  = flds.copy()
                  epol, spol, fi, avec, dipind = solvshift.solpol2.sftpli(rdma, chg, dip, qad, oct,
                        chgc1, dipc1, qadc1, octc1,rpol, polinv, mivec, dmat, flds, dimat, fivec,
                        vec1, vec2, mat1, redmss, freq, gijj, rpol1, pol1, lvec, ndma, npol, 
                        self.__mode, ndmac, npolc, lwrite=False)
+                 #spol = 0.0
                  self.__fi_pol = fi
                  shift_pol_mea = spol
                  # store field values at all polarizable centers

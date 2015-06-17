@@ -152,15 +152,20 @@ else:
 
 # [5] create report file
 out = open('shifts.dat', 'w')
-t = '%8s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s' % ('# Frame'.ljust(8),
+t = '%8s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s' % ('# Frame'.ljust(8),
                                                                      'Exact'  .rjust(10),  
                                                                      'EL-TOT' .rjust(10),
                                                                      'EL-MEA' .rjust(10),
                                                                      'EL-EA'  .rjust(10),
-                                                                     'POL'    .rjust(10),
-                                                                     'REP'    .rjust(10),
-                                                                     'EL-MEA-C'.rjust(10),
-                                                                     'EL-EA-C' .rjust(10),
+                                                                     'CORR-MEA'.rjust(10),
+                                                                     'CORR-EA' .rjust(10),
+                                                                     'POL-MEA'.rjust(10),
+                                                                     'POL-EA' .rjust(10),
+                                                                     'REP-MEA'    .rjust(10),
+                                                                     'REP-EA'.rjust(10),
+                                                                     'DISP-MEA'.rjust(10),
+                                                                     'DISP-EA' .rjust(10),
+                                                                     'DISP-ISO'.rjust(10),
                                                                      'TOTAL'   .rjust(10),
                                                                      'RMS_C'   .rjust(10),
                                                                      'RMS_S'   .rjust(10),
@@ -170,7 +175,7 @@ out.write(t+'\n')
 out.flush()
 
 # --- set the EFP environment
-efp = EFP(elect=elect,pol=pol,rep=rep,corr=corr,disp=True,ea=ea,freq=True,mode=mode,
+efp = EFP(elect=elect,pol=pol,rep=rep,corr=corr,disp=0,ea=ea,freq=True,mode=mode,
           ccut=ccut,pcut=pcut,ecut=ecut,
           cunit=True)
 
@@ -212,20 +217,23 @@ for xyz, freq in target:
     bsm  = ( frg_solute, frg_solvent )
 
     # --- evaluate the shifts
+    num = 0
     efp.set(xyz,ind,nmol,bsm,supl_copy,reord_copy)
-    efp.eval(0)
+    efp.eval(0,num=num,theory=0)
     
     # --- get the shifts
-    shifts = efp.get_shifts()
-    shift_exact = freq-freq_0
+    shifts        = efp.get_shifts()
+    if num: shifts_approx = efp.get_freq_approx(kij_el=False)
+    shift_exact   = freq-freq_0
     rms_c  = efp.get_rms()
     rms_s  = efp.get_rms_sol()
-    print " Shift error: %8.2f [cm-1] Max. RMS: %5.4f" % (shifts[-3]-shift_exact,max(rms_s,rms_c))
+    if num: print shifts_approx
+    print " Shift error: %8.2f [cm-1] Max. RMS: %5.4f" % (shifts['total']-shift_exact,max(rms_s,rms_c))
     # line of output frequencies
+    SHIFTS = [ shifts[x] for x in ['solcamm','ele_mea','ele_ea','cor_mea','cor_ea','pol_mea','pol_ea','rep_mea','rep_ea','dis_mea','dis_ea','dis_mea_iso','total'] ]
     log = "%8d" % I
     log+= " %10.2f"   %  shift_exact
-    log+= " %10.2f"   % (shifts[0]+shifts[1])
-    log+= 7*" %10.2f" %  tuple(shifts[:7])
+    log+= 13*" %10.2f"%  tuple(SHIFTS)
     log+= " %10.5f"   %  rms_c
     log+= " %10.5f"   %  rms_s
     log+= " %10d\n"   % n_solvent_mol

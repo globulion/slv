@@ -47,12 +47,12 @@ stdout.flush()
 NFRAMES = 5000
 
 #     cutoffs [Bohr]  ; Terms
-ccut= 40              ; elect = True ; correc = False
-pcut= 17              ; repul = True
-ecut= 11              ; polar = True ; disp = polar
+ccut= 40              ; elect = 1 ; correc = 1
+pcut= 17              ; repul = 1
+ecut= 12              ; polar = 1 ; disp = polar
 
 #     output file name
-report = 'md.shifts.amide-I.pea.dat'
+report = 'shifts.dat'
 
 # --- you don't need to change anything else below ----------------------------------------------------
 def eval_parall(efp, idx, args, frame, frame_idx):
@@ -62,11 +62,13 @@ def eval_parall(efp, idx, args, frame, frame_idx):
     efp.eval(0)
     rms_c = efp.get_rms()
     rms_s = efp.get_rms_sol()
+    rms_a = efp.get_rms_ave()
     shifts = efp.get_shifts()
+    SHIFTS = [ shifts[x] for x in ['solcamm','ele_mea','ele_ea','cor_mea','cor_ea','pol_mea','pol_ea','rep_mea','rep_ea','dis_mea','dis_ea','dis_mea_iso','total'] ]
     # line of output frequencies and misc data
-    log = " %7d" % frame_idx
-    log+= 7*"%10.2f" % tuple(shifts[:7])
-    log+= "%10.5f %10.5f\n" % (rms_c,rms_s)
+    log = "%8d" % frame_idx
+    log+= 13*" %10.2f" % tuple(SHIFTS)
+    log+= " %10.5f %10.5f %10.5f\n" % (rms_c,rms_s,rms_a)
     return log
 
 # [2] gather the arguments
@@ -105,16 +107,14 @@ efp = EFP(elect=elect, pol=polar, rep=repul, disp=disp, corr=correc,
 
 # [7] initiate the report file
 out = open(report, 'w')
-t = '%8s %10s %10s %10s %10s %10s %10s %10s %10s %10s' % ('# Frame'.ljust(8),
-                                                          'EL-MEA' .rjust(10),
-                                                          'EL-EA'  .rjust(10),
-                                                          'POL'    .rjust(10),
-                                                          'REP'    .rjust(10),
-                                                          'EL-MEA-C'.rjust(10),
-                                                          'EL-EA-C' .rjust(10),
-                                                          'TOTAL'   .rjust(10),
-                                                          'RMS_C'   .rjust(10),
-                                                          'RMS_S'   .rjust(10) )
+t = '%8s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s' % (\
+                         '# Frame'.ljust(8),  'EL-CAMM'.rjust(10),
+                         'EL-MEA' .rjust(10), 'EL-EA'  .rjust(10), 'CORR-MEA'.rjust(10),
+                         'CORR-EA'.rjust(10), 'POL-MEA'.rjust(10),  'POL-EA' .rjust(10),
+                         'REP-MEA'.rjust(10), 'REP-EA' .rjust(10), 'DISP-MEA'.rjust(10),
+                        'DISP-EA' .rjust(10),'DISP-ISO'.rjust(10),  'TOTAL'  .rjust(10), 'RMS-C'   .rjust(10),
+                        'RMS-S'   .rjust(10), 'RMS-AVE'.rjust(10))
+                                                           
 
 out.write(t+'\n')
 out.flush()
@@ -151,10 +151,8 @@ for i in range(NFRAMES):
          frame = array(md[i]) * u.AngstromToBohr
     else: 
          frame = array(md.next()) * u.AngstromToBohr
-                                 # ('libbbg.units','libbbg.utilities','numpy','solvshift','solvshift.solefp','solvshift.slvpar','PyQuante.Ints','libbbg.dma'),
-                                 #  ('libbbg', 'numpy', 'solvshift', 'solefp', 'PyQuante','coulomb'),
 
-    jobs.append( job_server.submit(eval_parall,(efp, idx, args, frame, frame_idx+1), (), #(solvshift.slvpar.Frag, solvshift.solefp.EFP),
+    jobs.append( job_server.submit(eval_parall,(efp, idx, args, frame, frame_idx+1), (),
                                    ('PyQuante.Ints', 'coulomb.multip', 'libbbg.qm.clemtp',\
        'numpy', 'libbbg.units', 'libbbg.utilities', 'solvshift.shftex', 'solvshift.shftce',\
        'solvshift.solpol', 'solvshift.solpol2', 'solvshift.efprot', 'solvshift.exrep',\
