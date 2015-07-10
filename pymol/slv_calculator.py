@@ -1,4 +1,6 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
+#*-* coding: utf-8 -*-
+
 # Copyright Notice
 # ================
 # 
@@ -7,7 +9,7 @@
 # the copyright notices.
 # 
 # ----------------------------------------------------------------------
-# This PyMOL Plugin is Copyright (C) 2014 by Bartosz Błasiak 
+# This PyMOL Plugin is Copyright (C) 2014 by Bartosz Blasiak 
 #              <blasiak.bartosz@gmail.com>
 # 
 #                        All Rights Reserved
@@ -64,15 +66,13 @@ Usage:
 the information which atoms are to be superimposed with the benchmark
 molecule's parameters.
 """
-import tkSimpleDialog
-import tkMessageBox
 from pymol import cmd
-import sys, urllib2, zlib, copy, units
 import Tkinter, Pmw, webbrowser
 from solvshift.solefp import EFP
 from solvshift.slvpar import Frag
 from numpy import float64, array, concatenate
-from utilities import text_to_list
+from libbbg.utilities import text_to_list
+from libbbg.units import UNITS 
 
 def __init__(self):
     self.menuBar.addmenuitem('Plugin','command','SLV Calculator',label='SLV Calculator',
@@ -86,7 +86,7 @@ class Fonts:
     unknown = '-*-lucidatypewriter-medium-r-*-*-*-140-*-*-*-*-*-*'
 
 # ------------------- PLUGIN CODE ------------------------------------------------
-class SLV_Calculator(Fonts,units.UNITS):
+class SLV_Calculator(Fonts,UNITS):
     def __init__(self,app):
         self.parent = app.root
         self.createWidgets()
@@ -104,7 +104,7 @@ class SLV_Calculator(Fonts,units.UNITS):
         Pmw.setbusycursorattributes(self.dialog.component('hull'))
 
         w = Tkinter.Label(self.dialog.interior(),
-                                text = 'SLV Calculator\nBartosz Błasiak, Sep 2014 - http://www.github.com/globulion',
+                                text = 'SLV Calculator\nBartosz Blasiak, Sep 2014 - http://www.github.com/globulion',
                                 background = 'black',
                                 foreground = 'white',
                                 )
@@ -214,19 +214,20 @@ class SLV_Calculator(Fonts,units.UNITS):
         n_solvent_atoms = frg_solvent.get_natoms()
         
         
-        efp = EFP(elect=1,pol=1,rep=1,corr=0,freq=True,
+        efp = EFP(elect=1,pol=1,rep=1,corr=1,disp=1,freq=True,mode=4,
                   ccut=None,pcut=None,ecut=None,
                   cunit=True)
         
         n_atoms         = len(xyz)
         n_solvent_mol   = (n_atoms - n_solute_atoms)/n_solvent_atoms
         
-        supl = list()
+        supl = list(); reord = list()
         s_1 = self.supl_1.getvalue(); s_2 = self.supl_2.getvalue()
         if s_1.lower() == 'none': s_1 = None
         if s_2.lower() == 'none': s_2 = None
         supl.append(s_1)  # solute
         supl.append(s_2)  # solvent
+        reord = [arange(n_solute_atoms,int), arange(n_solvent_atoms,int)]
         
         # --- build nmol, ind and bsm data
         bsm  = ( frg_solute, frg_solvent )
@@ -237,16 +238,16 @@ class SLV_Calculator(Fonts,units.UNITS):
             ind .append( 1                        )
         
         # --- evaluate the shifts
-        efp.set(xyz,ind,nmol,bsm,supl)
+        efp.set(xyz,ind,nmol,bsm,supl,reord)
         efp.eval(0)
             
         # --- get the shifts
-        shifts = efp.get_shift()
+        shifts = efp.get_shifts()
         rms = efp.get_rms()
         # line of output frequency shifts
         log = ''
-        log+= "%7.2f"    % (shifts[0]+shifts[1])
-        log+= 7*" %7.2f" % tuple(shifts[:7])
+        #log+= "%7.2f"    % (shifts[0]+shifts[1])
+        #log+= 7*" %7.2f" % tuple(shifts[:7])
         log+= " %7.5f\n" % rms
         print log
         self.resultsText.insert(Tkinter.END,log) 
