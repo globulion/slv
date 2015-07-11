@@ -70,7 +70,7 @@ from pymol import cmd
 import Tkinter, Pmw, webbrowser
 from solvshift.solefp import EFP
 from solvshift.slvpar import Frag
-from numpy import float64, array, concatenate
+from numpy import float64, array, concatenate, arange
 from libbbg.utilities import text_to_list
 from libbbg.units import UNITS 
 
@@ -167,15 +167,12 @@ class SLV_Calculator(Fonts,UNITS):
             entry.pack(fill='x',padx=4,pady=1)
  
         # happy results!
-        t = '%7s %7s %7s %7s %7s %7s %7s %7s %7s\n' % ('Elect' .rjust(7),
-                                                       'mea'   .rjust(7),
-                                                       'ea'    .rjust(7),
-                                                       'Pol'   .rjust(7),
-                                                       'Rep'   .rjust(7),
-                                                       'C-mea' .rjust(7),
-                                                       'C-ea'  .rjust(7),
-                                                       'TOT'   .rjust(7),
-                                                       'rms'   .rjust(7) )
+        t = '%7s %7s %7s %7s %7s %7s\n' % ('Coul'  .rjust(7),
+                                           'Rep'   .rjust(7),
+                                           'Pol'   .rjust(7),
+                                           'Disp'  .rjust(7),
+                                           'TOT'   .rjust(7),
+                                           'rms'   .rjust(7) )
         self.resultsFrame=Tkinter.Frame(group.interior())
         bar=Tkinter.Scrollbar(self.resultsFrame,)
         self.resultsText=Tkinter.Text(self.resultsFrame,yscrollcommand=bar.set,background="#ddddff",font="Courier 12")
@@ -227,7 +224,7 @@ class SLV_Calculator(Fonts,UNITS):
         if s_2.lower() == 'none': s_2 = None
         supl.append(s_1)  # solute
         supl.append(s_2)  # solvent
-        reord = [arange(n_solute_atoms,int), arange(n_solvent_atoms,int)]
+        reord = [arange(n_solute_atoms), arange(n_solvent_atoms)]
         
         # --- build nmol, ind and bsm data
         bsm  = ( frg_solute, frg_solvent )
@@ -244,10 +241,10 @@ class SLV_Calculator(Fonts,UNITS):
         # --- get the shifts
         shifts = efp.get_shifts()
         rms = efp.get_rms()
+        SHIFTS = [ shifts[x] for x in ['ele_tot','rep_tot','pol_tot','dis_tot','total'] ]
         # line of output frequency shifts
         log = ''
-        #log+= "%7.2f"    % (shifts[0]+shifts[1])
-        #log+= 7*" %7.2f" % tuple(shifts[:7])
+        log+= 5*" %7.2f" % tuple(SHIFTS)
         log+= " %7.5f\n" % rms
         print log
         self.resultsText.insert(Tkinter.END,log) 
