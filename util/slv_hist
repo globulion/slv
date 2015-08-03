@@ -49,11 +49,14 @@ out = 'plot.eps'
 if len(argv) > 4: out = argv[4]
 
 report =     argv[1]
-N      = int(argv[2])
+N      = numpy.array(argv[2].split(','),int)
 bins   = int(argv[3])
 
 data   = open(report)
-shifts = filetable.read(data)[:,N]
+d      = filetable.read(data)
+for i, n in enumerate(N):
+    if not i: shifts = d[:,n]
+    else:     shifts+= d[:,n]
 data.close()
 
 # ------------------------------------------------------------------------
@@ -104,6 +107,6 @@ pl.text(0.02,0.88,func_name,fontsize=21,transform=ax.transAxes,bbox=dict(facecol
 pl.text(0.02,0.58,func_parm,fontsize=16,transform=ax.transAxes,bbox=dict(facecolor='blue', alpha=0.1))
 pl.plot(X, Gaussian(X, sigma, n_o),linewidth=2.0)
 
-pl.show(block=True)
 pl.savefig(out)
+pl.show(block=True)
 # --- END --- #
