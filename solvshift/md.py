@@ -146,7 +146,8 @@ Usage:
            if line.startswith('!'):continue
            if 'atoms' in line:
                atoms, n_frags = line.split()[1:]
-               atoms   = libbbg.utilities.text_to_list(atoms)
+               if ',' in atoms: atoms   = libbbg.utilities.text_to_list(atoms, delimiter=',')
+               else:            atoms   = libbbg.utilities.text_to_list(atoms)
                n_frags = int(n_frags)
                
                n_atoms = atoms[-1]-atoms[0]+1
