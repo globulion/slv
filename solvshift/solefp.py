@@ -93,6 +93,11 @@ class EFP(object, libbbg.units.UNITS):
         self._eval(lwrite, num, step, theory)
         return
 
+    def eval_dma(self, dma, lwrite=False):
+        """Evaluate the properties due to electrostatic environment (relevant only in central mode)"""
+        self._eval_dma(dma, lwrite)
+        return
+
     def close(self):
         """
  Close the debug files if any (if lwrite in eval was True it has to be called 
@@ -567,7 +572,7 @@ Now, only for exchange-repulsion layer"""
   
     def _update(self,pos):
         """update the neighbour/in-sphere lists based on actual <pos> coordinate array"""
-        if not self.__pairwise_all:
+        if not self.__pairwise_all and len(self.__nmol)-1:
            nm = len(self.__nmol)-1
            nac= self.__nmol[0]
            natoms = len(pos)
@@ -613,6 +618,7 @@ Now, only for exchange-repulsion layer"""
            self.__nte = nte
         else:
            self.__rcoordc = pos
+           self.__rc = pos[:self.__nmol[0]]  # the case of no EFP molecules in the environment
         return
 
     # PROPERTY EVALUATORS
@@ -622,6 +628,112 @@ Now, only for exchange-repulsion layer"""
         if self.__pairwise_all:  self._eval_mode_global (lwrite, num, step, theory)
         else:                    self._eval_mode_central(lwrite, num, step, theory) 
         return
+
+    def _eval_dma(self, dma, lwrite):
+        """Cutoffs not supported yet for ENVIRON layer - just one object is considered"""
+        print " WARNING! No superimposition for ENVIRON yet! Please supply DMA already in appropriate position!!!"
+        shift_total = 0.0
+        shift_mea   = 0.0; shift_ea = 0.0; shift_corr_mea = 0.0; shift_corr_ea = 0.0
+
+        # --- extract the multipoles for the environment
+        N_dma_environ = len(dma)
+        if lwrite: print " ENVIRONMENT: %10d distributed centers" % N_dma_environ
+
+        # DMA objects support
+        if   isinstance(dma, libbbg.dma.DMA):
+             dma_copy = dma.copy(); dma_copy.trac()
+             xyz_environment = dma.get_pos()
+             chg_environment = dma.get_charges()
+             dip_environment = dma.get_dipoles()
+             qad_environment = dma_copy.get_quadrupoles()
+             oct_environment = dma_copy.get_octupoles(); del dma_copy
+        # NumPy NDArray support (format: [[X,Y,Z,q],....] all in AU!)
+        elif isinstance(dma, numpy.ndarray):
+          if dma.shape[1]==4:
+             xyz_environment = dma[:,:3]
+             chg_environment = dma[:,3]
+             dip_environment = numpy.zeros((N_dma_environ, 3),numpy.float64)
+             qad_environment = numpy.zeros((N_dma_environ, 6),numpy.float64)
+             oct_environment = numpy.zeros((N_dma_environ,10),numpy.float64)
+        # handle different data types
+        else: 
+           print " This data structure is not supported!\n Only libbbg.dma.DMA or numpy.ndarray objects are handled.\n"; exit()
+
+        # central molecule
+        frg = self.__bsm[0].copy(); parc= frg.copy().get()
+        ndmac= parc['ndma']
+
+        # superimposition of central molecule
+        self.__rms_central = frg.sup( self._reorder_xyz( self.__rc, self.__reordlist_c),
+                                      self.__suplist_c, dxyz=None)
+
+        self.__pos_c = frg.get_pos()
+
+        # properties of central molecule
+        parc= frg.get()
+        lvec = parc['lvec'].ravel()
+        gijj = self.__gijk[:,self.__mode-1,self.__mode-1]
+        freq   = self.__freq
+        redmss = self.__redmss
+        nmodes = self.__nmodes
+        qadc, octc = frg.get_traceless()
+        #
+        freqc = freq[self.__mode-1]
+        redmssc=redmss[self.__mode-1]
+
+        # parse analytical derivatives of DMTP
+        chgc1 = parc['dmac1'].ravel()
+        dipc1 = parc['dmad1'].ravel()
+        qadc1, octc1 = frg.get_traceless_1()
+        chgc2 = parc['dmac2'][self.__mode_sder_index].ravel()
+        dipc2 = parc['dmad2'][self.__mode_sder_index].ravel()
+        qadc2, octc2 = frg.get_traceless_2(self.__mode)
+        qadc2 = qadc2.ravel(); octc2 = octc2.ravel()
+
+        ndma = [ parc['ndma'] ]; ndma.append(N_dma_environ)
+        ndmas= sum(ndma)
+        rdma = numpy.concatenate  ([ parc['rdma'], xyz_environment ]).reshape(ndmas*3)
+        chg  = numpy.concatenate  ([ parc['dmac'], chg_environment ]).reshape(ndmas)
+        dip  = numpy.concatenate  ([ parc['dmad'], dip_environment ]).reshape(ndmas*3)
+        qad  = numpy.concatenate  ([       qadc  , qad_environment ]).reshape(ndmas*6)
+        oct  = numpy.concatenate  ([       octc  , oct_environment ]).reshape(ndmas*10)
+
+
+        # --- compute the frequency shifts
+        # mechanical anharmonicity
+        mea,a,b,c,d,e,fi = libbbg.qm.clemtp.sdmtpm(rdma,ndma,chg,dip,qad,oct,
+                           chgc1,dipc1,qadc1,octc1,redmss,freq,gijj,ndmac,self.__mode,lwrite=False)
+        self.__fi_dma_el = fi
+        shift_mea= mea
+
+        # electronic anharmonicity
+        if self.__eval_elect_ea:
+           ea ,a,b,c,d,e = libbbg.qm.clemtp.sdmtpe(rdma,ndma,chg,dip,qad,oct,
+                           chgc2,dipc2,qadc2,octc2,redmss,freq,self.__mode,lwrite=False)
+           shift_ea  = ea
+
+        # potential-derivative correction terms
+        if self.__eval_corr:
+           corr,rf2,rf3,rf4,rk2,rk3,rk4,corr_b,corr_c,corr_d = \
+                        libbbg.qm.clemtp.dmtcor(rdma,ndma,chg,dip,qad,oct,
+                        chgc1,dipc1,qadc1,octc1,redmss,freq,gijj,lvec,ndmac,self.__mode,lwrite=False)
+           shift_corr_mea = rf2#+rf3#+rf4
+           shift_corr_ea  = rk2#+rk3#+rk4
+
+
+        if self.__cunit:
+           shift_mea      *= self.HartreePerHbarToCmRec
+           shift_ea       *= self.HartreePerHbarToCmRec
+           shift_corr_mea *= self.HartreePerHbarToCmRec
+           shift_corr_ea  *= self.HartreePerHbarToCmRec
+
+        shift_total = shift_mea + shift_ea + shift_corr_mea + shift_corr_ea
+
+        # store the values
+        self.__shift['ele_env_mea' ] = shift_mea      ; self.__shift['ele_env_ea' ] = shift_ea
+        self.__shift['cor_env_mea' ] = shift_corr_mea ; self.__shift['cor_env_ea' ] = shift_corr_ea
+        self.__shift['tot_env'     ] = shift_total
+        return
     
     def _eval_mode_global(self, lwrite, num, step, theory):
         merror = ' Global mode is not implemented yet!'
@@ -629,6 +741,7 @@ Now, only for exchange-repulsion layer"""
         return
     
     def _eval_mode_central(self, lwrite, num, step, theory, dxyz=None):
+        """Includes only EFP layers (DMA environment is not accounted for!)"""
         assert step==0.006, ' Step %10.5f Angstrom is not supported yet!' % step
     
         # initialize frequency shifts
@@ -637,7 +750,7 @@ Now, only for exchange-repulsion layer"""
         shift_ele_ea = 0.0; shift_pol_ea  = 0.0; shift_rep_ea  = 0.0; shift_dis_ea  = 0.0
         shift_ele_corr_mea = 0.0 ; shift_ele_corr_ea = 0.0
         shift_dis_mea_iso = 0.0
-    
+
         # central molecule
         frg = self.__bsm[0].copy(); parc= frg.copy().get()
         if num: self.__lvec = parc['lvec']
@@ -705,8 +818,7 @@ Now, only for exchange-repulsion layer"""
           dipc2 = parc['dmad2'][self.__mode_sder_index].ravel()
           qadc2, octc2 = frg.get_traceless_2(self.__mode)
           qadc2 = qadc2.ravel(); octc2 = octc2.ravel()
-        
-    
+           
         # loop over other molecules
         rms_max = 0.0 
         rms_ave = self.__rms_central
