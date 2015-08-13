@@ -333,7 +333,7 @@ class Frag(object, libbbg.units.UNITS):
            #self.__atoms = mol.get_atoms() # dopisz do Molecule class!
            self.__natoms = len(self.__pos)
            self.__nmodes = 3 * self.__natoms - 6
-           self.__nmos   = int(sum(mol.get_atno())/2)
+           self.__nmos   = (int(sum(mol.get_atno())) - mol.get_charge())/2  # assumed closed-shell
            self.__method = mol.get_method()
            self.__basis  = mol.get_basis()
            self.__nbasis = len( mol.get_bfs() )

@@ -1111,7 +1111,7 @@ Now, only for exchange-repulsion layer"""
                  # store solvatochromic induced dipole moments at all polarizable centers
                  self.__avec   =(avec  .reshape(npols,3), rpol.reshape(npols,3))
                  # 
-                 if remove_clashes:
+                 if remove_clashes and N_ADD:
                     npols_add=sum([ x['npol'] for x in PAR_ADD ])
                     #
                     flds_add   = numpy.zeros(0, numpy.float64)
@@ -1121,6 +1121,7 @@ Now, only for exchange-repulsion layer"""
                     #self.__fi_pol = numpy.zeros(self.__nmodes, numpy.float64)
                     #
                     for imol in range(N_ADD):
+                        if lwrite: " Polarization due to molecule %d" % (imol+1)
                         PARLOC = [PAR_ADD[0], PAR_ADD[imol+1]]
                         QOLOC  = [QO_ADD [0],  QO_ADD[imol+1]]
                         #
