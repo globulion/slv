@@ -88,13 +88,67 @@ class EFP(object, libbbg.units.UNITS):
     # P U B L I C
     # OPERATIONAL METHODS
 
-    def eval(self, lwrite=False, num=False, step=0.006, theory=0):
-        """Evaluate the properties"""
-        self._eval(lwrite, num, step, theory)
+    def eval(self, lwrite=False, num=False, step=0.006, theory=0, remove_clashes=False, rcl_algorithm='remove_by_name'):
+        """
+ ----------------------------------------------------------------------------------------------------------------------
+ Evaluate the properties. Currently available ways of usage:
+
+ Task                                                               Relevant keywords                                   
+ ----------------------------------------------------------------------------------------------------------------------
+ Interaction energies                                               lwrite
+ Frequency shifts                                                   lwrite
+  a)  analytically                                                  remove_clashes, rcl_algorithm
+  b)  analytically with removal of EFP clashes for polarization
+  c)  numerically (A,B)                                             num, step, theory
+ ----------------------------------------------------------------------------------------------------------------------
+ Comments:
+
+ (A) removal of EFP clashes is not implemented
+ (B) dispersion is not added yet
+ ----------------------------------------------------------------------------------------------------------------------
+ Usage:
+
+ efp.eval(lwrite=False, num=False, step=0.006, theory=0, remove_clashes=False, rcl_algorithm='remove_by_name')
+ 
+ Options:
+ lwrite                           Print additional information (superimposition data, molecules in each layer)
+ num                              Evaluate frequency shifts numercially
+ step                             Step for numerical first-derivatives. Given in Angstroms
+ theory                           The level of SolX theory (0 or 2). Relevant if num=True
+ remove_clashes                   Remove clashes between EFP residues (only affects polarization frequency shifts!)
+ rcl_algorithm                    Algorithm for removing EFP residues when remove_clashes=True
+ ----------------------------------------------------------------------------------------------------------------------
+                                                                                            Last Revision: 13 Aug 2015
+ """
+        self._eval(lwrite, num, step, theory, remove_clashes, rcl_algorithm)
         return
 
     def eval_dma(self, dma, lwrite=False):
-        """Evaluate the properties due to electrostatic environment (relevant only in central mode)"""
+        """
+ ----------------------------------------------------------------------------------------------------------------------
+ Evaluate the properties due to electrostatic environment (relevant only in central mode)
+ ----------------------------------------------------------------------------------------------------------------------
+
+ This is designed only to frequency shift evaluation. 
+
+ Usage:
+
+ efp.eval_dma(dma, lwrite=False)
+
+ Options:
+
+ dma                              DMA distribution of the environment. Can be given in two forms:
+                                     a) libbbg.dma.DMA object with primitive moments (not traceless!)
+                                     b) numpy.ndarray of shape (ndma,4) where [:,:3] slice contains XYZ in Bohr
+                                        whereas [:,3] slice are the corresponding charges (A.U.)
+ lwrite                           Print additional information
+ ----------------------------------------------------------------------------------------------------------------------
+ Comments:
+
+ Cut-offs are not implemented for this layer yet. Therefore whole DMA distribution will be taken into account.
+ ----------------------------------------------------------------------------------------------------------------------
+                                                                                           Last Revision: 13 Aug 2015
+ """
         self._eval_dma(dma, lwrite)
         return
 
@@ -623,10 +677,10 @@ Now, only for exchange-repulsion layer"""
 
     # PROPERTY EVALUATORS
 
-    def _eval(self, lwrite, num, step, theory):
+    def _eval(self, lwrite, num, step, theory, remove_clashes, rcl_algorithm):
         if lwrite>1: self.__debug = open('__debug_file__','w')
         if self.__pairwise_all:  self._eval_mode_global (lwrite, num, step, theory)
-        else:                    self._eval_mode_central(lwrite, num, step, theory) 
+        else:                    self._eval_mode_central(lwrite, num, step, theory, remove_clashes, rcl_algorithm) 
         return
 
     def _eval_dma(self, dma, lwrite):
@@ -641,6 +695,7 @@ Now, only for exchange-repulsion layer"""
 
         # DMA objects support
         if   isinstance(dma, libbbg.dma.DMA):
+             assert not dma.is_traceless, " The DMA is in traceless form already! Provide primitive form instead!"
              dma_copy = dma.copy(); dma_copy.trac()
              xyz_environment = dma.get_pos()
              chg_environment = dma.get_charges()
@@ -649,7 +704,7 @@ Now, only for exchange-repulsion layer"""
              oct_environment = dma_copy.get_octupoles(); del dma_copy
         # NumPy NDArray support (format: [[X,Y,Z,q],....] all in AU!)
         elif isinstance(dma, numpy.ndarray):
-          if dma.shape[1]==4:
+             assert dma.shape[1]==4, " Incorrect shape of ndarray! %s, The last dimension needs to be 4!" % dma.shape
              xyz_environment = dma[:,:3]
              chg_environment = dma[:,3]
              dip_environment = numpy.zeros((N_dma_environ, 3),numpy.float64)
@@ -740,7 +795,7 @@ Now, only for exchange-repulsion layer"""
         raise NotImplementedError, merror
         return
     
-    def _eval_mode_central(self, lwrite, num, step, theory, dxyz=None):
+    def _eval_mode_central(self, lwrite, num, step, theory, remove_clashes, rcl_algorithm, dxyz=None):
         """Includes only EFP layers (DMA environment is not accounted for!)"""
         assert step==0.006, ' Step %10.5f Angstrom is not supported yet!' % step
     
@@ -750,6 +805,7 @@ Now, only for exchange-repulsion layer"""
         shift_ele_ea = 0.0; shift_pol_ea  = 0.0; shift_rep_ea  = 0.0; shift_dis_ea  = 0.0
         shift_ele_corr_mea = 0.0 ; shift_ele_corr_ea = 0.0
         shift_dis_mea_iso = 0.0
+        shift_pol_add_mea = 0.0  ;  shift_pol_add_ea = 0.0
 
         # central molecule
         frg = self.__bsm[0].copy(); parc= frg.copy().get()
@@ -932,6 +988,7 @@ Now, only for exchange-repulsion layer"""
                  PAR = list(); QO = list()
                  PAR.append( parc ); QO.append( (qadc, octc) )
               if lwrite: print " POL   LAYER: %10d molecules" % N
+
               # loop over solvent molecules in POL layer
               for i in xrange(N):
                   im = self.__mtp[i]
@@ -941,12 +998,26 @@ Now, only for exchange-repulsion layer"""
                   if num: STR = numpy.dot(STR+transl_inv, rot_inv)
                   frg = self.__bsm[im].copy()
                   rms = frg.sup( STR, suplist= self.__suplist[im] )
+                  if lwrite:
+                     xx = frg.xyz(units='angs'); print xx
                   par = frg.get()
                   if num:
                      PAR_SOL.append( par ); QO_SOL.append( frg.get_traceless() )                     
                   else:
                      PAR.append( par )
                      QO.append( frg.get_traceless() )
+
+              # eliminate clashing molecules
+              if remove_clashes:
+                 PAR, QO, PAR_ADD, QO_ADD = self._remove_clashes(PAR, QO, lwrite, rcl_algorithm)
+                 N_ADD = len(PAR_ADD) - 1   # these count only solvents (minus solute)
+                 N     = len(PAR)     - 1
+                 if lwrite: 
+                    print "            : %10d molecules after clash removal" % N    
+                    print "            : %10d molecules removed            " % N_ADD    
+                
+
+              # prepare the data structures for passing to Fortran soubroutines
               if num:
                  func_pol = numpy.zeros(N_FD, numpy.float64)
                  ndma_sol =                     [ x['ndma'] for x in PAR_SOL ]
@@ -1000,15 +1071,16 @@ Now, only for exchange-repulsion layer"""
                  #                                                                              
                  del PAR_SOL, QO_SOL
               else:
-                 ndma = [ x['ndma'] for x in PAR ]
+                 ndma = [ x['ndma'] for x in PAR ]                                                 
+                 npol = [ x['npol'] for x in PAR ]
                  ndmas= sum(ndma)
+                 npols= sum(npol)
+
                  rdma = numpy.concatenate  ([ x['rdma'] for x in PAR ]).reshape(ndmas*3)
                  chg  = numpy.concatenate  ([ x['dmac'] for x in PAR ]).reshape(ndmas)
                  dip  = numpy.concatenate  ([ x['dmad'] for x in PAR ]).reshape(ndmas*3)
                  qad  = numpy.concatenate  ([ QO[x][0]  for x in range(N+1)   ]).reshape(ndmas*6)
                  oct  = numpy.concatenate  ([ QO[x][1]  for x in range(N+1)   ]).reshape(ndmas*10)
-                 npol = [ x['npol'] for x in PAR ]
-                 npols= sum(npol)
                  rpol = numpy.concatenate  ([ x['rpol'] for x in PAR ]).reshape(npols*3)
                  pol  = numpy.concatenate  ([ x['dpol'] for x in PAR ])#.reshape(npols*9)
                  polinv = numpy.concatenate([ numpy.linalg.inv(x) for x in pol ]).reshape(npols*9)
@@ -1039,8 +1111,81 @@ Now, only for exchange-repulsion layer"""
                  # store solvatochromic induced dipole moments at all polarizable centers
                  self.__avec   =(avec  .reshape(npols,3), rpol.reshape(npols,3))
                  # 
+                 if remove_clashes:
+                    npols_add=sum([ x['npol'] for x in PAR_ADD ])
+                    #
+                    flds_add   = numpy.zeros(0, numpy.float64)
+                    dipind_add = numpy.zeros(0, numpy.float64)
+                    avec_add   = numpy.zeros(0, numpy.float64)
+                    #
+                    #self.__fi_pol = numpy.zeros(self.__nmodes, numpy.float64)
+                    #
+                    for imol in range(N_ADD):
+                        PARLOC = [PAR_ADD[0], PAR_ADD[imol+1]]
+                        QOLOC  = [QO_ADD [0],  QO_ADD[imol+1]]
+                        #
+                        ndma = [ x['ndma'] for x in PARLOC ]
+                        npol = [ x['npol'] for x in PARLOC ]
+                        ndmas= sum(ndma)
+                        npols= sum(npol)
+                        #
+                        rdma = numpy.concatenate  ([ x['rdma'] for x in PARLOC ]).reshape(ndmas*3)           
+                        chg  = numpy.concatenate  ([ x['dmac'] for x in PARLOC ]).reshape(ndmas)
+                        dip  = numpy.concatenate  ([ x['dmad'] for x in PARLOC ]).reshape(ndmas*3)
+                        qad  = numpy.concatenate  ([ x[ 0    ] for x in QOLOC  ]).reshape(ndmas*6)
+                        oct  = numpy.concatenate  ([ x[ 1    ] for x in QOLOC  ]).reshape(ndmas*10)
+                        rpol = numpy.concatenate  ([ x['rpol'] for x in PARLOC ]).reshape(npols*3)
+                        pol  = numpy.concatenate  ([ x['dpol'] for x in PARLOC ])#.reshape(npols*9)
+                        polinv = numpy.concatenate([ numpy.linalg.inv(x) for x in pol ]).reshape(npols*9)
+                        pol  = pol.ravel()
+                        rpol1= parc['lmoc1'].reshape(nmodes*npolc*3)
+                        pol1 = parc['dpol1'].reshape(nmodes*npolc*9)
+                        DIM  = npols*3
+                        dmat = numpy.zeros((DIM,DIM), numpy.float64)
+                        dimat= numpy.zeros((DIM,DIM), numpy.float64)
+                        mat1 = numpy.zeros((DIM,DIM), numpy.float64)
+                        flds = numpy.zeros( DIM, numpy.float64)
+                        vec1  =numpy.zeros( DIM, numpy.float64)
+                        vec2  =numpy.zeros( DIM, numpy.float64)
+                        fivec =numpy.zeros( DIM, numpy.float64)
+                        mivec =numpy.zeros( DIM, numpy.float64)
+                        #
+                        epol, spol, fi, avec, dipind = solvshift.solpol2.sftpli(rdma, chg, dip, qad, oct,
+                              chgc1, dipc1, qadc1, octc1,rpol, polinv, mivec, dmat, flds, dimat, fivec,
+                              vec1, vec2, mat1, redmss, freq, gijj, rpol1, pol1, lvec, ndma, npol, 
+                              self.__mode, ndmac, npolc, lwrite=False)
+                        #
+                        shift_pol_add_mea += spol
+                        self.__fi_pol += fi
+                        # ammend the fields on solute due to additive POL layer
+                        #print self.__flds  [0][:npolc].shape, flds  .reshape(npols,3).shape; exit()
+                        self.__flds  [0][:npolc]+= flds  .reshape(npols,3)[:npolc]
+                        self.__dipind[0][:npolc]+= dipind.reshape(npols,3)[:npolc]
+                        self.__avec  [0][:npolc]+= avec  .reshape(npols,3)[:npolc]
+                        # fields due to additive POL layer
+                        if not imol:  # initiate the vector fields
+                           flds_add   = numpy.concatenate( (flds_add  , flds  ) )
+                           dipind_add = numpy.concatenate( (dipind_add, dipind) )
+                           avec_add   = numpy.concatenate( (avec_add  , avec  ) )
+                        else:         # append new solvent fields and add contributions to solute fields
+                           flds_add   = numpy.concatenate( (flds_add  , flds  [npolc*3:]) )
+                           dipind_add = numpy.concatenate( (dipind_add, dipind[npolc*3:]) )
+                           avec_add   = numpy.concatenate( (avec_add  , avec  [npolc*3:]) )
+                           #
+                           flds_add  [:npolc*3] += flds[:npolc*3]
+                           dipind_add[:npolc*3] += flds[:npolc*3]
+                           avec_add  [:npolc*3] += avec[:npolc*3]
+                    #
+                    assert len(flds_add  )==npols_add*3
+                    assert len(dipind_add)==npols_add*3
+                    assert len(avec_add  )==npols_add*3
+                    #
+                    shift_pol_mea += shift_pol_add_mea
+                    del PAR_ADD, QO_ADD
+                 # 
                  del PAR, QO
-              
+                 #
+             
            # DISPERSION
            if self.__eval_disp:
               if num: print ' **** WARNING: Dispersion will not be evaluated!!!!'
@@ -1197,9 +1342,10 @@ Now, only for exchange-repulsion layer"""
            shift_pol_mea *= self.HartreePerHbarToCmRec; shift_pol_ea  *= self.HartreePerHbarToCmRec
            shift_dis_mea *= self.HartreePerHbarToCmRec; shift_dis_ea  *= self.HartreePerHbarToCmRec
            shift_rep_mea *= self.HartreePerHbarToCmRec; shift_rep_ea  *= self.HartreePerHbarToCmRec
+           shift_pol_add_mea  *= self.HartreePerHbarToCmRec; shift_pol_add_ea  *= self.HartreePerHbarToCmRec
            shift_ele_corr_mea *= self.HartreePerHbarToCmRec; shift_ele_corr_ea *= self.HartreePerHbarToCmRec
            shift_dis_mea_iso  *= self.HartreePerHbarToCmRec
-           shift_total   *= self.HartreePerHbarToCmRec
+           shift_total        *= self.HartreePerHbarToCmRec
     
         # diagonalize total Hessians
         if num:
@@ -1231,6 +1377,8 @@ Now, only for exchange-repulsion layer"""
         self.__shift['total_ea' ] = shift_ele_ea  + shift_ele_corr_ea  + shift_pol_ea  + shift_rep_ea  + shift_dis_ea
         self.__shift['solcamm'  ] = shift_ele_mea + shift_ele_ea 
         self.__shift['total_cor'] = shift_ele_corr_mea + shift_ele_corr_ea
+        self.__shift['pol_add_mea'] = shift_pol_add_mea
+        self.__shift['pol_add_ea' ] = shift_pol_add_ea   ; self.__shift['pol_add_tot'] = shift_pol_add_mea + shift_pol_add_ea
     
         # final printout
         if lwrite:
@@ -1238,7 +1386,7 @@ Now, only for exchange-repulsion layer"""
            print    "                MEA           : %10.2f" % shift_ele_mea
            print    "                 EA           : %10.2f" % shift_ele_ea
            print    "               CORR           : %10.2f" %(shift_ele_corr_mea + shift_ele_corr_ea)
-           print    " Polarization       frequency shift: %10.2f" % (shift_pol_mea + shift_pol_ea)
+           print    " Polarization       frequency shift: %10.2f  %10.2f" % (shift_pol_mea + shift_pol_ea, shift_pol_add_mea + shift_pol_add_ea)
            if not num: 
               print " Dispersion         frequency shift: %10.2f  %10.2f" % (shift_dis_mea_iso, shift_dis_mea)
            print    " Exchange-repulsion frequency shift: %10.2f" % (shift_rep_mea + shift_rep_ea)
@@ -1337,6 +1485,31 @@ The convention is to place -1 in the reord_list for atoms that have to be remove
         vib.eval()
         freq, redmss, U = vib.get()
         return hess, freq, redmss, U
+
+    def _remove_clashes(self, PAR, QO, lwrite, rcl_algorithm='remove_by_name'):
+        """
+ Eliminate clashes by some algorithm. Default is by removing residues from the list PAR and QO.
+ see .eval method for polarization frequency shifts.
+ """
+        PAR_NEW = [PAR[0]]; QO_NEW = [QO[0]]
+        PAR_ADD = [PAR[0]]; QO_ADD = [QO[0]]
+        #
+        if lwrite: print " CLASH REMOVAL PROCEDURE\n Algorithm: %s\n" % rcl_algorithm
+        i = 1
+        if rcl_algorithm == 'remove_by_name':
+           removable_pars = ['Methane', 'Ethane', 'N-Propane', 'N-methylacethamide', 'N-methylacethamide D7'] 
+           for par in PAR[1:]:
+               if lwrite: print "%30s" % par['name'], 
+               if par['name'] not in removable_pars: 
+                  if lwrite: print " - Included"
+                  PAR_NEW.append(PAR[i])
+                  QO_NEW.append(QO[i])
+               else: 
+                  if lwrite: print " - Rejected"
+                  PAR_ADD.append(PAR[i])
+                  QO_ADD.append(QO[i])
+               i+=1
+        return PAR_NEW, QO_NEW, PAR_ADD, QO_ADD
 
     # PAIR ENERGIES
     
