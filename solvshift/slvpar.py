@@ -83,6 +83,9 @@ class Frag(object, libbbg.units.UNITS):
      o dmso             DMSO                            YES    NO     NO                                         
      o meoh             Methanol                        YES    NO     NO                                         
      o etoh             Ethanol                         YES    NO     NO
+     o mesh             Methanothiol                    YES    NO     NO
+     o dms              Dimethylsylfide                 YES    NO     NO
+     o menh2            Methylamine                     YES    NO     NO
      o ccl4             Tetrachloromethane              YES    NO     NO                                         
      o chcl3            Chloroform                      YES    NO     NO                                         
      o dcm              Dichloromethane                 YES    NO     NO  
@@ -110,8 +113,10 @@ class Frag(object, libbbg.units.UNITS):
      o n-propane        n-Propane                       YES    NO     NO
      o cyclohexane      Cyclohexane                     YES    NO     NO
      o benzene          Benzene                         YES    NO     NO
+     o phenole          Phenole                         YES    NO     NO
      o dmf              Dimethylformamide               YES    NO     NO
      o thf              Tetrahydrofurane                YES    NO     NO
+     o cho-ch-nh2-ch3   2-Aminopropanal                 YES    NO     NO
     -----------------------------------------------------------------------------------------------
      frag = Frag(file)   where file is the Frag format file (*.frg) with parame
                          ters created by a user. See slv_der-* for fragment par
@@ -271,7 +276,8 @@ class Frag(object, libbbg.units.UNITS):
               '4-me-phenol'      ,'chonh2'  ,'chonhme'  ,'comenh2' ,'ethane'  ,
               'mecoo-' ,'menh3+' ,'methane' ,'n-propane','me-guanidinium+'    ,
               'ccl4'   ,'benzene','dmf'     ,'thf'      ,'cyclohexane'        ,
-              'etoh'   ,'mesh'   ,'menh2'   ,'phenol'   ,'cho-ch-nh2-ch3'     , ] 
+              'etoh'   ,'mesh'   ,'menh2'   ,'phenol'   ,'cho-ch-nh2-ch3'     , 
+              'dms'    ,                                                       ] 
                
     def __init__(self, file=None):
         self.__file = file
