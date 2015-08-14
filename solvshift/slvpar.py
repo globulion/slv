@@ -100,6 +100,7 @@ class Frag(object, libbbg.units.UNITS):
      o mescn            Methyl Thiocyanide              YES    YES    NO       C=N stretch
      o mecn             Methyl Nitrile                  YES    YES    NO       C=N stretch
      o et2coo           Diethyl Carbonate               YES    YES    NO       C=O stretch
+     o imidazole        Imidazole                       YES    NO     NO
      o 4-me-imidazole   4-Methyl Imidazole              YES    NO     NO
      o 4-me-phenol      4-Methyl Phenol                 YES    NO     NO
      o chonh2           Formamide                       YES    NO     NO
@@ -277,7 +278,7 @@ class Frag(object, libbbg.units.UNITS):
               'mecoo-' ,'menh3+' ,'methane' ,'n-propane','me-guanidinium+'    ,
               'ccl4'   ,'benzene','dmf'     ,'thf'      ,'cyclohexane'        ,
               'etoh'   ,'mesh'   ,'menh2'   ,'phenol'   ,'cho-ch-nh2-ch3'     , 
-              'dms'    ,                                                       ] 
+              'dms'    ,'imidazole'         ,                                  ] 
                
     def __init__(self, file=None):
         self.__file = file
