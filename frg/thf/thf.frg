@@ -1,5 +1,6 @@
  [ molecule ]                            
-   name       = dummy
+   name       = Tetrahydrofurane
+   shortname  = THF
    basis      = RHF/6-311++G**
    natoms     = 13
    nbasis     = 171

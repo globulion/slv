@@ -1,5 +1,6 @@
  [ molecule ]                            
-   name       = dummy
+   name       = Cyclohexane
+   shortname  = cyclohexane
    basis      = RHF/6-311++G**
    natoms     = 18
    nbasis     = 222

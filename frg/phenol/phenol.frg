@@ -1,5 +1,6 @@
  [ molecule ]                            
-   name       = dummy
+   name       = Phenol
+   shortname  = PhOH
    basis      = RHF/6-311++G**
    natoms     = 13
    nbasis     = 203

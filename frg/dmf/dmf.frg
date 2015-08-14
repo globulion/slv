@@ -1,5 +1,6 @@
  [ molecule ]                            
-   name       = dummy
+   name       = Dimethyloformamide
+   shortname  = DMF
    basis      = RHF/6-311++G**
    natoms     = 12
    nbasis     = 164

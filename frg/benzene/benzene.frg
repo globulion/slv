@@ -1,5 +1,6 @@
  [ molecule ]                            
-   name       = dummy
+   name       = Benzene
+   shortname  = C6H6
    basis      = RHF/6-311++G**
    natoms     = 12
    nbasis     = 180

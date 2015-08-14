@@ -1,5 +1,6 @@
  [ molecule ]                            
-   name       = dummy
+   name       = Methyl thiol
+   shortname  = MeSH
    basis      = RHF/6-311++G**
    natoms     = 6
    nbasis     = 82
