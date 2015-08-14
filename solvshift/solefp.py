@@ -794,7 +794,7 @@ Now, only for exchange-repulsion layer"""
         merror = ' Global mode is not implemented yet!'
         raise NotImplementedError, merror
         return
-    
+   
     def _eval_mode_central(self, lwrite, num, step, theory, remove_clashes, rcl_algorithm, dxyz=None):
         """Includes only EFP layers (DMA environment is not accounted for!)"""
         assert step==0.006, ' Step %10.5f Angstrom is not supported yet!' % step
@@ -998,7 +998,7 @@ Now, only for exchange-repulsion layer"""
                   if num: STR = numpy.dot(STR+transl_inv, rot_inv)
                   frg = self.__bsm[im].copy()
                   rms = frg.sup( STR, suplist= self.__suplist[im] )
-                  if lwrite:
+                  if 0:#lwrite:
                      xx = frg.xyz(units='angs'); print xx
                   par = frg.get()
                   if num:
@@ -1015,6 +1015,12 @@ Now, only for exchange-repulsion layer"""
                  if lwrite: 
                     print "            : %10d molecules after clash removal" % N    
                     print "            : %10d molecules removed            " % N_ADD    
+                 if lwrite:
+                    print
+                    print " Coordinates of POL LAYER after removal of clashes"
+                    for par in PAR:
+                        print self._xyz(par['pos'], par['atno'], units='Angs'),
+                    print
                 
 
               # prepare the data structures for passing to Fortran soubroutines
@@ -1588,6 +1594,19 @@ The convention is to place -1 in the reord_list for atoms that have to be remove
         return shift
 
     # to be deprecated
+
+    def _xyz(self, pos, atno, units='Angstrom'):
+        """generate the xyz file contents (without 2 first lines). Copied from Frag class - so it should be deprecated in the future to improve code stability"""
+        atomic_symbols = {1: 'H', 2: 'He', 3: 'Li', 6:'C', 7:'N', 8:'O', 9:'F', 11:'Na', 12:'Mg', 16:'S', 17:'Cl'}
+        log = ''
+        r = pos.copy()
+        Z = atno
+        if units.lower().startswith('angs'): r *= self.BohrToAngstrom
+        for i,x in enumerate(r):
+            log += '%3s' % atomic_symbols[Z[i]]
+            log += 3*'%16.6f' % tuple(x)
+            log += '\n'
+        return log 
 
     def _eval_dq(self, fi, theory, cart=True):
         """calculate structural distortions according to the level of SolX theory"""
