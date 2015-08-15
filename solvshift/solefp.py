@@ -685,7 +685,7 @@ Now, only for exchange-repulsion layer"""
 
     def _eval_dma(self, dma, lwrite):
         """Cutoffs not supported yet for ENVIRON layer - just one object is considered"""
-        print " WARNING! No superimposition for ENVIRON yet! Please supply DMA already in appropriate position!!!"
+        if lwrite: print " WARNING! No superimposition for ENVIRON yet! Please supply DMA already in appropriate position!!!"
         shift_total = 0.0
         shift_mea   = 0.0; shift_ea = 0.0; shift_corr_mea = 0.0; shift_corr_ea = 0.0
 
