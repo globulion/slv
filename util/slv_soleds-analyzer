@@ -53,10 +53,16 @@ def wstawiacz(m,n,l):
     for line in lines:
         a = line.split()
         a.insert(1,Atom(a[0]).atno)
-        w += 'wstawiacz.py  "'
-        w += '%2s  %4.1f' % (a[0], a[1])
-        w += '%15.8f' * 3 % tuple(map(float,a[2:]))
-        w += '"%4d   *.inp' % i
+#        w += 'wstawiacz.py  "'
+#        w += '%2s  %4.1f' % (a[0], a[1])
+#        w += '%15.8f' * 3 % tuple(map(float,a[2:]))
+#        w += '"%4d   *.inp' % i
+        tl = '%2s  %4.1f' % (a[0].ljust(2) , a[1])
+        tl+= '%15.8f' * 3 % tuple(map(float,a[2:]))
+        w += """
+for inp in *_.inp; do 
+   sed -i '%d a \ %s' $inp
+done""" % (i+1, tl) 
         w += '\n'
         i += 1
     out = open('__wstawiacz__.sh','w')
@@ -74,7 +80,7 @@ cd soleds
    cp ../__wstawiacz__.sh .
    bash __wstawiacz__.sh
    rm __wstawiacz__.sh
-   cd sder/15
+   cd sder/@STEPMODE
       cp ../../../__wstawiacz__.sh .
       slv -i @REF -a @ANH -m @MODE -s @STEPMODE -x 0
       mv ../../../*_.inp .
