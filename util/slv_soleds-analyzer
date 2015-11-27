@@ -24,7 +24,7 @@
   o gas phase xyz - xyz file with solute in gas-phase (anharmonic file orientation)
   o anh           - g09 anharmonic file with CUBIC (remember to change the wrong signs!)
   o mode          - normal mode number (in Helico, normal numbers - not in Python convention)
-  o line          - line number in gamess.py in which wstawiacz.py has to insert solvent molecule
+  o line          - line number in GAMESS input file after which solvent molecule is to be inserted
   o n             - the number of solvent atoms (default 3 - one water molecule)
   o step-cart     - differentiation step in cartesian coordinates (default 0.006 Angs)
   o step-mode     - differentiation step in normal coordinates (default 15.0)
