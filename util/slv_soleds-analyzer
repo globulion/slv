@@ -16,7 +16,7 @@
 
   Mode 2)
 
-      2  --- NOT IMPLEMENTED YET ---
+      2  [anh] [eds dirs] [mode] [method]
 
  where: 
 
@@ -28,10 +28,12 @@
   o n             - the number of solvent atoms (default 3 - one water molecule)
   o step-cart     - differentiation step in cartesian coordinates (default 0.006 Angs)
   o step-mode     - differentiation step in normal coordinates (default 15.0)
+  o eds dirs      - For example: w20:sder/20 - parse w20 as fder_dir and w20/sder/20 as sder_dir
+  o method        - HF or MP2, depending on the type of EDS calculations.
 
  Warning: the turn of solute atoms need to be identical in all files provided!
 
- Warning: when using Mode 2) you MUST change the step in slv.step file
+ Warning: when using Mode 2) you MUST change the step in slv.step file under fder_dir directory.
           SECOND DERIVATIVE DIFFERENIATION STEP (DIMENSIONLESS): [provide here correct value]
 """
 print __doc__
@@ -67,7 +69,7 @@ def inputs(ref_xyz, anh, mode, step_cart, step_mode):
 #!/bin/bash
 export SLV_MODE_ID=@MODE
 cd soleds
-   slv -i @REF -a @ANH -m @MODE -s @STEPCART -x 1 --sder-work=./sder/15/
+   slv -i @REF -a @ANH -m @MODE -s @STEPCART -x 1 --sder-work=./sder/@STEPMODE/
    mv ../*_.inp .
    cp ../__wstawiacz__.sh .
    bash __wstawiacz__.sh
@@ -112,7 +114,10 @@ if mode_of_action==1:
    if len(argv)>9 : step_cart = argv[9]
    if len(argv)>10: step_mode = argv[10]
 else:
-   pass
+   anh      = os.path.abspath(argv[2])
+   edsdirs  = argv[3]
+   mode     = int(argv[4])
+   method   = argv[5]
 
 # GENERATION MODE
 if mode_of_action==1:
@@ -134,17 +139,18 @@ if mode_of_action==1:
          os.system('rm -fr soleds')
          print
       else: exit()
-   os.system('mkdir -p soleds/sder/15')
+   os.system('mkdir -p soleds/sder/%s' % step_mode)
    
    # [4] copy templates to the appropriate directories
-   os.system('cp gamess.templ soleds && cp gamess.templ soleds/sder/15')
+   os.system('cp gamess.templ soleds && cp gamess.templ soleds/sder/%s' % step_mode)
    
    # [5] generate the __wstawiacz__.sh file
    wstawiacz(m,n,line)
    
-   # [6] 
+   # [6] make the input files
    inputs(ref_xyz, anh, mode, step_cart, step_mode)
 
 # CALCULATION MODE
 else:
-   raise NotImplementedError, 'Operation Mode is not yet implemented!'
+   # [1] calculate the frequency shifts
+   os.system('slv_eds-shifts.py %s %s %i %s' % (anh, edsdirs, mode, method) )

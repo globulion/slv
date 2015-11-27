@@ -1505,6 +1505,7 @@ The convention is to place -1 in the reord_list for atoms that have to be remove
         i = 1
         if rcl_algorithm == 'remove_by_name':
            removable_pars = ['Methane', 'Ethane', 'N-Propane', 'N-methylacethamide', 'N-methylacethamide D7'] 
+           removable_pars+= ['Benzene', 'Phenol', 'Formamide', 'Methane', 'Methyl amonium cation (+1)', 'Acetate anion (-1)', 'Methyl Guanidinium Cation (+1)', 'Dimethyl Sulfide'  ]
            for par in PAR[1:]:
                if lwrite: print "%30s" % par['name'], 
                if par['name'] not in removable_pars: 

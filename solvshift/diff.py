@@ -124,15 +124,15 @@ where X=5,9"""
         # EDS
         elif eds:
            fdir,sdir = eds.split(':')
-           self.EDS_set_1 = self.Parse_EDS(dir+fdir, eds_method)
-           self.EDS_set_2 = self.Parse_EDS(dir+sdir, eds_method)
+           self.EDS_set_1 = self.Parse_EDS(fdir, eds_method)
+           self.EDS_set_2 = self.Parse_EDS(sdir, eds_method)
            self.fEDS = self.get_EDS_fder()
            self.sEDS = self.get_EDS_sder()
         # EFP
         elif efp:
            fdir,sdir = efp.split(':')
-           self.EFP_set_1 = self.Parse_EFP(dir+fdir)
-           self.EFP_set_2 = self.Parse_EFP(dir+sdir)
+           self.EFP_set_1 = self.Parse_EFP(fdir)
+           self.EFP_set_2 = self.Parse_EFP(sdir)
            self.fEFP = self.get_EFP_fder()
            self.sEFP = self.get_EFP_sder()
     

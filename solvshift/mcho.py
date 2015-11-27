@@ -62,8 +62,12 @@ class MCHO(UNITS):
                  eds=False,
                  fEDS=0,
                  sEDS=0,
-                 nmodes=0):
+                 nmodes=0,
+                 dir='./'):
                     
+        self.dir = dir
+        if not dir.endswith('/'): self.dir+='/'
+
         if not eds:self.nModes = len(fderiv)
         else:      self.nModes = nmodes
         self.nAtoms = (self.nModes + 6)/3
@@ -586,7 +590,7 @@ class MCHO(UNITS):
         The coordinates are in AU!
         """
         
-        data = open('slv.frags','r').readlines()
+        data = open(self.dir+'slv.frags','r').readlines()
         fragments = []
         atoms = []
         for fragment in data:

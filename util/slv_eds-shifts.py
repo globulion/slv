@@ -33,12 +33,12 @@ method = argv[4]
 ANH = FREQ(anh)
 nmodes = len(ANH.freq)
 CALC=DIFF(freq=ANH.freq,
-          dir='.',
+          dir=eds.split(':')[0],
           L=ANH.L,
           eds=eds,
           eds_method=method)
 
-os.system('export SLV_MODE_ID=%d' % (mode-1))
+os.environ['SLV_MODE_ID'] = '%d' % (mode-1)
 #PRINT(CALC.fEDS)
 t = sqrt(ANH.redmass*UNITS.AmuToElectronMass)
 print CALC.fEDS.shape
@@ -55,7 +55,8 @@ PARAM = MCHO(gijj=ANH.K3,freq=ANH.freq,
              eds=True,
              fEDS=CALC.fEDS,
              sEDS=CALC.sEDS,
-             nmodes=nmodes)
+             nmodes=nmodes,
+             dir=eds.split(':')[0])
 shifts = PARAM.eds_shifts
 
 log = "\n"
