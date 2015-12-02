@@ -7,7 +7,7 @@
 
    -i [anh] -s [step] -m [mode] -x [xyz]
 
-   -c [anh] -s [step] -m [mode] -f [fchk] -d [dma] -e [efp] -o [frg]
+   -c [anh] -s [step] -m [mode] -f [fchk] -d [dma] -e [efp] -o [frg] (--omit_camm)
 """
 from sys import argv, exit
 from string import Template
@@ -37,11 +37,12 @@ def Main(argv):
     dma            ='dma'                                              # COULOMB DMA file
     frg            ='frg'                                              # SLV FRG FILE (Output)
     mode           = None                                              # MODE (helico, normal numbers)
+    omit_camm      = False                                             # whether to omit calculation of CAMM of not
     #
     try:
-       opts, args = getopt(argv, "hi:c:m:x:d:f:e:o:s:" , ["help" , "inputs=", "calc="
-                                                          "mode=", "xyz="    , "dma=", 
-                                                          "fchk=", "efp="    , "out=", "step="])
+       opts, args = getopt(argv, "hi:c:m:x:d:f:e:o:s:O" , ["help" , "inputs=", "calc="
+                                                           "mode=", "xyz="    , "dma=", 
+                                                           "fchk=", "efp="    , "out=", "step=", "omit_camm"])
     except GetoptError, error:
         print "\n Invalid option. Please refer to the usage below:" 
         print __doc__
@@ -62,8 +63,10 @@ def Main(argv):
         if opt in ("-o", "--out"):  frg = arg
         if opt in ("-m", "--mode"): mode = int(arg)
         if opt in ("-s", "--step"): step = float(arg)
+        if opt in ("-O", "--omit_camm"): omit_camm = True
 
-    run(Calc, anh, mode, step, basis, xyz, dma, fchk, efp, frg)
+
+    run(Calc, anh, mode, step, basis, xyz, dma, fchk, efp, frg, omit_camm)
     return
 
 
@@ -79,7 +82,7 @@ t_pol = Template("slv_der-dpol $ANH __out_wfn__.frg $STEP __out_pol__.frg")
 t_gijk= Template("slv_calc-gijk-from-hessians $ANH $STEP $MODE")
 
 
-def run(Calc, anh, mode, step, basis, xyz, dma, fchk, efp, frg):
+def run(Calc, anh, mode, step, basis, xyz, dma, fchk, efp, frg, omit_camm):
     """Main routine for generating of SolEFP parameters"""
     if mode is None:
        print "\n Set the mode number!\n"
@@ -116,8 +119,9 @@ def run(Calc, anh, mode, step, basis, xyz, dma, fchk, efp, frg):
        assert nae==nbe, 'NAE is not equal to NBE!'
 
        # [1] Calculation of CAMMs
-       os.system(t_camm.substitute(BASIS=basis))
-       clock.actualize('Computation of CAMM')
+       if not omit_camm:
+          os.system(t_camm.substitute(BASIS=basis)) 
+          clock.actualize('Computation of CAMM')
 
        # [2] Calculation of DMA derivatives
        os.system(t_dma.substitute(ANH=anh, FCHK=fchk, CAMM=dma, STEP=step))
