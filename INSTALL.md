@@ -13,7 +13,7 @@
       Table 1: SLV dependencies
       -----------------------------------------------------------------
       pp               Parallel Python                        1.6.4  
-      numpy            Numerical Python                       1.6.1
+      numpy            Numerical Python                       1.7.1
       scipy            Scientific Python Libraries            0.9.0
       MDAnalysis       Molecular Dynamics Analysis Tools      0.8.1
       scitools         Scientific Tools                       0.8
@@ -69,7 +69,7 @@
 
  II.1 Parallel Python
 
-      python setup.py install --prefix=$HOME/lib64
+      python setup.py install --prefix=$HOME
 
 
  II.2 Numerical Python
@@ -79,15 +79,15 @@
              1) create site.cfg file:                                                                                                            
                                                                                                                                                 
                 [mkl]                                                          
-                library_dirs = /opt/intel/composer_xe_2013_sp1/mkl/lib/intel64
-                include_dirs = /opt/intel/composer_xe_2013_sp1/mkl/include
+                library_dirs = /opt/intel/mkl/lib/intel64
+                include_dirs = /opt/intel/mkl/include
                 mkl_libs = mkl_rt
                                                                                                                                                 
              2) Modify cc_exe in numpy/distutils/intelccompiler.py
                                                                                                                                                 
                 self.cc_exe = 'icc -O3 -g -fPIC -fp-model strict -fomit-frame-pointer -openmp -xhost' 
                 
-                In the case of ILP64 interface add also -DMKL_ILP64 to these options
+                In the case of ILP64 interface add also -DMKL_ILP64 to these options. Add other options if needed.
                                                                                                                                                 
              3) Modify file numpy/distutils/fcompiler/intel.py
                                                                                                                                                 
@@ -96,15 +96,23 @@
                                                                                                                                                 
              4) install
                                                                                                                                                 
-                python setup.py config --compiler=intelem build_clib --compiler=intelem build_ext --compiler=intelem install --prefix=$HOME//lib64
+                python setup.py config --compiler=intelem build_clib --compiler=intelem build_ext --compiler=intelem install --prefix=$HOME
                                                                                                                                          
                                                                                                                                          
       II.2.2 Linking with ATLAS
                                                                                                                                          
-             python setup.py install --prefix=$HOME/lib64
+             python setup.py install --prefix=$HOME
 
 
  II.3 Scientific Python with MKL
+
+      II.3.1 Scipy 0.12.1
+
+         Install by
+
+         python setup.py config --compiler=intelem --fcompiler=intelem build_clib --compiler=intelem --fcompiler=intelem build_ext --compiler=intelem --fcompiler=intelem install --prefix=$HOME
+
+      II.3.2 Older Scipy versions
 
       1) modify file scipy/spatial/qhull/src/qhull_a.h (line 106)                                                                                                                                    
                                                                                                                                                                                                      
@@ -120,22 +128,22 @@
                                                                                                                                                                                                      
       2) install
                                                                                                                                                                                                      
-         python setup.py config --compiler=intelem --fcompiler=intelem build_clib --compiler=intelem --fcompiler=intelem build_ext --compiler=intelem --fcompiler=intelem install --prefix=$HOME/lib64
+         python setup.py config --compiler=intelem --fcompiler=intelem build_clib --compiler=intelem --fcompiler=intelem build_ext --compiler=intelem --fcompiler=intelem install --prefix=$HOME
 
 
  II.4 MDAnalysis
 
-      python setup.py install --prefix=$HOME/lib64/
+      python setup.py install --prefix=$HOME
 
 
  II.5 SciTools
 
-      python setup.py install --prefix=$HOME/lib64/
+      python setup.py install --prefix=$HOME
 
 
  II.6 PyQuante-Modified
 
-      python setup.py install --prefix=$HOME/lib64/
+      python setup.py install --prefix=$HOME
 
 
  II.7 LibBBG
@@ -146,7 +154,7 @@
                                                                                                                                    
       2) install
                                                                                                                                    
-         ./install -p $HOME/lib64/
+         ./install -p $HOME
                                                                                                                                    
       3) check if it works. On epsilon it should give this message:
          
@@ -189,7 +197,7 @@
                                                                                             
       2) install
                                                                                             
-         python setup.py install --prefix=$HOME/lib64/
+         python setup.py install --prefix=$HOME
 
 
  II.9 SLV
@@ -200,7 +208,7 @@
 
       2) install
 
-         ./install -p $HOME/lib64/
+         ./install -p $HOME
 
       3) set the $SLV_DAT variable in your $HOME/.bashrc file
 
