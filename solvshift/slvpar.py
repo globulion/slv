@@ -1013,7 +1013,7 @@ where v=0.3. Argument f is an array with the first dimension equal to 12
     #            P R O P E R T Y   E V A L U A T O R S          #
     # --------------------------------------------------------- #
 
-    def _get_property_solcamm(self, mode, ea=True, dma=True):  # in the future add mode=... keyword
+    def _get_property_solcamm(self, mode=None, ea=True, dma=True):  # in the future add mode=... keyword
         """
 Compute SolCAMM parameters. If dma=False it returns a tuple:
 
