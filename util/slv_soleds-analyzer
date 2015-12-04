@@ -62,7 +62,7 @@ def wstawiacz(m,n,l):
         w += """
 for inp in *_.inp; do 
    sed -i '%d a \ %s' $inp
-done""" % (i+1, tl) 
+done""" % (i, tl) 
         w += '\n'
         i += 1
     out = open('__wstawiacz__.sh','w')
