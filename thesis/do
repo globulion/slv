@@ -1,0 +1,12 @@
+#!/bin/bash
+for i in 1 2 3 ; do
+  bibtex  thesis${i}-blx.aux
+done
+latex   thesis.tex
+dvipdf  thesis.dvi
+
+#notangle -RMain slv-manual.nw > slv-manual.py
+#noweave  -index -latex -delay slv-manual.nw > slv-manual.tex
+#latex slv-manual.tex
+#dvipdf slv-manual.dvi
+#chmod u+x slv-manual.py
