@@ -42,6 +42,9 @@
 % rubberband spaces between paragraphs
 %\setlength{\parskip}{3ex plus 2ex minus 2ex}
 
+% interline
+\linespread{1.0}\selectfont
+
 % section numbers and table of contents 
 \setcounter{secnumdepth}{3} 
 \setcounter{tocdepth}{2}
@@ -1657,7 +1660,7 @@ all the normal modes.
 
 We have compared the structural distortions in the two approximations
 discussed here, mainly, approximation '1' (Eq.~\eqref{e:struct-dist-cho}) and 
-'2' (Eq.~\eqref{Q-approx-T1-expl-lead}). For simplicity, we have used Cho's coarse\hyp{}grained
+'2' (Eq.~\eqref{dQ-approx-T1-expl-lead}). For simplicity, we have used Cho's coarse\hyp{}grained
 model of solvatochromism based on the distributed solvatochromic multipoles. 
 Also, due to difficulties in calculating $\bf K$ matrix (this matrix need to
 be evaluated numerically which is too expensive) we neglect this contribution. 
@@ -1673,16 +1676,68 @@ because it is a prototypical model of the vibrations in peptides.
 We also study azide asymmetric
 stretch in MeN$_3$.
 
-In Fig.XXX I show the relative differences of the computed structural distortions.
+In Fig.~\ref{f.NMA.dq} I show the relative differences of the computed structural distortions.
+%
+\begin{figure}[ht]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.9\linewidth]{Fig-nma-dq.eps}
+}
+\caption{Structural distortions of NMA molecule and the resulting vibrational
+frequencies calculated by using B3LYP/6-311++G(d,p) method. 
+a) The structure of a model complex; b) relative differences of the
+structural distortions
+calculated for each normal mode displacement; c) and d) Hessian matrix in NMA gas-phase normal coordinate
+space calculated by using $\delta {\bf Q}^{[1]}$ and $\delta {\bf Q}^{[2]}$, respectively.
+Hessian matrices were averaged over 30 model NMA--(H$_2$O)$_{n=1-35}$ configurations.
+\label{f.NMA.dq}}
+\end{figure}
+%
 It can be seen that in the case of NMA, the two lowest frequency modes are incorrectly
 described by approximation '1' which significantly overestimates the structural distortion. 
-These modes are associated with methyl group hindered rotations. It is also clear that the
-amide I mode (red bar in Fig.XXXa), which is fairly isolated vibrational mode, is well described by 
+These modes are associated with methyl group hindered rotations. On the other hand, the
+amide I mode (red bar in Fig.~\ref{f.NMA.dq}b), which is fairly isolated vibrational mode, is well described by 
 approximation '1'. Also, most of the other structural distortions are close to the more accurate
 computation. Nevertheless, the presence of the 'spoiling modes' introduces
 severe errors when the NMA's Hessian is diagonalized which results in many large imaginary 
-frequencies. When approximation '2' is used, the extent of errors is significantly reduced
-and the frequency shift of the amide I mode is correctly reproduced. 
+frequencies (Fig.~\ref{f.NMA.dq}c). When approximation '2' is used, the extent of errors is significantly 
+reduced (Fig.~\ref{f.NMA.dq}d)
+The full DFT amide I mode
+frequency is 1680 cm$^{-1}$ and this result is reasonably reproduced by the SolCAMM-6 method\footnote{Multipoles
+are distributed on heavy atoms and amide proton hence the number of centers is 6. See Chapter XXX Sec XXX}
+which gives 1964 cm$^{-1}$. However, Hessians diagonalization gives correct frequency (1662 cm$^{-1}$) 
+only if '2' approximation
+is employed.
+
+The similar analysis for MeN$_3$ molecule brings however different results with SolCAMM-4 model
+used (see Fig.~\ref{f.NMA.dq}a-d). It can be seen that
+the structural distortion is not properly described since the Hessian contain apparently
+off-diagonal elements, and even '2' approximation works worse in this case. 
+%
+\begin{figure}[ht]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.9\linewidth]{Fig-men3-dq.eps}
+}
+\caption{Structural distortions of MeN$_3$ molecule and the resulting vibrational
+frequencies calculated by using B3LYP/6-311++G(d,p) method. 
+a) The structure of a model complex; b) relative differences of the
+structural distortions
+calculated for each normal mode displacement; c) and d) Hessian matrix in MeN$_3$ gas-phase normal coordinate
+space calculated by using $\delta {\bf Q}^{[1]}$ and $\delta {\bf Q}^{[2]}$, respectively.
+Hessian matrices were averaged over 20 model MeN$_3$--(H$_2$O)$_{n=1-10}$ configurations.
+\label{f.MeN3.dq}}
+\end{figure}
+%
+The differences in the vibrational solvatochromisms of NMA and MeN$_3$ are quite significant. 
+This is because amide I modes are surprisingly well described by purely Coulombic models
+which is in stark contrast to triple\hyp{}bonded IR probes such as CN or N$_3$.
+We will
+discuss it in more detail later when the non-Coulombic effects will also be derived and quantified.
 
 To summarize, when approximation '1'
 is used, frequency shifts need to be computed under diagonal Hessian approximation
@@ -1690,6 +1745,7 @@ and it is not possible to study the intramolecular mode mixing process without a
 modifications of the procedure. Therefore, approximation '2' might be useful when one
 wanted to study the solvation\hyp{}induced mode mixing. Nevertheless, this aspect needs to
 be investigated in more detail in the future.\footnote{The research presented here is not published yet.}
+Moreover, electrostatic model is not working properly for azide IR probes.
 
 
 \printbibliography[heading=subbibintoc,title={References}]
