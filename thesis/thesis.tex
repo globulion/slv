@@ -81,7 +81,7 @@
 % caption fonts
 \usepackage[font=scriptsize,labelfont=bf]{caption}
 
-% annoying page breaks leaving blank pages
+% annoying page breaks leaving blank pages (for noweb)
 \def\nwendcode{\endtrivlist\endgroup}
 \let\nwdocspar=\relax
 
@@ -94,7 +94,8 @@
     pdfkeywords={vibrational solvatochromism, interaction energy, ab initio, quantum chemistry},
     bookmarksnumbered=true,     
     bookmarksopen=true,         
-    bookmarksopenlevel=1,       
+    bookmarksopenlevel=1,
+    bookmarksdepth=3,
     colorlinks=false,            
     pdfstartview=Fit,           
     pdfpagemode=UseOutlines,
@@ -1447,13 +1448,96 @@ matrix elements change. This leads to the frequency shift in Eq.~\eqref{e:buckin
 The vibrational frequency shift theory discussed above 
 can be used
 to elucidate the effects of the external electrostatic 
-potential distribution on the vibrational frequency shift
+potential distribution on the vibrational frequency shift.
+Expanding the solute-solvent electrostatic interaction energy by using the
+following distributed multipole series 
+expansion\citep{Stone.TheTheoryOfIntermolecularForces.1996}
+%
+\begin{equation} \label{e:dmtp}
+ U \approx  \sum_x \left[ q_x \phi({\bf r}_x) + 
+                  {\BM \mu}_x \cdot {\BM \nabla} \phi({\bf r}_x)   + 
+      \frac{1}{3} {\BM \Theta}_x : {\BM \nabla} \otimes {\BM \nabla} \phi({\bf r}_x)   + 
+     \frac{1}{15} {\BM \Omega}_x \vdots {\BM \nabla} \otimes {\BM \nabla} \otimes {\BM \nabla} \phi({\bf r}_x) \right] + \ldots
+\end{equation}
+%
+and inserting this into Eq.~\eqref{e:buckingham-2st-order-total-fund} 
+one finds that the frequency shift can also be expanded
+in a similar way\citep{Cho.JCP.2009}:
+%
+\begin{equation} \label{e:dmtp-sol}
+ \Delta\omega_j \approx  \sum_x \left[ l_{x;j} \phi({\bf r}_x) + 
+                        {\bf L}_{x;j} \cdot {\BM \nabla} \phi({\bf r}_x)   + 
+      \frac{1}{3} {\BM \lambda}_{x;j} : {\bf \nabla} \otimes {\BM \nabla} \phi({\bf r}_x)   + 
+     \frac{1}{15} {\BM \Lambda}_{x;j} \vdots {\BM \nabla} \otimes {\BM \nabla} \otimes {\BM \nabla} \phi({\bf r}_x) \right] + \ldots
+\end{equation}
+%
+In the above equations, $\phi({\bf r}_x)$ is the electrostatic
+potential at point ${\bf r}_x$,
+$q_x$, ${\BM \mu}_x$, ${\BM \Theta}_x$, and ${\BM \Omega}_x$ 
+denote the traceless charge, dipole, quadrupole and octupole moment 
+of $x$th solute's site located at ${\bf r}_x$, whereas 
+$l_{x;j}$, ${\bf L}_{x;j}$, ${\BM \lambda}_{x;j}$ and ${\BM \Lambda}_{x;j}$ 
+denote the associated distributed traceless
+\emph{solvatochromic multopole moments}, respectively.
+
+In this work, we use the Buckingham's convention of defining the traceless cartesian
+quadrupole and octupole moments:\citep{Buckingham.QRevChemSoc.1959} 
+%
+\begin{equation} \label{e:quad-trac}
+\Theta_{ab} = \frac{1}{2} \int_V {\rm d}\;{\bf r} \rho({\bf r}) \left\{ 3r_ar_b-r^2 \delta_{ab}\right\}
+\end{equation}
+%
+and 
+%
+\begin{equation} \label{e:oct-trac}
+\Omega_{abc} = \frac{1}{2} \int_V {\rm d}\;{\bf r} \rho({\bf r}) \left\{ 5r_ar_br_c-r^2(r_a\delta_{bc}+
+                                                                     r_b\delta_{ac}+
+                                                                     r_c\delta_{ab})\right\}
+\end{equation}
+%
+where $\rho({\bf r}_x)$ is the total charge density.
+From that reason, the numerical coefficients in the multipole expansions 
+from Eqs.~\eqref{e:dmtp} and \eqref{e:dmtp-sol}
+are different than in the original work of Cho\citep{Cho.JCP.2009} who used 
+Jackson's convention instead.\citep{Jackson.ClassicalElectrodynamics.1998} 
+To convert a value of traceless
+quadrupole and octupole moment from Jackson's to Buckingham's convention
+divide it by two.
+
+It is strightforward to show that the resulting solvatochromic multipoles
+are given by
+%
+\begin{equation} \label{e:solvatochromic-multipoles}
+ {\bf S}^{(n)}_{x;j} \equiv \frac{1}{2M_j\omega_i} \left[ 
+     \frac{\partial^2 {\bf M}^{(n)}_{x;j} }{\partial Q_j^2} \Bigg|_{{\bf Q}_{0_A}}
+-
+\sum_i \frac{g_{ijj}}{M_i\omega_i^2} 
+\frac{\partial {\bf M}^{(n)}_{x;j} }{\partial Q_i} \Bigg|_{{\bf Q}_{0_A}}
+\right]
+\end{equation}
+%
+where we used a short\hyp{}hand notation for the (solvatochromic) multipole moments
+(${\bf S}^{(n)}_{x;j}$) ${\bf M}^{(n)}_{x}$
+of rank $n$ distributed on $x$th site. For example, ${\bf S}^{(2)}_{x;j}$
+denotes ${\bf \lambda}_{x;j}$ whereas ${\bf M}^{(1)}_{x}$ is ${\BM \mu}_x$.
+
+The series expansion given in Eq.~\eqref{e:dmtp-sol} is a very powerful tool because
+it separates the contributions of the solute and solvent molecules to the overall Coulombic
+frequency shifts. This is an example of the independent-fragment-based method
+when certain property of molecular aggregate can be modeled by the properties
+of the isolated molecules in gas phase. Note that, once ${\bf S}^{(n)}_{x;j}$
+are computed, frequency shifts can be evaluated in a very efficient way.
+This model also theoretially justifies the semi\hyp{}empirical fitting procedures 
+that are used in ESF methods (Eq.~\eqref{e:esf}).
+In Chapter~\ref{c:my-model} we will present the more detailed discussion of the Coulombic
+approximation outlined here.
+
 
 \section{Relationships between Cho's and Buckingham's models}
 
 It is instructive to analyze the meaning of the frequency shift
 formula from Eq.~\eqref{e:buckingham-2st-order-total-fund}
-looking at this problem from the perspectives of two different approaches.
+looking at this problem from the perspectives of the two quite different approaches.
 
 First of all, from Eq.~\eqref{e:force-const-cho} it is clear 
 that Buckingham's theory is valid only
@@ -1469,15 +1553,16 @@ whereas mechanical anharmonicity effect is second\hyp{}order
 with respect to the anharmonic potential and solute\hyp{}solvent
 interaction potential. It is interesting to note 
 that the structural distortion approximated
-in the first\hyp{}order of RSPT leads to Cho's model of vibrational
+in the first\hyp{}order of RSPT leads to the Cho's model of the vibrational
 solvatochromism. 
 
-\section{Structural Distortions: Discussion}
+\section{Structural Distortions: Discussion \label{s:str-dist-general-discussion}}
 
-Solvatochromism could be considered as a space distortion problem more generally.
-The equilibrium structures
-in gas phase and solution are in general different from each other.
-Due to solvation of IR active molecule its vibrational Q-space will
+Let us analyze the structural distortion problem more generally.
+%The equilibrium structures
+%in gas phase and solution are in general different from each other.
+Due to solvation of IR active molecule its vibrational normal mode space 
+or Q-space) will
 undergo some transformation which could be cast in the form:
 %
 \begin{equation}\label{Q-space-transform}
@@ -1506,14 +1591,19 @@ The vibrational potential energy function is:
 %
 \begin{equation}\label{V}
 V_{\rm eff} ({\bf Q})
-= V_0 + E^{\rm 1,0}_g + {\bf f} \cdot {\bf Q} + \frac{1}{2!} {\bf M} : {\bf Q}^2 + 
-\frac{1}{2!} {\bf K} : {\bf Q}^2 + \frac{1}{3!} {\bf g} \vdots {\bf Q}^3 + \ldots
+= V_0 + E^{\rm 1,0}_g + {\bf U}^{(1)} \cdot {\bf Q} + \frac{1}{2!} {\bf M} : {\bf Q}^2 + 
+\frac{1}{2!} {\bf U}^{(2)} : {\bf Q}^2 + \frac{1}{3!} {\bf g} \vdots {\bf Q}^3 + \ldots
 \end{equation}
 %
+where we defined $M_{ij} \equiv \delta_{ij}M_j\omega_j^2$
+as well as ${\bf U}^{(1)}$ (vector) and ${\bf U}^{(2)}$ (square symmetric matrix) 
+are the first and second derivatives
+of $U$ with respect to normal coordinates, respectively.
+
 Applying the condition from Eq.~\eqref{e:vib-pot-energy-function-new.condition} we find that
 %
 \begin{equation}\label{dQ-new}
-{\bf f} + {\bf B} \cdot \delta {\bf Q} + {\bf G} : \delta{\bf Q}^2 = {\bf 0}
+{\bf U}^{(1)} + {\bf B} \cdot \delta {\bf Q} + {\bf G} : \delta{\bf Q}^2 = {\bf 0}
 \end{equation}
 %
 %Since it is quadratic tensor equation it is very
@@ -1523,11 +1613,11 @@ or in more convenient form for analysis
 \delta {\bf Q} = 
 -\left\{ 
        {\bf 1} + {\bf B}^{-1} \left[ {\bf G} \cdot \delta {\bf Q} \right]
-\right\}^{-1} {\bf B}^{-1} \cdot {\bf f}
+\right\}^{-1} {\bf B}^{-1} \cdot {\bf U}^{(1)}
 \end{equation}
 %
 (Here new quantities were introduced for convenience: ${\bf G} = \frac{1}{2} {\bf g}$
-and ${\bf B} = {\bf M} + {\bf K}$). 
+and ${\bf B} = {\bf M} + {\bf U}^{(2)}$). 
 In the above expression, the Q-space transformation is hidden in an implicit tensor
 function form in which we substitute $\delta {\bf Q}\rightarrow -\delta {\bf Q}$
 (because we switch to new coordinate system).
@@ -1541,31 +1631,33 @@ we can simplify Eq.\eqref{dQ-new-c} to
 \delta {\bf Q} \approx
 -\left\{ 
        {\bf 1} - {\bf B}^{-1} \left[ {\bf G} \cdot \delta {\bf Q} \right]
-\right\} {\bf B}^{-1} \cdot {\bf f} = 
+\right\} {\bf B}^{-1} \cdot {\bf U}^{(1)} = 
 %
-- {\bf B}^{-1} \cdot {\bf f} + {\bf B}^{-1} \left[ {\bf G} \cdot \delta {\bf Q} \right] {\bf B}^{-1} \cdot {\bf f}
+- {\bf B}^{-1} \cdot {\bf U}^{(1)} + {\bf B}^{-1} \left[ {\bf G} \cdot \delta {\bf Q} \right] {\bf B}^{-1} \cdot {\bf U}^{(1)}
 \end{equation}
 %
 It can be easily shown that 
-${\bf B}^{-1} \left[ {\bf G} \cdot \delta {\bf Q} \right] {\bf B}^{-1} \cdot {\bf f} = {\bf A} \cdot \delta {\bf Q}$
+${\bf B}^{-1} \left[ {\bf G} \cdot \delta {\bf Q} \right] {\bf B}^{-1} \cdot {\bf U}^{(1)} = {\bf A} \cdot \delta {\bf Q}$
 where the auxiliary matrix is
 %
 \begin{equation}\label{A}
 A_{ij} = \frac{1}{2}\sum_{klm} 
-   \left( {\bf B}^{-1} \right)_{ik} g_{jkl} \left( {\bf B}^{-1} \right)_{lm} f_m
+   \left( {\bf B}^{-1} \right)_{ik} g_{jkl} \left( {\bf B}^{-1} \right)_{lm} 
+%\frac{\partial U}{\partial Q_m} \Bigg|_{{\bf Q}_{0_A}}
+U_m
 \end{equation}
 %
 and our result can be rewritten as follows:
 %
 \begin{equation}\label{dQ-T1}
-\delta {\bf Q} = -  \left\{ {\bf 1} - {\bf A} \right\}^{-1} {\bf B}^{-1} \cdot {\bf f}
+\delta {\bf Q} = -  \left\{ {\bf 1} - {\bf A} \right\}^{-1} {\bf B}^{-1} \cdot {\bf U}^{(1)}
 \end{equation}
 %
 After coordinate change we can write the expansion in Eq.\eqref{Q-space-transform} 
 of Q-space distortions:
 \begin{equation}\label{Q-new-T1}
 \boxed{
-{\bf \overline{Q}} \approx  \left\{ {\bf 1} - {\bf A} \right\}^{-1} {\bf B}^{-1} \cdot {\bf f} + {\bf 1} \cdot {\bf Q}
+{\bf \overline{Q}} \approx  \left\{ {\bf 1} - {\bf A} \right\}^{-1} {\bf B}^{-1} \cdot {\bf U}^{(1)} + {\bf 1} \cdot {\bf Q}
 = {\bf T} + {\bf R} \cdot {\bf Q}
 }
 \end{equation}
@@ -1579,20 +1671,20 @@ and anharmonicity $\bf g$.
 
 To study the leading terms in the polynomial expansion of Eq.~\eqref{dQ-T1}, 
 one can try to eliminate the inverse operations from ${\bf A}$ and ${\bf B}$ matrices by noting that
-${\bf M}^{-1} {\bf K} \ll {\bf 1}$ and ${\bf A} \ll {\bf 1}$. 
+${\bf M}^{-1} {\bf U}^{(2)} \ll {\bf 1}$ and ${\bf A} \ll {\bf 1}$. 
 Using this we can approximate the inverse of ${\bf B}$:
 %
 \begin{equation}\label{B-approx}
-{\bf B}^{-1} = \left\{ {\bf M} + {\bf K} \right\}^{-1} 
-= \left\{ {\bf 1} + {\bf M}^{-1}{\bf K} \right\}^{-1}{\bf M}^{-1}
-\cong \left\{ {\bf 1} - {\bf M}^{-1}{\bf K} \right\}{\bf M}^{-1}
+{\bf B}^{-1} = \left\{ {\bf M} + {\bf U}^{(2)} \right\}^{-1} 
+= \left\{ {\bf 1} + {\bf M}^{-1}{\bf U}^{(2)} \right\}^{-1}{\bf M}^{-1}
+\cong \left\{ {\bf 1} - {\bf M}^{-1}{\bf U}^{(2)} \right\}{\bf M}^{-1}
 \end{equation}
 %
 or in explicit notation
 %
 \begin{equation}\label{B-approx-expl}
 \left( {\bf B}^{-1} \right)_{ij} \cong
-\frac{1}{M_i\omega_i^2} \left( \delta_{ij} - \frac{K_{ij}}{M_j\omega_j^2} \right)
+\frac{1}{M_i\omega_i^2} \left( \delta_{ij} - \frac{U_{ij}}{M_j\omega_j^2} \right)
 \end{equation}
 %
 Inserting approximation Eq.\eqref{B-approx-expl} into Eq.\eqref{A} we find
@@ -1601,20 +1693,20 @@ ${\bf A}$ matrix expressed explicitly in terms of energy and its derivatives:
 \begin{equation}\label{A-approx-expl}
 A_{ij} = \frac{1}{2M_i\omega_i^2} 
 \left(
-     \sum_k \frac{g_{ijk}f_k}{M_k\omega_k^2} -
-     \sum_{kl} \frac{ g_{ijl} K_{lk} f_k - g_{jkl} K_{ik} f_l }
+     \sum_k \frac{g_{ijk}U_k}{M_k\omega_k^2} -
+     \sum_{kl} \frac{ g_{ijl} U_{lk} U_k - g_{jkl} K_{ik} U_l }
                     {M_k\omega_k^2 M_l\omega_l^2} +
-     \sum_{klm} \frac{ g_{jkl} K_{ik} K_{lm} f_l }
+     \sum_{klm} \frac{ g_{jkl} U_{ik} U_{lm} U_l }
                      {M_k\omega_k^2 M_l\omega_l^2 M_m\omega_m^2}
 \right)
 \end{equation}
 %
 Using these results we can draw new space as
 \begin{multline}\label{Q-new-T2-approx}
-{\bf \overline{Q}} \approx {\bf Q} + \left( {\bf 1} + {\bf A} \right) \left( {\bf 1} - {\bf M}^{-1}{\bf K} \right){\bf M}^{-1} \cdot {\bf f}
+{\bf \overline{Q}} \approx {\bf Q} + \left( {\bf 1} + {\bf A} \right) \left( {\bf 1} - {\bf M}^{-1}{\bf U}^{(2)} \right){\bf M}^{-1} \cdot {\bf f}
 = \\
-={\bf Q} + {\bf M}^{-1} \cdot {\bf f} - {\bf M}^{-1}{\bf K}{\bf M}^{-1}\cdot{\bf f}
-+ {\bf A}{\bf M}^{-1}\cdot{\bf f} - {\bf A}{\bf M}^{-1}{\bf K}{\bf M}^{-1}\cdot{\bf f}
+={\bf Q} + {\bf M}^{-1} \cdot {\bf U}^{(1)} - {\bf M}^{-1}{\bf U}^{(2)}{\bf M}^{-1}\cdot{\bf U}^{(1)}
++ {\bf A}{\bf M}^{-1}\cdot{\bf U}^{(1)} - {\bf A}{\bf M}^{-1}{\bf U}^{(2)}{\bf M}^{-1}\cdot{\bf U}^{(1)}
 \end{multline}
 %
 Note that ${\bf M}$ is diagonal and there are no inversions 
@@ -1625,10 +1717,10 @@ element separately:
 \begin{equation}\label{dQ-approx-T1-expl}
 \delta Q_i \cong \frac{f_i}{M_i\omega_i^2} + 
   \sum_j \left( 
-         \frac{ A_{ij}f_j }{M_j\omega_j^2} - 
-         \frac{ K_{ij}f_j }{M_i\omega_i^2 M_j\omega_j^2}
+         \frac{ A_{ij}U_j }{M_j\omega_j^2} - 
+         \frac{ U_{ij}U_j }{M_i\omega_i^2 M_j\omega_j^2}
          \right) -
-  \sum_{jk} \frac{ A_{ij} K_{jk} f_k }{M_j\omega_j^2 M_k\omega_k^2}
+  \sum_{jk} \frac{ A_{ij} U_{jk} U_k }{M_j\omega_j^2 M_k\omega_k^2}
 \end{equation}
 %
 The first four leading terms are
@@ -1639,9 +1731,9 @@ The first four leading terms are
 \delta Q_i \approx 
 \frac{1}{M_i\omega_i^2}
 \left(
-    f_i - \sum_j \frac{K_{ij}f_j}{M_j\omega_j^2} + 
-    \frac{1}{2} \sum_{jk} \frac{g_{ijk}f_jf_k}{M_j\omega_j^2 M_k\omega_k^2} -
-    \frac{1}{2} \sum_{jkl} \frac{g_{ijk}K_{jl}f_kf_l}{M_j\omega_j^2 M_k\omega_k^2 M_l\omega_l^2}
+    U_i - \sum_j \frac{U_{ij}U_j}{M_j\omega_j^2} + 
+    \frac{1}{2} \sum_{jk} \frac{g_{ijk}U_jU_k}{M_j\omega_j^2 M_k\omega_k^2} -
+    \frac{1}{2} \sum_{jkl} \frac{g_{ijk}U_{jl}U_kU_l}{M_j\omega_j^2 M_k\omega_k^2 M_l\omega_l^2}
 \right)
 \end{equation}
 %
@@ -1707,14 +1799,15 @@ reduced (Fig.~\ref{f.NMA.dq}d)
 The full DFT amide I mode
 frequency is 1680 cm$^{-1}$ and this result is reasonably reproduced by the SolCAMM-6 method\footnote{Multipoles
 are distributed on heavy atoms and amide proton hence the number of centers is 6. See Chapter XXX Sec XXX}
-which gives 1964 cm$^{-1}$. However, Hessians diagonalization gives correct frequency (1662 cm$^{-1}$) 
-only if '2' approximation
+which gives 1964 cm$^{-1}$. However, Hessian diagonalization gives correct frequency (1662 cm$^{-1}$) 
+only if approximation '2' 
 is employed.
 
-The similar analysis for MeN$_3$ molecule brings however different results with SolCAMM-4 model
-used (see Fig.~\ref{f.NMA.dq}a-d). It can be seen that
-the structural distortion is not properly described since the Hessian contain apparently
-off-diagonal elements, and even '2' approximation works worse in this case. 
+Similar analysis of MeN$_3$ molecule brings however different results when the SolCAMM-4 model is
+used\footnote{with solvatochromic multipoles disributed over all heavy atoms} 
+(see Fig.~\ref{f.NMA.dq}a-d). It can be seen that
+the structural distortion is not properly described since the Hessian contains apparently
+non-zero off-diagonal elements, and approximation '2' works even worse than '1'. 
 %
 \begin{figure}[ht]
 \centering
@@ -1733,13 +1826,17 @@ Hessian matrices were averaged over 20 model MeN$_3$--(H$_2$O)$_{n=1-10}$ config
 \label{f.MeN3.dq}}
 \end{figure}
 %
-The differences in the vibrational solvatochromisms of NMA and MeN$_3$ are quite significant. 
-This is because amide I modes are surprisingly well described by purely Coulombic models
-which is in stark contrast to triple\hyp{}bonded IR probes such as CN or N$_3$.
-We will
-discuss it in more detail later when the non-Coulombic effects will also be derived and quantified.
 
-To summarize, when approximation '1'
+In fact, the differences in the vibrational solvatochromisms of NMA and MeN$_3$ are quite significant. 
+This is because amide I modes are surprisingly well described by purely Coulombic 
+models\citep{Blasiak.Lee.Cho.JCP.2013,Blasiak.Cho.JCP.2014,Blasiak.Cho.JCP.2015}
+which is in stark contrast to triple\hyp{}bonded IR probes solvatochromisms such as 
+CN, NC or N$_3$.\citep{Blasiak.Ritchie.Webb.Cho.XXX.2016,Blasiak.Maj.Cho.XXX.2016}
+We will discuss this issue in more detail later when the non-Coulombic effects 
+are also derived and extensively quantified.
+
+In the examples studied above we considered the frequency of only localized 
+normal modes. Nevertheless, when approximation '1'
 is used, frequency shifts need to be computed under diagonal Hessian approximation
 and it is not possible to study the intramolecular mode mixing process without additional 
 modifications of the procedure. Therefore, approximation '2' might be useful when one
@@ -1747,13 +1844,55 @@ wanted to study the solvation\hyp{}induced mode mixing. Nevertheless, this aspec
 be investigated in more detail in the future.\footnote{The research presented here is not published yet.}
 Moreover, electrostatic model is not working properly for azide IR probes.
 
+\section{Summary}
+
+In this chapter, we have discussed the first\hyp{}principles
+vibrational solvatochromism theories of Buckingham and Cho which,
+although originate from different starting points, lead to the same results.
+Thus, the vibrational solvatochromic frequency shift of a spatially localized 
+IR probe normal mode can be described by Eq.~\eqref{e:buckingham-2st-order-total-fund}
+which is second-order in the perturbation of the isolated harmonic oscillator Hamiltonian.
+This model i) assumes the first\hyp{}order structural distortion of solute, which takes 
+into account only the solute\hyp{}solvent interaction potential and neglects
+solute's anharmonicity, as well as ii) considers the solvation\hyp{}induced change of the diagonal
+Hessian matrix elements only. Therefore, we shall refer to this theory
+as to the \emph{local mode approximation}. The theory reproduces well the frequency shifts of
+simple localized vibrations as well as structural distortions
+when the exact solute\hyp{}solvent interaction potential
+is employed. However, since the local mode approximation cannot describe the normal modes
+which are delocalized over many atoms, the approach of considering
+the Hessian matrix proposed by Cho in Eq.~\eqref{e:force-const-cho} is necessary. 
+In this case, particular caution should be made because the structural
+distortion estimation is not well researched up to that moment. If the
+first-order approximation from Eq.~\eqref{e:struct-dist-cho} failed in some cases, the results 
+derived in Sec.~\ref{s:str-dist-general-discussion} might become useful.
 
 \printbibliography[heading=subbibintoc,title={References}]
 \end{refsection}
 
+% === Chapter 4 ===
+\begin{refsection}
+\chapter{Origins of the Vibrational Solvatochromism \label{c:my-model}}
 
+Although the theory of the vibrational solvatochromism
+was developed before, it involved the solute\hyp{}solvent
+intermolecular potential which is an extremely complicated function
+of molecular properties.
+Therefore, it is important to find explicit 
+expressions that link the vibrational solvatochromism
+to the particular interaction phenomenon.
+Only then it is possible to obtain a robust model
+that can be further applied for condensed phases. 
+In this Chapter, we develop the rigorous first\hyp{}principles
+theory of the vibrational frequency shifts and transition
+dipole changes due to five fundamental interactions
+between molecules that can be found in nature: Coulombic, 
+exchange\hyp{}repulsion, induction, dispersion and charge\hyp{}transfer.
 
+\section{Coulombic Effects}
 
+\printbibliography[heading=subbibintoc,title={References}]
+\end{refsection}
 
 
 

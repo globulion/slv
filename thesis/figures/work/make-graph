@@ -7,4 +7,5 @@ for graph in nma-dq ; do
     evince   $graph.pdf
     pdftops -eps $graph.pdf
     #pdf2svg  $graph.pdf $graph.svg
+    rm       $graph-inc.eps
 done
