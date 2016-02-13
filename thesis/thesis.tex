@@ -103,6 +103,19 @@
 }
 \usepackage{hypcap}
 
+% boxed multiline equations
+\usepackage[overload]{empheq}
+
+\newcommand*{\widebox}[2][0.5em]{\fbox{\hspace{#1}$\displaystyle #2$\hspace{#1}}}
+\usepackage{xpatch}%
+\makeatletter
+\xpatchcmd{\@Aboxed}{%
+\boxed {#1#2}}
+{%
+\color{HotPink3}\boxed {\color{textcolor}#1#2}}
+{}{}
+\makeatother
+
 %---------------------------------------------------
 % SHORTCUTS
 \newcolumntype{,}{D{.}{,}{2}}
@@ -138,6 +151,18 @@
 \biggl(
 \frac{\partial^2 #1}{\partial #2 \partial #3}
 \biggr)_{#4}}}
+% derivatives without bound
+% derivative
+\newcommand{\fderiv}[2]{\ensuremath{
+\frac{\partial #1}{\partial #2}}}
+% diagonal second derivative
+\newcommand{\sderiv}[2]{\ensuremath{
+\frac{\partial^2 #1}{\partial #2^2}
+}}
+% off-diagonal second derivative
+\newcommand{\sderivd}[3]{\ensuremath{
+\frac{\partial^2 #1}{\partial #2 \partial #3}
+}}
 %---------------------------------------------------
 
 % subtitle
@@ -895,7 +920,7 @@ to derive the effects on the vibrational energies upon binding with solvent
 molecule (here abbreviated as $B$).
 In other words, he assumed that
 %
-\begin{equation}
+\begin{equation} \label{e:RSPT-Hamiltonian}
 \mathscr{H} = \mathscr{H}^{(0)} + \mathscr{H}'
 \end{equation}
 %
@@ -1368,7 +1393,7 @@ M_i \omega_i^2 \delta Q_i + \frac{\partial U}{\partial Q_i} \Bigg|_{{\bf Q}_{0_A
 \approx 0
 \end{equation}
 %
-defines the structural distortion $\delta Q_i$ when only linear terms with respect to $Q_i$
+which defines the structural distortion $\delta Q_i$ when only linear terms with respect to $Q_i$
 are considered. That is,
 %
 \begin{equation} \label{e:struct-dist-cho}
@@ -1426,7 +1451,9 @@ Therefore, the leading terms are quadratic in $\overline{\bf Q}$
 The new quadratic force constants can be immediately found as
 %
 \begin{equation} \label{e:force-const-cho}
+\boxed{
  k_{jk} = M_j \omega_j^2 \delta_{jk} - \sum_i g_{ijk} \frac{U_{0,i}}{M_i\omega_i^2} + U_{0,jk}
+}
 \end{equation}
 %
 This important result shows that the solute-solvent interaction
@@ -1519,7 +1546,7 @@ are given by
 where we used a short\hyp{}hand notation for the (solvatochromic) multipole moments
 (${\bf S}^{(n)}_{x;j}$) ${\bf M}^{(n)}_{x}$
 of rank $n$ distributed on $x$th site. For example, ${\bf S}^{(2)}_{x;j}$
-denotes ${\bf \lambda}_{x;j}$ whereas ${\bf M}^{(1)}_{x}$ is ${\BM \mu}_x$.
+denotes ${\BM \lambda}_{x;j}$ whereas ${\bf M}^{(1)}_{x}$ is ${\BM \mu}_x$.
 
 The series expansion given in Eq.~\eqref{e:dmtp-sol} is a very powerful tool because
 it separates the contributions of the solute and solvent molecules to the overall Coulombic
@@ -1844,9 +1871,157 @@ wanted to study the solvation\hyp{}induced mode mixing. Nevertheless, this aspec
 be investigated in more detail in the future.\footnote{The research presented here is not published yet.}
 Moreover, electrostatic model is not working properly for azide IR probes.
 
+\section{Vibrational Transition Dipole}
+
+Up to that moment, we were considering only the vibrational frequency shifts
+but it is also very useful to study the change of the vibrational
+transition dipole due to solvation because it contains the critical
+information about the changes in the IR absorption intensity.
+
+To a good approximation, vibrational transition dipole is proportional to the dipole derivative 
+with respect to the normal coordinate evaluated at the equilibrium geometry.
+Therefore, it is sufficient to consider the change in the dipole derivative
+upon solvation. In solution we have
+%
+\begin{equation} \label{e:dipole-solution}
+{\BM \mu}({\bf F}) \approx {\BM \mu}_0 + {\BM \alpha}_0 \cdot {\bf F}
+\end{equation}
+%
+and the dipole derivative is
+%
+\begin{equation} \label{e:dipole-der-solution}
+ \frac{\partial{\BM \mu}({\bf F})}{\partial\overline{Q}_j} \Bigg|_{\overline{\bf Q}_{0_A}}
+\approx 
+ \frac{\partial{\BM \mu}({\bf F})}{\partial Q_j} \Bigg|_{{\bf Q}_{0_A}}
++
+\sum_i \frac{\partial^2{\BM \mu}({\bf F})}{\partial Q_j \partial Q_i} \Bigg|_{{\bf Q}_{0_A}}
+\left( \overline{Q}_i - Q_i\right)
+\end{equation}
+%
+In the above equations, ${\BM \mu}_0$ and ${\BM \alpha}_0$ denote 
+the solute's gas\hyp{}phase dipole moment
+and polarizability, respectively.
+Thus, by using the results obtained in Eqs.~\eqref{e:struct-dist-cho} 
+and \eqref{e:struct-dist-cho-transl},
+the difference transition dipole is given by
+%
+\begin{equation} \label{e:dipole-der-diff-solution}
+\frac{\partial{\BM \mu}({\bf F})}{\partial\overline {\bf Q}_j} \Bigg|_{\overline{\bf Q}_{0_A}} -  
+ \frac{\partial{\BM \mu}({\bf F}={\bf 0})}{\partial {\bf Q}_j} \Bigg|_{{\bf Q}_{0_A}} \approx
+%
+\frac{\partial{\BM \alpha}_0}{\partial Q_j} \Bigg|_{{\bf Q}_{0_A}} \cdot {\bf F}
++
+\sum_i \frac{U_{0,i}}{M_i\omega_i^2} 
+\left\{
+\frac{\partial^2{\BM \alpha}_0}{\partial Q_j \partial Q_i} \Bigg|_{{\bf Q}_{0_A}} \cdot {\bf F}
++
+\frac{\partial^2{\BM \mu}_0}{\partial Q_j \partial Q_i} \Bigg|_{{\bf Q}_{0_A}}
+\right\}
+\end{equation}
+%
+In a limiting case when
+the interaction potential is approximated by the multipole expansion from
+Eq.~\eqref{e:dmtp}, 
+%and with constant $\nabla \phi$ 
+%(i.e., $\phi({\bf r}) = {\bf r} \cdot {\bf F} + {\rm const.}$), 
+Eq.~\eqref{e:dipole-der-diff-solution} can be recast 
+in a simple form
+%
+\begin{equation} \label{e:dipole-der-diff-solution-field}
+ \frac{\partial{\BM \mu}({\bf F})}{\partial\overline {\bf Q}_j} \Bigg|_{\overline{\bf Q}_{0_A}} -  
+ \frac{\partial{\BM \mu}({\bf F}={\bf 0})}{\partial {\bf Q}_j} \Bigg|_{{\bf Q}_{0_A}} \cong
+%
+\left[
+\frac{\partial {\BM \alpha}_0}{\partial Q_j} \Bigg|_{{\bf Q}_{0_A}} 
++ 
+\sum_i \frac{1}{M_i\omega_i^2} 
+\frac{\partial^2 {\BM \mu}_0}{\partial Q_j \partial Q_i} \Bigg|_{{\bf Q}_{0_A}}
+\otimes
+\frac{\partial {\BM \mu}_0}{\partial Q_i} \Bigg|_{{\bf Q}_{0_A}}
+\right] 
+\cdot {\bf F}
+\end{equation}
+%
+in which we neglected the contributions of the polarizability second derivatives.
+
+Note that the above discussion refers to the case
+in which electric field is uniform in space. 
+In the case when the electric field has a notable
+gradients around the vibrational chromophore
+the dipole\hyp{}dipole polarizability approximation from Eq.~\eqref{e:dipole-solution} 
+is not sufficient. 
+
+There are several ways to tackle the problem of non\hyp{}uniform
+electric field.
+One of them is to
+add the quadrupole polarizabilities to Eq.~\eqref{e:dipole-solution} 
+and obtain, for example, the contributions
+of the kind $\frac{1}{3} \frac{\partial{\bf A}_0}{\partial Q_j} \big|_{{\bf Q}_{0_A}} \cdot {\BM \nabla}{\bf F}$ 
+where ${\bf A}_0$ is the quadrupole-dipole polarizability. Another way is to use
+charge\hyp{}response kernel approach in which
+the first term in Eq.~\eqref{e:dipole-der-diff-solution} should be generalized 
+to the following form\citep{Cho.JCP.2009}
+%
+\begin{equation} \label{e:trans-dip-cho-pot-ind-effect}
+\left( \frac{\partial{\BM \alpha}_0}{\partial Q_j} \Bigg|_{{\bf Q}_{0_A}} \cdot {\bf F} \right)
+\;\longrightarrow\;
+2\int_V {\rm d}\;{\bf r} \int_V    {\rm d}\;{\bf r}' \; 
+\left\{
+\frac{\partial \kappa({\bf r},{\bf r}')}{\partial Q_j} \Bigg|_{{\bf Q}_{0_A}} {\bf r} \phi({\bf r}')
+\right\}
+%
+\end{equation}
+%
+where $\kappa({\bf r},{\bf r}')$ denotes the charge response kernel
+of solute. Analogously,
+%
+\begin{equation} \label{e:trans-dip-cho-pot-ind-effect-quadratic}
+\left( \frac{\partial^2{\BM \alpha}_0}{\partial Q_j \partial Q_i} \Bigg|_{{\bf Q}_{0_A}} \cdot {\bf F} \right)
+\;\longrightarrow\;
+2\int_V {\rm d}\;{\bf r} \int_V    {\rm d}\;{\bf r}' \; 
+\left\{
+\frac{\partial^2 \kappa({\bf r},{\bf r}')}{\partial Q_j \partial Q_i} \Bigg|_{{\bf Q}_{0_A}} {\bf r} \phi({\bf r}')
+\right\}
+%
+\end{equation}
+%
+Perhaps the most practical way is to employ the distributed
+polarizabilities, i.e., do the replacement ${\BM \alpha}_0\rightarrow\sum_a{\BM \alpha}_{0,a}$
+where the $a$th polarizable site is located at ${\bf r}_a$. 
+In this scenario, the difference transition dipole 
+is simply expressed as
+%
+\begin{multline}[box=\widebox] \label{e:dipole-der-diff-solution-distributed}
+\frac{\partial{\BM \mu}({\bf F})}{\partial\overline {\bf Q}_j} \Bigg|_{\overline{\bf Q}_{0_A}} -  
+ \frac{\partial{\BM \mu}({\bf F}={\bf 0})}{\partial {\bf Q}_j} \Bigg|_{{\bf Q}_{0_A}} \approx
+%
+\sum_a \left\{
+\frac{\partial{\BM \alpha}_{a,0}}{\partial Q_j} \Bigg|_{{\bf Q}_{0_A}} 
++
+\sum_i \frac{U_{0,i}}{M_i\omega_i^2} 
+%
+\frac{\partial^2{\BM \alpha}_{a,0}}{\partial Q_j \partial Q_i} \Bigg|_{{\bf Q}_{0_A}} 
+\right\} \cdot {\bf F}({\bf r}_a) \\
++
+\sum_i \frac{U_{0,i}}{M_i\omega_i^2}
+\frac{\partial^2{\BM \mu}_0}{\partial Q_j \partial Q_i} \Bigg|_{{\bf Q}_{0_A}}
+%
+\qquad\qquad\qquad\qquad\qquad\qquad
+\end{multline}
+%
+In the above expression, electric field is determined at
+various polarizable sites which we denote here as ${\bf F}({\bf r}_a)$.
+
+The theory presented in this Section is absolutely general 
+for any kind of the solute\hyp{}solvent
+interaction potential. Later on, we shall discuss the origins of the
+vibrational frequency shifts and transition dipole differences
+upon solvation.
+
+
 \section{Summary}
 
-In this chapter, we have discussed the first\hyp{}principles
+In this Chapter, we have discussed the first\hyp{}principles
 vibrational solvatochromism theories of Buckingham and Cho which,
 although originate from different starting points, lead to the same results.
 Thus, the vibrational solvatochromic frequency shift of a spatially localized 
@@ -1862,7 +2037,7 @@ when the exact solute\hyp{}solvent interaction potential
 is employed. However, since the local mode approximation cannot describe the normal modes
 which are delocalized over many atoms, the approach of considering
 the Hessian matrix proposed by Cho in Eq.~\eqref{e:force-const-cho} is necessary. 
-In this case, particular caution should be made because the structural
+In that case, particular caution should be made because the structural
 distortion estimation is not well researched up to that moment. If the
 first-order approximation from Eq.~\eqref{e:struct-dist-cho} failed in some cases, the results 
 derived in Sec.~\ref{s:str-dist-general-discussion} might become useful.
@@ -1891,13 +2066,193 @@ exchange\hyp{}repulsion, induction, dispersion and charge\hyp{}transfer.
 
 \section{Coulombic Effects}
 
+In the first\hyp{}order of perturbation
+theory, the intermolecular interaction potential
+can be understood as a Coulombic interaction
+of unperturbed solute and solvent molecules (i.e., 
+as if they were isolated).\citep{Jeziorski.Moszynski.Szalewicz.ChemRev.1994,Stone.TheTheoryOfIntermolecularForces.1996}
+In the long\hyp{}distance limit where the wavefunction overlap vanishes, the
+exchange and charge\hyp{}penetration effects 
+between solute and solvent molecules can be ignored.
+Then it becomes legitimate to model the electrostatic interaction
+energy by considering the distributed multipole expansion of electron
+charge density distributions\citep{Stone.TheTheoryOfIntermolecularForces.1996}
+which is given in Eq.~\eqref{e:dmtp}. Analogously,
+the electrostatic potential and its gradients
+can be also multipole\hyp{}expanded as follows
+%
+\begin{equation} \label{e:potential-gradients}
+\underbrace{\nabla \otimes \cdots \otimes \nabla}_{r} \phi({\bf r}_x) = 
+\sum_y \left[ 
+{\bf T}^{(r)} q_y - {\bf T}^{(r+1)} \cdot {\BM \mu}_y + 
+ \frac{1}{3} {\bf T}^{(r+2)} : {\BM \Theta}_y - 
+\frac{1}{15} {\bf T}^{(r+3)} : {\BM \Omega}_y + \ldots
+\right]
+\end{equation}
+%
+where 
+$\nabla \equiv \sum_{\zeta}^{x,y,z} \hat{\bf i}_\zeta \frac{\partial}{\partial \zeta_x}$, 
+$y$ runs over all solvent electrostatic distributed sites
+and ${\bf T}^{(r)}$ are the so called interaction tensors of rank $r$ which are defined as follows
+%
+\begin{subequations}
+\label{e:interaction-tensors}
+\begin{align}
+  T^{(0)} &= \frac{1}{\rvert {\bf r}_{xy} \lvert}  \label{e:interaction-tensors-1} \\
+  T^{(1)}_\alpha &=-\frac{{\bf r}_{xy;\alpha}}{\rvert {\bf r}_{xy} \lvert^3}  \label{e:interaction-tensors-2} \\
+  T^{(2)}_{\alpha\beta} &=3\frac{{\bf r}_{xy;\alpha} {\bf r}_{xy;\beta} }{\rvert {\bf r}_{xy} \lvert^5}  
+      - \frac{\delta_{\alpha\beta}}{\rvert {\bf r}_{xy} \lvert^3}             \label{e:interaction-tensors-3} \\
+  T^{(3)}_{\alpha\beta\gamma} &= -15 
+         \frac{{\bf r}_{xy;\alpha} {\bf r}_{xy;\beta} {\bf r}_{xy;\gamma} }{\rvert {\bf r}_{xy} \lvert^7}
+                  +3 \frac{{\bf r}_{xy;\alpha} \delta_{\beta\gamma}+
+                           {\bf r}_{xy;\beta}  \delta_{\alpha\gamma}+
+                           {\bf r}_{xy;\gamma} \delta_{\alpha\beta}}{\rvert {\bf r}_{xy} \lvert^5} \label{e:interaction-tensors-4}
+\end{align}
+\end{subequations}
+%
+with ${\bf r}_{xy} \equiv {\bf r}_x - {\bf r}_y$.
+
+The solvatochromic multipole series expansion given in Eq.~\eqref{e:dmtp-sol}
+is approximate because it neglects the change of the electrostatic
+potential when the vibration occurs. Here we re\hyp{}derive the 
+expression for the frequency shift with explicit inclusion of derivatives
+of $\phi$. The first and second derivatives of the Coulombic
+electrostatic energy can be expressed as follows\citep{Blasiak.Cho.JCP.2014}:
+%
+\begin{multline} \label{x:726439}
+ \fderiv{U^{\rm Coul}}{Q_i} =
+%
+\sum_x 
+\Bigg[ 
+  \fderiv{q_x}{Q_i} \phi({\bf r}_x) + 
+  \fderiv{{\BM \mu}_x}{Q_i} \cdot \nabla \phi({\bf r}_x) + \frac{1}{3}  
+  \fderiv{{\BM \Theta}_x}{Q_i} : \nabla\nabla \phi({\bf r}_x) \\ + \frac{1}{15}   
+  \fderiv{{\BM \Omega}_x}{Q_i} \vdots \nabla\nabla\nabla \phi({\bf r}_x) + \ldots 
+\Bigg] 
+%
++
+%
+\sum_x 
+\Bigg[ 
+  q_x \fderiv{\phi({\bf r}_x)}{Q_i} + 
+  {\BM \mu}_x \cdot \fderiv{\nabla \phi({\bf r}_x)}{Q_i} \\ + \frac{1}{3} 
+  {\BM \Theta}_x : \fderiv{\nabla\nabla \phi({\bf r}_x)}{Q_i} + \frac{1}{15}
+  {\BM \Omega}_x \vdots \fderiv{\nabla\nabla\nabla \phi({\bf r}_x)}{Q_i} + \ldots 
+\Bigg]
+\end{multline}
+%
+and
+%
+\begin{multline} \label{x:726440}
+ \sderiv{U^{\rm Coul}}{Q_i} =
+%
+\sum_x 
+\Bigg[ 
+  \sderiv{q_x}{Q_i} \phi({\bf r}_x) + 
+  \sderiv{{\BM \mu}_x}{Q_i} \cdot \nabla \phi({\bf r}_x) + \frac{1}{3}  
+  \sderiv{{\BM \Theta}_x}{Q_i} : \nabla\nabla \phi({\bf r}_x) \\ + \frac{1}{15}   
+  \sderiv{{\BM \Omega}_x}{Q_i} \vdots \nabla\nabla\nabla \phi({\bf r}_x) + \ldots 
+\Bigg] 
+%
++
+%
+\sum_x 
+\Bigg[ 
+  q_x \sderiv{\phi({\bf r}_x)}{Q_i} + 
+  {\BM \mu}_x \cdot \sderiv{\nabla \phi({\bf r}_x)}{Q_i} \\ + \frac{1}{3} 
+  {\BM \Theta}_x : \sderiv{\nabla\nabla \phi({\bf r}_x)}{Q_i} + \frac{1}{15}
+  {\BM \Omega}_x \vdots \sderiv{\nabla\nabla\nabla \phi({\bf r}_x)}{Q_i} + \ldots 
+\Bigg]
+\end{multline}
+%
+where, for the sake of notational simplicity, 
+it is assumed that the derivatives are to be evaluated at
+solute's gas phase equilibrium geometry.
+
+In the previous studies only the first summation terms in 
+Eqs.~\eqref{x:726439} and \eqref{x:726440} were taken into account because 
+they were assumed to be the dominant contributions. To evaluate the
+magnitudes of all the other remaining terms, one has to calculate
+the derivatives of electrostatic potential (and its spatial gradients)
+with respect to the normal coordinate. Rewriting the differential 
+operators and using the chain rule, we can simplify the
+derivative operators in the following way
+%
+\begin{subequations}  \label{e:deriv-operators}
+\begin{align}
+\fderiv{}{Q_i} &= \sum_m \fderiv{r_m}{Q_i}\fderiv{}{r_m} 
+     \approx \sum_{m\in x} \fderiv{r_m}{Q_i}\fderiv{}{r_m} 
+     = {\bf L}_x^{(i)} \cdot {\BM \nabla}_x      \label{e:deriv-operators-1} \\
+\sderiv{}{Q_i} &= \sum_{mn} \fderiv{r_m}{Q_i}\fderiv{r_n}{Q_i}\sderivd{}{r_m}{r_n} 
+     \approx \sum_{m\in x}\sum_{n\in x} \fderiv{r_m}{Q_i}\fderiv{r_n}{Q_i}\sderivd{}{r_m}{r_n} 
+     = {\bf L}_x^{(i)} \otimes {\bf L}_x^{(i)} : {\BM \nabla}_x{\BM \nabla}_x  \label{e:deriv-operators-2}
+\end{align}
+\end{subequations}
+%
+where $n$ and $m$ represent the Cartesian coordinatesof solute
+atomic centers and ${\bf L}_x^{(i)}$ denotes the mass\hyp{}weighted
+eigenvector referring to the motion of atom $x$ along $Q_i$
+(see Appendix~\ref{asec:vibranal} for more details how to obtain these vectors).
+In the above derivations we assumed that the change of the electrostatic
+potential due to the displacement alont the normal coordinate is, 
+to a good approximation, local, that is to say, only the change of the
+atomic position ${\bf r}_x$ is important for which electrostatic potential 
+is evaluated. This is equivalent to neglecting the intramolecular induction
+effects.
+
+Inserting Eqs.~\eqref{e:deriv-operators-1} and ~\eqref{e:deriv-operators-2}
+into Eqs.~\eqref{x:726439} and ~\eqref{x:726440} and properly 
+grouping terms with the same characters, we obtain
+the first and second derivatives of the intermolecular interaction
+potential, which are associated with each multipole moment, i.e.,
+%
+\begin{subequations}  \label{e:f-terms}
+\begin{align}
+ U_i^{(q)}          &= \sum_x 
+  \left[ \fderiv{q_x}{Q_i} \phi({\bf r}_x) 
+ + q_x {\bf L}_x^{(1)} \cdot \nabla \phi({\bf r}_x) \right]       
+                                                                \label{e:f-terms-1} \\
+ U_i^{(\BM\mu)}     &= \sum_x  
+  \left[ \fderiv{{\BM \mu}_x}{Q_i} \cdot \nabla\phi({\bf r}_x) 
+ + {\BM \mu}_x \otimes {\bf L}_x^{(1)} : \nabla\nabla \phi({\bf r}_x) \right]     
+                                                                \label{e:f-terms-2} \\
+ U_i^{(\BM\Theta)}  &= \sum_x  
+  \left[ \fderiv{{\BM \Theta}_x}{Q_i} : \nabla\nabla\phi({\bf r}_x) 
+ + {\BM \Theta}_x \otimes {\bf L}_x^{(1)} : \nabla\nabla\nabla \phi({\bf r}_x) \right]      
+                                                                \label{e:f-terms-3} \\
+ U_i^{(\BM\Omega)}  &= \sum_x      
+  \fderiv{{\BM \Omega}_x}{Q_i} \vdots \nabla\nabla\nabla\phi({\bf r}_x)  
+                                                                \label{e:f-terms-4} 
+\end{align}
+\end{subequations}
+%
+and
+%
+\begin{subequations}  \label{e:k-terms}
+\begin{align}
+ U_{jj}^{(q)}          &= \sum_x        \label{e:k-terms-1} \\
+ U_{jj}^{(\BM\mu)}     &= \sum_x        \label{e:k-terms-2} \\
+ U_{jj}^{(\BM\Theta)}  &= \sum_x        \label{e:k-terms-3} \\
+ U_{jj}^{(\BM\Omega)}  &= \sum_x        \label{e:k-terms-4} \\
+\end{align}
+\end{subequations}
+%
+
+
+
 \printbibliography[heading=subbibintoc,title={References}]
 \end{refsection}
 
 
 
 
-%\appendix 
+
+
+
+
+
+% ==================== APPENDICES ================================
+
 \begin{appendices}
 \addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
 
