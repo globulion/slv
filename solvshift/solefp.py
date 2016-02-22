@@ -287,6 +287,32 @@ class EFP(object, libbbg.units.UNITS):
         """Return the solvatochromic induced dipoles at all distributed polarizability sites as a tuple (Dip,r)"""
         return self.__avec
 
+    def get_xyz_string(self):
+        """Returns the fragment of XYZ file containing all EFP fragments within Coulomb cutoff. Implemented only for central mode!"""
+        if not self.__eval_freq: 
+           raise NotImplementedError, "Implemented only for central (frequency shift) mode!"
+        else:
+           log = ""
+   
+           frg = self.__bsm[0].copy()
+           rms = frg.sup( self._reorder_xyz( self.__rc, self.__reordlist_c),
+                                                          self.__suplist_c, )
+           parc = frg.get() 
+           pars = [parc,]
+
+           N = len(self.__ntc)
+           for i in xrange(N):
+               im = self.__mtc[i]
+               nm_prev = sum(self.__ntc[:i])
+               nm_curr = sum(self.__ntc[:i+1])
+               STR = self._reorder_xyz( self.__rcoordc[nm_prev:nm_curr]    , self.__reordlist[im] )  # reorder to BSM-FRG atom order
+               frg = self.__bsm[im].copy()
+               rms = frg.sup( STR , suplist= self.__suplist[im] )
+               pars.append(frg.get())
+           for par in pars:
+               log += self._xyz(par['pos'], par['atno'], units='Angs')
+           return log
+
     def get_forces(self, tot=False):
         """
 Return solvation forces associated with solute's normal coordinates. 
@@ -793,6 +819,16 @@ Now, only for exchange-repulsion layer"""
     def _eval_mode_global(self, lwrite, num, step, theory):
         merror = ' Global mode is not implemented yet!'
         raise NotImplementedError, merror
+
+        # compute exchange-repulsion energy
+        for parA in PAR:
+            for parB in PAR:
+                e_exrep += self._pair_rep(parA,parB)
+
+        if self.__cunit:
+           e_exrep *= self.HartreeToKcalPerMole
+
+        self.__energy_exrep = e_exrep
         return
    
     def _eval_mode_central(self, lwrite, num, step, theory, remove_clashes, rcl_algorithm, dxyz=None):
@@ -1330,6 +1366,17 @@ Now, only for exchange-repulsion layer"""
                                 ria, rib, rna, rnb, ria1, cika, cikb, cika1,
                                 skm, tkm, sk1m, tk1m, za, zb, nbsb, mlist,
                                 faij, fbij, faij1, self.__mode, sij, tij, smij, tmij, fi)
+                  #eint = solvshift.exrep.exrep(ria.reshape(nmosa,3),
+                  #                             rib.reshape(nmosb,3),
+                  #                             rna.reshape(len(rna)/3,3),
+                  #                             rnb.reshape(len(rnb)/3,3),
+                  #                             faij.reshape(nmosa,nmosa),
+                  #                             fbij.reshape(nmosb,nmosb),
+                  #                             cika.reshape(nmosa,nbsa),
+                  #                             cikb.reshape(nmosb,nbsb),
+                  #                             skm.reshape(nbsa,nbsb),
+                  #                             tkm.reshape(nbsa,nbsb),za,zb)
+                  #self.eexrep = eint * self.HartreeToKcalPerMole
                   serp+= sma
                   self.__fi_rep += fi
                   #
