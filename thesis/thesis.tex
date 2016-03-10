@@ -65,6 +65,10 @@
 
 % tables
 \usepackage{dcolumn}
+\usepackage{multirow}
+\usepackage{hhline} 
+%\setlength{\tabcolsep}{0.5em} % for the horizontal padding
+%{\renewcommand{\arraystretch}{2.2}% for the vertical padding
 
 % mathematics
 \usepackage{amsmath}
@@ -1481,7 +1485,7 @@ following distributed multipole series
 expansion\citep{Stone.TheTheoryOfIntermolecularForces.1996}
 %
 \begin{equation} \label{e:dmtp}
- U \approx  \sum_x \left[ q_x \phi({\bf r}_x) + 
+ U^{\rm Coul} \approx  \sum_x \left[ q_x \phi({\bf r}_x) + 
                   {\BM \mu}_x \cdot {\BM \nabla} \phi({\bf r}_x)   + 
       \frac{1}{3} {\BM \Theta}_x : {\BM \nabla} \otimes {\BM \nabla} \phi({\bf r}_x)   + 
      \frac{1}{15} {\BM \Omega}_x \vdots {\BM \nabla} \otimes {\BM \nabla} \otimes {\BM \nabla} \phi({\bf r}_x) \right] + \ldots
@@ -1492,7 +1496,7 @@ one finds that the frequency shift can also be expanded
 in a similar way\citep{Cho.JCP.2009}:
 %
 \begin{equation} \label{e:dmtp-sol}
- \Delta\omega_j \approx  \sum_x \left[ l_{x;j} \phi({\bf r}_x) + 
+ \Delta\omega_j^{\rm Coul} \approx  \sum_x \left[ l_{x;j} \phi({\bf r}_x) + 
                         {\bf L}_{x;j} \cdot {\BM \nabla} \phi({\bf r}_x)   + 
       \frac{1}{3} {\BM \lambda}_{x;j} : {\bf \nabla} \otimes {\BM \nabla} \phi({\bf r}_x)   + 
      \frac{1}{15} {\BM \Lambda}_{x;j} \vdots {\BM \nabla} \otimes {\BM \nabla} \otimes {\BM \nabla} \phi({\bf r}_x) \right] + \ldots
@@ -1505,7 +1509,8 @@ denote the traceless charge, dipole, quadrupole and octupole moment
 of $x$th solute's site located at ${\bf r}_x$, whereas 
 $l_{x;j}$, ${\bf L}_{x;j}$, ${\BM \lambda}_{x;j}$ and ${\BM \Lambda}_{x;j}$ 
 denote the associated distributed traceless
-\emph{solvatochromic multopole moments}, respectively.
+\emph{solvatochromic multopole moments}, respectively.\footnote{Since we deal with 
+electrostatic approximation, those multipole moments are actually \emph{electrochromic}.}
 
 In this work, we use the Buckingham's convention of defining the traceless cartesian
 quadrupole and octupole moments:\citep{Buckingham.QRevChemSoc.1959} 
@@ -2192,7 +2197,7 @@ derivative operators in the following way
 where $n$ and $m$ represent the Cartesian coordinatesof solute
 atomic centers and ${\bf L}_x^{(i)}$ denotes the mass\hyp{}weighted
 eigenvector referring to the motion of atom $x$ along $Q_i$
-(see Appendix~\ref{asec:vibranal} for more details how to obtain these vectors).
+(see Appendix~\ref{asec:vibranal} for more details on how to obtain these vectors).
 In the above derivations we assumed that the change of the electrostatic
 potential due to the displacement alont the normal coordinate is, 
 to a good approximation, local, that is to say, only the change of the
@@ -2203,22 +2208,22 @@ effects.
 Inserting Eqs.~\eqref{e:deriv-operators-1} and ~\eqref{e:deriv-operators-2}
 into Eqs.~\eqref{x:726439} and ~\eqref{x:726440} and properly 
 grouping terms with the same characters, we obtain
-the first and second derivatives of the intermolecular interaction
+the first and the second derivatives of the intermolecular interaction
 potential, which are associated with each multipole moment, i.e.,
 %
 \begin{subequations}  \label{e:f-terms}
 \begin{align}
  U_i^{(q)}          &= \sum_x 
   \left[ \fderiv{q_x}{Q_i} \phi({\bf r}_x) 
- + q_x {\bf L}_x^{(1)} \cdot \nabla \phi({\bf r}_x) \right]       
+ + q_x {\bf L}_x^{(i)} \cdot \nabla \phi({\bf r}_x) \right]       
                                                                 \label{e:f-terms-1} \\
  U_i^{(\BM\mu)}     &= \sum_x  
   \left[ \fderiv{{\BM \mu}_x}{Q_i} \cdot \nabla\phi({\bf r}_x) 
- + {\BM \mu}_x \otimes {\bf L}_x^{(1)} : \nabla\nabla \phi({\bf r}_x) \right]     
+ + {\BM \mu}_x \otimes {\bf L}_x^{(i)} : \nabla\nabla \phi({\bf r}_x) \right]     
                                                                 \label{e:f-terms-2} \\
  U_i^{(\BM\Theta)}  &= \sum_x  
   \left[ \fderiv{{\BM \Theta}_x}{Q_i} : \nabla\nabla\phi({\bf r}_x) 
- + {\BM \Theta}_x \otimes {\bf L}_x^{(1)} : \nabla\nabla\nabla \phi({\bf r}_x) \right]      
+ + {\BM \Theta}_x \otimes {\bf L}_x^{(i)} : \nabla\nabla\nabla \phi({\bf r}_x) \right]      
                                                                 \label{e:f-terms-3} \\
  U_i^{(\BM\Omega)}  &= \sum_x      
   \fderiv{{\BM \Omega}_x}{Q_i} \vdots \nabla\nabla\nabla\phi({\bf r}_x)  
@@ -2230,16 +2235,174 @@ and
 %
 \begin{subequations}  \label{e:k-terms}
 \begin{align}
- U_{jj}^{(q)}          &= \sum_x        \label{e:k-terms-1} \\
- U_{jj}^{(\BM\mu)}     &= \sum_x        \label{e:k-terms-2} \\
- U_{jj}^{(\BM\Theta)}  &= \sum_x        \label{e:k-terms-3} \\
- U_{jj}^{(\BM\Omega)}  &= \sum_x        \label{e:k-terms-4} \\
+ U_{jj}^{(q)}          &= \sum_x   
+    \left[ \sderiv{q_x}{Q_j} \phi({\bf r}_x) 
+    + 2 \fderiv{q_x}{Q_j} {\bf L}_x^{(j)} \cdot \nabla \phi({\bf r}_x) 
+    + q_x \nabla\nabla \phi({\bf r}_x) : {\bf L}_x^{(j)} \otimes {\bf L}_x^{(j)} \right]     \label{e:k-terms-1} \\
+%
+ U_{jj}^{(\BM\mu)}     &= \sum_x  
+    \left[ \sderiv{{\BM \mu}_x}{Q_j} \phi({\bf r}_x) 
+    + 2 \fderiv{{\BM \mu}_x}{Q_j} \otimes {\bf L}_x^{(j)} : \nabla\nabla \phi({\bf r}_x) 
+    + {\BM \mu}_x \cdot \nabla\nabla\nabla \phi({\bf r}_x) \vdots {\bf L}_x^{(j)} \otimes {\bf L}_x^{(j)} \right]      
+    \label{e:k-terms-2} \\
+%
+ U_{jj}^{(\BM\Theta)}  &= \frac{1}{15} \sum_x  
+    \left[ \sderiv{{\BM \Theta}_x}{Q_j} \phi({\bf r}_x) 
+    + 2 \fderiv{{\BM \Theta}_x}{Q_j} \otimes {\bf L}_x^{(j)} \vdots \nabla\nabla\nabla \phi({\bf r}_x)  \right]      
+    \label{e:k-terms-3} \\
+%
+ U_{jj}^{(\BM\Omega)}  &= \frac{1}{3} \sum_x \sderiv{{\BM \Omega}_x}{Q_j} \phi({\bf r}_x)       \label{e:k-terms-4} \\
 \end{align}
 \end{subequations}
 %
+For clarity, only tensors whose rank is less than four are keept in the above summations.
+The formulae in Eqs.~\eqref{e:f-terms} and \eqref{e:k-terms} look rather formidable,
+especially due to the fact that the potentials and their 
+gradients\footnote{in the current implementation up to third rank}
+have to be computed from Eq.~\eqref{e:potential-gradients}
+which is also a multipole expansion. Therefore,
+the electrostatic\hyp{}potential\hyp{}corrected frequency shift
+becomes
+%
+\begin{equation} \label{e:dw-solefp-coul}
+\Delta \omega_j^{\rm Coul} = \Delta \omega_j^{\rm SolDMA} + \Delta\omega_j({\partial\phi}) 
+\end{equation}
+%
+where $\Delta \omega_j^{\rm SolDMA}$ is equal to the distributed multipole analysis (DMA)
+expansion approximating the Coulombic frequency shift given in Eq.~\eqref{e:dmtp-sol} whereas
+%
+\begin{equation} \label{e:dw-solefp-coul-correction}
+\Delta\omega_j({\partial\phi})  = -\frac{1}{2M_j\omega_j}
+\sum_{x \in A}\sum_{y \in B}
+\Big[
+\sum_i  \frac{g_{ijj}}{M_i\omega_i^2} \sum_{r^{-n} \textrm{ terms} } U_i^{xy} - \sum_{r^{-n} \textrm{ terms} } U_{jj}^{xy}
+\Big]
+\end{equation}
+%
+The resulting terms $U_i^{xy}$ and $U_{jj}^{xy}$ in Eq.~\eqref{e:dw-solefp-coul-correction}
+have various asymptotic distance dependences (denoted above as $r^{-n}$
+where $r$ is the distance between the distributed multipole centers).
+The explicit formulae
+that can be directly implemented into a computer code
+are listed in Appendix~\ref{a:fk-terms} according to $n$. 
+Note that only terms with $n\ge 2$ contribute (i.e., charge-dipole
+like terms) because of the differentiation operator.
 
+Before we move to analyze the non\hyp{}Coulombic frequency shifts, two cautionary remarks
+on the Coulomb frequency shift correction from Eq.~\eqref{e:dw-solefp-coul-correction} should be made.
+First, note that, while $\Delta \omega_j^{\rm SolDMA}$ can be computed from the
+solvatochromic multipoles that can be stored in a generalized object
+describing a molecule, $\Delta\omega_j({\partial\phi})$ requires 
+additionally other quantities that cannot be incorporated
+into the definition of the solvatochromic multipole due to the directional
+terms coupling solute and solvent distances. Therefore,
+the evaluation of the frequency shift including electrostatic potential
+correction complicates the implementation (additionally, multipole moments
+and their first derivatives with respect to all the normal coordinates need 
+to be stored as well). However, it is mostly the case
+that $\Delta\omega_j({\partial\phi})$ is much smaller than $\Delta \omega_j^{\rm SolDMA}$
+so under certain circumstances the former contribution could be
+neglected.
 
+Second, because the multipole series expansion of the interaction energy
+is in principle divergent, the derivative of such series
+with respect to normal coordinate is divergent as well. Moreover, 
+there is no theorem stating that such a series will have the same radius of convergence
+than the conventional interaction energy expansion. In fact,
+we have found, by comparing the $r^{-n}$ terms contributions to the frequency
+shifts, that in some cases the series diverges already for 
+$r^{-3}$ contributions. Therefore, for practical reasons, only
+the first correction terms that have $r^{-2}$ asymptotic dependence
+are recommended be taken into account. In this approximation,
+the Coulombic frequency shift has the following form
+%
+\begin{equation} \label{e:dw-solefp-coul-working}
+\Delta\omega_j^{\rm Coul} \cong \Delta\omega_j^{\rm SolDMA} + \frac{1}{2M_j\omega_j}
+\sum_i \frac{g_{ijj}}{M_i\omega_i^2} \sum_{x \in A}\sum_{y \in B}
+\left\{ q_x - 2\delta_{ij} \fderiv{q_y}{Q_i} \right\} \frac{q_y}{r_{xy}^3} {\bf L}_x^{(i)} \cdot {\bf r}_{xy} 
+\end{equation}
+%
+For the more detailed analysis of the convergence properties
+of $\Delta\omega_j({\partial\phi})$ for some examplary model 
+systems the Reader is reffered to
+the Appendix~\ref{a:convergence-of-the-correction-terms}
 
+\section{SolX models}
+
+We would like to introduce the naming convention 
+of the various solvatochromic models
+that we shall be using consecutively throughout this Thesis. As it was
+shown in the previous Chapter, the vibrational frequency shift is a function
+of the solute\hyp{}solvent interaction potential derivatives
+with respect to solute's normal modes. Therefore, for $U$ approximated
+with method 'X' we shall refer to
+a resulting solvatochromic method as to 'SolX' method, theory or model. 
+Thus, we can have
+SolDMA or SolCAMM models when DMA of Stone\citep{Stone.JCTC.2005} or cumulative atomic multipole
+moments (CAMM) of Sokalski and Poirier\citep{Sokalski.Poirier.CPL.1983} are used. 
+If one wanted to use the distributed multipoles centered at the localized molecular orbitals
+one could define the SolLMTP method for instance, that can be derived 
+from the LMTP expansion by Etchebest \emph{et al}.\citep{Etchebest.Lavery.Pullman.TheorChimActa.1982}
+The SolLMTP model has the unique feature that all the solvatochromic 
+distributed charges vanish and the first non\hyp{}zero tensor elements
+are the distributed solvatochromic dipoles.
+
+When the distributed multipoles are contracted (or summed)
+to a single center we obtain the SolMMM model with MMM denoting 
+the molecular multipole moment. This model is useful when
+modeling Stark tuning rates, which are approximately equal to
+the solvatochromic SolMMM dipole.
+
+The contraction of SolDMA/CAMM models can also be partial
+leading to contracted models denoted here as SolCAMM-$n$ (or SolDMA-$n$), where
+$n$ denotes the number of distributed sites. In particular,
+this feature can be used to construct the united atom models,
+for example describing methyl groups. In Figure~\ref{f:contr}
+we show the procedure of such a construction.
+%
+\begin{figure}[ht]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.9\linewidth]{contr.eps}
+}
+\caption{Construction of contracted SolCAMM-$n$ models. Here, as an example, we present
+the construction of versions of SolCAMM-$12$ (or SolDMA-$12$) model for NMA. 
+The example is shown for one of methyl groups which we approximate by a united atom 
+placed on the corresponding carbon atom. The origins are depicted by arrows
+whereas the multipole centers as blue spheres. 1) all the distributed multipoles 
+are placed on each atom. Since they have different origins the cannot be summed up 
+to obtain united atom. 2) Thus, it is necessary to shift their origins to one, 
+arbitrary point P. From now on, all the multipoles have the same origin at P 
+and they are additive. 3) All the multipoles for methyl group (four sets 
+of multipoles for each atom) are summed over. The resulting united atom 
+multipole moment has its origin at point P. 4) The center of these multipoles 
+is moved to the carbon atom position.
+\label{f:contr}}
+\end{figure}
+%
+This procedure can lead to the increase in the performance
+of the method because the number of distributed centers
+is decreased. If the contraction involves atoms that 
+are not affected by the vibrational mode of interest (e.g. 
+hydrogen atoms in the methyl group when one is interested
+in amide I mode) the contracted models give basically 
+the same results as uncontracted models which is shown
+in Fig.~\ref{f:contr-uncontr-comparison}.
+%
+\begin{figure}[ht]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.1\linewidth]{contr.eps}
+}
+\caption{Performance of SolCAMM-12 (fully distributed) and SolCAMM-6 (two 
+united atoms) for the training set of NMA-H$_2$O$_n=1-30$ clusters.
+\label{f:contr-uncontr-comparison}}
+\end{figure}
+%
 \printbibliography[heading=subbibintoc,title={References}]
 \end{refsection}
 
@@ -2659,7 +2822,171 @@ or in cartesian not-weighted coordinates
 \end{equation}
 where we introduced the matrix ${\bf l}={\bf M}^{-1} \tilde{\bf L}$.
 
+%--------------------------------------------------------------------------------------------------
+\chapter{Correction terms for the evaluation of $\Delta \omega^{\rm Coul}$\label{a:fk-terms}}
 
+Here we list the explicit formulae for the evaluation of the first and second derivatives
+of the solute\hyp{}solvent interaction potential that emerge due to the electrostatic potential
+variation along the solute's normal coordinate. Subsequenty, the series 
+convergence properties are tested for model NMA-H$_2$O dimers. 
+Refer to Eq.~\eqref{e:dw-solefp-coul-correction}
+for the context.
+
+\section{Asymptotic analysis of the correction terms}
+
+After inserting the series expansions from Eq.~\eqref{e:potential-gradients} 
+and Eq.~\eqref{e:interaction-tensors} into Eqs.~\eqref{e:f-terms} and \eqref{e:k-terms}
+one can easily see that each term containing interaction tensors of various ranks
+will have different asymptotic behaviours which can be put in 
+the following rule:
+%
+\begin{quote}
+The term containing interaction tensor of rank $n$ 
+has $r^{-(n+1)}$ asymptotic dependence.
+\end{quote}
+%
+Following this rule,
+it is easy to see that considering the dependence up to $r^{-4}$ among the new terms
+there are two $r^{-2}$ terms, five $r^{-3}$ terms and eight
+$r^{-4}$ terms, so fifteen terms in total. Comparing with 
+solvatochromic multipole terms when one has two $r^{-1}$,
+four $r^{-2}$, six $r^{-3}$ and eight $r^{-4}$ terms (20 in total)
+the amount of the new terms is quite big though there are no $r^{-1}$ 
+terms present. In Table~\ref{t:cterms} all the terms for $n=2,3,4$
+are listed.
+
+\begin{table}[ht]
+%\resizebox{1.4\textwidth}{!}{\begin{minipage}{\textwidth}
+\caption{List of the additional terms originating from the
+electrostatic interaction that were not included in $\Delta\omega^{\rm SolDMA}$.
+Here, the subscripts or superscripts $x$ and $y$ refer to the distributed multipole
+sites of the solute and solvent molecules, respectively. To simplify notation,
+we used the definitions: $G^{(i)}_{xy} \equiv {\bf L}_x^{(i)} \cdot {\bf r}_{xy}$,
+$G_{x;xy} \equiv {\BM \mu}_x \cdot {\bf L}_x^{(i)}$, $G_{y;xy} \equiv {\BM \mu}_y \cdot {\bf L}_x^{(i)}$
+and $G_{x;xy}' \equiv \fderiv{{\BM \mu}_x}{Q_i} \cdot {\bf L}_x^{(i)}$.
+It is assumed that the derivatives are computed at the solute's gas-phase geometry.
+\label{t:cterms}}
+%\begin{footnotesize}
+\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } l ll ll}
+\hline\hline
+$r^{-n}$        && $U_i^{(x,y)}$   && $U_{jj}^{(x,y)}$ \\%[10ex] 
+\hline
+$r^{-2}$        && $-q_xq_y r_{xy}^{-3} G^{(i)}_{xy}$  
+                && $-2\fderiv{q_x}{Q_i}q_y r_{xy}^{-3} G^{(i)}_{xy}$ \\
+\hline
+\multirow{3}{*}{$r^{-3}$}  && $-3G^{(i)}_{xy} r_{xy}^{-5} \left( q_x {\BM \mu}_y  -q_y {\BM \mu}_x \right) \cdot {\bf r}_{xy}$  
+                           && $-6G^{(i)}_{xy} r_{xy}^{-5} \left( \fderiv{q_x}{Q_i} {\BM \mu}_y  -q_y \fderiv{{\BM \mu}_x}{Q_i} \right) \cdot {\bf r}_{xy}$ \\
+                           && $r_{xy}^{-3} \left( q_x {\BM \mu}_y  -q_y {\BM \mu}_x \right) \cdot {\bf L}_x^{(i)}$ 
+                           && $2r_{xy}^{-3} \left( \fderiv{q_x}{Q_i} {\BM \mu}_y  
+                                                -q_y \fderiv{{\BM \mu}_x}{Q_i} \right) \cdot {\bf L}_x^{(i)}$ \\
+                           && 
+                           && $q_xq_y\left( 3\left(G^{(i)}_{xy}\right)^2 r_{xy}^{-2} - 
+                                  \left| {\bf L}_x^{(i)} \right|^2\right)r_{xy}^{-3}$\\
+\hline
+\multirow{8}{*}{$r^{-4}$}  && $2r_{xy}^{-5} \left( q_x{\BM \Theta}_y + q_y{\BM \Theta}_x \right) : {\bf L}_x^{(i)} \otimes {\bf r}_{xy}$  
+                           && $4r_{xy}^{-5} \left( \fderiv{q_x}{Q_i}{\BM \Theta}_y 
+                              + q_y\fderiv{{\BM \Theta}_x}{Q_i} \right) : {\bf L}_x^{(i)} \otimes {\bf r}_{xy}$ \\
+                           && $-5G^{(i)}_{xy} r_{xy}^{-7} \left( q_x{\BM \Theta}_y 
+                              + q_y{\BM \Theta}_x \right) : {\bf r}_{xy} \otimes {\bf r}_{xy}$ 
+                           && $-10G^{(i)}_{xy} r_{xy}^{-7} \left( \fderiv{q_x}{Q_i}{\BM \Theta}_y 
+                              + q_y\fderiv{{\BM \Theta}_x}{Q_i} \right) : {\bf r}_{xy} \otimes {\bf r}_{xy}$\\
+                           && $-3\left(G^{(i)}_{xy} {\BM \mu}_x \cdot {\BM \mu}_y
+                              + G_{y;xy} {\BM \mu}_x \cdot {\bf r}_{xy}
+                                     \right)r_{xy}^{-5}$ 
+                           && $-6\left(G^{(i)}_{xy} \fderiv{{\BM \mu}_x}{Q_i} \cdot {\BM \mu}_y
+                              + G_{y;xy} \fderiv{{\BM \mu}_x}{Q_i} \cdot {\bf r}_{xy}
+                                     \right)r_{xy}^{-5}$ \\
+                           && $-3 G_{x;xy} r_{xy}^{-5} {\BM \mu}_y \cdot {\bf r}_{xy}$
+                           && $-6 G_{x;xy}'r_{xy}^{-5} {\BM \mu}_y \cdot {\bf r}_{xy}$ \\
+                           && $15G^{(i)}_{xy} r_{xy}^{-7} {\BM \mu}_x \otimes {\BM \mu}_y : {\bf r}_{xy}^2 $ 
+                           && $30G^{(i)}_{xy} r_{xy}^{-7} \fderiv{{\BM \mu}_x}{Q_i} \otimes {\BM \mu}_y : {\bf r}_{xy}^2 $\\
+                           && 
+                           && $15r_{xy}^{-7} \left(G^{(i)}_{xy}\right)^2 \left( q_x{\BM \mu}_y 
+                              - q_y{\BM \mu}_x \right) \cdot {\bf r}_{xy} $ \\
+                           &&  
+                           && $-3q_x r_{xy}^{-5} \left( 2G^{(i)}_{xy} {\bf L}_x^{(i)} 
+                              + \left(G^{(i)}_{xy}\right)^2 \right) \cdot {\BM \mu}_y $ \\
+                           &&  
+                           && $+3q_y r_{xy}^{-5} \left( 2G^{(i)}_{xy} {\bf L}_x^{(i)} 
+                              + \left(G^{(i)}_{xy}\right)^2 \right) \cdot {\BM \mu}_x $ \\
+\hline\hline
+\end{tabular*}
+%\end{footnotesize}
+%\end{minipage} }
+\end{table}
+
+
+\section{Analysis of the convergence properties of Eq.~\eqref{e:dw-solefp-coul-correction}\label{a:convergence-of-the-correction-terms}}
+
+We have analyzed the various contributions to $\Delta\omega^{\rm Coul}(\partial\phi)$
+for the three model systems A, B and C depicted in Fig.XXX. It is found 
+(Table~\ref{t:ctest}) that
+it is safe to truncate the series espansion on $r^{-2}$ terms. The other higher order terms,
+especially in the case of the electronic anharmonicity contribution 
+(associated with $U_{jj}$), can cause unreasonably
+large frequency shifts. 
+We compare the approximate evaluation with SolEDS calculations as a benchmark frequency shifts.
+
+\begin{table}[ht]
+\caption{Convergence of the electrostatic correction terms to SolCAMM
+method that were estimated for three model NMA-H$_2$O dimers
+shown in Figure XXX. In this Table, 'MEA' and 'EA' denote the mechanical and electric
+anharmonicity contributions, respectively, whereas 'Total' is their sum.
+Cumulative atomic multipole moments (CAMM) were evaluated 
+at all atoms of NMA with subsecuent contraction of CH$_3$ groups 
+to get SolCAMM-6 model.
+Calculations were performed at HF/6-311++G(d,p) level.
+All values are given in cm$^{-1}$.
+\label{t:ctest}}
+\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } l ll ll}
+\hline\hline
+\multicolumn{5}{c}{Amide I mode} \\
+\hline
+System               & Method    & MEA           & EA         & Total        \\
+\hline
+\multirow{5}{*}{A}   & SolCAMM   & -39.4 (+6.2)  & 5.3 (+0.9) & -34.1 (+7.1) \\
+        & Corr$^{\rm r2}$        & -47.4 (-1.8)  & 4.9 (+0.5) & -42.5 (-1,3) \\
+        & Corr$^{\rm r2+r3}$     & -53.2 (-7.6)  & 7.7 (+3.3) & -45.5 (-4.3) \\
+        & Corr$^{\rm r2+r3+r4}$  & -55.3 (-9.7)  & 8.8 (+4.4) & -46.5 (-5.3) \\
+                     & SolEDS    & -45.6         & 4.4        & -41.2        \\
+\hline
+\multirow{5}{*}{B}   & SolCAMM   & -15.2 (+1.7)  & 3.8 (+2.2) & -11.4 (+3.9) \\
+        & Corr$^{\rm r2}$        & -17.7 (-0.8)  & 4.3 (+2.7) & -13.4 (+1.9) \\
+        & Corr$^{\rm r2+r3}$     & -21.1 (-4.2)  & 4.0 (+2.4) & -17.1 (-1.8) \\
+        & Corr$^{\rm r2+r3+r4}$  & -21.2 (-4.3)  & 3.7 (+2.1) & -17.5 (-2.2) \\
+                     & SolEDS    & -16.9         & 1.6        & -15.3        \\
+\hline
+\multirow{5}{*}{C}   & SolCAMM   & -35.4 (+6.6)  & 8.9 (+3.3) & -26.5 (+9.9) \\
+        & Corr$^{\rm r2}$        & -40.7 (+1.3)  & 8.8 (+3.2) & -31.9 (+4.5) \\
+        & Corr$^{\rm r2+r3}$     & -41.6 (+0.4)  &11.9 (+6.3) & -29.7 (+6.7) \\
+        & Corr$^{\rm r2+r3+r4}$  & -42.6 (-0.6)  &15.0 (+9.4) & -27.6 (+8.8) \\
+                     & SolEDS    & -42.0         & 5.6        & -36.4        \\
+\hline\hline
+\multicolumn{5}{c}{Amide II mode} \\
+\hline
+System               & Method    & MEA           & EA         & Total        \\
+\hline
+\multirow{5}{*}{A}   & SolCAMM   & 14.0 (+2.9)   & -6.3 (-3.2)& 7.7 (-0.3)   \\
+        & Corr$^{\rm r2}$        & 14.3 (+3.2)   & -6.4 (-3.3)& 7.9 (-0.1)   \\
+        & Corr$^{\rm r2+r3}$     & 14.0 (+2.9)   & -7.2 (-4.3)& 6.8 (-1.2)   \\
+        & Corr$^{\rm r2+r3+r4}$  & 15.0 (+3.9)   & -8.2 (-5.1)& 6.8 (-1.2)   \\
+                     & SolEDS    & 11.1          & -3.1       & 8.0          \\
+\hline
+\multirow{5}{*}{B}   & SolCAMM   & 10.6 (-1.1)   & 13.2 (+8.4)& 23.8 (+7.3)  \\
+        & Corr$^{\rm r2}$        & 13.4 (+1.7)   & 13.2 (+8.4)& 26.6 (+10.1) \\
+        & Corr$^{\rm r2+r3}$     & 19.1 (+7.4)   & 22.0 (+17.2)&41.1 (+24.6) \\
+        & Corr$^{\rm r2+r3+r4}$  & 21.6 (+9.9)   & 42.1 (+37.3)&63.7 (+47.2) \\
+                     & SolEDS    & 11.7          & 4.8        & 16.5         \\
+\hline
+\multirow{5}{*}{C}   & SolCAMM   & 12.8 (+1.2)   & -4.9 (-2.9)& 7.9 (-1.7)   \\
+        & Corr$^{\rm r2}$        & 14.4 (+2.8)   & -4.9 (-2.9)& 9.5 (-0.1)   \\
+        & Corr$^{\rm r2+r3}$     & 14.6 (+3.0)   & -5.4 (-3.4)&11.0 (+1.4)   \\
+        & Corr$^{\rm r2+r3+r4}$  & 14.7 (+3.1)   & -5.6 (-3.6)& 9.1 (-0.5)   \\
+                     & SolEDS    & 11.6          & -2.0       & 9.6          \\
+\hline\hline
+\end{tabular*}
+\end{table}
+%--------------------------------------------------------------------------------------------------
 \chapter{Experiments\label{a:exp-ftir}}
 
 Absorption frequencies of CN stretch modes in MeCN and MeSCN dissolved in various
