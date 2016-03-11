@@ -62,6 +62,8 @@
 
 % graphics
 \usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{lipsum}
 
 % tables
 \usepackage{dcolumn}
@@ -2251,7 +2253,7 @@ and
     + 2 \fderiv{{\BM \Theta}_x}{Q_j} \otimes {\bf L}_x^{(j)} \vdots \nabla\nabla\nabla \phi({\bf r}_x)  \right]      
     \label{e:k-terms-3} \\
 %
- U_{jj}^{(\BM\Omega)}  &= \frac{1}{3} \sum_x \sderiv{{\BM \Omega}_x}{Q_j} \phi({\bf r}_x)       \label{e:k-terms-4} \\
+ U_{jj}^{(\BM\Omega)}  &= \frac{1}{3} \sum_x \sderiv{{\BM \Omega}_x}{Q_j} \phi({\bf r}_x)       \label{e:k-terms-4}
 \end{align}
 \end{subequations}
 %
@@ -2327,38 +2329,326 @@ of $\Delta\omega_j({\partial\phi})$ for some examplary model
 systems the Reader is reffered to
 the Appendix~\ref{a:convergence-of-the-correction-terms}
 
+\section{Exchange-repulsion effects}
+
+The electrostatic contribution to the frequency shift is the dominant term 
+when the intermolecular distance is sufficiently large enough to ignore 
+any wavefunction overlap. However, in general, the exchange effects
+are non\hyp{}negligible for typical van der Waals complexes, at least to the first\hyp{}order
+in the intermolecular interaction. Particularly 
+in the case of solute\hyp{}solvent hydrogen bonded dimer, 
+short\hyp{}range interactions become important. 
+Therefore, the Pauli effects and their contribution to the frequency shift have to be taken into account.
+
+Following Jensen and Gordon\citep{Jensen.Gordon.JCP.1998,Jensen.Gordon.MolPhys.1996} 
+the exchange\hyp{}repulsion interaction energy 
+between molecules A (solute), and B (solvent) is given approximately as 
+%
+\begin{multline}\label{e:u-exrep-efp}
+U^{\rm Ex-Rep} \approx \sum_{a \in A}\sum_{b \in B} \Bigg[
+-4\sqrt{\frac{-2{\rm ln}|S_{ab}|}{\pi}} \frac{S_{ab}^2}{r_{ab}} 
+-
+2S_{ab} \Big( \sum_{c \in A} G^A_{ac} S_{cb} + 
+\sum_{d \in B} G^B_{bd} S_{da} - 2 T_{ab} \Big) + \\
+-2S^2_{ab} \Big( \frac{1}{r_{ab}} 
+- 2\sum_{c \in A} \frac{1}{r_{cb}} 
+- 2\sum_{d \in B} \frac{1}{r_{ad}}
++ \sum_{x \in A} \frac{Z_x}{r_{xb}} 
++ \sum_{y \in B} \frac{Z_y}{r_{ay}}  
+\Big)
+\Bigg]
+\end{multline}
+%
+where $S_{ab}$ and $T_{ab}$ denote one\hyp{}electron overlap and kinetic integrals 
+between the $a$th and $b$th localized molecular orbital (LMO), 
+$G^X_{ab}$ is the Fock matrix element of molecule 
+$X$, and $Z_x$ is the atomic number of the $x$th atom. 
+The relative distance $r$ is defined as $r_{\alpha\beta} = \left|{\bf r}_\alpha − {\bf r}_\beta \right|$. 
+Here, the indices $a$, $b$, $c$, and $d$ refer to LMO's whereas indices $x$ and $y$ 
+do to atoms in molecules $A$ and $B$, respectively. Note also that the $a$th 
+and $c$th LMO's belong to solute and $b$th and $d$th LMO's to solvent molecule. 
+It was shown\citep{Jensen.Gordon.JCP.1998,Jensen.Gordon.MolPhys.1996,Kemp.Rintelman.Gordon.Jensen.TheoretChemAcc.2009} 
+that the expression in Eq.~\eqref{e:u-exrep-efp} gives reasonable 
+estimations of exchange\hyp{}repulsion energies for many dimeric systems 
+and they are in good agreement with exchange energies obtained 
+by using Morokuma's interaction energy decomposition 
+method\citep{Kitaura.Morokuma.IJQC.1976} 
+as well as 
+with exact quantum chemistry calculations. Because of the fact that 
+exchange\hyp{}repulsion is approximately pairwise 
+additive,\citep{Chen.Li.JPCA.2010,Chen.Gordon.JCP.1996,Jens.Bruske.Grimme.PCCP.2009,
+Gora.Sokalski.Leszczynski.Pett.JPCB.2005,Chaudret.Gresh.Parisel.Piquemel.JCC.2011} 
+one can 
+apply Eq.~\eqref{e:u-exrep-efp} to multimers. Furthermore, it is computationally fast 
+and easy not only because it requires only the one\hyp{}electron integrals 
+but also because the Fock matrices for each monomer need to be computed just once.
+
+The frequency shift originating from repulsive interaction between 
+solute and solvent molecules can be cast in the following form 
+with mechanical anharmonicity taken into account: 
+%
+\begin{equation}\label{e:dw-exrep-base}
+\Delta \omega_j^{\rm Ex-Rep} =
+\frac{1}{2M_j\omega_j} \left[ 
+\sderiv{U^{\rm Ex-Rep}}{Q_j} -
+\sum_i \frac{g_{ijj}}{M_i\omega_i^2}\fderiv{U^{\rm Ex-Rep}}{Q_i}
+\right]
+\approx 
+-\frac{1}{2M_j\omega_j}\sum_i \frac{g_{ijj}}{M_i\omega_i^2}\fderiv{U^{\rm Ex-Rep}}{Q_i}
+\end{equation}
+%
+where the vibrational force associated with the exchange\hyp{}repulsion 
+potential of the $i$th normal coordinate is given as
+%
+\begin{multline}\label{e:force-exrep}
+\fderiv{U^{\rm Ex-Rep}}{Q_i} = 
+\sum_{a \in A}\sum_{b \in B} 
+\Bigg[ 4
+   \frac{S_{ab}}{r_{ab}}
+   \fderiv{S_{ab}}{Q_i}
+   \times
+   \Bigg\{
+       \sqrt{\frac{-1}{2\pi{\rm ln}\left|S_{ab}\right|}} - 2\sqrt{\frac{-2{\rm ln}\left|S_{ab}\right|}{\pi}}
+   \Bigg\} \\
+   -\frac{S_{ab}^2}{r_{ab}^2}
+   \fderiv{r_{ab}}{Q_i}
+   \sqrt{\frac{-2{\rm ln}|S_{ab}|}{\pi}}
+   - 2\fderiv{S_{ab}}{Q_i} 
+   \times
+   \Big( 
+       \sum_{c \in A} G^A_{ac} S_{cb} + 
+       \sum_{d \in B} G^B_{bd} S_{da} - 2 T_{ab} 
+   \Big) \\
+   -4S_{ab} \fderiv{S_{ab}}{Q_i}
+   \times
+   \Big( \sum_{y \in B} \frac{Z_y}{r_{ay}} 
+       + \sum_{x \in A} \frac{Z_x}{r_{bx}} - 2\sum_{d \in B} \frac{1}{r_{ad}}
+       - 2\sum_{c \in A} \frac{1}{r_{cb}} + \frac{1}{r_{ab}}
+   \Big) \\%%%%
+   - 2S_{ab}
+   \Bigg\{ 
+       \sum_{c \in A} 
+       \Big[
+          \fderiv{G^A_{ac}}{Q_i} S_{cb}  +  G^A_{ac} \fderiv{S_{cb}}{Q_i}
+       \Big] +
+       \sum_{d \in B} G^B_{bd} \fderiv{S_{da}}{Q_i} - 2 \fderiv{T_{ab}}{Q_i}
+   \Bigg\} \\
+   + 2S^2_{ab} 
+   \Bigg\{ 
+      \sum_{y \in B} \frac{Z_y}{r_{ay}^2} \fderiv{r_{ay}}{Q_i} +
+      \sum_{x \in A} \frac{Z_x}{r_{bx}^2} \fderiv{r_{xb}}{Q_i} -
+      2\sum_{d \in B} \frac{1}{r_{ad}^2} \fderiv{r_{ad}}{Q_i} %\\
+    - 2\sum_{c \in A} \frac{1}{r_{cb}^2} \fderiv{r_{cb}}{Q_i} + \frac{1}{r_{ab}^2} \fderiv{r_{ab}}{Q_i}
+   \Bigg\}
+\Bigg]
+\end{multline}
+%
+As can be seen in Eq.~\eqref{e:force-exrep}, there are quite a large number of derivatives 
+to be calculated. They are the derivatives of relative distances, 
+overlap and kinetic integrals, and Fock matrix elements. The former 
+are in general written as 
+%
+\begin{equation}\label{e:dr}
+\fderiv{r_{\alpha\beta}}{Q_i} = 
+\frac{1}{r_{\alpha\beta}} 
+\left( {\bf r}_\alpha - {\bf r}_\beta \right) \cdot
+\left( \fderiv{{\bf r}_\alpha}{Q_i} - \fderiv{{\bf r}_\beta}{Q_i} \right)
+\end{equation}
+%
+We shall assume that the solvent wavefunction is not affected 
+by small change ($\delta Q_i$) in the solute structure. This assumption 
+is valid when the electronic coupling between solute and 
+solvent is negligibly small, which is the case of typical 
+intermolecular interaction. Thus, one can rewrite 
+the distance derivatives in Eq.~\eqref{e:force-exrep} as
+%
+\begin{subequations}
+\begin{align}
+\fderiv{r_{ab}}{Q_i} &\approx \frac{1}{r_{ab}} 
+\left( {\bf r}_i - {\bf r}_j \right) \cdot
+\fderiv{{\bf r}_i}{Q_i} \\
+\fderiv{r_{ay}}{Q_i} &\approx \frac{1}{r_{ay}} 
+\left( {\bf r}_a - {\bf r}_y \right) \cdot
+\fderiv{{\bf r}_a}{Q_i} \\
+\fderiv{r_{bx}}{Q_i} &\approx \frac{1}{r_{bx}} 
+\left( {\bf r}_b - {\bf r}_x \right) \cdot
+{\bf L}_x^{(i)} \\
+\fderiv{r_{cb}}{Q_i} &\approx \frac{1}{r_{cb}} 
+\left( {\bf r}_c - {\bf r}_b \right) \cdot
+\fderiv{{\bf r}_c}{Q_i} \\
+\fderiv{r_{ad}}{Q_i} &\approx \frac{1}{r_{ad}} 
+\left( {\bf r}_a - {\bf r}_d \right) \cdot
+\fderiv{{\bf r}_a}{Q_i}
+\end{align}
+\end{subequations}
+%
+The derivatives of solute's LMO centroids, which are defined as 
+the charge centroids, ${\bf r}_a=\langle \chi_a\lvert\hat{\bf r}\rvert\chi_a\rangle$, 
+need to be evaluated just once, 
+much like Fock matrix derivatives, because they refer to solute 
+molecule only. They can also be found from:
+%
+\begin{equation}\label{e:ddfg7676s2}
+\fderiv{{\bf r}_a}{Q_i} = 
+\sum_{\mu,\sigma \in A}\sum_{x_I}
+\fderiv{x_I}{Q_i} \fderiv{}{x_I} 
+\left( c_{a\mu}^* c_{a\sigma} \tbraket{\mu}{{\bf r}}{\sigma}\right)
+\end{equation}
+%
+In the above equation atomic basis functions $\mu$ and $\sigma$ 
+belong to solute molecule. The derivatives of conventional dipole
+matrix elements between AO basis functions as well as LMO-LCAO
+coefficients can be found easily by numerical differentiation
+(however, the first can be also very easily computed analitically).
+These derivatives are to be computed \emph{only once} because
+we keep solute molecule frozen.% and the only thing we should do
+%with them is to rotate the vectors $\fderiv{{\bf r}_a}{Q_i}$
+%within the simulation by appropriate superimposition with target
+%solute structure (rigid molecule algorithm).
+
+The derivatives of LMO-LMO one-electron integrals 
+such as overlap integral defined as $S_{ab}=\langle \chi_a\vert\chi_b\rangle$ 
+and kinetic integral 
+$T_{ab}=\langle \chi_a\lvert-\frac{1}{2}\nabla^2\rvert\chi_b\rangle$
+with respect to vibrational coordinate are calculated by
+%
+\begin{multline}\label{e:derSij}
+\fderiv{S_{ab}}{Q_i} = 
+\sum_{\mu \in A} \sum_{\sigma \in B} 
+\Big\{
+\fderiv{c_{a\mu}^*}{Q_i} c_{b\sigma} \braket{\mu}{\sigma} +
+c_{a\mu}^* \fderiv{c_{b\sigma}}{Q_i} \braket{\mu}{\sigma} + 
+c_{a\mu}^* c_{b\sigma}  \fderiv{\braket{\mu}{\sigma}}{Q_i}
+\Big\}
+\approx \\ \cong
+\sum_{\mu \in A} \sum_{\sigma \in B} 
+\Big\{
+\fderiv{c_{a\mu}^*}{Q_i} c_{b\sigma} \braket{\mu}{\sigma} +
+c_{a\mu}^* c_{b\sigma}   \braket{\fderiv{\mu}{Q_i}}{\sigma}
+\Big\}
+\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad
+\end{multline}
+%
+\begin{equation}\label{e:derTij}
+\fderiv{T_{ab}}{Q_i}  \cong
+\sum_{\mu \in A} \sum_{\sigma \in B} 
+\Big\{
+\fderiv{c_{a\mu}^*}{Q_i} c_{b\sigma} \tbraket{\mu}{ -\frac{\nabla^2}{2} }{\sigma} +
+c_{a\mu}^* c_{b\sigma}   \tbraket{\fderiv{\mu}{Q_i}}{ -\frac{\nabla^2}{2} }{\sigma}
+\Big\}
+\end{equation}
+%
+Further simplification of Eq.~\eqref{e:derTij} 
+can be achieved by rewriting explicitly the derivatives 
+with respect to normal coordinates in the atomic coordinate space 
+%
+\begin{equation}\label{e:derXij}
+\tbraket{\fderiv{\mu}{Q_i}}{ \mathscr{O} }{\sigma} = 
+\sum_{x \in A} \fderiv{{\bf r}_x}{Q_i} \tbraket{\fderiv{\mu}{{\bf r}_x}}{ \mathscr{O} }{\sigma} =
+\sum_{x \in A, \mu \in x} \fderiv{{\bf r}_x}{Q_i} \tbraket{\fderiv{\mu}{{\bf r}_x}}{ \mathscr{O} }{\sigma} =
+{\bf L}^{(i)}_{x_\mu} \cdot \tbraket{\fderiv{\mu}{{\bf r}_{x_\mu}}}{ \mathscr{O} }{\sigma}
+\end{equation}
+%
+for $\mathscr{O}=1$ or $-\frac{1}{2}\nabla^2$.
+We can write the above result since the atomic orbital functions depend only upon three atomic coordinates. For contracted 
+basis function $\ket{\mu}$ where each primitive Gaussian type orbitals (GTO's) have the same center
+${\bf r}_\mu$ this simplification will hold for all GTOs. Using the fact that primitive GTO derivative
+has its simple recursive relation
+%
+\begin{equation}\label{orbder}
+\fderiv{\ket{\phi}} {x} = 
+\sqrt{\left( 2l_\phi + 1 \right)\alpha_\phi} \ket{\phi}_{l+1} -
+2l_\phi \sqrt{\frac{\alpha_\phi}{2l_\phi-1}} \ket{\phi}_{l-1} =
+A_{l_\phi}  \ket{\phi}_{l+1} + B_{l_\phi}  \ket{\phi}_{l-1}
+\end{equation}
+%
+and the definition of contracted basis function
+%
+\begin{equation}\label{muorb}
+\ket{\mu} = \sum_k c_{\mu k} \ket{\phi_k}
+\end{equation}
+%
+we quickly get
+%
+\begin{equation}\label{sdd}
+\tbraket{\fderiv{\mu}{{\bf r}_{x_\mu}}}{ \mathscr{O} }{\sigma} =
+\sum_{k\in\mu}\sum_{t\in\sigma}
+c_{\mu k}^*c_{\sigma t}
+  \left[
+  %
+  \begin{pmatrix}
+  A_{l_\phi} \bra{\phi_k}_{l+1} \\ 
+  A_{m_\phi} \bra{\phi_k}_{m+1} \\ 
+  A_{n_\phi} \bra{\phi_k}_{n+1}
+  \end{pmatrix}
+  %
++
+  \begin{pmatrix}
+  B_{l_\phi} \bra{\phi_k}_{l-1} \\ 
+  B_{m_\phi} \bra{\phi_k}_{m-1} \\ 
+  B_{n_\phi} \bra{\phi_k}_{n-1}
+  \end{pmatrix}
+  \right]
+  %
+\mathscr{O}\ket{\phi_t}
+\end{equation}
+%
+%
+The latter result can be inserted into Eq.\eqref{e:derXij} and in this way
+one can compute overlap and kinetic integral derivatives with respect to the normal coordinate
+in each frame of a simulation using instantaneous positions of solute and solvent molecules.
+First kinetic and overlap integrals between primitive GTOs are to be computed. Next,
+using Eq.\eqref{sdd} one has to obtain integral derivative wrt atomic position
+containing the actual basis function and finally using Eq.\eqref{e:derXij} by a dot product
+transform this derivative to normal coordinate space.
+
+The derivatives of intramolecular Fock matrix elements can be easily found
+by numerical  differentiation (note, that they need to be evaluated only once).
+They can also be calculated analitically by using standard methods implemented
+in current QM packages like {\sc Gaussian} or {\sc Gamess}.
+
+
 \section{SolX models}
 
 We would like to introduce the naming convention 
 of the various solvatochromic models
-that we shall be using consecutively throughout this Thesis. As it was
+that we shall be using from that point 
+consecutively throughout this Thesis. As it was
 shown in the previous Chapter, the vibrational frequency shift is a function
 of the solute\hyp{}solvent interaction potential derivatives
 with respect to solute's normal modes. Therefore, for $U$ approximated
 with method 'X' we shall refer to
 a resulting solvatochromic method as to 'SolX' method, theory or model. 
-Thus, we can have
-SolDMA or SolCAMM models when DMA of Stone\citep{Stone.JCTC.2005} or cumulative atomic multipole
-moments (CAMM) of Sokalski and Poirier\citep{Sokalski.Poirier.CPL.1983} are used. 
+
+\subsection{Distributed muptipole models}
+
+When DMA of Stone\citep{Stone.JCTC.2005} or cumulative atomic multipole
+moments (CAMM) of Sokalski and Poirier\citep{Sokalski.Poirier.CPL.1983} are used,
+SolDMA or SolCAMM models can be obtained. 
 If one wanted to use the distributed multipoles centered at the localized molecular orbitals
 one could define the SolLMTP method for instance, that can be derived 
 from the LMTP expansion by Etchebest \emph{et al}.\citep{Etchebest.Lavery.Pullman.TheorChimActa.1982}
 The SolLMTP model has the unique feature that all the solvatochromic 
 distributed charges vanish and the first non\hyp{}zero tensor elements
-are the distributed solvatochromic dipoles.
+are the distributed solvatochromic dipoles. In contrast, an approximate model 
+with only distributed solvatochromic charges can be constructed based on the
+charges from electrostatic potentials using a grid\hyp{}based 
+method\citep{Breneman.Wiberg.JCC.1990} (ChelpG)
+(resulting in a SolChelpG model).
 
 When the distributed multipoles are contracted (or summed)
 to a single center we obtain the SolMMM model with MMM denoting 
 the molecular multipole moment. This model is useful when
-modeling Stark tuning rates, which are approximately equal to
-the solvatochromic SolMMM dipole.
+modeling Stark tuning rates, which are equal to
+the SolMMM dipole.
 
 The contraction of SolDMA/CAMM models can also be partial
 leading to contracted models denoted here as SolCAMM-$n$ (or SolDMA-$n$), where
 $n$ denotes the number of distributed sites. In particular,
 this feature can be used to construct the united atom models,
 for example describing methyl groups. In Figure~\ref{f:contr}
-we show the procedure of such a construction.
+we show the procedure of such a construction and Figure~\ref{f:solxn}
+depicts a few examples.
 %
 \begin{figure}[ht]
 \centering
@@ -2382,27 +2672,138 @@ is moved to the carbon atom position.
 \label{f:contr}}
 \end{figure}
 %
-This procedure can lead to the increase in the performance
+
+\begin{wrapfigure}{r}{0.30\textwidth}
+\vspace{-30pt}
+\begin{center}
+    \includegraphics[width=0.28\textwidth]{SolXn.eps}
+  \end{center}
+  \vspace{-18pt}
+  \caption{Variants of SolX models for $N$-methyl acetamide amide I mode.
+X denotes distributed atomic multipoles in this case (e.g., DMA or CAMM).\label{f:solxn}}
+\vspace{-20pt}
+\end{wrapfigure}
+%
+\noindent This procedure can lead to the increase in the performance
 of the method because the number of distributed centers
 is decreased. If the contraction involves atoms that 
 are not affected by the vibrational mode of interest (e.g. 
 hydrogen atoms in the methyl group when one is interested
 in amide I mode) the contracted models give basically 
-the same results as uncontracted models which is shown
-in Fig.~\ref{f:contr-uncontr-comparison}.
+the same results as uncontracted models (we 
+will discuss it in the next Chapter). 
+
+\subsection{SolEFP, SolEDS and SolSAPT models}
+
+To include also non\hyp{}Coulombic effects to describe 
+the intermolecular interaction potential one can use, for example,
+the following methods:
 %
-\begin{figure}[ht]
-\centering
-\setlength\fboxsep{0.4pt}
-\setlength\fboxrule{0.5pt}
-\fbox{
-\includegraphics[width=0.1\linewidth]{contr.eps}
-}
-\caption{Performance of SolCAMM-12 (fully distributed) and SolCAMM-6 (two 
-united atoms) for the training set of NMA-H$_2$O$_n=1-30$ clusters.
-\label{f:contr-uncontr-comparison}}
-\end{figure}
+\begin{enumerate}
+  \item Effective Fragment 
+Potentials\citep{Day.Jensen.Gordon.Webb.Stevens.Krauss.Garmer.Basch.Cohen.JCP.1996,
+Flick.Kosenkov.Hohenstein.Sherrill.Slipchenko.JCTC.2012} (EFP)
+  \item Variational\hyp{}perturbational Interaction Energy Decomposition
+Scheme\citep{Sokalski.Roszak.Pecul.CPL.1988,
+Chalasinski.Szczesniak.MolPhys.1988,Cybulski.Chalasinski.Moszynski.JCP.1990,
+Gora.Bartkowiak.Roszak.Leszczynski.JCP.2004} (EDS)
+  \item Symmetry Adapted Perturbation Theory\citep{Jeziorski.Moszynski.Szalewicz.ChemRev.1994} (SAPT)
+\end{enumerate}
 %
+These will lead to the SolEFP, SolEDS and SolSAPT methods, accordingly. 
+SolEFP method was already described in the previous sections
+and the frequency shift is given as
+%
+\begin{equation} \label{e:dw-solefp}
+\Delta\omega^{\rm SolEFP} = 
+\Delta\omega^{\rm Coul} + \Delta\omega^{\rm Ex-Rep} + 
+\Delta\omega^{\rm Ind} + \Delta\omega^{\rm Disp}_6
+\end{equation}
+%
+It is also strightforward to compute the 
+solvation\hyp{}induced transition dipole change
+with SolEFP vibrational forces according to the following prescription
+%
+\begin{equation} \label{e:dmu-solefp}
+d = c!
+\end{equation}
+%
+
+Due to its intrinsic fragmentation framework\citep{Gordon.Fedorov.Pruitt.Slipchenko.ChemRev.2012}, 
+SolEFP is suitable for modeling very large systems
+ranging from bulk solutions to highly heterogeneous
+protein environments (see Chapter X). Note that in order
+to compute the solvation\hyp{}induced frequency shift or the
+transition dipole moment change, one needs the information
+about the gas\hyp{}phase states of the molecules \emph{only}, 
+because the effects of their interactions do not require 
+any other specific solute\hyp{}solvent information.
+On the other hand, according to 
+previous sections, SolEFP espression in Eq.~\eqref{e:dw-solefp} 
+is an approximation of the local mode approximation from
+Eq.~\eqref{e:buckingham-2st-order-total-fund}. Let us 
+explicitly list all the approximations here:
+%
+\begin{itemize}
+ \item The charge\hyp{}penetration effects have been ignored, since they are likely to be weak. 
+Nevertheless, since they were found to be of importance in describing Coulomb interaction energy 
+(not frequency shift), such charge\hyp{}penetration effects need to be studied in the future.
+ \item Due to the complexity of the SolEFP equations, we did not take into account the electric 
+anharmonicity contributions, except for that associated with the Coulomb interaction\hyp{}induced 
+frequency shift. When the exchange\hyp{}repulsion, induction, and dispersion terms in the frequency 
+shift calculation are estimated, only the first derivatives of potential energy with respect 
+to normal coordinates are considered. We already showed that this approximation is quite acceptable 
+for describing the carbonyl and CN stretch modes.\citep{Blasiak.Cho.JCP.2014,Blasiak.Cho.JCP.2015,
+Blasiak.Ritchie.Webb.Cho.XXX.2016}
+However, for completeness it will be necessary to further test the validity of this approximation 
+for other IR probes. In particular, we noticed that in the case of amide II mode
+electronic anharmonicity of exchange\hyp{}repulsion contribution cannot be ignored.\citep{Blasiak.Cho.JCP.2015}
+ \item The exchange\hyp{}repulsion interaction\hyp{}induced frequency shift was based on the approximation 
+that only a single exchange of electron pair between solute and solvent is considered. 
+In fact, it is believed here that this is an excellent approximation because the direct comparisons 
+of the SolEFP results with completely \emph{ab initio}\footnote{SolEDS} calculation results indicate 
+that the current SolEFP exchange\hyp{}repulsion frequency shifts are quite accurate.
+ \item Induction and dispersion interaction\hyp{}induced frequency shifts 
+were treated by taking into consideration only the dipole\hyp{}dipole interactions 
+between LMO polarizable centers. Perhaps, the dispersion interaction\hyp{}induced 
+contribution originating from distributed quadrupole\hyp{}dipole and quadrupole\hyp{}quadrupole 
+interactions could be of importance as well.
+ \item Since the SolEFP theory is to calculate all the vibrational solvatochromism parameters 
+that can be obtained from \emph{ab initio} calculations of the solute molecule in the gas phase, 
+the same structure should be used when the theory is applied to the solution systems 
+with a solute molecule surrounded by solvent molecules. Therefore, there exists a certain 
+ambiguity (difficulty) in perfectly superimposing it onto the solute molecule in solutions 
+-- note that the detailed molecular structures (bond lengths, bond angles, and so on) 
+of solute molecules in solutions are slightly different from that in the gas phase 
+due to electronic structure change induced by solute\hyp{}solvent intermolecular interactions. 
+Nevertheless, it should be emphasized that the present vibrational solvatochromism theory 
+correctly includes the effects from solvation\hyp{}induced structural distortions 
+since they are related to mechanical anharmonicity in the corresponding potential 
+energy surface. Therefore, the above difficulty may not be the most crucial one, 
+but still it needs to be investigated more in detail. We will refer to this issue as to
+the \emph{superimposition problem}.
+\end{itemize}
+%
+Thus, before SolEFP method is used, it has to be validated
+first agaist some more accurate approach. 
+
+%which is shown in Fig.~\ref{f:contr-uncontr-comparison}.
+%%
+%\begin{figure}[ht]
+%\centering
+%\setlength\fboxsep{0.4pt}
+%\setlength\fboxrule{0.5pt}
+%\fbox{
+%\includegraphics[width=0.1\linewidth]{contr.eps}
+%}
+%\caption{Performance of SolCAMM-12 (fully distributed) and SolCAMM-6 (two 
+%united atoms) for the training set of NMA-H$_2$O$_n=1-30$ clusters.
+%\label{f:contr-uncontr-comparison}}
+%\end{figure}
+%%
+%
+
+
 \printbibliography[heading=subbibintoc,title={References}]
 \end{refsection}
 
