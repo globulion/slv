@@ -2071,16 +2071,40 @@ dipole changes due to five fundamental interactions
 between molecules that can be found in nature: Coulombic, 
 exchange\hyp{}repulsion, induction, dispersion and charge\hyp{}transfer.
 
-\section{Coulombic Effects}
+\section{Coulombic Effects\label{s:dw-coul}}
 
-In the first\hyp{}order of perturbation
-theory, the intermolecular interaction potential
+In the first\hyp{}order of polarization perturbation
+theory\footnote{i.e., in the long\hyp{}distance limit 
+where the wavefunction overlap vanishes. In such a case the
+exchange and charge\hyp{}penetration effects 
+between solute and solvent molecules can be safely ignored.}, 
+the intermolecular interaction potential
 can be understood as a Coulombic interaction
 of unperturbed solute and solvent molecules (i.e., 
 as if they were isolated).\citep{Jeziorski.Moszynski.Szalewicz.ChemRev.1994,Stone.TheTheoryOfIntermolecularForces.1996}
-In the long\hyp{}distance limit where the wavefunction overlap vanishes, the
-exchange and charge\hyp{}penetration effects 
-between solute and solvent molecules can be ignored.
+That is
+%
+\begin{equation} \label{e:eint-1}
+U^{(1)} = 
+\langle 0_A0_B \lvert \mathscr{V}_{AB} \rvert 0_A0_B \rangle 
+\end{equation}
+%
+Here, $\mathscr{V}_{AB}$ is the solute\hyp{}solvent
+interaction potential defined as $\mathscr{V}_{AB}\equiv\mathscr{H}_{AB} - \mathscr{H}_{0_A} - \mathscr{H}_{0_B} $,
+and $\vert 0_A0_B \rangle \cong \vert 0_A \rangle \otimes \vert 0_B \rangle$
+and $\vert mn \rangle \cong \vert m \rangle \otimes \vert n \rangle$
+represent the electronic ground state and excited states
+of the $AB$ complex, respectively. The isolated electronic states of monomers $A$
+and $B$ are determined by the time\hyp{}independent Schr{\"o}dinger
+equations
+%
+\begin{subequations}
+ \begin{align}
+  \mathscr{H}_{0_A} \vert m \rangle &= \hbar \omega_m \vert m \rangle \\
+  \mathscr{H}_{0_B} \vert n \rangle &= \hbar \omega_n \vert n \rangle
+ \end{align}
+\end{subequations}
+%
 Then it becomes legitimate to model the electrostatic interaction
 energy by considering the distributed multipole expansion of electron
 charge density distributions\citep{Stone.TheTheoryOfIntermolecularForces.1996}
@@ -2329,6 +2353,374 @@ of $\Delta\omega_j({\partial\phi})$ for some examplary model
 systems the Reader is reffered to
 the Appendix~\ref{a:convergence-of-the-correction-terms}
 
+
+\section{Polarization and dispersion effects}
+
+In Section~\ref{s:dw-coul} we have focused on a long\hyp{}range
+approximation of the electrostatic contribution to the frequency
+shift that assumed that interacting species do not perturb
+their charge densities. However, according to classical electrostatics,
+it is well known that any charge density induces the new
+charge density of opposite sign in a surrounding medium. In quantum
+physics, this is manifested by induction effects due to the polarization
+of the electronic density distribution of atoms. This causes
+an additional attractive forces between molecules which
+become stonger when the density distributions become more polarized
+(e.g., dipole moment is large). Therefore, the
+phenomenon of the \emph{induction} (or \emph{polarization}) effects
+in the vibrational solvatochromism cannot be ignored.
+
+In addition to polarization effects which can be treated
+by semi\hyp{}classical theory, there is also yet another effect
+which cannot be explained by classical physics. Due to the Heisenberg
+uncertainty principle, the permanent multipole moments of the 
+molecular charge distribution cannot be determined at an instant
+of time within 100\% precision. There is always some uncertainty
+in the multipole moment which leads to the additional stabilization
+of the total energy of the system due to \emph{electron correlation}. This effect is
+called \emph{dispersion} and plays very important role in chemistry.
+This is the dispersion interactions which makes the neutral rare gas atoms 
+like He or Ne
+to attract each other with the strength of such attraction decreasing
+with $r^{-6}$ where $r$ is the interatomic distance.
+
+According to the polarization perturbation theory, the induction
+and dispersion forces arise in the second\hyp{}order with respect to
+the interaction 
+operator.\citep{Stone.TheTheoryOfIntermolecularForces.1996,
+Jeziorski.Moszynski.Szalewicz.ChemRev.1994} 
+Thus, the second order correction to the total
+energy of the system can be written as
+%
+\begin{equation} \label{e:eint-2}
+U^{(2)} = - \sum_{mn\ne 00} \frac{
+\langle 0_A0_B \lvert \mathscr{V}_{AB} \rvert mn \rangle \langle  mn \lvert \mathscr{V}_{AB} \rvert 0_A0_B \rangle
+}{\hbar \left( \omega_{m0_A} + \omega_{n0_B}\right)}
+\end{equation}
+%
+
+\subsection{Induction effects}
+
+If we restrict the summation in Eq.~\eqref{e:eint-2} to run over such states
+that involve ground state of either monomer
+we get the second\hyp{}order induction energy. Mainly,
+%
+\begin{equation} \label{e:eint-2-ind}
+U^{\rm Ind} = U^{\rm Ind}_A + U^{\rm Ind}_B =
+- \sum_{m\ne 0} \frac{
+\lvert \langle 0_A0_B \lvert \mathscr{V}_{AB} \rvert m0_B \rangle \rvert^2
+}{\hbar \left( \omega_{m} - \omega_{0_A}\right)}
+%
+- \sum_{n\ne 0} \frac{
+\lvert \langle 0_A0_B \lvert \mathscr{V}_{AB} \rvert 0_An \rangle \rvert^2
+}{\hbar \left( \omega_{n} - \omega_{0_B}\right)}
+\end{equation}
+%
+%The induction energy
+%arises as a part of the second\hyp{}order 
+Interaction potential can be then multipole\hyp{}expanded and
+it can be shown that the induction energy
+can be expressed as
+%
+\begin{equation} \label{e:eint-2-ind-mult}
+U^{\rm Ind} = - \frac{1}{2} {\BM \alpha}_A : {\bf F} \otimes {\bf F} 
+              - \frac{1}{2} {\BM \alpha}_B : {\bf F} \otimes {\bf F} + \ldots
+\end{equation}
+% 
+where the ground\hyp{}state polarizability is defined as
+%
+\begin{equation} \label{e:polarizability}
+{\BM \alpha}_A = 2\sum_{m\neq 0} \frac{
+\langle 0_A \lvert \hat{\BM \mu} \rvert m \rangle \otimes \langle m \lvert \hat{\BM \mu} \rvert 0_A \rangle 
+}{\hbar \left( \omega_{m} - \omega_{0_A}\right)}
+\end{equation}
+%
+and similarly for solvent molecule.\footnote{We emphasize here
+that electric field $\bf F$ in the above expression
+is the sum of the electric field produced by the permanent
+multipole moments and the induced electric fields.}
+It is more desirable to work with
+the distributed polarizability picture because the series in 
+Eq.~\eqref{e:eint-2-ind-mult} gives typically poor estimates of $U^{\rm Ind}$,
+especially when dipole\hyp{}dipole approximation is invoked. 
+
+According to Li \emph{et al.},\citep{Li.Netzloff.Gordon.JCP.2006} 
+the induction interaction energy in the 
+\emph{distributed} dipole\hyp{}dipole polarizability approximation 
+can be written in the following form:
+%
+\begin{equation} \label{e:eint-2-ind-dip-distr}
+U^{\rm Ind} = - \frac{1}{2} {\bf p} \cdot {\bf p} = - \frac{1}{2} {\bf F}^T \cdot {\bf D}^{-1} \cdot {\bf F}
+\end{equation}
+%
+where ${\bf p}$ constitutes the induced dipoles of 
+polarizable centers and ${\bf F}$ constitutes the electric field 
+vectors evaluated at each polarizable center, which are created by the 
+distributed static multipole moments of interacting molecules.
+Mainly,
+%
+\begin{subequations} \label{e:pf}
+\begin{align}
+ {\bf p} &= 
+ \begin{Bmatrix}
+  {\bf p}_1 & {\bf p}_2 & \cdots & {\bf p}_N
+ \end{Bmatrix} \\
+ {\bf F}&= 
+ \begin{Bmatrix}
+  {\bf F}_1 & {\bf F}_2 & \cdots & {\bf F}_N
+ \end{Bmatrix}
+\end{align}
+\end{subequations}
+%
+Thus, the length of these two vectors is $3N$ in contrast to the dimension
+of $\bf F$ in Eq.~\eqref{e:eint-2-ind-mult} which is just the limitting case of 
+Eq.~\eqref{e:eint-2-ind-dip-distr} with $N=1$.
+The $\bf D$ matrix elements are defined as
+%
+\begin{equation} \label{e:D-matrix}
+{\bf D}_{ab} = 
+\left\{\begin{matrix}               
+{\BM \alpha}_a^{-1} \delta_{ab} && \text{if $a$,$b$ belong to the same molecule} \\
+-{\bf T}_{ab}^{(2)}             && \text{if $a$,$b$ belong to different molecules}
+\end{matrix}\right. 
+\end{equation}
+%
+where ${\BM \alpha}_a$ is the distributed state anisotropic polarizability
+tensor. They can be calculated by using coupled\hyp{}perturbed Hartree\hyp{}Fock
+theory by analyzing the response of the localized molecular orbitals
+(LMO's) on the electric field perturbation. Note that the formalism
+in Eq.~\eqref{e:eint-2-ind-dip-distr} uses a trick which enables one
+to work with the \emph{static} (not induced) electric field while still taking
+into account the induced electric fields in an exact manner. In fact,
+the induced electric fields are taken into account in $\bf D$ matrix already
+by the dipole\hyp{}dipole interaction tensors ${\bf T}_{ab}^{(2)}$.
+Therefore, the inverse of $\bf D$ matrix generalizes
+the polarizability for the $N$-body system in a special way, making use
+of only permanent multipoles and polarizabilities which greatly simplifies
+the computations.\footnote{Otherwise, electric fields must be iteratively converged to
+self\hyp{}consistency.}
+
+Now, the vibrational frequency shift due to induction can be written
+as
+%
+\begin{equation}\label{e:dw-ind-base}
+\Delta \omega_j^{\rm Ind} =
+\frac{1}{2M_j\omega_j} \left[ 
+\sderiv{U^{\rm Ind}}{Q_j} -
+\sum_i \frac{g_{ijj}}{M_i\omega_i^2}\fderiv{U^{\rm Ind}}{Q_i}
+\right]
+\approx 
+-\frac{1}{2M_j\omega_j}\sum_i \frac{g_{ijj}}{M_i\omega_i^2}\fderiv{U^{\rm Ind}}{Q_i}
+\end{equation}
+%
+where we neglected the electric anharmonicity contribution because it is usually small.
+The vibrational force is found to be
+%
+\begin{equation} \label{e:vibr-force-ind}
+\fderiv{U^{\rm Ind}}{Q_i} = \frac{1}{2} {\bf F}^{T} \cdot
+     \left[ 
+           {\bf D}^{-1} \fderiv{{\bf D}}{Q_i} {\bf D}^{-1}
+     \right] \cdot {\bf F}
+     - \frac{1}{2} \fderiv{{\bf F}^{T}}{Q_i} \cdot
+     \left[
+            {\bf D}^{-1} + \left({\bf D}^{-1} \right)^T
+     \right] \cdot {\bf F}
+\end{equation}
+%
+Inserting this result into Eq.~\eqref{e:dw-ind-base}
+we obtain the vibrational frequency shift induced by induced dipoles
+%
+\begin{equation}\label{e:dw-ind-avec}
+\Delta\omega_j^{\rm Ind} = - \frac{1}{2}                 {\bf a}_j \cdot {\bf F} 
+                           - \frac{1}{2} {\bf F}^T \cdot {\bf A}_j \cdot {\bf F}
+\end{equation}
+%
+where
+%
+\begin{subequations} \label{e:a-A}
+ \begin{align}
+ {\bf a}_j &= -\frac{1}{2M_j\omega_j} \left[ \sum_i \frac{g_{ijj}}{M_i\omega_i^2} 
+               \fderiv{{\bf F}^T}{Q_i} \right] \cdot \left[ {\bf D}^{-1} + \left({\bf D}^{-1}\right)^T\right]\\
+%
+ {\bf A}_j &= +\frac{1}{2M_j\omega_j} {\bf D}^{-1} \cdot 
+               \left[ \sum_i \frac{g_{ijj}}{M_i\omega_i^2} \fderiv{{\bf D}}{Q_i} \right] 
+               \cdot {\bf D}^{-1}
+ \end{align}
+\end{subequations}
+%
+Thus, ${\bf a}_j$ can be considered as a set of the \emph{induced
+solvatochromic dipoles} of the solute's $j$th normal mode that are 
+located at the polarizable centers of the system:
+%
+\begin{equation} \label{e:a-vec}
+ {\bf a}_j =
+ \begin{Bmatrix}
+  {\BM \mu}_{j;1}^{\rm Ind} & {\BM \mu}_{j;2}^{\rm Ind} & \cdots & {\BM \mu}_{j;N}^{\rm Ind}
+ \end{Bmatrix}
+\end{equation}
+%
+whereas ${\bf A}_j$ is the generalized (in a similar fashion as ${\bf D}^{-1}$ 
+from Eq.~\eqref{e:eint-2-ind-dip-distr}) \emph{solvatchromic polarizability} of the $j$th mode.
+While ${\bf A}_j$ is relatively small in many cases, ${\bf a}_j$ is non\hyp{}negligible.
+Note also that, since our formalism includes $N$\hyp{}body interactions,
+${\bf a}_j$ is non\hyp{}zero at the centers located on solvent molecules.
+This means that the polarization interaction\hyp{}induced vibrational solvatochromism
+is a delocalized phenomenon.
+
+Now, we need the explicit expressions for the vibrational
+derivatives of $\bf D$ and $\bf F$. The derivatives of the first are straightforward
+%
+\begin{equation}
+\fderiv{{\bf D}_{ab}}{Q_i} = 
+\left\{\begin{matrix}               
+-{\BM \alpha}_a^{-1} \fderiv{{\BM \alpha}_a}{Q_i} {\BM \alpha}_a^{-1} 
+                       \delta_{ab} && \text{if $a$,$b$ belong to the same molecule} \\
+-\fderiv{{\bf T}_{ab}^{(2)}}{Q_i}  && \text{if $a$,$b$ belong to different molecules}
+\end{matrix}\right. 
+\end{equation}
+%
+with
+%
+\begin{equation}
+\fderiv{{\bf T}_{ab}^{(2)}}{Q_i} = \frac{3}{r_{ab}^3} 
+       \left\{ 
+           \left[ 
+                {\bf r}_{ab} \cdot \fderiv{{\bf r}_{a}}{Q_i} 
+           \right]
+           \left(
+                 \frac{5}{r_{ab}^2} {\bf r}_{ab} \otimes {\bf r}_{ab} - {\bf 1}
+           \right) -
+%           \left(
+                 {\bf r}_{ab} \otimes \fderiv{{\bf r}_{a}}{Q_i} - \fderiv{{\bf r}_{a}}{Q_i} \otimes {\bf r}_{ab}
+%           \right)
+       \right\}
+\end{equation}
+%
+The evaluatioan of electric field derivatives with respect to the normal coordinate 
+has to be performed for \emph{all} polarizable points in the system. 
+It can be done analytically
+in fairly strightforward manner, but it is rather tedious work. 
+Under the distributed charge approximation, 
+the electric field at ${\bf r}_\alpha$ due to the 
+distributed charges placed at $N$ number of ${\bf r}_\beta$ points is
+%
+\begin{equation}
+{\bf F}_\alpha = \sum_\beta^N \frac{q_\alpha}{r_{\alpha\beta}^3} {\bf r}_{\alpha\beta}
+\end{equation}
+%
+Taking the first derivative we find that
+%
+\begin{equation}
+\fderiv{{\bf F}_\alpha}{Q_i} = \sum_\beta^N \frac{1}{r_{\alpha\beta}^3}  
+        \left(
+            \fderiv{q_\beta}{Q_i}{\bf r}_{\alpha\beta} + q_\beta \fderiv{{\bf r}_{\alpha\beta}}{Q_i} - \frac{3q_\beta}{r_{\alpha\beta}^2} 
+                \left[ 
+                     {\bf r}_{\alpha\beta} \cdot \fderiv{{\bf r}_{\alpha\beta}}{Q_i} 
+                \right] {\bf r}_{\alpha\beta}
+        \right)
+\end{equation}
+%
+As the solute molecule vibrates, to a good approximation, 
+only its structure, distributed multipole moments, polarizabilities 
+and the LMO centroids will change. We can neglect the small 
+structural distortions of nearby solvent molecules. 
+It leads to the two expressions for electric field derivatives:
+%
+\begin{eqnarray}
+\fderiv{{\bf F}}{Q_i} \left({\bf r}_{a\in\substack{\text{solute}\\\text{DPOL}}} \right)
+   &=& \sum_{y\in\substack{\text{solvent}\\\text{DMA}}}^N \frac{1}{r_{ay}^3}  
+        \left(
+                q_y \fderiv{{\bf r}_{a}}{Q_i} - \frac{3q_y}{r_{ay}^2} 
+                \left[ 
+                     {\bf r}_{ay} \cdot \fderiv{{\bf r}_{a}}{Q_i} 
+                \right] {\bf r}_{ay}
+        \right) \\
+%
+\fderiv{{\bf F}}{Q_i} \left({\bf r}_{b\in\substack{\text{solvent}\\\text{DPOL}}} \right)
+    &=& \sum_{x\in\substack{\text{solute}\\\text{DMA}}}^N \frac{1}{r_{bx}^3}  
+        \left(
+            \fderiv{q_x}{Q}{\bf r}_{bx} - q_x {\bf L}_x^{(i)} + \frac{3q_x}{r_{bx}^2} 
+                \left[ 
+                     {\bf r}_{bx} \cdot {\bf L}_x^{(i)}
+                \right] {\bf r}_{bx}
+        \right)
+\end{eqnarray}
+%
+where we chosen the convention that $a$ and $b$ indices refer to the 
+polarizable sites whereas $x$ and $y$ to the atomic sites of the solute
+and solvent moleucle, respectively.
+
+In the above equations, solute and solvent DPOL represent the sets 
+of distributed polarizability sites of solute and solvent molecules, 
+respectively, whereas solvent and solute DMA are the sets of distributed 
+multipole analysis sites of solute and solvent molecules, respectively. 
+In the presented model we assume that the distributed multipole moments are located only at atomic points.
+In the Ref.\citep{Blasiak.Cho.JCP.2014} we have provided all the 
+necessary electric field derivative formulae for the contributions
+coming from distributed multipoles up to octupoles. 
+
+The derivatives of LMO centroids and multipole moments are evaluated numerically whereas 
+the mass\hyp{}weighted eigenvectors
+${\bf L}_x^{(i)}$ 
+are obtained from the harmonic vibrational analysis (see Appendix~\ref{asec:vibranal}).
+
+\subsubsection{Induced solvatochromic multipoles}
+
+It is useful to analyze the solvatochromic multipoles 
+when the induction effects are taken into account.
+In the single\hyp{}center limit, the solvatochromic
+frequency shift from Eq.~\eqref{}
+becomes
+%
+\begin{equation} \label{e:dmtp-solmmm}
+ \Delta\omega_j^{\rm Coul} \approx  
+                        {\bf L}_j({\bf r}_0) \cdot {\BM \nabla} \phi({\bf r}_0)   + 
+      \frac{1}{3} {\BM \lambda}_j({\bf r}_0) : {\bf \nabla}  {\BM \nabla} \phi({\bf r}_0)   + 
+     \frac{1}{15} {\BM \Lambda}_j({\bf r}_0) \vdots {\BM \nabla}  {\BM \nabla}  {\BM \nabla} \phi({\bf r}_0) + \ldots
+\end{equation}
+%
+since the total solvatochromic charge must be zero. Here, the multipoles
+are evaluated with respect to origin at $({\bf r}_0)$.
+The solvatochromic multipoles are given by Eq.~\eqref{e:solvatochromic-multipoles}.
+Particularly, the first expansion coefficient in the above expansion
+is called the Stark tuning rate and can be measured.
+
+When induction is taken into account the solvatochromic multipoles
+will change. This induced effect can be calculated directly from
+${\bf a}_j$ by
+%
+\begin{subequations}
+\begin{align}
+{\bf L}_j^{\rm ind}({\bf r}_0)       &=   \sum_a {\BM \mu}_a^{\rm ind} \\
+{\BM \lambda}_j^{\rm ind}({\bf r}_0) &= - \sum_a \Big[ {\BM \mu}_a^{\rm ind} \otimes \left( {\bf r}_0 
+                                       - {\bf r}_a \right) + \left( {\bf r}_0 
+                                       - {\bf r}_a \right) \otimes {\BM \mu}_a^{\rm ind} \Big] \\
+{\BM \Lambda}_j^{\rm ind}({\bf r}_0) &=   {\bf r}_0 \otimes {\BM \mu}_j^{\rm ind}({\bf r}_0) \otimes {\bf r}_0 \\ \nonumber
+                                    &  + \sum_a \Big[ \left( {\bf r}_0^2 - {\bf r}_a^2 \right) \otimes {\BM \mu}_a^{\rm ind} 
+                                       + {\BM \mu}_a^{\rm ind} \otimes \left( {\bf r}_0^2 - {\bf r}_a^2 \right) 
+                                       - {\bf r}_a \otimes {\BM \mu}_a^{\rm ind} \otimes {\bf r}_a \Big]
+\end{align}
+\end{subequations}
+%
+Thus, they are easily computable and can provide the 
+information on whether Stark theory based on molecular
+solvatochromic multipoles is accurate or not. We will discuss 
+this aspect in more detail in Chapter X.
+
+\subsection{Dispersion effects}
+
+The remaining part of the second\hyp{}order interaction
+energy from Eq.~\eqref{e:eint-2} which has to be considered
+is the following contribution
+%
+\begin{equation} \label{e:eint-2-disp}
+U^{(2)} = - \sum_{m\ne 0} \sum_{n\ne 0} \frac{
+\lvert \langle 0_A0_B \lvert \mathscr{V}_{AB} \rvert mn \rangle \rvert^2
+}{\hbar \left( \omega_{m0_A} + \omega_{n0_B}\right)}
+\end{equation}
+%
+This is the dispersion interaction in the second\hyp{}order of RSPT.
+
 \section{Exchange-repulsion effects}
 
 The electrostatic contribution to the frequency shift is the dominant term 
@@ -2363,7 +2755,7 @@ where $S_{ab}$ and $T_{ab}$ denote one\hyp{}electron overlap and kinetic integra
 between the $a$th and $b$th localized molecular orbital (LMO), 
 $G^X_{ab}$ is the Fock matrix element of molecule 
 $X$, and $Z_x$ is the atomic number of the $x$th atom. 
-The relative distance $r$ is defined as $r_{\alpha\beta} = \left|{\bf r}_\alpha − {\bf r}_\beta \right|$. 
+The relative distance $r$ is defined as $r_{\alpha\beta} = \left|{\bf r}_\alpha - {\bf r}_\beta \right|$. 
 Here, the indices $a$, $b$, $c$, and $d$ refer to LMO's whereas indices $x$ and $y$ 
 do to atoms in molecules $A$ and $B$, respectively. Note also that the $a$th 
 and $c$th LMO's belong to solute and $b$th and $d$th LMO's to solvent molecule. 
@@ -2608,6 +3000,7 @@ They can also be calculated analitically by using standard methods implemented
 in current QM packages like {\sc Gaussian} or {\sc Gamess}.
 
 
+
 \section{SolX models}
 
 We would like to introduce the naming convention 
@@ -2717,7 +3110,7 @@ and the frequency shift is given as
 \begin{equation} \label{e:dw-solefp}
 \Delta\omega^{\rm SolEFP} = 
 \Delta\omega^{\rm Coul} + \Delta\omega^{\rm Ex-Rep} + 
-\Delta\omega^{\rm Ind} + \Delta\omega^{\rm Disp}_6
+\Delta\omega^{\rm Ind} + \Delta\omega^{\rm Disp}_6 + \Delta\omega^{\rm CT}
 \end{equation}
 %
 It is also strightforward to compute the 
