@@ -1474,7 +1474,32 @@ mixing processes.
 On the other hand, calculations of $U_{0,jk}$ could be quite difficult 
 in practice. It is useful to study the local approximation in which
 one neglects the mode mixing and assumes that only the diagonal Hessian
-matrix elements change. This leads to the frequency shift in Eq.~\eqref{e:buckingham-2st-order-total-fund}.
+matrix elements change. This leads to the frequency shift in Eq.~\eqref{e:buckingham-2st-order-total-fund}
+which can also be recast in the following form
+%
+\begin{equation} 
+ \Delta\omega_{1\leftarrow 0,j} = \left( \hat{F_j}^{\rm EA} + \hat{F_j}^{\rm MA}\right) U
+\end{equation}
+%
+with the auxiliary vibrational solvatochromic operators defined as
+%
+\begin{subequations} \label{e:dw-fea-fma}
+ \begin{align}
+  \hat{F_j}^{\rm EA} &\equiv  \frac{1}{2M_j\omega_j} \frac{\partial}{\partial Q_j} \Bigg|_{{\bf Q}_{0_A}} 
+         \label{e:dw-fea}\\
+  \hat{F_j}^{\rm MA} &\equiv -\frac{1}{2M_j\omega_j} 
+             \sum_i \frac{g_{ijj}}{M_i\omega_i^2} \frac{\partial}{\partial Q_i} \Bigg|_{{\bf Q}_{0_A}} 
+         \label{e:dw-fma}
+ \end{align}
+\end{subequations}
+%
+The first contribution (with operator defined in Eq.~\eqref{e:dw-fea}) 
+is associated with the \emph{electronic anharmonicity}
+since it involves the second derivatives of the solute's dipole
+moment (under multipole approximation; see the next Section). 
+The second contribution (Eq.~\eqref{e:dw-fma})
+is the \emph{mechanical anharmonicity} effect due to the appearance of the 
+cubic anharmonicity of the vibrational potential energy surface.
 
 \subsection{Vibrational Electrochromism}
 
@@ -2575,14 +2600,14 @@ derivatives of $\bf D$ and $\bf F$. The derivatives of the first are straightfor
 \left\{\begin{matrix}               
 -{\BM \alpha}_a^{-1} \fderiv{{\BM \alpha}_a}{Q_i} {\BM \alpha}_a^{-1} 
                        \delta_{ab} && \text{if $a$,$b$ belong to the same molecule} \\
--\fderiv{{\bf T}_{ab}^{(2)}}{Q_i}  && \text{if $a$,$b$ belong to different molecules}
+-\fderiv{{\bf T}^{ab,(2)}}{Q_i}  && \text{if $a$,$b$ belong to different molecules}
 \end{matrix}\right. 
 \end{equation}
 %
 with
 %
 \begin{equation}
-\fderiv{{\bf T}_{ab}^{(2)}}{Q_i} = \frac{3}{r_{ab}^3} 
+\fderiv{{\bf T}^{ab,(2)}}{Q_i} = \frac{3}{r_{ab}^3} 
        \left\{ 
            \left[ 
                 {\bf r}_{ab} \cdot \fderiv{{\bf r}_{a}}{Q_i} 
@@ -2669,13 +2694,13 @@ are obtained from the harmonic vibrational analysis (see Appendix~\ref{asec:vibr
 It is useful to analyze the solvatochromic multipoles 
 when the induction effects are taken into account.
 In the single\hyp{}center limit, the solvatochromic
-frequency shift from Eq.~\eqref{}
+frequency shift from Eq.~\eqref{e:dmtp-sol}
 becomes
 %
 \begin{equation} \label{e:dmtp-solmmm}
  \Delta\omega_j^{\rm Coul} \approx  
                         {\bf L}_j({\bf r}_0) \cdot {\BM \nabla} \phi({\bf r}_0)   + 
-      \frac{1}{3} {\BM \lambda}_j({\bf r}_0) : {\bf \nabla}  {\BM \nabla} \phi({\bf r}_0)   + 
+      \frac{1}{3} {\BM \lambda}_j({\bf r}_0) : {\BM \nabla}  {\BM \nabla} \phi({\bf r}_0)   + 
      \frac{1}{15} {\BM \Lambda}_j({\bf r}_0) \vdots {\BM \nabla}  {\BM \nabla}  {\BM \nabla} \phi({\bf r}_0) + \ldots
 \end{equation}
 %
@@ -2695,15 +2720,28 @@ ${\bf a}_j$ by
 {\BM \lambda}_j^{\rm ind}({\bf r}_0) &= - \sum_a \Big[ {\BM \mu}_a^{\rm ind} \otimes \left( {\bf r}_0 
                                        - {\bf r}_a \right) + \left( {\bf r}_0 
                                        - {\bf r}_a \right) \otimes {\BM \mu}_a^{\rm ind} \Big] \\
-{\BM \Lambda}_j^{\rm ind}({\bf r}_0) &=   {\bf r}_0 \otimes {\BM \mu}_j^{\rm ind}({\bf r}_0) \otimes {\bf r}_0 \\ \nonumber
+{\BM \Lambda}_j^{\rm ind}({\bf r}_0) &=   {\bf r}_0 \otimes {\BM \mu}_j^{\rm ind}({\bf r}_0) \otimes {\bf r}_0 \nonumber \\ 
                                     &  + \sum_a \Big[ \left( {\bf r}_0^2 - {\bf r}_a^2 \right) \otimes {\BM \mu}_a^{\rm ind} 
                                        + {\BM \mu}_a^{\rm ind} \otimes \left( {\bf r}_0^2 - {\bf r}_a^2 \right) 
                                        - {\bf r}_a \otimes {\BM \mu}_a^{\rm ind} \otimes {\bf r}_a \Big]
 \end{align}
 \end{subequations}
 %
-Thus, they are easily computable and can provide the 
-information on whether Stark theory based on molecular
+and the electric field\hyp{}induced frequency shift 
+is approximately given as
+%
+\begin{equation} \label{e:dmtp-solmmm-ind}
+ \Delta\omega_j^{\rm Elect} \equiv  \Delta\omega_j^{\rm Coul} +  \Delta\omega_j^{\rm Ind} \approx  
+                       \left\{ {\bf L}_j + \frac{1}{2} {\bf L}_j^{\rm ind} \right\} 
+                       \cdot {\BM \nabla} \phi({\bf r}_0)   + 
+      \frac{1}{3} \left\{ {\BM \lambda}_j + {\BM \lambda}_j^{\rm ind}({\bf r}_0) \right\} 
+                           : {\BM \nabla}  {\BM \nabla} \phi({\bf r}_0)   +   \ldots
+\end{equation}
+%
+Thus, the induced molecular solvatochromic multipoles and the frequency shift
+are easily computable and, when compared with the much more accurate
+frequency shift from Eq.~\eqref{e:dw-ind-avec}, can provide valuable 
+information on whether Stark theory based on the molecular
 solvatochromic multipoles is accurate or not. We will discuss 
 this aspect in more detail in Chapter X.
 
@@ -2714,12 +2752,329 @@ energy from Eq.~\eqref{e:eint-2} which has to be considered
 is the following contribution
 %
 \begin{equation} \label{e:eint-2-disp}
-U^{(2)} = - \sum_{m\ne 0} \sum_{n\ne 0} \frac{
+U^{\rm Disp} = - \sum_{m\ne 0} \sum_{n\ne 0} \frac{
 \lvert \langle 0_A0_B \lvert \mathscr{V}_{AB} \rvert mn \rangle \rvert^2
 }{\hbar \left( \omega_{m0_A} + \omega_{n0_B}\right)}
 \end{equation}
 %
 This is the dispersion interaction in the second\hyp{}order of RSPT.
+Using the Casimir-Polder identity
+%
+\begin{equation} \label{e:Casimir-Polder}
+\frac{1}{\omega_{m0_A}+\omega_{n0_B}} =\frac{2}{\pi} \int_0^{\infty} 
+\frac{\omega_{m0_A}\omega_{n0_B}}
+{\left(\omega_{m0_A}^2+\Omega^2\right)\left(\omega_{n0_B}^2+\Omega^2\right)} {\rm d}\Omega
+\end{equation}
+%
+we obtain
+%
+\begin{equation} \label{e:sfaf}
+U^{\rm Disp} =-\frac{2}{\pi}\int_0^{\infty} \sum_{m\ne 0} \sum_{n\ne 0}
+\frac{\omega_{m0_A}\omega_{n0_B}
+\lvert \langle 0_A0_B \lvert \mathscr{V}_{AB} \rvert mn \rangle \rvert^2
+}
+{\left(\omega_{m0_A}^2+\Omega^2\right)\left(\omega_{n0_B}^2+\Omega^2\right)} {\rm d}\Omega
+\end{equation}
+%
+The interaction potential $\mathscr{V}_{AB}$ can be expanded in terms of multipoles. 
+The first two terms contributing to the dispersion interaction energy 
+in Eq.~\eqref{e:sfaf} are\citep{Smith.Ruedenberg.Gordon.Slipchenko.JCP.2012}
+%
+\begin{equation} \label{e:x487395}
+\mathscr{V}_{AB} \rightarrow
+- {\BM \mu}^A \otimes {\BM \mu}^B : {\bf T}^{AB,(2)} + \frac{1}{3} 
+\left( 
+ {\BM \mu}^A \otimes {\BM \Theta}^B - {\BM \Theta}^A \otimes {\BM \mu}^B
+\right) \vdots {\bf T}^{AB,(3)}
+\end{equation}
+%
+since the terms containing charges will vanish due to orthogonality 
+of the monomer eigenstates. The second- and third-rank interaction tensors,
+${\bf T}^{AB,(2)}$ and ${\bf T}^{AB,(3)}$, 
+can be found in Ref.\citep{Stone.TheTheoryOfIntermolecularForces.1996}
+Substituting Eq.~\eqref{e:x487395} into Eq.~\eqref{e:sfaf} we have
+%
+\begin{equation}
+ U^{\rm Disp} \cong  U^{\rm Disp}_6 + U^{\rm Disp}_7 + U^{\rm Disp}_8 + \ldots
+\end{equation}
+%
+with
+%
+\begin{subequations} \label{e:udisp-6-7-8}
+ \begin{align}
+  U^{\rm Disp}_6 &= - \frac{\hbar}{2\pi} \sum_{\alpha\beta\gamma\delta}^{x,y,z}
+   T^{AB}_{\alpha\beta}T^{AB}_{\gamma\delta} \int_0^{\infty} {\rm d}\Omega \; 
+    \alpha^A_{\alpha\gamma}(i\Omega)\alpha^B_{\beta\delta}(i\Omega) \\
+  U^{\rm Disp}_7 &= \frac{\hbar}{3\pi} \sum_{\alpha\beta\gamma\delta\eta}^{x,y,z}
+   T^{AB}_{\alpha\beta}T^{AB}_{\gamma\delta\eta} \int_0^{\infty} {\rm d}\Omega \; 
+    \left\{ 
+     \alpha^A_{\alpha\gamma}(i\Omega)A^B_{\beta,\delta\eta}(i\Omega) -
+     A^A_{\alpha,\gamma\delta}(i\Omega)\alpha^B_{\beta\eta}(i\Omega) 
+    \right\} \\
+   U^{\rm Disp}_8 &= - \frac{\hbar}{18\pi} \sum_{\alpha\beta\gamma\delta\eta\chi}^{x,y,z}
+   T^{AB}_{\alpha\beta\gamma}T^{AB}_{\delta\eta\chi} \int_0^{\infty} {\rm d}\Omega \; 
+    \Big\{ 
+      \alpha^A_{\alpha\delta}(i\Omega) c^B_{\beta\gamma,\eta\chi}(i\Omega) \nonumber \\  &\qquad+ 
+      c^A_{\alpha\beta,\delta\eta}(i\Omega) \alpha^B_{\gamma\chi}(i\Omega) -
+      A^A_{\alpha,\delta\eta}(i\Omega) A^B_{\chi,\beta\gamma}(i\Omega) -
+      A^A_{\delta,\alpha\beta}(i\Omega) A^B_{\gamma,\eta\chi}(i\Omega)
+   \Big\}
+ \end{align}
+\end{subequations}
+%
+In the above equations, the dipole\hyp{}dipole, dipole\hyp{}quadrupole, 
+and quadrupole\hyp{}quadrupole polarizabilities at imaginary frequency 
+$i\Omega$ are, respectively, defined as
+%
+\begin{subequations} \label{e:iomega-polarizabilities}
+ \begin{align}
+  \alpha^A_{\alpha\beta}(i\Omega) &= 2\sum_{m\neq 0} \frac{
+\omega_{m0_A} 
+\langle 0_A \lvert \hat{\mu}_{\alpha} \rvert m \rangle  \langle m \lvert \hat{\mu}_{\beta} \rvert 0_A \rangle 
+}{\hbar \left( \omega_{m0_A}^2 + \Omega^2 \right)} \\
+%
+  A^A_{\alpha,\beta\gamma}(i\Omega) &= 2\sum_{m\neq 0} \frac{
+\omega_{m0_A} 
+\langle 0_A \lvert \hat{\mu}_{\alpha} \rvert m \rangle  \langle m \lvert \hat{\Theta}_{\beta\gamma} \rvert 0_A \rangle 
+}{\hbar \left( \omega_{m0_A}^2 + \Omega^2 \right)} \\
+%
+  c^A_{\alpha\beta,\gamma\delta}(i\Omega) &= 2\sum_{m\neq 0} \frac{
+\omega_{m0_A} 
+\langle 0_A \lvert \hat{\Theta}_{\alpha\beta} \rvert m \rangle  \langle m \lvert \hat{\Theta}_{\gamma\delta} \rvert 0_A \rangle 
+}{\hbar \left( \omega_{m0_A}^2 + \Omega^2 \right)}
+ \end{align}
+\end{subequations}
+%
+The terms in Eqs.~\eqref{e:udisp-6-7-8} depend on the intermolecular distance 
+$R_{AB}$ as $R^{-6}_{AB}$, $R^{-7}_{AB}$, and $R^{-8}_{AB}$, 
+respectively, so that $U^{\rm Disp}$ can be written as
+%
+\begin{equation} \label{e:udisp-cn-series}
+ U^{\rm Disp} \cong -\frac{C_6}{R^{6}_{AB}} -\frac{C_7}{R^{7}_{AB}} -\frac{C_8}{R^{8}_{AB}} + \ldots
+\end{equation}
+%
+where $R_{AB}=\left|{\bf R}_A-{\bf R}_B\right|$ 
+and ${\bf R}_A$ is the charge\hyp{}centroid 
+defined as ${\bf R}_A=\langle 0_A\left|\hat{\bf r}\right|0_A\rangle$. 
+The coefficient of the leading term in Eq.~\eqref{e:udisp-cn-series} is given by
+%
+\begin{equation} \label{e:c6}
+ C_6 = \frac{3\hbar}{\pi} \int_0^\infty \alpha^A(i\Omega) \alpha^B(i\Omega) \;{\rm d}\Omega
+\end{equation}
+%
+where we isotropically averaged out over all orientations and used the 
+isotropic polarizabilities, $\alpha^A=\frac{1}{3}{\rm Tr}\;{\BM \alpha}$.
+Note that, when the charge distribution has the center of inversion, 
+the dipole\hyp{}quadrupole polarizabilities vanish by symmetry 
+and only even\hyp{}rank terms are non\hyp{}zero. Even in the case 
+of non-centrosymmetric molecules, the rotational average 
+of the $R^{-7}_{AB}$ term in Eq.~\eqref{e:udisp-cn-series} 
+is often negligibly small.\citep{Stone.TheTheoryOfIntermolecularForces.1996}
+
+Now, considering the lowest\hyp{}order term in Eq.~\eqref{e:udisp-cn-series} 
+with the vibrational solvatochromic operator from Eq.~\eqref{e:dw-fea-fma}, we have
+%
+\begin{multline}
+   \Delta\omega^{\rm Disp}_6 = - \frac{1}{2\pi} \sum_{\alpha\beta\gamma\delta}^{x,y,z} 
+   \Bigg[ 
+   \hat{F_j} \left\{ T^{AB}_{\alpha\beta}T^{AB}_{\gamma\delta} \right\} \int_0^{\infty} {\rm d}\Omega \; 
+    \alpha^A_{\alpha\gamma}(i\Omega)\alpha^B_{\beta\delta}(i\Omega) \\
+   + 
+   T^{AB}_{\alpha\beta}T^{AB}_{\gamma\delta} \hat{F_j} \int_0^{\infty} {\rm d}\Omega \;
+   \alpha^A_{\alpha\gamma}(i\Omega)\alpha^B_{\beta\delta}(i\Omega) 
+   \Bigg]
+\end{multline}
+%
+Direct differentiation with respecto to normal coordinates leads to 
+%
+\begin{equation} \label{e:dw-disp-6}
+ \Delta\omega_{j,6}^{\rm Disp} \cong 
+\frac{1}{4\pi M_j\omega_j}\sum_i \frac{g_{ijj}}{M_i\omega_i^2} 
+%\sum_{a\in  A}\sum_{b\in B}
+\sum_{\alpha\beta\gamma\delta}^{x,y,z}   \times \int_{0}^{\infty} {\rm d}\Omega
+%
+ \left\{
+T^{AB}_{\alpha\beta}T^{AB}_{\gamma\delta}
+\frac{\partial \alpha_{\alpha\gamma}^{A}}{\partial Q_i}
++
+\frac{\partial \left(T^{AB}_{\alpha\beta}T^{AB}_{\gamma\delta}\right)}{\partial Q_i}
+\alpha_{\alpha\gamma}^{A}
+\right\}
+\alpha_{\beta\delta}^{B}
+\end{equation}
+%
+In Eq.~\eqref{e:dw-disp-6}, we ignored the electric anharmonicity contribution 
+that is related to the second derivative of dispersion interaction energy 
+(Eq.~\eqref{e:dw-fea}) with respect to the vibrational coordinate $Q_j$, 
+since it is small and can be omitted as a good approximation 
+(see the next Chapter). 
+The product of the interaction tensor elements is
+%
+\begin{equation} \label{e:378463267}
+ T^{AB}_{\alpha\beta} T^{AB}_{\gamma\delta} = \frac{9}{R^{10}} R_\alpha R_\beta R_\gamma R_\delta
+ - \frac{3}{R^8} \left( R_\alpha R_\beta \delta_{\gamma\delta} + R_\gamma R_\delta \delta_{\alpha\beta}\right)
+ + \frac{\delta_{\alpha\beta}\delta_{\gamma\delta}}{R^6}
+\end{equation}
+%
+where we used $R=\left|{\bf R}_{AB}\right|$.
+Its derivative with respect to $Q_i$ is
+%
+\begin{multline} \label{e:happylabel}
+ \fderiv{\left( T^{AB}_{\alpha\beta} T^{AB}_{\gamma\delta} \right)}{Q_i} = 
+  \frac{9}{R^{10}} 
+   \left( 
+     P^{(i)}_\alpha R_\beta R_\gamma R_\delta + 
+     R_\alpha P^{(i)}_\beta R_\gamma R_\delta +
+     R_\alpha R_\beta P^{(i)}_\gamma R_\delta +
+     R_\alpha R_\beta R_\gamma P^{(i)}_\delta
+   \right) \\
+    - \frac{90}{R^{12}}
+       G^{(i)} R_\alpha R_\beta R_\gamma R_\delta
+    - \frac{3}{R^8} 
+      \left[ 
+          \left( P^{(i)}_\alpha R_\beta  + R_\alpha P^{(i)}_\beta \right)\delta_{\gamma\delta}
+        + \left( P^{(i)}_\gamma R_\delta + R_\gamma P^{(i)}_\delta\right)\delta_{\alpha\beta}
+      \right] \\
+   + \frac{24}{R^{10}} G^{(i)} 
+      \left( 
+       R_\alpha R_\beta  \delta_{\gamma\delta} 
+     + R_\gamma R_\delta \delta_{\alpha\beta} 
+      \right) 
+   - \frac{6}{R^{8}} G^{(i)} \delta_{\alpha\beta}  \delta_{\gamma\delta}
+\end{multline}
+%
+with the auxiliary definisions
+%
+\begin{subequations}
+ \begin{align}
+   {\bf P}^{(i)} &= \fderiv{{\bf R}_A}{Q_i} \\
+   G^{(i)}       &= {\bf R}_{AB} \cdot \fderiv{{\bf R}_A}{Q_i}
+ \end{align}
+\end{subequations}
+%
+introduced to simplify the notation.
+
+Equation~\eqref{e:dw-disp-6} can be further simplified by taking only the isotropic 
+part of the dipole\hyp{}dipole polarizabilities, which is to assume that 
+$\alpha_{\sigma\sigma} \approx \frac{1}{3}{\rm Tr}{\BM\alpha} \equiv \alpha \text{ for } \sigma \in (x, y, z)$. 
+Within this approximation, the corresponding vibrational frequency shift 
+can be recast in the form
+%
+\begin{equation} \label{e:dw-disp-6-iso}
+\Delta \omega_{j,6}^{\rm Disp-Iso} = \frac{3}{2\pi M_j\omega_j}
+\sum_i \frac{g_{ijj}}{M_i\omega_i^2} 
+%\sum_{a\in  A}\sum_{b\in B}
+\frac{1}{R^6_{AB}} \times
+\int_{0}^{\infty} {\rm d}\Omega \left\{ 
+\frac{\partial \alpha_0^{A}}{\partial Q_i}- 
+\frac{6G^{(i)}}{R^2_{AB}} 
+\alpha_0^{A}
+\right\}
+\alpha_0^{B} 
+\end{equation}
+%
+It is important to note that the first term in Eq.~\eqref{e:dw-disp-6-iso} 
+is the contribution originating from the polarizability change 
+when solute molecule undergoes a vibrational distortion 
+along the $Q_i$ coordinate and it is proportional to $R^{-6}_{AB}$. 
+The second term in the integral that is associated with the derivative 
+of the product of interaction tensors in Eq.~\eqref{e:happylabel}
+is asymptotically proportional to $R^{-7}_{AB}$. Further ignoring the latter 
+(the second term in the curly bracket of Eq.~\eqref{e:dw-disp-6-iso}), 
+the formula for the dipole\hyp{}dipole dispersion interaction\hyp{}induced 
+frequency shift becomes
+%
+\begin{equation} \label{e:dw-disp-6-iso-approx}
+\Delta \omega_{j,6}^{\rm Disp-Iso} = \frac{3}{2\pi M_j\omega_j}
+\sum_i \frac{g_{ijj}}{M_i\omega_i^2} 
+%\sum_{a\in  A}\sum_{b\in B}
+\frac{1}{R^6_{AB}} 
+\int_{0}^{\infty} 
+\frac{\partial \alpha_0^{A}}{\partial Q_i}
+\alpha_0^{B}  \;{\rm d}\Omega  
+\end{equation}
+%
+This expression could be recast in the following form: 
+%
+\begin{equation} \label{e:dw-disp-6-iso-approx-cj6}
+\Delta \omega_{j,6}^{\rm Disp-Approx} = 
+ - \frac{C_{j,6}}{R_{AB}^6}
+\end{equation}
+%
+where similar to the traditional $C_n$ coefficients 
+in the series expansion of the dispersion interaction 
+energy in Eq.~\eqref{e:udisp-cn-series}, $C_{j,6}$ 
+can be referred to as 
+the 'vibrational solvatochromic $C_6$ coefficient' 
+and is defined as
+%
+\begin{equation} \label{e:cj6}
+C_{j,6} \equiv
+-\frac{3}{2\pi M_j\omega_j} 
+\int_{0}^{\infty} 
+\left[
+\sum_i \frac{g_{ijj}}{M_i\omega_i^2} 
+\fderiv{\alpha_0^{A}}{Q_i}
+\right]
+\alpha_0^{B} 
+{\rm d}\Omega  
+\end{equation}
+%
+Note that this vibrational frequency shift coefficient 
+$C_{j,6}$ can be calculated for any solute and solvent 
+molecule in the gas phase. Thus, it is relatively easy 
+to calculate $\Delta \omega_{j,6}^{\rm Disp}$ for any 
+given pair of solute and solvent molecules.
+
+The next important contribution to the vibrational frequency 
+shift is due to $U_{8}^{\rm Disp}$ term. By neglecting the 
+contribution from the dipole\hyp{}quadrupole polarizability 
+interactions and the first derivatives of $T^{AB}_{\alpha\beta}T^{AB}_{\gamma\delta\eta}$ 
+(which decay as $R^{-9}_{AB}$), it is possible to obtain 
+the following equation for $\Delta \omega_{j,8}^{\rm Disp}$: 
+%
+\begin{multline} \label{e:dw-disp-8}
+ \Delta\omega_{j,8}^{\rm Disp} \approx 
+\frac{1}{36\pi M_j\omega_j}\sum_i \frac{g_{ijj}}{M_i\omega_i^2} 
+\sum_{\alpha\beta\gamma\delta\eta\chi}^{x,y,z}   
+T^{AB}_{\alpha\beta\gamma}T^{AB}_{\delta\eta\chi}
+%
+\int_{0}^{\infty} {\rm d}\Omega
+ \left\{
+\frac{\partial \alpha_{\alpha\gamma}^{A}}{\partial Q_i} c^{B}_{\beta\gamma,\eta\chi}
++
+\fderiv{c^{A}_{\alpha\beta,\delta\eta}}{Q_i} \alpha^B_{\gamma\chi}
+\right\}  \\
++ O\left( R^{-9}_{AB}\right)
+\end{multline}
+%
+Note that, in this case, also quadrupole\hyp{}quadrupole 
+polarizabilities and their first derivatives with respect 
+to all the normal coordinates are additionally needed, 
+which makes this calculation of Eq.~\eqref{e:dw-disp-8} 
+very difficult to handle in practice. 
+
+\subsubsection{Distributed polarizability approach for dispersion}
+
+If the total molecular (single\hyp{}centered) multipole 
+expansions of the charge distributions of the molecules 
+$A$ and $B$ are used, both the lowest\hyp{}order 
+dipole\hyp{}dipole (proportional to $R^{-6}_{AB}$) 
+and higher\hyp{}order terms in Eq.~\eqref{e:dw-disp-6} are usually large 
+so that a serious convergence problem arises when Eq.~\eqref{e:dw-disp-6} 
+is calculated for large solute and solvent molecules with 
+spatially delocalized charge distributions. Therefore, 
+the distributed site approach has been used in the EFP2 
+method\citep{Adamovic.Gordon.MolPhys.2005} to improve 
+this convergence of the multipolar expansion series 
+for the dispersion interaction energy. Naturally, 
+the theory on the dispersion interaction\hyp{}induced 
+vibrational solvatochromism can be extended by following 
+the same idea. The expressions for the frequency shifts 
+and the associated vibrational solvatochromic coefficients 
+that we implemented and quantitatively evaluated in 
+this work are given as
+
 
 \section{Exchange-repulsion effects}
 
