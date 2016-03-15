@@ -77,6 +77,7 @@
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{mathrsfs}
+\allowdisplaybreaks
 
 % symbols
 \usepackage{gensymb}
@@ -2475,7 +2476,7 @@ the induction interaction energy in the
 can be written in the following form:
 %
 \begin{equation} \label{e:eint-2-ind-dip-distr}
-U^{\rm Ind} = - \frac{1}{2} {\bf p} \cdot {\bf p} = - \frac{1}{2} {\bf F}^T \cdot {\bf D}^{-1} \cdot {\bf F}
+U^{\rm Ind} = - \frac{1}{2} {\bf p} \cdot {\bf F} = - \frac{1}{2} {\bf F}^T \cdot {\bf D}^{-1} \cdot {\bf F}
 \end{equation}
 %
 where ${\bf p}$ constitutes the induced dipoles of 
@@ -2745,7 +2746,7 @@ information on whether Stark theory based on the molecular
 solvatochromic multipoles is accurate or not. We will discuss 
 this aspect in more detail in Chapter X.
 
-\subsection{Dispersion effects}
+\subsection{Dispersion effects\label{s:disp}}
 
 The remaining part of the second\hyp{}order interaction
 energy from Eq.~\eqref{e:eint-2} which has to be considered
@@ -2945,10 +2946,10 @@ Its derivative with respect to $Q_i$ is
 %
 with the auxiliary definisions
 %
-\begin{subequations}
+\begin{subequations} 
  \begin{align}
-   {\bf P}^{(i)} &= \fderiv{{\bf R}_A}{Q_i} \\
-   G^{(i)}       &= {\bf R}_{AB} \cdot \fderiv{{\bf R}_A}{Q_i}
+   {\bf P}^{(i)} &= \fderiv{{\bf R}_A}{Q_i}                    \label{e:pi} \\
+   G^{(i)}       &= {\bf R}_{AB} \cdot \fderiv{{\bf R}_A}{Q_i} \label{e:gi}
  \end{align}
 \end{subequations}
 %
@@ -3056,24 +3057,119 @@ very difficult to handle in practice.
 
 \subsubsection{Distributed polarizability approach for dispersion}
 
-If the total molecular (single\hyp{}centered) multipole 
-expansions of the charge distributions of the molecules 
-$A$ and $B$ are used, both the lowest\hyp{}order 
+Similarly as in the case of the induction energy, 
+dispersion energy calculation based on the total molecular (single\hyp{}centered)
+multipole expansion as discussed in Section~\ref{s:disp} 
+is prone to exhibit serious convergence problems because
+both the lowest\hyp{}order 
 dipole\hyp{}dipole (proportional to $R^{-6}_{AB}$) 
-and higher\hyp{}order terms in Eq.~\eqref{e:dw-disp-6} are usually large 
-so that a serious convergence problem arises when Eq.~\eqref{e:dw-disp-6} 
-is calculated for large solute and solvent molecules with 
-spatially delocalized charge distributions. Therefore, 
-the distributed site approach has been used in the EFP2 
-method\citep{Adamovic.Gordon.MolPhys.2005} to improve 
-this convergence of the multipolar expansion series 
-for the dispersion interaction energy. Naturally, 
-the theory on the dispersion interaction\hyp{}induced 
-vibrational solvatochromism can be extended by following 
-the same idea. The expressions for the frequency shifts 
-and the associated vibrational solvatochromic coefficients 
-that we implemented and quantitatively evaluated in 
-this work are given as
+and higher\hyp{}order terms in Eq.~\eqref{e:dw-disp-6} 
+are usually large. Therefore we utilize the distributed site 
+approach also for dispersion effects.\citep{Adamovic.Gordon.MolPhys.2005}
+This leads to the following expressions for the 
+dispersion\hyp{}induced vibrational frequency shifts 
+%
+\begin{multline}
+    \Delta\omega_{j,6}^{\rm Disp} \cong 
+       \frac{1}{4\pi M_j\omega_j}\sum_i \frac{g_{ijj}}{M_i\omega_i^2} 
+       \sum_{a\in  A}\sum_{b\in B}
+       \sum_{\alpha\beta\gamma\delta}^{x,y,z}  \\ 
+    \qquad \times \int_{0}^{\infty} {\rm d}\Omega
+       %
+       \left\{
+         T^{ab}_{\alpha\beta}T^{ab}_{\gamma\delta}
+           \frac{\partial \alpha_{\alpha\gamma}^{(a)}}{\partial Q_i}
+            +
+           \frac{\partial \left(T^{ab}_{\alpha\beta}T^{ab}_{\gamma\delta}\right)}{\partial Q_i}
+          \alpha_{\alpha\gamma}^{(a)}
+      \right\}
+      \alpha_{\beta\delta}^{(b)}   
+\end{multline}
+%
+in which we have substituted $A$ indices referring to the molecular centroids
+with $a$ indices indicating polarizable centers (LMO centroids) 
+of molecule $A$, and summed over all polarizable sites in solute
+and solvent molecules. The exactly same substitutions need to be made
+in Eqs.~\eqref{e:378463267}, \eqref{e:happylabel}, \eqref{e:pi}  and \eqref{e:gi}
+in order to obtain terms corresponding to the interaction tensor products.
+Analogously, formulas approximating $\Delta\omega_{j,6}^{\rm Disp}$ 
+can be written as
+%
+\begin{equation} \label{e:dw-disp-6-iso-distributed}
+\Delta \omega_{j,6}^{\rm Disp-Iso} = \frac{3}{2\pi M_j\omega_j}
+\sum_i \frac{g_{ijj}}{M_i\omega_i^2} 
+\sum_{a\in  A}\sum_{b\in B}
+\frac{1}{R^6_{ab}} \times
+\int_{0}^{\infty} {\rm d}\Omega \left\{ 
+\frac{\partial \alpha_0^{(a)}}{\partial Q_i}- 
+\frac{6G^{(i)}}{R^2_{ab}} 
+\alpha_0^{(a)}
+\right\}
+\alpha_0^{(b)} 
+\end{equation}
+%
+and 
+%
+\begin{equation} \label{e:dw-disp-6-iso-approx-distributed}
+\Delta \omega_{j,6}^{\rm Disp-Iso} = 
+- \sum_{a\in  A}\sum_{b\in B}
+C^{ab}_{j,6} R^{-6}_{ab}  
+\end{equation}
+%
+in which we have defined the \emph{distributed} solvatochromic 
+dispersion coefficients as follows
+%
+\begin{equation} \label{e:cj6-distributed}
+C^{ab}_{j,6} \equiv -\frac{3}{2\pi M_j\omega_j}
+\int_{0}^{\infty} 
+\left\{
+\sum_i \frac{g_{ijj}}{M_i\omega_i^2} 
+\frac{\partial \alpha_0^{(a)}}{\partial Q_i}
+\right\}
+\alpha_0^{(b)}  \;{\rm d}\Omega  
+\end{equation}
+%
+They sum to the total molecular coefficient
+%
+\begin{equation}
+\sum_{a\in  A}\sum_{b\in B} C^{ab}_{j,6}  =  C_{j,6} 
+\end{equation}
+%
+that is given in Eq.~\eqref{e:cj6}.
+
+Despite that the odd\hyp{}order terms in the series in Eq.~\eqref{e:udisp-cn-series} 
+are usually negligibly small or even vanish, the contribution 
+from induced dipole\hyp{}induced quadrupole interaction 
+($R^{-8}$ terms associated with $C_8$ coefficients) 
+cannot be ignored since, even in the LMO\hyp{}distributed 
+site representation, its magnitude can be $\sim$1/3 of the total 
+dispersion energy.\citep{Adamovic.Gordon.MolPhys.2005} Therefore, one should also include 
+$\Delta\omega_{j,8}^{\rm Disp}$ to estimate the total 
+frequency shift, especially when a pair of molecules 
+are in close vicinity to each other. This difficulty 
+in taking into account the higher\hyp{}order contributions 
+to the dispersion interaction energy was resolved, in the 
+theoretical framework of EFP2, by introducing an empirical 
+scaling factor of 4/3 that was derived by comparing 
+$U^{\rm Disp}_6$ from EFP2 with the accurate calculation results 
+obtained with SAPT.\citep{Jeziorski.Moszynski.Szalewicz.ChemRev.1994,
+Adamovic.Gordon.MolPhys.2005} Unfortunately, it is very 
+difficult to assess the quantitative significance of 
+$\Delta\omega_{j,8}^{\rm Disp}$ directly. Nonetheless, 
+it is indeed smaller than the lowest order ($R^{-6}$) term, 
+and furthermore, it is even much smaller than other 
+Coulomb and induction terms so that the contribution, 
+$\Delta\omega_{j,8}^{\rm Disp}$, to the total vibrational 
+frequency shift will not be included in the present work. 
+It should be mentioned that Xu, Zahariev, and Gordon 
+recently developed and extended EFP2 theory by including 
+to the dispersion interaction term proportional to $R^{-7}$, 
+since they were able to compute LMO\hyp{}LMO distributed 
+dipole\hyp{}quadrupole polarizabilities.\citep{Xu.Zahariev.Gordon.JCTC.2014} 
+This very promising result suggests that it might be 
+possible to obtain the $R^{-8}$ contributions to the 
+vibrational frequency shift, $\Delta\omega_{j,8}^{\rm Disp}$, 
+in the future.
 
 
 \section{Exchange-repulsion effects}
@@ -3087,8 +3183,41 @@ in the case of solute\hyp{}solvent hydrogen bonded dimer,
 short\hyp{}range interactions become important. 
 Therefore, the Pauli effects and their contribution to the frequency shift have to be taken into account.
 
-Following Jensen and Gordon\citep{Jensen.Gordon.JCP.1998,Jensen.Gordon.MolPhys.1996} 
-the exchange\hyp{}repulsion interaction energy 
+To explicitly include the exchange\hyp{}repulsion one needs to
+modify the perturbation expression from Eq.~\eqref{e:eint-1}
+%
+\begin{equation} \label{e:eint-1-expol}
+U^{(1)} = 
+\frac{
+\langle \mathscr{A} 0_A0_B \lvert \mathscr{V}_{AB} \rvert \mathscr{A} 0_A0_B \rangle 
+}{
+\langle \mathscr{A} 0_A0_B \vert \mathscr{A} 0_A0_B \rangle 
+}
+\end{equation}
+%
+which is called the first\hyp{}order exchange perturbation theory.
+The operator $\mathscr{A}$ is a standard antysymmetrizer which
+can be expanded in the following series
+%
+\begin{equation} \label{e:antisymmetrizer-series}
+ \mathscr{A} = \mathbb{1} + \mathscr{P}_1 + \mathscr{P}_2 + \ldots
+\end{equation}
+%
+in which $\mathscr{P}_n$ is the permutation operator that exchanges the labels 
+of the $n$ electron pairs in between $\vert 0_A \rangle$ and $\vert 0_B \rangle$
+and summs over all possibilities to give an antisymmetrized product
+$\vert \mathscr{A} 0_A0_B \rangle $. When no electron exchange is
+assumed, i.e., $\mathscr{A}$ is just an identity operator $\mathbb{1}$, 
+Eq.~\eqref{e:eint-1-expol} becomes Eq.~\eqref{e:eint-1}.
+
+In this work, we assume the approximation of $\mathscr{A}$
+based on the truncation of the series in Eq.~\eqref{e:antisymmetrizer-series}
+at the single electron exchange. This gives already good exchange\hyp{}repulsion
+energy estimates in most cases. It was shown by 
+Jensen and Gordon\citep{Jensen.Gordon.JCP.1998,Jensen.Gordon.MolPhys.1996}
+that, by invoking this
+approximation and zero differential overlap, 
+the Hartree\hyp{}Fock exchange\hyp{}repulsion interaction energy 
 between molecules A (solute), and B (solvent) is given approximately as 
 %
 \begin{multline}\label{e:u-exrep-efp}
@@ -3340,7 +3469,6 @@ c_{\mu k}^*c_{\sigma t}
 \mathscr{O}\ket{\phi_t}
 \end{equation}
 %
-%
 The latter result can be inserted into Eq.\eqref{e:derXij} and in this way
 one can compute overlap and kinetic integral derivatives with respect to the normal coordinate
 in each frame of a simulation using instantaneous positions of solute and solvent molecules.
@@ -3353,6 +3481,285 @@ The derivatives of intramolecular Fock matrix elements can be easily found
 by numerical  differentiation (note, that they need to be evaluated only once).
 They can also be calculated analitically by using standard methods implemented
 in current QM packages like {\sc Gaussian} or {\sc Gamess}.
+
+
+\section{Modeling the solute's far environment}
+
+In the preceeding Sections we have focused on the
+theory that is applicable to the explicit solute\hyp{}solvent
+clusters. However, it is still computationally very difficult 
+to compute the Coulombic, induction, dispersion, exchange\hyp{}repulsion
+and charge transfer vibrational frequency shifts (and the transition dipole moment changes)
+for a bulk system because the formulae we have derived are quite
+complicated and their evaluation is relatively time consuming. The most computationally
+demanding terms are the induction, charge transfer and exchange\hyp{}repulsion contributions.
+The cost of $\Delta\omega^{\rm Ind}$ grows very rapidly with the system size
+due to the need of inverting very large and sparse $\bf D$ matrices.
+On the other hand, the computation of one\hyp{}electron overlap, kinetic
+and potential integrals and their derivatives with respect to all the normal 
+coordinates are very time consuming because of the enormous amount of such integrals
+that need to be computed for the evaluation of $\Delta\omega^{\rm Ex-Rep}$ and $\Delta\omega^{\rm CT}$.
+Since the $U^{\rm Coul}$, $U^{\rm Ind}$ and $U^{\rm Disp}$
+are in general long\hyp{}range interactions, it becomes desirable
+to design some approximate and efficient way to take into account the
+effect of the far environment which, in the case of the molecular bulk 
+system, can be considered as infinite solution.
+
+In the case when the periodic boundary conditions are utilized, 
+calculation of the very long\hyp{}range contributions to $\Delta\omega$ 
+could be done by developing an Ewald summation\hyp{}like procedure.
+However, this can still be computationally quite demanding since it is
+not that easy to split the non\hyp{}additive induction effects
+into the direct and reciprocal spaces.
+
+Another way of solving the problem of the very long\hyp{}range
+vibrational frequency shifts can be the assumption that the
+far environment is felt by the solute molecule as the \emph{continuum}
+rather than the descrete molecular ensemble. This assumption
+is reasonable as long as the 'far environment'
+is understood to be sufficiently far away from the solute's
+center of mass. In that case all the specific solute\hyp{}solvent
+interactions should vanish and the only contributions should be
+associated with the \emph{non\hyp{}specific} Coulombic, induction and dispersion
+effects that can be modelled by classical descriptors of polarity.
+
+\subsection{Onsager model of the vibrational solvatochromism}
+
+As the simplest case let us consider the Onsager model
+in which the solute molecule with the permanent gas\hyp{}phase 
+dipole moment ${\BM \mu}_0$
+is placed inside a spherical cavity of radius $a$. Note that
+for our purpose the cavity need to be quite large. Therefore 
+we can safely neglect other than dipole\hyp{}dipole interactions.
+In such a case, the solvation (interaction) energy is given as
+%
+\begin{equation} \label{e:esol-onsager}
+ U^{\rm Sol}(\varepsilon, {\bf Q}) =
+ -\frac{1}{2} {\BM \mu}(\varepsilon, {\bf Q}) \cdot {\bf F}^{\rm Ons}
+\end{equation}
+%
+where the Onsager reaction (electric) field acting on the solute molecule
+is
+%
+\begin{equation} \label{e:fons}
+  {\bf F}^{\rm Ons} = \frac{2(\varepsilon-1)}{a^3(2\varepsilon+1)} {\BM \mu}(\varepsilon, {\bf Q})
+ = g(a,\varepsilon) {\BM \mu}(\varepsilon, {\bf Q})
+\end{equation}
+%
+In the above equations, ${\BM \mu}(\varepsilon, {\bf Q})$ 
+is the total solute's (gas\hyp{}phase and induced) dipole moment.
+It is strighforward to write down the expression for the
+vibrational frequency shift as
+%
+\begin{equation} \label{e:dw-ons-gen}
+  \Delta\omega_j(\varepsilon, {\bf Q}) = \hat{F}_j \left[ U^{\rm Sol}(\varepsilon, {\bf Q}) \right]
+\end{equation}
+%
+where $\hat{F}_j$ is the vibrational solvatochromic frequency shift 
+operator from Eq.~\eqref{e:dw-fea-fma}.
+
+To calculate the solvatochromic vibrational frequency shift
+using solute's gas\hyp{}phase properties it is necessary to expand
+the dipole moment into a power series with respect to the two perturbations,
+i.e., structural distortion and the Onsager electric field. Considering the first
+four terms in the Taylor expansion of ${\BM \mu}(\varepsilon, {\bf Q})$ one gets
+%
+\begin{equation} \label{e:mu-qf}
+ {\BM \mu}(\varepsilon, {\bf Q}) \approx 
+ {\BM \mu}_0 + \fderiv{{\BM \mu}}{\bf F}\Bigg|_{0}  \cdot {\bf F}^{\rm Ons}
+ + \sum_i \fderiv{{\BM \mu}}{Q_i}\Bigg|_{0} \delta Q_i 
+ + \sum_i \sderivd{{\BM \mu}}{{\bf F}}{Q_i}\Bigg|_{0} \cdot {\bf F}^{\rm Ons} \delta Q_i
+\end{equation}
+%
+where the subscript $0$ denotes that the derivatives are evaluated in the gas phase,
+i.e., ${\bf F}={\bf 0}$ and $\delta Q_i=0$.
+
+\subsubsection{Rigid molecule approximation}
+
+If the structural distortion are neglected, we have
+%
+\begin{equation}
+ {\BM \mu}(\varepsilon, {\bf Q}) \approx 
+ {\BM \mu}_0 + {\BM \alpha}_0  \cdot {\bf F}^{\rm Ons}
+\end{equation}
+%
+where the dipole\hyp{}dipole gas\hyp{}phase polarizability is
+%
+\begin{equation}
+{\BM \alpha}_0  = \fderiv{{\BM \mu}}{\bf F}\Bigg|_{0}
+\end{equation}
+%
+Then, the Onsager reaction field can be approximately written as
+%
+\begin{equation}
+{\bf F}^{\rm Ons} \approx g(a,\varepsilon) {\bf B} \cdot {\BM \mu}_0
+\end{equation}
+%
+with the auxiliary matrix given as follows
+%
+\begin{equation}
+{\bf B} = \left( \mathbb{1} - g(a,\varepsilon){\BM \alpha}_0 \right)^{-1}
+\end{equation}
+%
+Thus, the resulting solvation energy can be recast in the form
+that depends only on gas\hyp{}phase solute properties:
+%
+\begin{equation} \label{e:ons-e-sol-init}
+U^{\rm Sol}(\varepsilon, \delta{\bf Q}=0) = -\frac{1}{2} {\BM \Phi}(a, \varepsilon) : {\BM \mu}_0 \otimes {\BM \mu}_0
+\end{equation}
+%
+where the ${\BM \Phi}(a, \varepsilon)$ tensor is defined as
+%
+\begin{equation}
+{\BM \Phi}(a, \varepsilon) = g(a,\varepsilon) {\bf B} + g^2(a,\varepsilon) {\bf B} {\BM \alpha}_0 {\bf B}
+\end{equation}
+%
+Now, applying the vibrational solvatochromic frequency shift
+operator to this solvation energy,
+we find that the frequecy shift is
+%
+\begin{equation} \label{e:dw-ons-working-form}
+\Delta\omega_j(\varepsilon, \delta{\bf Q}=0) = \frac{1}{4M_j\omega_j}
+\left\{ \sum_i \frac{g_{ijj}}{M_i\omega_i^2}S_i - K_j \right\}
+\end{equation}
+%
+where the coefficients are given as
+%
+\begin{subequations}
+ \begin{align}
+  S_i &= \fderiv{{\BM \Phi}}{Q_i} : {\BM \mu}_0 \otimes {\BM \mu}_0 
+           + 2{\BM \Phi} : \fderiv{{\BM \mu}_0}{Q_i} \otimes {\BM \mu}_0 \label{e:ons-si-init}\\
+  K_j &= \sderiv{{\BM \Phi}}{Q_j} : {\BM \mu}_0 \otimes {\BM \mu}_0
+           + 2{\BM \Phi} : \left[ \sderiv{{\BM \mu}_0}{Q_j} \otimes {\BM \mu}_0 
+           +  \fderiv{{\BM \mu}_0}{Q_j} \otimes \fderiv{{\BM \mu}_0}{Q_j} \right] 
+           + 4\fderiv{{\BM \Phi}}{Q_j} : \fderiv{{\BM \mu}_0}{Q_j} \otimes {\BM \mu}_0  \label{e:ons-ki-init}
+ \end{align}
+\end{subequations}
+%
+Note that ${\BM \Phi}$ is symmetric. Also, using Eq.~\eqref{e:struct-dist-cho}
+we can estimate the structural distortion as
+%
+\begin{equation} \label{e:ons-dq-init}
+\delta Q_i \approx \frac{S_i}{2M_j\omega_j^2}
+\end{equation}
+%
+Thus, it becomes possible to iteratively take into account 
+the structural distortion effects for the solute's permanent
+dipole moment evaluation, which directly influences the 
+frequency shift via Eqs.~\eqref{e:esol-onsager}, 
+\eqref{e:dw-ons-gen} and \eqref{e:mu-qf}. 
+
+\subsubsection{Structural distortion effect: Iterative method}
+
+When $\hat{F}_j$ acts on the full solvation energy 
+the vibrational frequency shift has the same form as 
+in Eq.~\eqref{e:dw-ons-working-form}
+but the $S_i$ and $K_j$ coefficients are now different:
+%
+\begin{subequations}
+ \begin{align}
+  S_i &= \fderiv{{\BM \mu}(\varepsilon,{\bf Q})}{Q_i} \cdot {\bf F}^{\rm Ons}
+           + {\BM \mu}(\varepsilon,{\bf Q}) \cdot \fderiv{{\bf F}^{\rm Ons}}{Q_i}
+        \label{e:ons-si-iter}  \\
+  K_j &= \left[ 
+             \sderiv{{\BM \mu}_0}{Q_j}  
+        + 2 \fderiv{{\BM \alpha}_0}{Q_j}  \cdot \fderiv{{\bf F}^{\rm Ons}}{Q_j}
+         \right] \cdot {\bf F}^{\rm Ons}
+         + 2\fderiv{{\BM \mu}(\varepsilon,{\bf Q})}{Q_j} \cdot \fderiv{{\bf F}^{\rm Ons}}{Q_j}
+        \label{e:ons-ki-iter}
+ \end{align}
+\end{subequations}
+%
+Analogously, the structural distortion is 
+$\delta Q_i=S_i/2M_i\omega_i^2$.
+One of the necessary derivatives are directly found to be
+%
+\begin{multline} \label{e:mu-qf-derivative}
+\fderiv{{\BM \mu}(\varepsilon,{\bf Q})}{Q_j} =
+\fderiv{{\BM \mu}_0}{Q_j} + \fderiv{{\BM \alpha}_0}{Q_j}  \cdot {\bf F}^{\rm Ons}
++ \sum_i \sderivd{{\BM \mu}_0}{Q_j}{Q_i} \delta Q_i 
++ \sum_i \sderivd{{\BM \alpha}_0}{Q_j}{Q_i} \cdot {\bf F}^{\rm Ons} \delta Q_i \\
++ {\BM \alpha}_0  \cdot \fderiv{{\bf F}^{\rm Ons}}{Q_j} 
++ \sum_i \fderiv{{\BM \alpha}_0}{Q_i} \delta Q_i \cdot \fderiv{{\bf F}^{\rm Ons}}{Q_j} 
+\end{multline}
+%
+From Eqs.~\eqref{e:mu-qf}
+and \eqref{e:fons} one can easily find that
+the Onsager reaction field is given as
+%
+\begin{equation} \label{e:ons-field}
+ {\bf F}^{\rm Ons} = -{\bf A}^{-1} \cdot 
+\left[ 
+   {\BM \mu}_0 + \sum_i \fderiv{{\BM \mu}_0}{Q_i}\delta Q_i
+\right]
+\end{equation}
+%
+where the matrix $\bf A$, which can be viewed as generalized polarizability,
+is
+%
+\begin{equation} \label{e:a-matrix}
+{\bf A} = {\BM \alpha}_0 - \frac{1}{g(a,\varepsilon)} \mathbb{1} 
+   + \sum_i \fderiv{{\BM \alpha}_0}{Q_i}\delta Q_i
+\end{equation}
+%
+Thus the derivatives of the Onsager field are found to be
+%
+\begin{equation}
+\fderiv{{\bf F}^{\rm Ons}}{Q_j}  = 
+- {\bf A}^{-1} 
+   \left[ 
+       \fderiv{{\BM \mu}_0}{Q_j} 
+      + \sum_i \sderivd{{\BM \mu}_0}{Q_j}{Q_i} \delta Q_i 
+      - \fderiv{{\bf A}}{Q_j}  {\bf A}^{-1}  
+           \left\{ 
+               {\BM \mu}_0 + \sum_i \fderiv{{\BM \mu}_0}{Q_i}\delta Q_i
+           \right\}
+   \right]
+\end{equation}
+%
+where
+%
+\begin{equation}
+  \fderiv{{\bf A}}{Q_j} = \fderiv{{\BM \alpha}_0}{Q_j} 
+               + \sum_i \sderivd{{\BM \alpha}_0}{Q_j}{Q_i}
+\end{equation}
+%
+We are now ready to outline the iterative procedure
+to converge $U^{\rm Sol}$ with respect to the structural
+distortion:
+%
+\begin{itemize}
+\item[\textbullet] {\bf Initial Conditions}. 
+                        Precompute the solvation energy from Eq.~\eqref{e:ons-e-sol-init}
+                        and the initial structural distortions
+                        from Eq.~\eqref{e:ons-dq-init} and 
+                        Eq.~\eqref{e:ons-si-init}
+\item[\textbullet] {\bf Iterations}. Start the iterative procedure 
+                        by recomputing $U^{\rm Sol}$ and $\delta Q_i$
+\begin{enumerate}
+ \item Calculate structural distortions from Eq.~\eqref{e:ons-dq-init}
+       and Eq.~\eqref{e:ons-si-iter}
+ \item Calculate Onsager field using Eqs.~\eqref{e:ons-field} and \eqref{e:a-matrix}
+ \item Calculate dipole moment using Eq.~\eqref{e:mu-qf} 
+%       and its derivatives from Eq.~\eqref{e:mu-qf-derivative}
+ \item Calculate solvation energy using Eq.~\eqref{e:esol-onsager}
+ \begin{itemize}
+      \item if $\left| U^{\rm Sol}_{\rm old} - U^{\rm Sol}_{\rm new}\right| > \Delta U^{\rm crit}$:
+            continue by updating the derivatives of dipole moment and Onsager field
+            and going back to the next iteration
+      \item else: End. 
+ \end{itemize}    
+\end{enumerate}
+\end{itemize}
+%
+Once the solvation energy is converged (lowered as solute molecule
+relaxes from its gas\hyp{}phase geometry) one can obtain
+the vibrational frequency shift by using Eqs.~\eqref{e:dw-ons-working-form},
+\eqref{e:ons-si-iter} and \eqref{e:ons-ki-iter}.
+
+
+
+
 
 
 
