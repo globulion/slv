@@ -3521,7 +3521,8 @@ is understood to be sufficiently far away from the solute's
 center of mass. In that case all the specific solute\hyp{}solvent
 interactions should vanish and the only contributions should be
 associated with the \emph{non\hyp{}specific} Coulombic, induction and dispersion
-effects that can be modelled by classical descriptors of polarity.
+effects, the first two of which
+can be modelled by classical descriptors of polarity.
 
 \subsection{Onsager model of the vibrational solvatochromism}
 
@@ -3640,7 +3641,7 @@ Note that ${\BM \Phi}$ is symmetric. Also, using Eq.~\eqref{e:struct-dist-cho}
 we can estimate the structural distortion as
 %
 \begin{equation} \label{e:ons-dq-init}
-\delta Q_i \approx \frac{S_i}{2M_j\omega_j^2}
+\delta Q_i \approx \frac{S_i}{2M_i\omega_i^2}
 \end{equation}
 %
 Thus, it becomes possible to iteratively take into account 
@@ -3704,7 +3705,7 @@ is
 %
 Thus the derivatives of the Onsager field are found to be
 %
-\begin{equation}
+\begin{equation} \label{e:ons-field-deriv}
 \fderiv{{\bf F}^{\rm Ons}}{Q_j}  = 
 - {\bf A}^{-1} 
    \left[ 
@@ -3737,11 +3738,13 @@ distortion:
 \item[\textbullet] {\bf Iterations}. Start the iterative procedure 
                         by recomputing $U^{\rm Sol}$ and $\delta Q_i$
 \begin{enumerate}
+ \item Calculate Onsager field using Eqs.~\eqref{e:ons-field} and \eqref{e:a-matrix}, 
+       and its derivatives from Eq.~\eqref{e:ons-field-deriv}
+ \item Calculate dipole moment using Eq.~\eqref{e:mu-qf} 
+       and its derivatives from Eq.~\eqref{e:mu-qf-derivative}
  \item Calculate structural distortions from Eq.~\eqref{e:ons-dq-init}
        and Eq.~\eqref{e:ons-si-iter}
- \item Calculate Onsager field using Eqs.~\eqref{e:ons-field} and \eqref{e:a-matrix}
- \item Calculate dipole moment using Eq.~\eqref{e:mu-qf} 
-%       and its derivatives from Eq.~\eqref{e:mu-qf-derivative}
+
  \item Calculate solvation energy using Eq.~\eqref{e:esol-onsager}
  \begin{itemize}
       \item if $\left| U^{\rm Sol}_{\rm old} - U^{\rm Sol}_{\rm new}\right| > \Delta U^{\rm crit}$:
@@ -3752,15 +3755,62 @@ distortion:
 \end{enumerate}
 \end{itemize}
 %
-Once the solvation energy is converged (lowered as solute molecule
-relaxes from its gas\hyp{}phase geometry) one can obtain
+Once the solvation energy is converged 
+(lowered as solute molecule
+relaxes from its gas\hyp{}phase geometry) 
+up to a chosen criterion $\Delta U^{\rm crit}$
+one can obtain
 the vibrational frequency shift by using Eqs.~\eqref{e:dw-ons-working-form},
 \eqref{e:ons-si-iter} and \eqref{e:ons-ki-iter}.
 
+In terms of accuracy, the rigid molecule approximation
+provides already a good solvation energies and the frequency shifts
+even for small cavity sizes which are simulating the molecular
+volume
+(see Chapter X). Therefore, to estimate
+the frequency shift long\hyp{}range correction
+it is sufficient to focus
+on the approximation given in Eq.~\eqref{e:ons-e-sol-init}
+and the resulting vibrational frequency shift.
+This is mostly because, for our purposes, $a$ shall be typically
+large (much larger than the effective radius of the molecular
+charge distribution), and the structural distortion effects can be 
+neglected without significant loss of accuracy.
 
+\subsection{Long\hyp{}range dispersion correction}
 
-
-
+It is clear that the Onsager model neglects the dispersion
+interaction since it is a semi\hyp{}classical model.
+In fact, the frequency shift (including the structural distortion)
+can be rewritten in the following form
+%
+\begin{equation} 
+ \Delta\omega_j(\varepsilon, a) = 
+- \left[ {\BM \mu}_j + \frac{1}{2} {\BM \mu}_j^{\rm Ind} \right] \cdot {\bf F}^{\rm Ons} 
+- \frac{1}{2} {\BM \alpha}_j : {\bf F}^{\rm Ons} \otimes {\bf F}^{\rm Ons} 
+= \Delta\omega_j^{\rm Coul}(\varepsilon, a) + \Delta\omega_j^{\rm Ind}(\varepsilon, a)
+\end{equation}
+%
+where the Coulombic and induction frequency shifts 
+are given as
+%
+\begin{subequations}
+ \begin{align}
+   \Delta\omega_j^{\rm Coul}(\varepsilon, a) &= - {\BM \mu}_j \cdot {\bf F}^{\rm Ons} \\
+   \Delta\omega_j^{\rm Ind}(\varepsilon, a)  &= - \frac{1}{2} {\BM \mu}_j^{\rm Ind} \cdot {\bf F}^{\rm Ons} 
+       - \frac{1}{2} {\BM \alpha}_j : {\bf F}^{\rm Ons} \otimes {\bf F}^{\rm Ons} 
+ \end{align}
+\end{subequations}
+%
+The effective gas\hyp{}phase and induced solvatochromic dipoles
+are defined as
+%
+%
+whereas the solvatochromic polarizability is
+It is interesting to note the straightforward
+similarity of the above equations to the corresponding
+contributions in the descrete model of vibrational
+solvatochromism discussed in previous Sections.
 
 
 \section{SolX models}
