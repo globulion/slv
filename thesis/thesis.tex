@@ -3777,6 +3777,163 @@ large (much larger than the effective radius of the molecular
 charge distribution), and the structural distortion effects can be 
 neglected without significant loss of accuracy.
 
+\subsection{Problems with the Onsager model}
+
+Let us consider the dipole\hyp{}dipole interaction
+potential between solute's dipole moment ${\BM \mu}_0$ 
+and solvent molecules that is given by 
+%
+\begin{equation}
+ U^{\rm dd} = \frac{\mu_0\mu_S}{r^3} \kappa
+%\left\{ {\bf n}_0 \cdot {\bf n}_S - 3()^2 \right\}
+\end{equation}
+%
+where $\mu_S$ is the solvent molecule dipole moment, 
+$r$ is solute\hyp{}solvent distance 
+and $\kappa$ is the orientation factor which is related
+to the unit vectors describing the relative orientation
+of solvent and solute molecules. 
+It can be shown that 
+under the Bolzmann (thermal) equilibrium conditions we have
+%
+\begin{subequations}
+\begin{align} \label{e:73626}
+ \langle \kappa \rangle_{\Omega} &= \iint \kappa {\rm d}\Omega_A{\rm d}\Omega_B  = 0 \\
+ \langle \kappa^2 \rangle_{\Omega} &= \frac{2}{3}
+\end{align}
+\end{subequations}
+%
+where the subscript
+$\Omega$ denotes the averaging over all orientations of 
+solute and solvent molecules in thermal equillibrium.
+Thus, the frequency shift becomes
+%
+\begin{equation}
+ \langle \Delta \omega_j^{\rm dd} \rangle_{\Omega} = 
+\frac{1}{\mathcal{Z}} 
+\iint {\rm d}\Omega_A{\rm d}\Omega_B \; \left[\hat{F}_j U^{\rm dd}\right] e^{-\frac{U^{\rm dd}}{k_BT}} 
+\end{equation}
+%
+where the orientational 
+partition function is
+%
+\begin{equation}
+\mathcal{Z} =
+\iint {\rm d}\Omega_A{\rm d}\Omega_B \; e^{-\frac{U^{\rm dd}}{k_BT}}
+\end{equation}
+%
+In the limit of $U^{\rm dd}\ll k_BT$ we can approximate 
+$e^{-\frac{U^{\rm dd}}{k_BT}}\approx 1 -\frac{U^{\rm dd}}{k_BT}$, i.e.,
+%
+\begin{equation}
+ \langle \Delta \omega_j^{\rm dd} \rangle_{\Omega} \approx 
+\frac{1}{\mathcal{Z}} 
+\iint {\rm d}\Omega_A{\rm d}\Omega_B \; \left[\hat{F}_j U^{\rm dd}\right]
+\left\{ 1 - \frac{U^{\rm dd}}{k_BT}\right\}
+\end{equation}
+%
+Using relations ~\eqref{e:73626} we find that $\mathcal{Z}\approx1$
+and noting that $\fderiv{r}{Q_i} \cong 0$ for all $i$ we have
+%
+\begin{equation}
+ \langle \Delta \omega_j^{\rm dd} \rangle_{\Omega} \approx 
+-\frac{2}{3} \left[ C^{\rm EA}_j + C^{\rm MA}_j \right] \frac{\mu_0\mu_S^2}{k_BTr^6} 
+= \overline{\Delta \omega_j^{\rm dd}}(r)
+\end{equation}
+%
+where the solvatochromic constants are defined as
+%
+\begin{subequations}
+\begin{align}
+ C^{\rm EA}_j &= \frac{1}{2M_j\omega_j} \sderiv{\mu_0}{Q_j} \\
+ C^{\rm MA}_j &=-\frac{1}{2M_j\omega_j} \sum_i \frac{g_{ijj}}{M_i\omega_i^2} \fderiv{\mu_0}{Q_i}
+\end{align}
+\end{subequations}
+%
+Thus, the average frequency shift that is caused
+by the far environment separated by a distance $a$
+from the solute's center of mass is
+%
+\begin{equation}
+\langle\Delta \omega_j^{\rm dd}\rangle \approx
+4\pi \int_a^{\infty} {\rm d}r \; \overline{\Delta \omega_j^{\rm dd}}(r) r^2 \rho g(r)
+\end{equation}
+%
+where the solute\hyp{}solvent radial distribution function, $g(r)$, 
+can be assumed to be unity for large $a$. Thus the vibrational
+frequency shift due to far environment reads
+%
+\begin{equation} \label{e:x123}
+ \langle \Delta \omega_j^{\rm dd} \rangle \approx 
+\frac{8\pi}{9a^3} \left[ C^{\rm EA}_j + C^{\rm MA}_j \right] \frac{\mu_0\mu_S^2}{k_BT} 
+\end{equation}
+%
+Now, 
+%neglecting the solute's polarizability or, equivalently, assuming 
+%$\varepsilon_\infty=1$ for the cavity, 
+the Fr{\"o}hloch\hyp{}Kirkwood\hyp{}Onsager 
+relationship becomes
+%
+\begin{equation} \label{e:x124}
+\frac{\varepsilon - 1}{\varepsilon + 2} 
+- \frac{\varepsilon_\infty - 1}{\varepsilon_\infty + 2}\approx 
+\frac{4\pi g_K \rho\mu_S^2}{9k_BT}
+\end{equation}
+%
+By comparing Eqs.~\eqref{e:x123} and ~\eqref{e:x124}
+we find that
+%
+\begin{equation} \label{e:x1234}
+ \langle \Delta \omega_j^{\rm dd} \rangle \approx 
+\frac{2\left[ C^{\rm EA}_j + C^{\rm MA}_j \right]\mu_0}{g_Ka^3}  
+\left\{
+\frac{\varepsilon - 1}{\varepsilon + 2} 
+- \frac{\varepsilon_\infty - 1}{\varepsilon_\infty + 2}
+\right\}
+\end{equation}
+%
+Thus it is evident that the Onsager model does not take 
+into account the local nature of the solvent structure which is
+reflected by $g_K$. To see the difference between the Onsager model
+and Eq.~\eqref{e:x1234}, let us neflect solute and solvent polarizability.
+In this approximation, $\langle \Delta \omega_j^{\rm dd} \rangle\approx 
+\frac{2C_j\mu_0}{g_Ka^3}  
+\frac{\varepsilon - 1}{\varepsilon + 2}$
+and $\langle \Delta \omega_j^{\rm Ons} \rangle \approx 
+\frac{2 C_j \mu_0}{a^3}  
+\frac{\varepsilon - 1}{2\varepsilon + 1}$. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 \subsection{Long\hyp{}range dispersion correction}
 
 It is clear that the Onsager model neglects the dispersion
