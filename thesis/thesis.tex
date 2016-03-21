@@ -2805,7 +2805,7 @@ with
  \begin{align}
   U^{\rm Disp}_6 &= - \frac{\hbar}{2\pi} \sum_{\alpha\beta\gamma\delta}^{x,y,z}
    T^{AB}_{\alpha\beta}T^{AB}_{\gamma\delta} \int_0^{\infty} {\rm d}\Omega \; 
-    \alpha^A_{\alpha\gamma}(i\Omega)\alpha^B_{\beta\delta}(i\Omega) \\
+    \alpha^A_{\alpha\gamma}(i\Omega)\alpha^B_{\beta\delta}(i\Omega) \label{e:edisp6}\\
   U^{\rm Disp}_7 &= \frac{\hbar}{3\pi} \sum_{\alpha\beta\gamma\delta\eta}^{x,y,z}
    T^{AB}_{\alpha\beta}T^{AB}_{\gamma\delta\eta} \int_0^{\infty} {\rm d}\Omega \; 
     \left\{ 
@@ -3193,9 +3193,13 @@ U^{(1)} =
 }{
 \langle \mathscr{A} 0_A0_B \vert \mathscr{A} 0_A0_B \rangle 
 }
+= U^{\rm Coul} + U^{\rm Ex-Rep}
 \end{equation}
 %
 which is called the first\hyp{}order exchange perturbation theory.
+In the above equation, $U^{\rm Coul}$ is given by Eq.~\eqref{e:eint-1}
+whereas $U^{\rm Ex-Rep}$ is the exchange\hyp{}repulsion
+energy due to Pauli exclusion principle.
 The operator $\mathscr{A}$ is a standard antysymmetrizer which
 can be expanded in the following series
 %
@@ -3208,7 +3212,10 @@ of the $n$ electron pairs in between $\vert 0_A \rangle$ and $\vert 0_B \rangle$
 and summs over all possibilities to give an antisymmetrized product
 $\vert \mathscr{A} 0_A0_B \rangle $. When no electron exchange is
 assumed, i.e., $\mathscr{A}$ is just an identity operator $\mathbb{1}$, 
-Eq.~\eqref{e:eint-1-expol} becomes Eq.~\eqref{e:eint-1}.
+Eq.~\eqref{e:eint-1-expol} becomes Eq.~\eqref{e:eint-1}. It is important to emphasize that, for 
+a typical molecular complex in equillibrium geometry, $U^{\rm Ex-Rep}$
+is substantial and cannot be neglected by no means. In fact, it can even 
+exceed $\left|U^{\rm Coul}\right|$ in some cases.
 
 In this work, we assume the approximation of $\mathscr{A}$
 based on the truncation of the series in Eq.~\eqref{e:antisymmetrizer-series}
@@ -3216,7 +3223,7 @@ at the single electron exchange. This gives already good exchange\hyp{}repulsion
 energy estimates in most cases. It was shown by 
 Jensen and Gordon\citep{Jensen.Gordon.JCP.1998,Jensen.Gordon.MolPhys.1996}
 that, by invoking this
-approximation and zero differential overlap, 
+approximation and spherical gaussian overlap\citep{Jensen.JCP.1996}, 
 the Hartree\hyp{}Fock exchange\hyp{}repulsion interaction energy 
 between molecules A (solute), and B (solvent) is given approximately as 
 %
@@ -3483,55 +3490,22 @@ They can also be calculated analitically by using standard methods implemented
 in current QM packages like {\sc Gaussian} or {\sc Gamess}.
 
 
-\section{Modeling the solute's far environment}
+\section{Continuum model of the vibrational solvatochromism}
 
-In the preceeding Sections we have focused on the
-theory that is applicable to the explicit solute\hyp{}solvent
-clusters. However, it is still computationally very difficult 
-to compute the Coulombic, induction, dispersion, exchange\hyp{}repulsion
-and charge transfer vibrational frequency shifts (and the transition dipole moment changes)
-for a bulk system because the formulae we have derived are quite
-complicated and their evaluation is relatively time consuming. The most computationally
-demanding terms are the induction, charge transfer and exchange\hyp{}repulsion contributions.
-The cost of $\Delta\omega^{\rm Ind}$ grows very rapidly with the system size
-due to the need of inverting very large and sparse $\bf D$ matrices.
-On the other hand, the computation of one\hyp{}electron overlap, kinetic
-and potential integrals and their derivatives with respect to all the normal 
-coordinates are very time consuming because of the enormous amount of such integrals
-that need to be computed for the evaluation of $\Delta\omega^{\rm Ex-Rep}$ and $\Delta\omega^{\rm CT}$.
-Since the $U^{\rm Coul}$, $U^{\rm Ind}$ and $U^{\rm Disp}$
-are in general long\hyp{}range interactions, it becomes desirable
-to design some approximate and efficient way to take into account the
-effect of the far environment which, in the case of the molecular bulk 
-system, can be considered as infinite solution.
+It is instructive to study continuum models of solvation
+in terms of the vibrational frequency shifts since they 
+are still used by some researchers to relate macroscopic
+solvent properties with molecular vibrational characteristics.
 
-In the case when the periodic boundary conditions are utilized, 
-calculation of the very long\hyp{}range contributions to $\Delta\omega$ 
-could be done by developing an Ewald summation\hyp{}like procedure.
-However, this can still be computationally quite demanding since it is
-not that easy to split the non\hyp{}additive induction effects
-into the direct and reciprocal spaces.
-
-Another way of solving the problem of the very long\hyp{}range
-vibrational frequency shifts can be the assumption that the
-far environment is felt by the solute molecule as the \emph{continuum}
-rather than the descrete molecular ensemble. This assumption
-is reasonable as long as the 'far environment'
-is understood to be sufficiently far away from the solute's
-center of mass. In that case all the specific solute\hyp{}solvent
-interactions should vanish and the only contributions should be
-associated with the \emph{non\hyp{}specific} Coulombic, induction and dispersion
-effects, the first two of which
-can be modelled by classical descriptors of polarity.
-
-\subsection{Onsager model of the vibrational solvatochromism}
-
-As the simplest case let us consider the Onsager model
-in which the solute molecule with the permanent gas\hyp{}phase 
+As the simplest case let us consider the situation
+in which the neutral solute molecule with the permanent gas\hyp{}phase 
 dipole moment ${\BM \mu}_0$
-is placed inside a spherical cavity of radius $a$. Note that
-for our purpose the cavity need to be quite large. Therefore 
-we can safely neglect other than dipole\hyp{}dipole interactions.
+is placed inside a spherical cavity of radius $a$, i.e., the 
+Onsager model. 
+%Note that
+%for our purpose the cavity need to be quite large. Therefore 
+%we can safely neglect other than dipole\hyp{}dipole interactions
+%and consider the Onsager model of solvation.
 In such a case, the solvation (interaction) energy is given as
 %
 \begin{equation} \label{e:esol-onsager}
@@ -3543,7 +3517,7 @@ where the Onsager reaction (electric) field acting on the solute molecule
 is
 %
 \begin{equation} \label{e:fons}
-  {\bf F}^{\rm Ons} = \frac{2(\varepsilon-1)}{a^3(2\varepsilon+1)} {\BM \mu}(\varepsilon, {\bf Q})
+  {\bf F}^{\rm Ons} = \frac{2(\varepsilon-1)(n^2+1)}{3a^3(2\varepsilon+n^2)} {\BM \mu}(\varepsilon, {\bf Q})
  = g(a,\varepsilon) {\BM \mu}(\varepsilon, {\bf Q})
 \end{equation}
 %
@@ -3650,7 +3624,7 @@ dipole moment evaluation, which directly influences the
 frequency shift via Eqs.~\eqref{e:esol-onsager}, 
 \eqref{e:dw-ons-gen} and \eqref{e:mu-qf}. 
 
-\subsubsection{Structural distortion effect: Iterative method}
+\subsection{Structural distortion effect: Iterative method}
 
 When $\hat{F}_j$ acts on the full solvation energy 
 the vibrational frequency shift has the same form as 
@@ -3662,13 +3636,13 @@ but the $S_i$ and $K_j$ coefficients are now different:
   S_i &= \fderiv{{\BM \mu}(\varepsilon,{\bf Q})}{Q_i} \cdot {\bf F}^{\rm Ons}
            + {\BM \mu}(\varepsilon,{\bf Q}) \cdot \fderiv{{\bf F}^{\rm Ons}}{Q_i}
         \label{e:ons-si-iter}  \\
-  K_j &= \left[ 
+  K_j &= 2\left[ 
              \sderiv{{\BM \mu}_0}{Q_j}  
         + 2 \fderiv{{\BM \alpha}_0}{Q_j}  \cdot \fderiv{{\bf F}^{\rm Ons}}{Q_j}
          \right] \cdot {\bf F}^{\rm Ons}
-         + 2\fderiv{{\BM \mu}(\varepsilon,{\bf Q})}{Q_j} \cdot \fderiv{{\bf F}^{\rm Ons}}{Q_j}
+         + 4\fderiv{{\BM \mu}(\varepsilon,{\bf Q})}{Q_j} \cdot \fderiv{{\bf F}^{\rm Ons}}{Q_j}
         \label{e:ons-ki-iter}
- \end{align}
+ \end{align} % i have multiplied K_j by 2
 \end{subequations}
 %
 Analogously, the structural distortion is 
@@ -3767,24 +3741,195 @@ In terms of accuracy, the rigid molecule approximation
 provides already a good solvation energies and the frequency shifts
 even for small cavity sizes which are simulating the molecular
 volume
-(see Chapter X). Therefore, to estimate
-the frequency shift long\hyp{}range correction
-it is sufficient to focus
-on the approximation given in Eq.~\eqref{e:ons-e-sol-init}
-and the resulting vibrational frequency shift.
-This is mostly because, for our purposes, $a$ shall be typically
-large (much larger than the effective radius of the molecular
-charge distribution), and the structural distortion effects can be 
-neglected without significant loss of accuracy.
+(see Chapter X). 
+%Therefore, to estimate
+%the frequency shift long\hyp{}range correction
+%it is sufficient to focus
+%on the approximation given in Eq.~\eqref{e:ons-e-sol-init}
+%and the resulting vibrational frequency shift.
+%This is mostly because, for our purposes, $a$ shall be typically
+%large (much larger than the effective radius of the molecular
+%charge distribution), and the structural distortion effects can be 
+%neglected without significant loss of accuracy.
 
-\subsection{Problems with the Onsager model}
+\subsection{Coulombic and induction effects}
+
+To obtain the explicit forms of $\Delta\omega_j^{\rm Coul}$
+and $\Delta\omega_j^{\rm Ind}$
+%$\widetilde{\Delta\omega}_j^{\rm Coul}$
+%and $\widetilde{\Delta\omega}_j^{\rm Ind}$ 
+within Onsager model
+the frequency shift (neglecting the structural distortion)
+can be rewritten in the following form
+%
+\begin{multline} 
+ \Delta\omega_j(\varepsilon, a) = 
+- \left[ {\BM \mu}_j + \frac{1}{2} {\BM \mu}_j^{\rm Ind} \right] \cdot {\bf F}^{\rm Ons} 
+- \frac{1}{2} {\BM \alpha}_j : {\bf F}^{\rm Ons} \otimes {\bf F}^{\rm Ons} 
++ \widetilde{\Delta\omega}_j({\bf F})
+\\ = \Delta\omega_j^{\rm Coul} + \Delta\omega_j^{\rm Ind}
++ \Delta\omega_j({\bf F})
+\end{multline}
+%
+where the Coulombic and induction frequency shifts 
+are given as
+%
+\begin{subequations}
+ \begin{align}
+   \Delta\omega_j^{\rm Coul}             &= - {\BM \mu}_j \cdot {\bf F}^{\rm Ons} \\
+   \Delta\omega_j^{\rm Ind}              &= - \frac{1}{2} {\BM \mu}_j^{\rm Ind} \cdot {\bf F}^{\rm Ons} 
+       - \frac{1}{2} {\BM \alpha}_j : {\bf F}^{\rm Ons} \otimes {\bf F}^{\rm Ons} 
+ \end{align}
+\end{subequations}
+%
+whereas the electric field correction term is
+%
+\begin{equation} 
+\Delta\omega_j({\bf F}) = \frac{1}{4M_j\omega_j}
+\sum_i \frac{g_{ijj}}{M_i\omega_i^2} \left\{ {\BM\mu}_0 + 
+2\delta_{ij}\frac{M_i\omega_i^2}{g_{ijj}}\fderiv{{\BM\mu}_0}{Q_i}\right\} \cdot \fderiv{{\bf F}^{\rm Ons}}{Q_i}
+\end{equation}
+%
+The effective gas\hyp{}phase and induced solvatochromic dipoles
+are defined as
+%
+\begin{subequations}
+ \begin{align}
+   {\BM \mu}_j &= \frac{1}{2M_j\omega_j}
+\left[  \sderiv{{\BM\mu}_0}{Q_j}
+- \sum_i \frac{g_{ijj}}{M_i\omega_i^2} \fderiv{{\BM\mu}_0}{Q_i}
+\right] \\
+   {\BM \mu}_j^{\rm Ind} &= \frac{1}{2M_j\omega_j} 
+\left[ 8 \fderiv{{\bf F}^{\rm Ons}}{Q_j} \cdot \fderiv{{\BM\alpha}_0}{Q_j} - 
+   \sum_i \frac{g_{ijj}}{M_i\omega_i^2} \fderiv{{\bf F}^{\rm Ons}}{Q_i} \cdot {\BM\alpha}_0
+\right]
+ \end{align}
+\end{subequations}
+%
+whereas the solvatochromic polarizability is
+%
+\begin{equation} 
+  {\BM \alpha}_j = - \frac{1}{2M_j\omega_j} 
+   \sum_i \frac{g_{ijj}}{M_i\omega_i^2} \fderiv{{\BM\alpha}_0}{Q_i}
+\end{equation}
+%
+It is interesting to note the straightforward
+similarity of the above equations to the corresponding
+contributions in the descrete model of vibrational
+solvatochromism discussed in previous Sections.
+
+Obviously, continuum model cannot take into account
+explicit solvation effects such as molecular collisions
+and specific interactions. Therefore, its significance
+lies mostly in the concept of the non\hyp{}specific
+vibrational frequency shift due to electrostatic
+interactions.
+
+
+\section{Modeling the solute's far environment}
+
+In the preceeding Sections we have focused on the
+theory that is applicable to the explicit solute\hyp{}solvent
+clusters. However, it is still computationally very difficult 
+to compute the Coulombic, induction, dispersion, exchange\hyp{}repulsion
+and charge transfer vibrational frequency shifts (and the transition dipole moment changes)
+for a bulk system because the formulae we have derived are quite
+complicated and their evaluation is relatively time consuming. The most computationally
+demanding terms are the induction, charge transfer and exchange\hyp{}repulsion contributions.
+While the latter two are fairly short\hyp{}range effects
+and should be readily converged with a reasonably small amount of
+surrounding molecules, the induction is a long\hyp{}range effect. Moreover,
+the cost of $\Delta\omega^{\rm Ind}$ grows very rapidly with the system size
+due to the need of inverting very large and sparse $\bf D$ matrices.
+%On the other hand, the computation of one\hyp{}electron overlap, kinetic
+%and potential integrals and their derivatives with respect to all the normal 
+%coordinates are very time consuming because of the enormous amount of such integrals
+%that need to be computed for the evaluation of $\Delta\omega^{\rm Ex-Rep}$ and $\Delta\omega^{\rm CT}$.
+%Fortunately, these contributions are fairly short\hyp{}range
+%and should be readily converged with a reasonably small amount of
+%surrounding molecules. However, 
+Since the $U^{\rm Coul}$, $U^{\rm Ind}$ and $U^{\rm Disp}$
+are in general long\hyp{}range interactions, it becomes desirable
+to design some approximate and efficient way to take into account the
+effect of the far environment which, in the case of the molecular bulk 
+system, can be considered as infinite solution.
+
+In the case when the periodic boundary conditions are utilized, 
+calculation of the very long\hyp{}range contributions to $\Delta\omega$ 
+could be done by developing an Ewald summation\hyp{}like procedure.
+However, this can still be computationally quite demanding since it is
+not that easy to split the non\hyp{}additive induction effects
+into the direct and reciprocal spaces.
+
+Another way of solving the problem of the very long\hyp{}range
+vibrational frequency shifts can be the assumption that the
+far environment is felt by the solute molecule as the \emph{continuum}
+rather than the descrete molecular ensemble. This assumption
+is reasonable as long as the 'far environment'
+is understood to be sufficiently far away from the solute's
+center of mass. In that case all the specific solute\hyp{}solvent
+interactions should vanish and the only contributions should be
+associated with the \emph{non\hyp{}specific} Coulombic, induction and dispersion
+effects,
+%, the first two of which
+which can be modelled by classical descriptors of polarity and 
+density of a solvent. In the forthcoming paragraphs we wish to find the
+vibrational frequency shift due to far environment separated
+by sufficiently large distance $r_{\rm max}$ from solute's center of mass
+in all directions. Thus, we want to find
+%
+\begin{equation}
+ \widetilde{\Delta\omega}_j = 
+\widetilde{\Delta\omega}_j^{\rm Coul} +
+\widetilde{\Delta\omega}_j^{\rm Ind} +
+\widetilde{\Delta\omega}_j^{\rm Disp}
+\end{equation}
+%
+where the wide tilde symbolizes the contribution
+due to the solvent
+that surrounds the sphere of radius $a$ with the solute
+in the middle. It is usefull to recall 
+the Onsager\hyp{}Kirkwood\hyp{}Fr{\"o}hlich (OKF) relation
+that relates the macroscopic observables with the microscopic 
+solvent properties
+%
+\begin{equation} \label{e:OKF}
+ \varepsilon - \varepsilon_\infty = \frac{4\pi\rho_S}{9k_BT}g_K\mu_S^2 
+\frac{\varepsilon(\varepsilon_\infty+2)^2}{2\varepsilon+\varepsilon_\infty}
+\end{equation}
+%
+In the above equation, $\varepsilon_\infty$ is the dielectric constant
+at infinite frequency which is equal to the square 
+of the high\hyp{}frequency refractive index, $\varepsilon_\infty=n^2$, 
+$\rho_S$ is the solvent number density\footnote{number of molecules
+per unit volume}, $\mu_S$ is
+its dipole moment in the gas phase and $g_K$ denotes the so called
+Kirkwood correlation factor that describes the correlation between
+the directions of the dipole moments. Note also that 
+OKF relation is applicable
+when solvent molecules are approximately spherical in shape.
+However, we emphasize that the situation assumed here
+is \emph{not} the same as in the case of the Onsager model of solvation
+with large cavity. This is because the true solution is filled with
+molecules inside the sphere of radius $r_{\rm max}$ and, hence, the dielectric constant
+is not discontinuous at the boundary of a sphere which leads to different
+solutions to Poisson equation. We assume that the dielectric constant is not
+changed.
+
+%\subsection{Including solvent internal structure}
+%Onsager model neglects the solvent internal structure
+%which is reflected in Kirkwood correlation factor, $g_K$.
+%In fact, for typical protic solvents, $g_K$ is in the range
+%1.5--5 whereas in Onsager theory $g_K=1$.
+
+\subsection{Long\hyp{}range Coulombic correction}
 
 Let us consider the dipole\hyp{}dipole interaction
 potential between solute's dipole moment ${\BM \mu}_0$ 
 and solvent molecules that is given by 
 %
 \begin{equation}
- U^{\rm dd} = \frac{\mu_0\mu_S}{r^3} \kappa
+ U^{\rm dd} = \frac{\mu_0\mu_S}{\varepsilon r^3} \kappa
 %\left\{ {\bf n}_0 \cdot {\bf n}_S - 3()^2 \right\}
 \end{equation}
 %
@@ -3837,7 +3982,7 @@ and noting that $\fderiv{r}{Q_i} \cong 0$ for all $i$ we have
 %
 \begin{equation}
  \langle \Delta \omega_j^{\rm dd} \rangle_{\Omega} \approx 
--\frac{2}{3} \left[ C^{\rm EA}_j + C^{\rm MA}_j \right] \frac{\mu_0\mu_S^2}{k_BTr^6} 
+-\frac{2}{3} \left[ C^{\rm EA}_j + C^{\rm MA}_j \right] \frac{\mu_0\mu_S^2}{k_BT\varepsilon r^6} 
 = \overline{\Delta \omega_j^{\rm dd}}(r)
 \end{equation}
 %
@@ -3855,8 +4000,8 @@ by the far environment separated by a distance $a$
 from the solute's center of mass is
 %
 \begin{equation}
-\langle\Delta \omega_j^{\rm dd}\rangle \approx
-4\pi \int_a^{\infty} {\rm d}r \; \overline{\Delta \omega_j^{\rm dd}}(r) r^2 \rho g(r)
+\widetilde{\Delta \omega}_j^{\rm Coul} \approx
+4\pi \int_{r_{\rm max}}^{\infty} {\rm d}r \; \overline{\Delta \omega_j^{\rm dd}}(r) r^2 \rho_S g(r)
 \end{equation}
 %
 where the solute\hyp{}solvent radial distribution function, $g(r)$, 
@@ -3864,115 +4009,155 @@ can be assumed to be unity for large $a$. Thus the vibrational
 frequency shift due to far environment reads
 %
 \begin{equation} \label{e:x123}
- \langle \Delta \omega_j^{\rm dd} \rangle \approx 
-\frac{8\pi}{9a^3} \left[ C^{\rm EA}_j + C^{\rm MA}_j \right] \frac{\mu_0\mu_S^2}{k_BT} 
+  \widetilde{\Delta \omega}_j^{\rm Coul}  \approx 
+\frac{8\pi}{9\varepsilon^2 r_{\rm max}^3} \left[ C^{\rm EA}_j + C^{\rm MA}_j \right] \frac{\mu_0\mu_S^2\rho_S}{k_BT} 
 \end{equation}
 %
-Now, 
+%Now, 
 %neglecting the solute's polarizability or, equivalently, assuming 
 %$\varepsilon_\infty=1$ for the cavity, 
-the Fr{\"o}hloch\hyp{}Kirkwood\hyp{}Onsager 
-relationship becomes
+%the Fr{\"o}hloch\hyp{}Kirkwood\hyp{}Onsager 
+%relationship becomes
 %
-\begin{equation} \label{e:x124}
-\frac{\varepsilon - 1}{\varepsilon + 2} 
-- \frac{\varepsilon_\infty - 1}{\varepsilon_\infty + 2}\approx 
-\frac{4\pi g_K \rho\mu_S^2}{9k_BT}
-\end{equation}
+%\begin{equation} \label{e:x124}
+%\frac{\varepsilon - 1}{\varepsilon + 2} 
+%- \frac{\varepsilon_\infty - 1}{\varepsilon_\infty + 2}\approx 
+%\frac{4\pi g_K \rho\mu_S^2}{9k_BT}
+%\end{equation}
 %
-By comparing Eqs.~\eqref{e:x123} and ~\eqref{e:x124}
+By comparing Eqs.~\eqref{e:x123} and ~\eqref{e:OKF}
 we find that
 %
 \begin{equation} \label{e:x1234}
- \langle \Delta \omega_j^{\rm dd} \rangle \approx 
-\frac{2\left[ C^{\rm EA}_j + C^{\rm MA}_j \right]\mu_0}{g_Ka^3}  
+ \widetilde{\Delta \omega}_j^{\rm Coul} \approx 
+\frac{2\left[ C^{\rm EA}_j + C^{\rm MA}_j \right]\mu_0}{g_Kr_{\rm max}^3}  
 \left\{
-\frac{\varepsilon - 1}{\varepsilon + 2} 
-- \frac{\varepsilon_\infty - 1}{\varepsilon_\infty + 2}
+%\frac{\varepsilon - 1}{\varepsilon + 2} 
+%- \frac{\varepsilon_\infty - 1}{\varepsilon_\infty + 2}
+\frac{(\varepsilon-n^2)(2\varepsilon+n^2)}{\varepsilon^3(n^2+2)^2}
 \right\}
 \end{equation}
 %
-Thus it is evident that the Onsager model does not take 
-into account the local nature of the solvent structure which is
-reflected by $g_K$. To see the difference between the Onsager model
-and Eq.~\eqref{e:x1234}, let us neflect solute and solvent polarizability.
-In this approximation, $\langle \Delta \omega_j^{\rm dd} \rangle\approx 
-\frac{2C_j\mu_0}{g_Ka^3}  
-\frac{\varepsilon - 1}{\varepsilon + 2}$
-and $\langle \Delta \omega_j^{\rm Ons} \rangle \approx 
-\frac{2 C_j \mu_0}{a^3}  
-\frac{\varepsilon - 1}{2\varepsilon + 1}$. 
+%Thus it is evident that the Onsager model does not take 
+%into account the local nature of the solvent structure which is
+%reflected by $g_K$. To see the difference between the Onsager model
+%and Eq.~\eqref{e:x1234}, let us neflect solute and solvent polarizability.
+%In this approximation, $\langle \Delta \omega_j^{\rm dd} \rangle\approx 
+%\frac{2C_j\mu_0}{g_Ka^3}  
+%\frac{\varepsilon - 1}{\varepsilon + 2}$
+%and $\langle \Delta \omega_j^{\rm Ons} \rangle \approx 
+%\frac{2 C_j \mu_0}{a^3}  
+%\frac{\varepsilon - 1}{2\varepsilon + 1}$. 
+From the above relation it is clear that the long\hyp{}range
+Coulombic correction is much smaller in protic 
+than in aprotic solvents due to the screening effects
+caused by polar molecules inside the sphere.
+%It is to be expected that $\widetilde{\Delta \omega}_j^{\rm Coul}$
+%is rather small, especially in polar solvents and for large
+%$r_{\rm max}$. Therefore we assume that the associated induction
+%effects (i.e., dipole-induced dipole
 
+\subsection{Long\hyp{}range induction correction}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Let us analyze the induction energy. Under dipole\hyp{}dipole
+approximation it is given as
+%
+\begin{equation}
+ U^{\rm did} \approx -\frac{1}{2} \left[ \alpha_0 F_S^2 + \alpha_S F_0^2\right]
+\end{equation}
+%
+where $\alpha_0$ and $\alpha_S$ is the isotropic polarizability
+of solute and solvent whereas $F_0$ and $F_S$ is the electric field
+created by solute and solvent, respectively.
+By averaging over all orientations of solute and solvent
+molecules it is easy to show that
+the frequency shift is
+%
+\begin{equation}
+ \overline{\Delta \omega_j^{\rm did}}(r) = 
+-\frac{C_j^{\rm EA} + C_j^{\rm MA} }{\varepsilon^2 r^6}
+\end{equation}
+%
+with
+%
+\begin{subequations}
+\begin{align}
+  C_j^{\rm MA} &= -\frac{1}{2M_j\omega_j}\sum_i \frac{g_{ijj}}{M_i\omega_i^2} \left\{ 
+   2\mu_0\fderiv{\mu_0}{Q_i}\alpha_S + \mu_0^2\fderiv{\alpha_S}{Q_i}
+\right\} \\
+  C_j^{\rm EA} &= \frac{1}{2M_j\omega_j} \left\{ 
+  2\alpha_S\left[
+      \mu_0\sderiv{\mu_0}{Q_j} + 2\left(\fderiv{\mu_0}{Q_j}\right)^2 
+    \right]
+   + \mu_S^2 \sderiv{\alpha_0}{Q_j}
+\right\}
+\end{align}
+\end{subequations}
+%
+Therefore we finally have
+%
+\begin{equation} \label{e:x12341}
+ \widetilde{\Delta \omega}_j^{\rm Ind} \approx
+\frac{-4\pi\rho}{3\varepsilon^2 r_{\max}^3} \left[ C_j^{\rm EA} + C_j^{\rm MA} \right]
+\end{equation}
+%
+Note that this contribution is temperature independent.
 
 \subsection{Long\hyp{}range dispersion correction}
 
-It is clear that the Onsager model neglects the dispersion
-interaction since it is a semi\hyp{}classical model.
-In fact, the frequency shift (including the structural distortion)
-can be rewritten in the following form
+%It is clear that the Onsager model neglects the dispersion
+%interaction since it is a semi\hyp{}classical model.
+In the following way as before one can obtain the
+dispersion correction. We shall use the London isotropic
+dispersion energy approximation which states that
 %
-\begin{equation} 
- \Delta\omega_j(\varepsilon, a) = 
-- \left[ {\BM \mu}_j + \frac{1}{2} {\BM \mu}_j^{\rm Ind} \right] \cdot {\bf F}^{\rm Ons} 
-- \frac{1}{2} {\BM \alpha}_j : {\bf F}^{\rm Ons} \otimes {\bf F}^{\rm Ons} 
-= \Delta\omega_j^{\rm Coul}(\varepsilon, a) + \Delta\omega_j^{\rm Ind}(\varepsilon, a)
+\begin{equation} \label{e:ryap}
+ U^{\rm London} \approx -\frac{3}{2\varepsilon^2 r^6} \frac{I_0I_S}{I_0+I_S} \alpha_0 \alpha_S
 \end{equation}
 %
-where the Coulombic and induction frequency shifts 
-are given as
+$I$ is the ionisation energy of the corresponding
+molecule. Equation Eq.~\eqref{e:ryap}
+can be considered as an approximation of more rigorous Eq.~\eqref{e:edisp6}
+As in the previous examples, we can easily get the estimation of
+long\hyp{}range dispersion vibrational frequency shift
+%
+\begin{equation} \label{e:x123413}
+ \widetilde{\Delta \omega}_j^{\rm Disp} \approx
+\frac{-2\pi\rho}{\varepsilon^2 r_{\max}^3} \alpha_S \frac{I_0I_S}{I_0+I_S} \left[ C_j^{\rm EA} + C_j^{\rm MA} \right]
+\end{equation}
+%
+with
 %
 \begin{subequations}
- \begin{align}
-   \Delta\omega_j^{\rm Coul}(\varepsilon, a) &= - {\BM \mu}_j \cdot {\bf F}^{\rm Ons} \\
-   \Delta\omega_j^{\rm Ind}(\varepsilon, a)  &= - \frac{1}{2} {\BM \mu}_j^{\rm Ind} \cdot {\bf F}^{\rm Ons} 
-       - \frac{1}{2} {\BM \alpha}_j : {\bf F}^{\rm Ons} \otimes {\bf F}^{\rm Ons} 
- \end{align}
+\begin{align}
+  C_j^{\rm MA} &= -\frac{1}{2M_j\omega_j}\sum_i \frac{g_{ijj}}{M_i\omega_i^2} \fderiv{\alpha_0}{Q_i}\\
+  C_j^{\rm EA} &= \frac{1}{2M_j\omega_j} \sderiv{\alpha_0}{Q_j}
+\end{align}
 \end{subequations}
 %
-The effective gas\hyp{}phase and induced solvatochromic dipoles
-are defined as
+The result
+can be recast in terms of the solvent refractive index
+as
 %
+\begin{equation} \label{e:x1234161}
+ \widetilde{\Delta \omega}_j^{\rm Disp} \approx
+\frac{-3(n^2-1)}{2(n^2+2)\varepsilon^2 r_{\max}^3} \frac{I_0I_S}{I_0+I_S} \left[ C_j^{\rm EA} + C_j^{\rm MA} \right]
+\end{equation}
 %
-whereas the solvatochromic polarizability is
-It is interesting to note the straightforward
-similarity of the above equations to the corresponding
-contributions in the descrete model of vibrational
-solvatochromism discussed in previous Sections.
+We have neglected the change of solute's ionisation energy due to structural
+distortion along the normal coordinates. 
 
+To summarize, the long\hyp{}range corrections to the vibrational
+frequency shifts due to Coulomb, induction and dispersion forces
+have been derived and the resulting formulas are trivial to implement.
+However, our analysis is valid only for isotropic solutions and cannot be 
+applied when the molecular environment around the solute is strongly heterogeneous.
 
-\section{SolX models}
+\section{SolX models ov vibrational solvatochromism}
 
-We would like to introduce the naming convention 
+As the fundamental theory of the physical origins of the vibrational
+solvatochromism has been thoroughly presented, 
+in this section we would like to introduce the naming convention 
 of the various solvatochromic models
 that we shall be using from that point 
 consecutively throughout this Thesis. As it was
@@ -3984,9 +4169,46 @@ a resulting solvatochromic method as to 'SolX' method, theory or model.
 
 \subsection{Distributed muptipole models}
 
-When DMA of Stone\citep{Stone.JCTC.2005} or cumulative atomic multipole
-moments (CAMM) of Sokalski and Poirier\citep{Sokalski.Poirier.CPL.1983} are used,
-SolDMA or SolCAMM models can be obtained. 
+Under the distributed multipole approximation, the Coulombic
+interaction energy can be expressed as a following series
+%
+\begin{equation}
+ U^{\rm Coul} = \sum_{x\in A}\sum_{y\in B} \cong T^{xy}q^{(x)}q^{(y)} + 
+\sum_\alpha T^{xy}_\alpha \left( q^{(x)} \mu^{(y)}_\alpha - \mu^{(x)}_\alpha q^{(y)}\right)
+ - \sum_{\alpha\beta} T^{xy}_{\alpha\beta} \mu^{(x)}_\alpha \mu^{(y)}_\beta + \ldots
+\end{equation}
+%
+where $x$ and $y$ denote the distributed sites on the solute and solvent
+molecules, respectively. There exists a number of ways of obtaining
+the distributed multipoles. 
+
+In the distributed multipole analysis 
+(DMA) of Stone\citep{Stone.JCTC.2005}, the particular multipoles
+are computed by integrating the matrix elements of multipole
+operators over localized amount of volume enclosing the distributed
+site of interest. These multipoles are characterized by good convergence
+properties of the resulting interaction energies. 
+However, differentiation of DMA with respect to nuclear coordinate
+is difficult to implement (the integration domains need to be the same
+during numerical computation of the derivatives). 
+
+More convenient in use in the vibrational solvatochromism
+is the cumulative atomic multipole
+moments method (CAMM) developed by Sokalski and Poirier.\citep{Sokalski.Poirier.CPL.1983}
+The multipoles are the generalization of the Mulliken atomic charges
+and they are given by exact relations:
+
+There is no technical problem related to the differentiation of CAMM
+with respect to the nuclear coordinate. However, the convergence of CAMM
+is somewhat worse than that of DMA since the integration of matrix elements 
+is performed over the whole space. This means that the electronic density
+is divided evenly over all atomic orbitals, even those which are located far
+from the distribution center. Nevertheless, CAMM still provides reasonable 
+estimates of $U^{\rm Coul}$ and we shall use them throughout this Thesis.
+
+If DMA
+or CAMM are used,
+SolDMA or SolCAMM models can be obtained, accordingly. 
 If one wanted to use the distributed multipoles centered at the localized molecular orbitals
 one could define the SolLMTP method for instance, that can be derived 
 from the LMTP expansion by Etchebest \emph{et al}.\citep{Etchebest.Lavery.Pullman.TheorChimActa.1982}
