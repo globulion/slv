@@ -76,7 +76,10 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
+\usepackage{amsbsy}
+\usepackage{bm}
 \usepackage{mathrsfs}
+\usepackage{upgreek}
 \allowdisplaybreaks
 
 % symbols
@@ -136,7 +139,8 @@
 % Math
 \newcommand{\pd}{\ensuremath{\partial}}
 \newcommand{\DR}{\ensuremath{{\rm d} {\bf r}}}
-\newcommand{\BM}[1]{\ensuremath{\mbox{\boldmath${#1}$}}}
+%\newcommand{\BM}[1]{\ensuremath{\mbox{\boldmath${#1}$}}}
+\newcommand{\BM}[1]{\bm{#1}}
 % Chemistry (formulas)
 \newcommand{\ch}[2]{\ensuremath{\mathrm{#1}_{#2}}}
 % Math 
@@ -590,6 +594,8 @@ model as\citep{Wortmann.Bishop.JCP.1998}
 f(0) = \frac{\varepsilon (n^2(0)+2)}{n^2(0)+2\varepsilon}
 \end{equation}
 %
+which extends Lorentz expression by including also orientational polarization effects
+but refers to static limit.
 It was deduced that $f$ can be in the range of 1.1-1.3\citep{Wortmann.Bishop.JCP.1998,
 Bublitz.Boxer.AnnuRevPhysChem.1997}, although
 it is unclear whether this is always the case.
@@ -645,7 +651,7 @@ solvent-related empirical descriptors
 \left( d_{Sol} - d_{St} \right) A_D \\ + 
 \left( \frac{\varepsilon_{Sol}-1}{\varepsilon_{Sol}+2} - \frac{\varepsilon_{St}-1}{\varepsilon_{St}+2} \right) A_\varepsilon +
 \frac{3}{4\pi}
-\left( \frac{n^2_{Sol}-1}{n^2_{Sol}+1} - \frac{n^2_{St}-1}{n^2_{St}+1} \right) A_\alpha
+\left( \frac{n^2_{Sol}-1}{n^2_{Sol}+2} - \frac{n^2_{St}-1}{n^2_{St}+2} \right) A_\alpha
 \end{multline}
 %
 In the above formula, $\Delta \omega_{gp}$ denotes the frequency shift in pure liquid of solute
@@ -659,7 +665,8 @@ Note that all fitting parameters in Eqs.~\eqref{e:kamlet-taft} and ~\eqref{e:faw
 describe the solute-solvent interactions empirically.
 
 In his seminal works, Ben-Amotz et al.\citep{Ben-Amotz.Lee.Cho.List.JCP.1992} 
-used the first-principles theory of Buckingham
+used the first-principles theory of Buckingham\citep{Buckingham.ProcRSocLondonA.1958,
+Buckingham.ProcRSocLondonA.1960,Buckingham.TransFaradaySoc.1960}
 to derive the contributions to the vibrational frequency shift due to
 repulsive, attractive and centrifugal distortion forces. Mainly,
 %
@@ -2093,9 +2100,397 @@ Only then it is possible to obtain a robust model
 that can be further applied for condensed phases. 
 In this Chapter, we develop the rigorous first\hyp{}principles
 theory of the vibrational frequency shifts and transition
-dipole changes due to five fundamental interactions
+dipole changes.
+Due to historical reasons, we first develop a model in terms
+of the implicit theories of solvation in which solute's molecular
+environment is approximated by a continuum. 
+Next, we derive the explicit theory based on five fundamental interactions
 between molecules that can be found in nature: Coulombic, 
 exchange\hyp{}repulsion, induction, dispersion and charge\hyp{}transfer.
+Finally, we develop an approximate approach to
+to estimating the long\hyp{}range corrections to the vibrational
+frequency shifts when the solution extends to infinity.
+
+\section{Implicit model: Coulombic and induction effects}
+
+At the heart of the foundations of our knowledge about the 
+physical chemistry of liquids and solutions are the \emph{continuum}
+models of Onsager, Kirkwood and Fr{\"o}hlich. They
+provided invaluable insight into the solvation
+process from statistical thermodynamical point of view, linking
+the microscopic characteristics of molecular species
+with the macroscopic representatives of liquids
+such as density, dielectric constant or refractive index.
+Despite they cannot capture all the intermolecular
+interactions effects rigorously, they do often provide a surprisingly 
+correct
+description of various observables in solution.
+Therefore, it is instructive to study continuum models of solvation
+in terms of the vibrational solvatochromism since they 
+are still used by some researchers to relate macroscopic
+solvent properties with molecular vibrational characteristics
+in aprotic solvents.
+
+As the simplest case let us consider the situation
+in which the neutral solute molecule with the permanent gas\hyp{}phase 
+dipole moment ${\BM \mu}_0$
+is placed inside a spherical cavity of radius $a$, i.e., the 
+Onsager model. 
+%Note that
+%for our purpose the cavity need to be quite large. Therefore 
+%we can safely neglect other than dipole\hyp{}dipole interactions
+%and consider the Onsager model of solvation.
+In such a case, the solvation (interaction) energy is given as
+%
+\begin{equation} \label{e:esol-onsager}
+ U^{\rm Sol}(\varepsilon, {\bf Q}) =
+ -\frac{1}{2} {\BM \mu}(\varepsilon, {\bf Q}) \cdot {\bf F}^{\rm Ons}
+\end{equation}
+%
+where the Onsager reaction (electric) field acting on the solute molecule
+is
+%
+\begin{equation} \label{e:fons}
+  {\bf F}^{\rm Ons} = \frac{2(\varepsilon-1)(n^2+1)}{3a^3(2\varepsilon+n^2)} {\BM \mu}(\varepsilon, {\bf Q})
+ = g(a,\varepsilon) {\BM \mu}(\varepsilon, {\bf Q})
+\end{equation}
+%
+In the above equations, ${\BM \mu}(\varepsilon, {\bf Q})$ 
+is the total solute's (gas\hyp{}phase and induced) dipole moment.
+It is strighforward to write down the expression for the
+vibrational frequency shift as
+%
+\begin{equation} \label{e:dw-ons-gen}
+  \Delta\omega_j(\varepsilon, {\bf Q}) = \hat{F}_j \left[ U^{\rm Sol}(\varepsilon, {\bf Q}) \right]
+\end{equation}
+%
+where $\hat{F}_j$ is the vibrational solvatochromic frequency shift 
+operator from Eq.~\eqref{e:dw-fea-fma}.
+
+To calculate the solvatochromic vibrational frequency shift
+using solute's gas\hyp{}phase properties it is necessary to expand
+the dipole moment into a power series with respect to the two perturbations,
+i.e., structural distortion and the Onsager electric field. Considering the first
+four terms in the Taylor expansion of ${\BM \mu}(\varepsilon, {\bf Q})$ one gets
+%
+\begin{equation} \label{e:mu-qf}
+ {\BM \mu}(\varepsilon, {\bf Q}) \approx 
+ {\BM \mu}_0 + \fderiv{{\BM \mu}}{\bf F}\Bigg|_{0}  \cdot {\bf F}^{\rm Ons}
+ + \sum_i \fderiv{{\BM \mu}}{Q_i}\Bigg|_{0} \delta Q_i 
+ + \sum_i \sderivd{{\BM \mu}}{{\bf F}}{Q_i}\Bigg|_{0} \cdot {\bf F}^{\rm Ons} \delta Q_i
+\end{equation}
+%
+where the subscript $0$ denotes that the derivatives are evaluated in the gas phase,
+i.e., ${\bf F}={\bf 0}$ and $\delta Q_i=0$. Computation of the solute dipole
+moment is not so easy since the relaxation process of the electronic wavefunction
+and molecular structure has to be taken into account. This can 
+be introduced in a one\hyp{}electron Hamiltonian in the Schr{\"o}dinger equation
+or its approximate form. However, this is still relatively costly. Beneath
+we present the approximate method of taking into account
+this relaxation process basing solely on the solute's gas\hyp{}phase properties.
+
+\subsection{Rigid molecule approximation}
+
+Let us first consider the case when we neglect structural
+relaxation due to the reaction field and focus only
+on the electronic charge density redistribution. In such a case,
+%
+\begin{equation}
+ {\BM \mu}(\varepsilon, {\bf Q}) \approx 
+ {\BM \mu}_0 + {\BM \alpha}_0  \cdot {\bf F}^{\rm Ons}
+\end{equation}
+%
+where the dipole\hyp{}dipole gas\hyp{}phase polarizability is
+%
+\begin{equation}
+{\BM \alpha}_0  = \fderiv{{\BM \mu}}{\bf F}\Bigg|_{0}
+\end{equation}
+%
+Then, the Onsager reaction field can be approximately written as
+%
+\begin{equation}
+{\bf F}^{\rm Ons} \approx g(a,\varepsilon) {\bf B} \cdot {\BM \mu}_0
+\end{equation}
+%
+with the auxiliary matrix given as follows
+%
+\begin{equation}
+{\bf B} = \left( \mathbb{1} - g(a,\varepsilon){\BM \alpha}_0 \right)^{-1}
+\end{equation}
+%
+Thus, the resulting solvation energy can be recast in the form
+that depends only on gas\hyp{}phase solute properties:
+%
+\begin{equation} \label{e:ons-e-sol-init}
+U^{\rm Sol}(\varepsilon, \delta{\bf Q}=0) = -\frac{1}{2} {\BM \Phi}(a, \varepsilon) : {\BM \mu}_0 \otimes {\BM \mu}_0
+\end{equation}
+%
+where the ${\BM \Phi}(a, \varepsilon)$ tensor is defined as
+%
+\begin{equation}
+{\BM \Phi}(a, \varepsilon) = g(a,\varepsilon) {\bf B} + g^2(a,\varepsilon) {\bf B} {\BM \alpha}_0 {\bf B}
+\end{equation}
+%
+Now, applying the vibrational solvatochromic frequency shift
+operator to this solvation energy,
+we find that the frequecy shift is
+%
+\begin{equation} \label{e:dw-ons-working-form}
+\Delta\omega_j(\varepsilon, \delta{\bf Q}=0) = \frac{1}{4M_j\omega_j}
+\left\{ \sum_i \frac{g_{ijj}}{M_i\omega_i^2}S_i - K_j \right\}
+\end{equation}
+%
+where the coefficients are given as
+%
+\begin{subequations}
+ \begin{align}
+  S_i &= \fderiv{{\BM \Phi}}{Q_i} : {\BM \mu}_0 \otimes {\BM \mu}_0 
+           + 2{\BM \Phi} : \fderiv{{\BM \mu}_0}{Q_i} \otimes {\BM \mu}_0 \label{e:ons-si-init}\\
+  K_j &= \sderiv{{\BM \Phi}}{Q_j} : {\BM \mu}_0 \otimes {\BM \mu}_0
+           + 2{\BM \Phi} : \left[ \sderiv{{\BM \mu}_0}{Q_j} \otimes {\BM \mu}_0 
+           +  \fderiv{{\BM \mu}_0}{Q_j} \otimes \fderiv{{\BM \mu}_0}{Q_j} \right] 
+           + 4\fderiv{{\BM \Phi}}{Q_j} : \fderiv{{\BM \mu}_0}{Q_j} \otimes {\BM \mu}_0  \label{e:ons-ki-init}
+ \end{align}
+\end{subequations}
+%
+Note that ${\BM \Phi}$ is symmetric.  
+
+\subsection{Structural distortion effect: Iterative method}
+
+Now, using Eq.~\eqref{e:struct-dist-cho}
+we can estimate the structural distortion due to relaxation 
+in the first approximation as
+%
+\begin{equation} \label{e:ons-dq-init}
+\delta Q_i \approx \frac{S_i}{2M_i\omega_i^2}
+\end{equation}
+%
+Thus, it becomes possible to iteratively take into account 
+the structural distortion effects for the solute's permanent
+dipole moment evaluation, which directly influences the 
+frequency shift via Eqs.~\eqref{e:esol-onsager}, 
+\eqref{e:dw-ons-gen} and \eqref{e:mu-qf}.
+
+When $\hat{F}_j$ acts on the full solvation energy 
+the vibrational frequency shift has the same form as 
+in Eq.~\eqref{e:dw-ons-working-form}
+but the $S_i$ and $K_j$ coefficients are now different:
+%
+\begin{subequations}
+ \begin{align}
+  S_i &= \fderiv{{\BM \mu}(\varepsilon,{\bf Q})}{Q_i} \cdot {\bf F}^{\rm Ons}
+           + {\BM \mu}(\varepsilon,{\bf Q}) \cdot \fderiv{{\bf F}^{\rm Ons}}{Q_i}
+        \label{e:ons-si-iter}  \\
+  K_j &= 2\left[ 
+             \sderiv{{\BM \mu}_0}{Q_j}  
+        + 2 \fderiv{{\BM \alpha}_0}{Q_j}  \cdot \fderiv{{\bf F}^{\rm Ons}}{Q_j}
+         \right] \cdot {\bf F}^{\rm Ons}
+         + 4\fderiv{{\BM \mu}(\varepsilon,{\bf Q})}{Q_j} \cdot \fderiv{{\bf F}^{\rm Ons}}{Q_j}
+        \label{e:ons-ki-iter}
+ \end{align} % i have multiplied K_j by 2
+\end{subequations}
+%
+Analogously, the structural distortion is 
+$\delta Q_i=S_i/2M_i\omega_i^2$.
+One of the necessary derivatives are directly found to be
+%
+\begin{multline} \label{e:mu-qf-derivative}
+\fderiv{{\BM \mu}(\varepsilon,{\bf Q})}{Q_j} =
+\fderiv{{\BM \mu}_0}{Q_j} + \fderiv{{\BM \alpha}_0}{Q_j}  \cdot {\bf F}^{\rm Ons}
++ \sum_i \sderivd{{\BM \mu}_0}{Q_j}{Q_i} \delta Q_i 
++ \sum_i \sderivd{{\BM \alpha}_0}{Q_j}{Q_i} \cdot {\bf F}^{\rm Ons} \delta Q_i \\
++ {\BM \alpha}_0  \cdot \fderiv{{\bf F}^{\rm Ons}}{Q_j} 
++ \sum_i \fderiv{{\BM \alpha}_0}{Q_i} \delta Q_i \cdot \fderiv{{\bf F}^{\rm Ons}}{Q_j} 
+\end{multline}
+%
+Moreover, from Eqs.~\eqref{e:mu-qf}
+and \eqref{e:fons} one can easily find that
+the Onsager reaction field is given as
+%
+\begin{equation} \label{e:ons-field}
+ {\bf F}^{\rm Ons} = -{\bf A}^{-1} \cdot 
+\left[ 
+   {\BM \mu}_0 + \sum_i \fderiv{{\BM \mu}_0}{Q_i}\delta Q_i
+\right]
+\end{equation}
+%
+where the matrix $\bf A$, which can be viewed as generalized polarizability,
+is
+%
+\begin{equation} \label{e:a-matrix}
+{\bf A} = {\BM \alpha}_0 - \frac{1}{g(a,\varepsilon)} \mathbb{1} 
+   + \sum_i \fderiv{{\BM \alpha}_0}{Q_i}\delta Q_i
+\end{equation}
+%
+Thus the derivatives of the Onsager field are found to be
+%
+\begin{equation} \label{e:ons-field-deriv}
+\fderiv{{\bf F}^{\rm Ons}}{Q_j}  = 
+- {\bf A}^{-1} 
+   \left[ 
+       \fderiv{{\BM \mu}_0}{Q_j} 
+      + \sum_i \sderivd{{\BM \mu}_0}{Q_j}{Q_i} \delta Q_i 
+      - \fderiv{{\bf A}}{Q_j}  {\bf A}^{-1}  
+           \left\{ 
+               {\BM \mu}_0 + \sum_i \fderiv{{\BM \mu}_0}{Q_i}\delta Q_i
+           \right\}
+   \right]
+\end{equation}
+%
+where
+%
+\begin{equation}
+  \fderiv{{\bf A}}{Q_j} = \fderiv{{\BM \alpha}_0}{Q_j} 
+               + \sum_i \sderivd{{\BM \alpha}_0}{Q_j}{Q_i}
+\end{equation}
+%
+We are now ready to outline the iterative procedure
+to converge $U^{\rm Sol}$ with respect to both electronic
+charge density polarization and the structural
+relaxation:
+%
+\begin{itemize}
+\item[\textbullet] {\bf Initial Conditions}. 
+                        By starting from rigid molecule approximation,
+                        precompute the solvation energy from Eq.~\eqref{e:ons-e-sol-init}
+                        and the initial structural distortions
+                        from Eq.~\eqref{e:ons-dq-init} and 
+                        Eq.~\eqref{e:ons-si-init}
+\item[\textbullet] {\bf Iterations}. Start the iterative procedure 
+                        by recomputing $U^{\rm Sol}$ and $\delta Q_i$
+\begin{enumerate}
+ \item Calculate Onsager field using Eqs.~\eqref{e:ons-field} and \eqref{e:a-matrix}, 
+       and its derivatives from Eq.~\eqref{e:ons-field-deriv}
+ \item Calculate dipole moment using Eq.~\eqref{e:mu-qf} 
+       and its derivatives from Eq.~\eqref{e:mu-qf-derivative}
+ \item Calculate structural distortions from Eq.~\eqref{e:ons-dq-init}
+       and Eq.~\eqref{e:ons-si-iter}
+ \item Calculate solvation energy using Eq.~\eqref{e:esol-onsager}
+ \begin{itemize}
+      \item if $\left| U^{\rm Sol}_{\rm old} - U^{\rm Sol}_{\rm new}\right| > \Delta U^{\rm crit}$:
+            continue by updating the derivatives of dipole moment and Onsager field
+            and going back to the next iteration
+      \item else: End. 
+ \end{itemize}    
+\end{enumerate}
+\end{itemize}
+%
+Once the solvation energy is converged 
+(lowered as solute molecule
+relaxes from its gas\hyp{}phase geometry) 
+up to a chosen criterion $\Delta U^{\rm crit}$
+one can readily obtain
+the vibrational frequency shift by using Eqs.~\eqref{e:dw-ons-working-form},
+\eqref{e:ons-si-iter} and \eqref{e:ons-ki-iter}.
+
+In terms of accuracy, the rigid molecule approximation
+provides already a good solvation energies and the frequency shifts
+even for small cavity sizes which are simulating the molecular
+volume
+(see Chapter X). 
+%Therefore, to estimate
+%the frequency shift long\hyp{}range correction
+%it is sufficient to focus
+%on the approximation given in Eq.~\eqref{e:ons-e-sol-init}
+%and the resulting vibrational frequency shift.
+%This is mostly because, for our purposes, $a$ shall be typically
+%large (much larger than the effective radius of the molecular
+%charge distribution), and the structural distortion effects can be 
+%neglected without significant loss of accuracy.
+
+\subsection{The nature of interactions in Onsager model}
+
+Onsager solvation energy is derived based on solving Poisson
+equation for the boundary conditions specified by a point
+dipole in a cavity surrounded by continuum dielectric.
+Therefore the electrostatic effects that include polarization
+energy are treated semi\hyp{}classically.
+
+Let us study the origin of the vibrational frequency shift
+within the Onsager model. 
+%To obtain the explicit forms of $\Delta\omega_j^{\rm Coul}$
+%and $\Delta\omega_j^{\rm Ind}$
+%$\widetilde{\Delta\omega}_j^{\rm Coul}$
+%and $\widetilde{\Delta\omega}_j^{\rm Ind}$ 
+When the structural relaxation effect on solute's dipole moment
+is neglected we can rewrite the frequency shift to be
+%
+\begin{multline} \label{e:f9f9f}
+ \Delta\omega_j(\varepsilon, a) = 
+- \left[ {\BM \mu}_j + \frac{1}{2} {\BM \mu}_j^{\rm Ind} \right] \cdot {\bf F}^{\rm Ons} 
+- \frac{1}{2} {\BM \alpha}_j : {\bf F}^{\rm Ons} \otimes {\bf F}^{\rm Ons} 
++ \widetilde{\Delta\omega}_j({\bf F})
+\\ = \Delta\omega_j^{\rm Coul} + \Delta\omega_j^{\rm Ind}
+\end{multline}
+%
+where the Coulombic and induction frequency shifts 
+are defined as
+%
+\begin{subequations}
+ \begin{align}
+   \Delta\omega_j^{\rm Coul}             &= - {\BM \mu}_j \cdot {\bf F}^{\rm Ons} + \Delta\omega_j({\bf F})\\
+   \Delta\omega_j^{\rm Ind}              &= - \frac{1}{2} {\BM \mu}_j^{\rm Ind} \cdot {\bf F}^{\rm Ons} 
+       - \frac{1}{2} {\BM \alpha}_j : {\bf F}^{\rm Ons} \otimes {\bf F}^{\rm Ons} 
+ \end{align}
+\end{subequations}
+%
+The effective gas\hyp{}phase and induced solvatochromic dipoles
+are defined as
+%
+\begin{subequations}
+ \begin{align}
+   {\BM \mu}_j &= \frac{1}{2M_j\omega_j}
+\left[  \sderiv{{\BM\mu}_0}{Q_j}
+- \sum_i \frac{g_{ijj}}{M_i\omega_i^2} \fderiv{{\BM\mu}_0}{Q_i}
+\right] \\
+   {\BM \mu}_j^{\rm Ind} &= \frac{1}{2M_j\omega_j} 
+\left[ 8 \fderiv{{\bf F}^{\rm Ons}}{Q_j} \cdot \fderiv{{\BM\alpha}_0}{Q_j} - 
+   \sum_i \frac{g_{ijj}}{M_i\omega_i^2} \fderiv{{\bf F}^{\rm Ons}}{Q_i} \cdot {\BM\alpha}_0
+\right]
+ \end{align}
+\end{subequations}
+%
+whereas the solvatochromic polarizability is
+%
+\begin{equation} 
+  {\BM \alpha}_j = - \frac{1}{2M_j\omega_j} 
+   \sum_i \frac{g_{ijj}}{M_i\omega_i^2} \fderiv{{\BM\alpha}_0}{Q_i}
+\end{equation}
+%
+In Eq.~\eqref{e:f9f9f}, we separated the 'electric-field correction'
+term from the Coulombic term due to technical reasons,
+%
+\begin{equation} 
+\Delta\omega_j({\bf F}) = \frac{1}{4M_j\omega_j}
+\sum_i \frac{g_{ijj}}{M_i\omega_i^2} \left\{ {\BM\mu}_0 + 
+2\delta_{ij}\frac{M_i\omega_i^2}{g_{ijj}}\fderiv{{\BM\mu}_0}{Q_i}\right\} \cdot \fderiv{{\bf F}^{\rm Ons}}{Q_i}
+\end{equation}
+%
+This contribution depends on the electric field changes along the vibrational
+coordinate while it does not involve the polarizability. Therefore
+it cannot be written in a way that is analogous
+to the conventional multipole expansion of interaction energy 
+in which dipoles (permanent and induced) interact with electric fields.
+
+As can be seen, Onsager model includes semiclassically
+Coulombic and induction energies. However, it cannot
+deal with dispersion effects that are fully quantum mechanical
+in nature. Moreover,
+%It is interesting to note the straightforward
+%similarity of the above equations to the corresponding
+%contributions in the descrete model of vibrational
+%solvatochromism discussed in previous Sections.
+Onsager model (and any other continuum approach) 
+is incapable of modelling
+explicit solvation effects such as molecular collisions
+and specific interactions. Therefore, its significance
+lies mostly in the concept of the non\hyp{}specific
+vibrational frequency shift (due to electrostatic
+interactions) and should not be used for quantitative
+calculations, especially when specific interactions such as
+hydrogen bonds are present solute and its molecular environment.
+
+
 
 \section{Coulombic Effects\label{s:dw-coul}}
 
@@ -2141,7 +2536,7 @@ can be also multipole\hyp{}expanded as follows
 \begin{equation} \label{e:potential-gradients}
 \underbrace{\nabla \otimes \cdots \otimes \nabla}_{r} \phi({\bf r}_x) = 
 \sum_y \left[ 
-{\bf T}^{(r)} q_y - {\bf T}^{(r+1)} \cdot {\BM \mu}_y + 
+{\bf T}^{(r)} q_y - {\bf T}^{(r+1)} \cdot {\BM \upmu}_y + 
  \frac{1}{3} {\bf T}^{(r+2)} : {\BM \Theta}_y - 
 \frac{1}{15} {\bf T}^{(r+3)} : {\BM \Omega}_y + \ldots
 \right]
@@ -2182,7 +2577,7 @@ electrostatic energy can be expressed as follows\citep{Blasiak.Cho.JCP.2014}:
 \sum_x 
 \Bigg[ 
   \fderiv{q_x}{Q_i} \phi({\bf r}_x) + 
-  \fderiv{{\BM \mu}_x}{Q_i} \cdot \nabla \phi({\bf r}_x) + \frac{1}{3}  
+  \fderiv{{\BM \upmu}_x}{Q_i} \cdot \nabla \phi({\bf r}_x) + \frac{1}{3}  
   \fderiv{{\BM \Theta}_x}{Q_i} : \nabla\nabla \phi({\bf r}_x) \\ + \frac{1}{15}   
   \fderiv{{\BM \Omega}_x}{Q_i} \vdots \nabla\nabla\nabla \phi({\bf r}_x) + \ldots 
 \Bigg] 
@@ -2192,7 +2587,7 @@ electrostatic energy can be expressed as follows\citep{Blasiak.Cho.JCP.2014}:
 \sum_x 
 \Bigg[ 
   q_x \fderiv{\phi({\bf r}_x)}{Q_i} + 
-  {\BM \mu}_x \cdot \fderiv{\nabla \phi({\bf r}_x)}{Q_i} \\ + \frac{1}{3} 
+  {\BM \upmu}_x \cdot \fderiv{\nabla \phi({\bf r}_x)}{Q_i} \\ + \frac{1}{3} 
   {\BM \Theta}_x : \fderiv{\nabla\nabla \phi({\bf r}_x)}{Q_i} + \frac{1}{15}
   {\BM \Omega}_x \vdots \fderiv{\nabla\nabla\nabla \phi({\bf r}_x)}{Q_i} + \ldots 
 \Bigg]
@@ -2206,7 +2601,7 @@ and
 \sum_x 
 \Bigg[ 
   \sderiv{q_x}{Q_i} \phi({\bf r}_x) + 
-  \sderiv{{\BM \mu}_x}{Q_i} \cdot \nabla \phi({\bf r}_x) + \frac{1}{3}  
+  \sderiv{{\BM \upmu}_x}{Q_i} \cdot \nabla \phi({\bf r}_x) + \frac{1}{3}  
   \sderiv{{\BM \Theta}_x}{Q_i} : \nabla\nabla \phi({\bf r}_x) \\ + \frac{1}{15}   
   \sderiv{{\BM \Omega}_x}{Q_i} \vdots \nabla\nabla\nabla \phi({\bf r}_x) + \ldots 
 \Bigg] 
@@ -2216,7 +2611,7 @@ and
 \sum_x 
 \Bigg[ 
   q_x \sderiv{\phi({\bf r}_x)}{Q_i} + 
-  {\BM \mu}_x \cdot \sderiv{\nabla \phi({\bf r}_x)}{Q_i} \\ + \frac{1}{3} 
+  {\BM \upmu}_x \cdot \sderiv{\nabla \phi({\bf r}_x)}{Q_i} \\ + \frac{1}{3} 
   {\BM \Theta}_x : \sderiv{\nabla\nabla \phi({\bf r}_x)}{Q_i} + \frac{1}{15}
   {\BM \Omega}_x \vdots \sderiv{\nabla\nabla\nabla \phi({\bf r}_x)}{Q_i} + \ldots 
 \Bigg]
@@ -2269,9 +2664,9 @@ potential, which are associated with each multipole moment, i.e.,
   \left[ \fderiv{q_x}{Q_i} \phi({\bf r}_x) 
  + q_x {\bf L}_x^{(i)} \cdot \nabla \phi({\bf r}_x) \right]       
                                                                 \label{e:f-terms-1} \\
- U_i^{(\BM\mu)}     &= \sum_x  
-  \left[ \fderiv{{\BM \mu}_x}{Q_i} \cdot \nabla\phi({\bf r}_x) 
- + {\BM \mu}_x \otimes {\bf L}_x^{(i)} : \nabla\nabla \phi({\bf r}_x) \right]     
+ U_i^{(\BM\upmu)}     &= \sum_x  
+  \left[ \fderiv{{\BM \upmu}_x}{Q_i} \cdot \nabla\phi({\bf r}_x) 
+ + {\BM \upmu}_x \otimes {\bf L}_x^{(i)} : \nabla\nabla \phi({\bf r}_x) \right]     
                                                                 \label{e:f-terms-2} \\
  U_i^{(\BM\Theta)}  &= \sum_x  
   \left[ \fderiv{{\BM \Theta}_x}{Q_i} : \nabla\nabla\phi({\bf r}_x) 
@@ -2292,10 +2687,10 @@ and
     + 2 \fderiv{q_x}{Q_j} {\bf L}_x^{(j)} \cdot \nabla \phi({\bf r}_x) 
     + q_x \nabla\nabla \phi({\bf r}_x) : {\bf L}_x^{(j)} \otimes {\bf L}_x^{(j)} \right]     \label{e:k-terms-1} \\
 %
- U_{jj}^{(\BM\mu)}     &= \sum_x  
-    \left[ \sderiv{{\BM \mu}_x}{Q_j} \phi({\bf r}_x) 
-    + 2 \fderiv{{\BM \mu}_x}{Q_j} \otimes {\bf L}_x^{(j)} : \nabla\nabla \phi({\bf r}_x) 
-    + {\BM \mu}_x \cdot \nabla\nabla\nabla \phi({\bf r}_x) \vdots {\bf L}_x^{(j)} \otimes {\bf L}_x^{(j)} \right]      
+ U_{jj}^{(\BM\upmu)}     &= \sum_x  
+    \left[ \sderiv{{\BM \upmu}_x}{Q_j} \phi({\bf r}_x) 
+    + 2 \fderiv{{\BM \upmu}_x}{Q_j} \otimes {\bf L}_x^{(j)} : \nabla\nabla \phi({\bf r}_x) 
+    + {\BM \upmu}_x \cdot \nabla\nabla\nabla \phi({\bf r}_x) \vdots {\bf L}_x^{(j)} \otimes {\bf L}_x^{(j)} \right]      
     \label{e:k-terms-2} \\
 %
  U_{jj}^{(\BM\Theta)}  &= \frac{1}{15} \sum_x  
@@ -2456,7 +2851,7 @@ U^{\rm Ind} = - \frac{1}{2} {\BM \alpha}_A : {\bf F} \otimes {\bf F}
 where the ground\hyp{}state polarizability is defined as
 %
 \begin{equation} \label{e:polarizability}
-{\BM \alpha}_A = 2\sum_{m\neq 0} \frac{
+{\BM \upalpha}_A = 2\sum_{m\neq 0} \frac{
 \langle 0_A \lvert \hat{\BM \mu} \rvert m \rangle \otimes \langle m \lvert \hat{\BM \mu} \rvert 0_A \rangle 
 }{\hbar \left( \omega_{m} - \omega_{0_A}\right)}
 \end{equation}
@@ -3490,340 +3885,6 @@ They can also be calculated analitically by using standard methods implemented
 in current QM packages like {\sc Gaussian} or {\sc Gamess}.
 
 
-\section{Continuum model of the vibrational solvatochromism}
-
-It is instructive to study continuum models of solvation
-in terms of the vibrational frequency shifts since they 
-are still used by some researchers to relate macroscopic
-solvent properties with molecular vibrational characteristics.
-
-As the simplest case let us consider the situation
-in which the neutral solute molecule with the permanent gas\hyp{}phase 
-dipole moment ${\BM \mu}_0$
-is placed inside a spherical cavity of radius $a$, i.e., the 
-Onsager model. 
-%Note that
-%for our purpose the cavity need to be quite large. Therefore 
-%we can safely neglect other than dipole\hyp{}dipole interactions
-%and consider the Onsager model of solvation.
-In such a case, the solvation (interaction) energy is given as
-%
-\begin{equation} \label{e:esol-onsager}
- U^{\rm Sol}(\varepsilon, {\bf Q}) =
- -\frac{1}{2} {\BM \mu}(\varepsilon, {\bf Q}) \cdot {\bf F}^{\rm Ons}
-\end{equation}
-%
-where the Onsager reaction (electric) field acting on the solute molecule
-is
-%
-\begin{equation} \label{e:fons}
-  {\bf F}^{\rm Ons} = \frac{2(\varepsilon-1)(n^2+1)}{3a^3(2\varepsilon+n^2)} {\BM \mu}(\varepsilon, {\bf Q})
- = g(a,\varepsilon) {\BM \mu}(\varepsilon, {\bf Q})
-\end{equation}
-%
-In the above equations, ${\BM \mu}(\varepsilon, {\bf Q})$ 
-is the total solute's (gas\hyp{}phase and induced) dipole moment.
-It is strighforward to write down the expression for the
-vibrational frequency shift as
-%
-\begin{equation} \label{e:dw-ons-gen}
-  \Delta\omega_j(\varepsilon, {\bf Q}) = \hat{F}_j \left[ U^{\rm Sol}(\varepsilon, {\bf Q}) \right]
-\end{equation}
-%
-where $\hat{F}_j$ is the vibrational solvatochromic frequency shift 
-operator from Eq.~\eqref{e:dw-fea-fma}.
-
-To calculate the solvatochromic vibrational frequency shift
-using solute's gas\hyp{}phase properties it is necessary to expand
-the dipole moment into a power series with respect to the two perturbations,
-i.e., structural distortion and the Onsager electric field. Considering the first
-four terms in the Taylor expansion of ${\BM \mu}(\varepsilon, {\bf Q})$ one gets
-%
-\begin{equation} \label{e:mu-qf}
- {\BM \mu}(\varepsilon, {\bf Q}) \approx 
- {\BM \mu}_0 + \fderiv{{\BM \mu}}{\bf F}\Bigg|_{0}  \cdot {\bf F}^{\rm Ons}
- + \sum_i \fderiv{{\BM \mu}}{Q_i}\Bigg|_{0} \delta Q_i 
- + \sum_i \sderivd{{\BM \mu}}{{\bf F}}{Q_i}\Bigg|_{0} \cdot {\bf F}^{\rm Ons} \delta Q_i
-\end{equation}
-%
-where the subscript $0$ denotes that the derivatives are evaluated in the gas phase,
-i.e., ${\bf F}={\bf 0}$ and $\delta Q_i=0$.
-
-\subsubsection{Rigid molecule approximation}
-
-If the structural distortion are neglected, we have
-%
-\begin{equation}
- {\BM \mu}(\varepsilon, {\bf Q}) \approx 
- {\BM \mu}_0 + {\BM \alpha}_0  \cdot {\bf F}^{\rm Ons}
-\end{equation}
-%
-where the dipole\hyp{}dipole gas\hyp{}phase polarizability is
-%
-\begin{equation}
-{\BM \alpha}_0  = \fderiv{{\BM \mu}}{\bf F}\Bigg|_{0}
-\end{equation}
-%
-Then, the Onsager reaction field can be approximately written as
-%
-\begin{equation}
-{\bf F}^{\rm Ons} \approx g(a,\varepsilon) {\bf B} \cdot {\BM \mu}_0
-\end{equation}
-%
-with the auxiliary matrix given as follows
-%
-\begin{equation}
-{\bf B} = \left( \mathbb{1} - g(a,\varepsilon){\BM \alpha}_0 \right)^{-1}
-\end{equation}
-%
-Thus, the resulting solvation energy can be recast in the form
-that depends only on gas\hyp{}phase solute properties:
-%
-\begin{equation} \label{e:ons-e-sol-init}
-U^{\rm Sol}(\varepsilon, \delta{\bf Q}=0) = -\frac{1}{2} {\BM \Phi}(a, \varepsilon) : {\BM \mu}_0 \otimes {\BM \mu}_0
-\end{equation}
-%
-where the ${\BM \Phi}(a, \varepsilon)$ tensor is defined as
-%
-\begin{equation}
-{\BM \Phi}(a, \varepsilon) = g(a,\varepsilon) {\bf B} + g^2(a,\varepsilon) {\bf B} {\BM \alpha}_0 {\bf B}
-\end{equation}
-%
-Now, applying the vibrational solvatochromic frequency shift
-operator to this solvation energy,
-we find that the frequecy shift is
-%
-\begin{equation} \label{e:dw-ons-working-form}
-\Delta\omega_j(\varepsilon, \delta{\bf Q}=0) = \frac{1}{4M_j\omega_j}
-\left\{ \sum_i \frac{g_{ijj}}{M_i\omega_i^2}S_i - K_j \right\}
-\end{equation}
-%
-where the coefficients are given as
-%
-\begin{subequations}
- \begin{align}
-  S_i &= \fderiv{{\BM \Phi}}{Q_i} : {\BM \mu}_0 \otimes {\BM \mu}_0 
-           + 2{\BM \Phi} : \fderiv{{\BM \mu}_0}{Q_i} \otimes {\BM \mu}_0 \label{e:ons-si-init}\\
-  K_j &= \sderiv{{\BM \Phi}}{Q_j} : {\BM \mu}_0 \otimes {\BM \mu}_0
-           + 2{\BM \Phi} : \left[ \sderiv{{\BM \mu}_0}{Q_j} \otimes {\BM \mu}_0 
-           +  \fderiv{{\BM \mu}_0}{Q_j} \otimes \fderiv{{\BM \mu}_0}{Q_j} \right] 
-           + 4\fderiv{{\BM \Phi}}{Q_j} : \fderiv{{\BM \mu}_0}{Q_j} \otimes {\BM \mu}_0  \label{e:ons-ki-init}
- \end{align}
-\end{subequations}
-%
-Note that ${\BM \Phi}$ is symmetric. Also, using Eq.~\eqref{e:struct-dist-cho}
-we can estimate the structural distortion as
-%
-\begin{equation} \label{e:ons-dq-init}
-\delta Q_i \approx \frac{S_i}{2M_i\omega_i^2}
-\end{equation}
-%
-Thus, it becomes possible to iteratively take into account 
-the structural distortion effects for the solute's permanent
-dipole moment evaluation, which directly influences the 
-frequency shift via Eqs.~\eqref{e:esol-onsager}, 
-\eqref{e:dw-ons-gen} and \eqref{e:mu-qf}. 
-
-\subsection{Structural distortion effect: Iterative method}
-
-When $\hat{F}_j$ acts on the full solvation energy 
-the vibrational frequency shift has the same form as 
-in Eq.~\eqref{e:dw-ons-working-form}
-but the $S_i$ and $K_j$ coefficients are now different:
-%
-\begin{subequations}
- \begin{align}
-  S_i &= \fderiv{{\BM \mu}(\varepsilon,{\bf Q})}{Q_i} \cdot {\bf F}^{\rm Ons}
-           + {\BM \mu}(\varepsilon,{\bf Q}) \cdot \fderiv{{\bf F}^{\rm Ons}}{Q_i}
-        \label{e:ons-si-iter}  \\
-  K_j &= 2\left[ 
-             \sderiv{{\BM \mu}_0}{Q_j}  
-        + 2 \fderiv{{\BM \alpha}_0}{Q_j}  \cdot \fderiv{{\bf F}^{\rm Ons}}{Q_j}
-         \right] \cdot {\bf F}^{\rm Ons}
-         + 4\fderiv{{\BM \mu}(\varepsilon,{\bf Q})}{Q_j} \cdot \fderiv{{\bf F}^{\rm Ons}}{Q_j}
-        \label{e:ons-ki-iter}
- \end{align} % i have multiplied K_j by 2
-\end{subequations}
-%
-Analogously, the structural distortion is 
-$\delta Q_i=S_i/2M_i\omega_i^2$.
-One of the necessary derivatives are directly found to be
-%
-\begin{multline} \label{e:mu-qf-derivative}
-\fderiv{{\BM \mu}(\varepsilon,{\bf Q})}{Q_j} =
-\fderiv{{\BM \mu}_0}{Q_j} + \fderiv{{\BM \alpha}_0}{Q_j}  \cdot {\bf F}^{\rm Ons}
-+ \sum_i \sderivd{{\BM \mu}_0}{Q_j}{Q_i} \delta Q_i 
-+ \sum_i \sderivd{{\BM \alpha}_0}{Q_j}{Q_i} \cdot {\bf F}^{\rm Ons} \delta Q_i \\
-+ {\BM \alpha}_0  \cdot \fderiv{{\bf F}^{\rm Ons}}{Q_j} 
-+ \sum_i \fderiv{{\BM \alpha}_0}{Q_i} \delta Q_i \cdot \fderiv{{\bf F}^{\rm Ons}}{Q_j} 
-\end{multline}
-%
-From Eqs.~\eqref{e:mu-qf}
-and \eqref{e:fons} one can easily find that
-the Onsager reaction field is given as
-%
-\begin{equation} \label{e:ons-field}
- {\bf F}^{\rm Ons} = -{\bf A}^{-1} \cdot 
-\left[ 
-   {\BM \mu}_0 + \sum_i \fderiv{{\BM \mu}_0}{Q_i}\delta Q_i
-\right]
-\end{equation}
-%
-where the matrix $\bf A$, which can be viewed as generalized polarizability,
-is
-%
-\begin{equation} \label{e:a-matrix}
-{\bf A} = {\BM \alpha}_0 - \frac{1}{g(a,\varepsilon)} \mathbb{1} 
-   + \sum_i \fderiv{{\BM \alpha}_0}{Q_i}\delta Q_i
-\end{equation}
-%
-Thus the derivatives of the Onsager field are found to be
-%
-\begin{equation} \label{e:ons-field-deriv}
-\fderiv{{\bf F}^{\rm Ons}}{Q_j}  = 
-- {\bf A}^{-1} 
-   \left[ 
-       \fderiv{{\BM \mu}_0}{Q_j} 
-      + \sum_i \sderivd{{\BM \mu}_0}{Q_j}{Q_i} \delta Q_i 
-      - \fderiv{{\bf A}}{Q_j}  {\bf A}^{-1}  
-           \left\{ 
-               {\BM \mu}_0 + \sum_i \fderiv{{\BM \mu}_0}{Q_i}\delta Q_i
-           \right\}
-   \right]
-\end{equation}
-%
-where
-%
-\begin{equation}
-  \fderiv{{\bf A}}{Q_j} = \fderiv{{\BM \alpha}_0}{Q_j} 
-               + \sum_i \sderivd{{\BM \alpha}_0}{Q_j}{Q_i}
-\end{equation}
-%
-We are now ready to outline the iterative procedure
-to converge $U^{\rm Sol}$ with respect to the structural
-distortion:
-%
-\begin{itemize}
-\item[\textbullet] {\bf Initial Conditions}. 
-                        Precompute the solvation energy from Eq.~\eqref{e:ons-e-sol-init}
-                        and the initial structural distortions
-                        from Eq.~\eqref{e:ons-dq-init} and 
-                        Eq.~\eqref{e:ons-si-init}
-\item[\textbullet] {\bf Iterations}. Start the iterative procedure 
-                        by recomputing $U^{\rm Sol}$ and $\delta Q_i$
-\begin{enumerate}
- \item Calculate Onsager field using Eqs.~\eqref{e:ons-field} and \eqref{e:a-matrix}, 
-       and its derivatives from Eq.~\eqref{e:ons-field-deriv}
- \item Calculate dipole moment using Eq.~\eqref{e:mu-qf} 
-       and its derivatives from Eq.~\eqref{e:mu-qf-derivative}
- \item Calculate structural distortions from Eq.~\eqref{e:ons-dq-init}
-       and Eq.~\eqref{e:ons-si-iter}
-
- \item Calculate solvation energy using Eq.~\eqref{e:esol-onsager}
- \begin{itemize}
-      \item if $\left| U^{\rm Sol}_{\rm old} - U^{\rm Sol}_{\rm new}\right| > \Delta U^{\rm crit}$:
-            continue by updating the derivatives of dipole moment and Onsager field
-            and going back to the next iteration
-      \item else: End. 
- \end{itemize}    
-\end{enumerate}
-\end{itemize}
-%
-Once the solvation energy is converged 
-(lowered as solute molecule
-relaxes from its gas\hyp{}phase geometry) 
-up to a chosen criterion $\Delta U^{\rm crit}$
-one can obtain
-the vibrational frequency shift by using Eqs.~\eqref{e:dw-ons-working-form},
-\eqref{e:ons-si-iter} and \eqref{e:ons-ki-iter}.
-
-In terms of accuracy, the rigid molecule approximation
-provides already a good solvation energies and the frequency shifts
-even for small cavity sizes which are simulating the molecular
-volume
-(see Chapter X). 
-%Therefore, to estimate
-%the frequency shift long\hyp{}range correction
-%it is sufficient to focus
-%on the approximation given in Eq.~\eqref{e:ons-e-sol-init}
-%and the resulting vibrational frequency shift.
-%This is mostly because, for our purposes, $a$ shall be typically
-%large (much larger than the effective radius of the molecular
-%charge distribution), and the structural distortion effects can be 
-%neglected without significant loss of accuracy.
-
-\subsection{Coulombic and induction effects}
-
-To obtain the explicit forms of $\Delta\omega_j^{\rm Coul}$
-and $\Delta\omega_j^{\rm Ind}$
-%$\widetilde{\Delta\omega}_j^{\rm Coul}$
-%and $\widetilde{\Delta\omega}_j^{\rm Ind}$ 
-within Onsager model
-the frequency shift (neglecting the structural distortion)
-can be rewritten in the following form
-%
-\begin{multline} 
- \Delta\omega_j(\varepsilon, a) = 
-- \left[ {\BM \mu}_j + \frac{1}{2} {\BM \mu}_j^{\rm Ind} \right] \cdot {\bf F}^{\rm Ons} 
-- \frac{1}{2} {\BM \alpha}_j : {\bf F}^{\rm Ons} \otimes {\bf F}^{\rm Ons} 
-+ \widetilde{\Delta\omega}_j({\bf F})
-\\ = \Delta\omega_j^{\rm Coul} + \Delta\omega_j^{\rm Ind}
-+ \Delta\omega_j({\bf F})
-\end{multline}
-%
-where the Coulombic and induction frequency shifts 
-are given as
-%
-\begin{subequations}
- \begin{align}
-   \Delta\omega_j^{\rm Coul}             &= - {\BM \mu}_j \cdot {\bf F}^{\rm Ons} \\
-   \Delta\omega_j^{\rm Ind}              &= - \frac{1}{2} {\BM \mu}_j^{\rm Ind} \cdot {\bf F}^{\rm Ons} 
-       - \frac{1}{2} {\BM \alpha}_j : {\bf F}^{\rm Ons} \otimes {\bf F}^{\rm Ons} 
- \end{align}
-\end{subequations}
-%
-whereas the electric field correction term is
-%
-\begin{equation} 
-\Delta\omega_j({\bf F}) = \frac{1}{4M_j\omega_j}
-\sum_i \frac{g_{ijj}}{M_i\omega_i^2} \left\{ {\BM\mu}_0 + 
-2\delta_{ij}\frac{M_i\omega_i^2}{g_{ijj}}\fderiv{{\BM\mu}_0}{Q_i}\right\} \cdot \fderiv{{\bf F}^{\rm Ons}}{Q_i}
-\end{equation}
-%
-The effective gas\hyp{}phase and induced solvatochromic dipoles
-are defined as
-%
-\begin{subequations}
- \begin{align}
-   {\BM \mu}_j &= \frac{1}{2M_j\omega_j}
-\left[  \sderiv{{\BM\mu}_0}{Q_j}
-- \sum_i \frac{g_{ijj}}{M_i\omega_i^2} \fderiv{{\BM\mu}_0}{Q_i}
-\right] \\
-   {\BM \mu}_j^{\rm Ind} &= \frac{1}{2M_j\omega_j} 
-\left[ 8 \fderiv{{\bf F}^{\rm Ons}}{Q_j} \cdot \fderiv{{\BM\alpha}_0}{Q_j} - 
-   \sum_i \frac{g_{ijj}}{M_i\omega_i^2} \fderiv{{\bf F}^{\rm Ons}}{Q_i} \cdot {\BM\alpha}_0
-\right]
- \end{align}
-\end{subequations}
-%
-whereas the solvatochromic polarizability is
-%
-\begin{equation} 
-  {\BM \alpha}_j = - \frac{1}{2M_j\omega_j} 
-   \sum_i \frac{g_{ijj}}{M_i\omega_i^2} \fderiv{{\BM\alpha}_0}{Q_i}
-\end{equation}
-%
-It is interesting to note the straightforward
-similarity of the above equations to the corresponding
-contributions in the descrete model of vibrational
-solvatochromism discussed in previous Sections.
-
-Obviously, continuum model cannot take into account
-explicit solvation effects such as molecular collisions
-and specific interactions. Therefore, its significance
-lies mostly in the concept of the non\hyp{}specific
-vibrational frequency shift due to electrostatic
-interactions.
 
 
 \section{Modeling the solute's far environment}
@@ -3889,7 +3950,7 @@ where the wide tilde symbolizes the contribution
 due to the solvent
 that surrounds the sphere of radius $a$ with the solute
 in the middle. It is usefull to recall 
-the Onsager\hyp{}Kirkwood\hyp{}Fr{\"o}hlich (OKF) relation
+the Onsager\hyp{}Kirkwood\hyp{}Fr{\"o}hlich (OKF) relation\citep{Valisko.Boda.JPCB.2005}
 that relates the macroscopic observables with the microscopic 
 solvent properties
 %
@@ -3904,7 +3965,8 @@ of the high\hyp{}frequency refractive index, $\varepsilon_\infty=n^2$,
 $\rho_S$ is the solvent number density\footnote{number of molecules
 per unit volume}, $\mu_S$ is
 its dipole moment in the gas phase and $g_K$ denotes the so called
-Kirkwood correlation factor that describes the correlation between
+Kirkwood correlation factor\citep{Reis.Iglesias.PCCP.2011} 
+that describes the correlation between
 the directions of the dipole moments. Note also that 
 OKF relation is applicable
 when solvent molecules are approximately spherical in shape.
@@ -3950,7 +4012,7 @@ under the Bolzmann (thermal) equilibrium conditions we have
 %
 where the subscript
 $\Omega$ denotes the averaging over all orientations of 
-solute and solvent molecules in thermal equillibrium.
+solute and solvent molecules in thermal equillibrium.\citep{London.TransFaradSoc.1937}
 Thus, the frequency shift becomes
 %
 \begin{equation}
@@ -4109,7 +4171,7 @@ Note that this contribution is temperature independent.
 %interaction since it is a semi\hyp{}classical model.
 In the following way as before one can obtain the
 dispersion correction. We shall use the London isotropic
-dispersion energy approximation which states that
+dispersion energy approximation which states that\citep{London.TransFaradSoc.1937}
 %
 \begin{equation} \label{e:ryap}
  U^{\rm London} \approx -\frac{3}{2\varepsilon^2 r^6} \frac{I_0I_S}{I_0+I_S} \alpha_0 \alpha_S
@@ -4153,78 +4215,53 @@ have been derived and the resulting formulas are trivial to implement.
 However, our analysis is valid only for isotropic solutions and cannot be 
 applied when the molecular environment around the solute is strongly heterogeneous.
 
-\section{SolX models ov vibrational solvatochromism}
+\section{SolX models of vibrational solvatochromism}
 
 As the fundamental theory of the physical origins of the vibrational
 solvatochromism has been thoroughly presented, 
-in this section we would like to introduce the naming convention 
-of the various solvatochromic models
-that we shall be using from that point 
-consecutively throughout this Thesis. As it was
-shown in the previous Chapter, the vibrational frequency shift is a function
-of the solute\hyp{}solvent interaction potential derivatives
-with respect to solute's normal modes. Therefore, for $U$ approximated
-with method 'X' we shall refer to
-a resulting solvatochromic method as to 'SolX' method, theory or model. 
+in this Section we would like to briefly outline
+the various solvatochromic models, most of which 
+we shall be using from that point 
+consecutively throughout the Thesis. It is clear
+that the form of the solvatochromic model strongly depends
+on the representation of solute\hyp{}solvent interaction potential.
+Therefore, we shall refer to
+a 'SolX' method, theory or model, that is approximating $U$
+by method 'X'. We introduce this naming convention to quickly refer to a
+particular vibrational frequency shift approximation. 
+
 
 \subsection{Distributed muptipole models}
 
-Under the distributed multipole approximation, the Coulombic
-interaction energy can be expressed as a following series
-%
-\begin{equation}
- U^{\rm Coul} = \sum_{x\in A}\sum_{y\in B} \cong T^{xy}q^{(x)}q^{(y)} + 
-\sum_\alpha T^{xy}_\alpha \left( q^{(x)} \mu^{(y)}_\alpha - \mu^{(x)}_\alpha q^{(y)}\right)
- - \sum_{\alpha\beta} T^{xy}_{\alpha\beta} \mu^{(x)}_\alpha \mu^{(y)}_\beta + \ldots
-\end{equation}
-%
-where $x$ and $y$ denote the distributed sites on the solute and solvent
-molecules, respectively. There exists a number of ways of obtaining
-the distributed multipoles. 
-
-In the distributed multipole analysis 
-(DMA) of Stone\citep{Stone.JCTC.2005}, the particular multipoles
-are computed by integrating the matrix elements of multipole
-operators over localized amount of volume enclosing the distributed
-site of interest. These multipoles are characterized by good convergence
-properties of the resulting interaction energies. 
-However, differentiation of DMA with respect to nuclear coordinate
-is difficult to implement (the integration domains need to be the same
-during numerical computation of the derivatives). 
-
-More convenient in use in the vibrational solvatochromism
-is the cumulative atomic multipole
-moments method (CAMM) developed by Sokalski and Poirier.\citep{Sokalski.Poirier.CPL.1983}
-The multipoles are the generalization of the Mulliken atomic charges
-and they are given by exact relations:
-
-There is no technical problem related to the differentiation of CAMM
-with respect to the nuclear coordinate. However, the convergence of CAMM
-is somewhat worse than that of DMA since the integration of matrix elements 
-is performed over the whole space. This means that the electronic density
-is divided evenly over all atomic orbitals, even those which are located far
-from the distribution center. Nevertheless, CAMM still provides reasonable 
-estimates of $U^{\rm Coul}$ and we shall use them throughout this Thesis.
-
-If DMA
-or CAMM are used,
-SolDMA or SolCAMM models can be obtained, accordingly. 
-If one wanted to use the distributed multipoles centered at the localized molecular orbitals
-one could define the SolLMTP method for instance, that can be derived 
-from the LMTP expansion by Etchebest \emph{et al}.\citep{Etchebest.Lavery.Pullman.TheorChimActa.1982}
+The easiest approach to approximate the Coulombic frequency shifts
+is to use multipoles. In the Appendix~\ref{c:dma}
+we describe in detail methods that can be used to obtain
+the distributed multipoles from the one\hyp{}particle density matrices
+obtain by \emph{ab initio} calculations: the distributed multipole analysis (DMA) of
+Stone \citep{Stone.JCTC.2005}, cumulative atomic multipole moments 
+of Sokalski and Poirier \citep{Sokalski.Poirier.CPL.1983}
+and the multipoles centered at the localized molecular orbital centroids (LMTP)
+by Etchebest \emph{et al} \citep{Etchebest.Lavery.Pullman.TheorChimActa.1982}.
+This leads to SolDMA, SolCAMM and SolLMTP models, accordingly, with the 
+solvatochromic multipoles defined by Eq.~\eqref{e:solvatochromic-multipoles}. 
+%If one wanted to use the distributed multipoles centered at the localized molecular orbitals
+%one could define the SolLMTP method for instance, 
 The SolLMTP model has the unique feature that all the solvatochromic 
 distributed charges vanish and the first non\hyp{}zero tensor elements
 are the distributed solvatochromic dipoles. In contrast, an approximate model 
 with only distributed solvatochromic charges can be constructed based on the
 charges from electrostatic potentials using a grid\hyp{}based 
 method\citep{Breneman.Wiberg.JCC.1990} (ChelpG)
-(resulting in a SolChelpG model).
+which leads to a SolChelpG model.
 
-When the distributed multipoles are contracted (or summed)
+\paragraph{Contracted models}
+
+When the distributed multipoles are summed (or contracted)
 to a single center we obtain the SolMMM model with MMM denoting 
 the molecular multipole moment. This model is useful when
 modeling Stark tuning rates, which are equal to
-the SolMMM dipole.
+the SolMMM dipole. Note that SolMMM model can be obtained
+also by differentiation the total molecular moments.
 
 The contraction of SolDMA/CAMM models can also be partial
 leading to contracted models denoted here as SolCAMM-$n$ (or SolDMA-$n$), where
@@ -4972,6 +5009,162 @@ System               & Method    & MEA           & EA         & Total        \\
 \end{tabular*}
 \end{table}
 %--------------------------------------------------------------------------------------------------
+
+\begin{refsection}
+\chapter{Distributed multipole analysis\label{c:dma}}
+
+In this Thesis we make use of distributed multipole 
+moments determined by using various methods in order to obtain
+the appropriate vibrational solvatochromic midels. In this Chapter,
+we describe the mathematical formulation and characteristics of various methods
+in more detail.
+Under the distributed multipole approximation, the Coulombic
+interaction energy can be expressed as a following series\citep{Stone.TheTheoryOfIntermolecularForces.1996}
+%
+\begin{equation}
+ U^{\rm Coul} = \sum_{x\in A}\sum_{y\in B} \cong T^{xy}q^{(x)}q^{(y)} + 
+\sum_\alpha T^{xy}_\alpha \left( q^{(x)} \mu^{(y)}_\alpha - \mu^{(x)}_\alpha q^{(y)}\right)
+ - \sum_{\alpha\beta} T^{xy}_{\alpha\beta} \mu^{(x)}_\alpha \mu^{(y)}_\beta + \ldots
+\end{equation}
+%
+where $x$ and $y$ denote the distributed sites on the solute and solvent
+molecules, respectively. There exists a number of ways of obtaining
+the distributed multipoles. 
+
+\section{DMA method}
+
+In the distributed multipole analysis 
+(DMA) of Stone\citep{Stone.JCTC.2005}, the particular multipoles
+are computed by integrating the matrix elements of multipole
+operators over localized amount of volume enclosing the distributed
+site of interest. These multipoles are characterized by good convergence
+properties of the resulting interaction energies. 
+However, differentiation of DMA with respect to nuclear coordinate
+is difficult to implement (the integration domains need to be the same
+during numerical computation of the derivatives). 
+
+\section{CAMM method}
+
+More convenient in use in the vibrational solvatochromic calculations
+is the cumulative atomic multipole
+moments method (CAMM) developed by Sokalski and Poirier.\citep{Sokalski.Poirier.CPL.1983}
+The multipoles are the generalization of the Mulliken atomic charges
+and they are given by exact relations:
+%
+\begin{equation}
+\begin{aligned}
+q_x              &=-\sum_{r\in x} \sum_s  P_{rs} \langle r \rvert s \rangle \\
+\bm{\upmu}_x     &= \sum_{r\in x} \sum_s  P_{rs} 
+\left[
+        \langle r \rvert s \rangle {\bf R}_x - \langle r \lvert {\bf r} \rvert s \rangle
+\right]   \\
+\bm{\Theta}_{x}  &= \sum_{r\in x} \sum_s P_{rs}
+\left[
+   - {\bf R}_x \otimes {\bf R}_x \langle r \rvert s \rangle +
+    {\bf R}_x \otimes  \langle r \lvert {\bf r} \rvert s \rangle + 
+                       \langle r \lvert {\bf r} \rvert s \rangle \otimes {\bf R}_x -
+    \langle r \lvert {\bf r} \otimes {\bf r} \rvert s \rangle
+\right]   \\
+%\begin{gathered}
+\bm{\Omega}_{x}  &=
+\sum_{r\in x} \sum_s P_{rs}
+\Big[
+          {\bf R}_x \otimes {\bf R}_x \otimes {\bf R}_x \langle r \rvert s \rangle -
+          {\bf R}_x \otimes {\bf R}_x \otimes \langle r \lvert {\bf r} \rvert s \rangle -
+          {\bf R}_x \otimes \langle r \lvert {\bf r} \rvert s \rangle \otimes {\bf R}_x \\ \nonumber
+ &\quad- \langle r \lvert {\bf r} \rvert s \rangle \otimes {\bf R}_x \otimes {\bf R}_x +
+          {\bf R}_x \otimes \langle r \lvert {\bf r} \otimes {\bf r} \rvert s \rangle +
+          \langle r \lvert {\bf r} \otimes {\bf R}_x \otimes {\bf r} \rvert s \rangle +
+          \langle r \lvert {\bf r} \otimes {\bf r} \rvert s \rangle \otimes {\bf R}_x \\ \nonumber
+ &\quad- \langle r \lvert {\bf r} \otimes {\bf r} \otimes {\bf r} \rvert s \rangle
+\Big] 
+%\end{gathered}
+\end{aligned}
+\end{equation}
+%
+where $r$ and $s$ denote the basis functions, $P_{rs}$ is the
+one\hyp{}particle density matrix element and $x$ is the atomic centre.
+All the one\hyp{}electron multipole integrals 
+$\langle r \lvert f({\bf r},{\bf R}_x)\rvert s \rangle$ 
+can be easily 
+evaluated by a computer program using the above analytical formulae.
+Therefore, there is no technical problem related to the differentiation of CAMM
+with respect to the nuclear coordinate.\footnote{One needs to pay attention
+upon keeping the origins of multipoles fixed during the numerical differentiation;
+see the discussion on that aspect in Sec.XXX} However, the convergence of CAMM
+is somewhat worse than that of DMA since the integration of matrix elements 
+is performed over the whole space. This means that the electronic density
+is divided evenly over all atomic orbitals, even those which are located far
+from the distribution center. Nevertheless, CAMM still provides reasonable 
+estimates of $U^{\rm Coul}$ and we shall use them throughout this Thesis.
+
+\section{LMTP method}
+
+Instead of using atoms as expansion centers, one can use also localized molecular orbitals
+for that purpose. This is the localized orbital multipole (LMTP) expansion 
+proposed by Etchebest \emph{et al}.\citep{Etchebest.Lavery.Pullman.TheorChimActa.1982}
+The aim is to decompose molecular multipole moments into additive
+distributed moments which are centered not only at atomic sites
+(and even at mid\hyp{}bond distances) but also at lone\hyp{}pairs 
+and extended $\pi$\hyp{}orbitals in a way similar to the Mulliken\hyp{}based
+partitioning scheme.
+
+The momecular primitive and origin\hyp{}dependent multipole moment $\bf M$
+is given as:
+%
+\begin{equation}\label{M}
+{\bf M} = \sum_A Z_A{\bf R}_A + \tbraket{\Psi}{\mathscr{M}^{(r)}}{\Psi}
+\end{equation}
+%
+where $\mathscr{M}^{(r)}$ is $r$-th rank multipole moment operator
+%
+\begin{equation}\label{Mop}
+\mathscr{M}^{(r)} = -\sum_i^N \underbrace{{\bf r}_i \otimes \cdots \otimes {\bf r}_i }_{r \; {\rm times}} = \sum_i^N \hat{m}^{(r)}(N)
+\end{equation}
+%
+The summations extend over all $A$ atoms and all electrons $i$ in the system
+and $\otimes$ is tensor outer product operator.
+Using Slater\hyp{}Condon rule for matrix elements of one\hyp{}electron operator
+between ground state bra and ket Slater determinants we obtain
+%
+\begin{equation}\label{MSC}
+{\bf M} = \sum_A Z_A{\bf R}_A - \sum_i^N \tbraket{\chi_i}{\hat{m}^{(r)}(1)}{\chi_i}
+\end{equation}
+%
+and $\ket{\chi_i}$ are occupied molecular spin\hyp{}orbitals.
+Now let us define a simple decomposition of electronic part of $\bf M$, i.e. ${\bf M}_e$:
+%
+\begin{equation}\label{MSCp}
+{\bf M}_e = \sum_G {\bf M}_{e,G} =  -\sum_G\sum_{i \in G} \tbraket{\chi_i}{\hat{m}^{(r)}(1)}{\chi_i}
+\end{equation}
+%
+Now, if we want to start from canonical orbitals $\ket{\chi_i}_C$ and use atomic basis functions to create also
+non\hyp{}atomic and non\hyp{}mid\hyp{}bond distributed moments one should rather use in Equation \eqref{MSCp} localized
+molecular spin\hyp{}orbitals, $\ket{\chi_i}_L$:
+%
+\begin{equation}\label{a}
+\ket{\chi_i}_L = \sum_j U_{ji} \ket{\chi_i}_C
+\end{equation}
+%
+where $\bf U$ is unitary rotation matrix in space of canonical MOs which localizes them. Assuming we know
+$U_{ji}$ elements and using LCAO expansion of canonical MO one immediately finds that
+%
+\begin{equation}\label{b}
+{\bf M}_{e,G} = -\sum_{i \in G} \sum_{jm} \sum_{kl} U^*_{ji} U_{mi} C^*_{jl} C_{mk} \tbraket{l}{\hat{m}^{(r)}(1)}{k}
+\end{equation}
+%
+Here, $C_{ij}$ are canonical expansion coefficients of MO in AO basis.
+
+When we evaluate all the moments for each LMO group $G$ we can accumulate them in each $G$-th center
+changing the origins. There are always MOs which are centered mainly on atoms (atomic contributions
+mostly from core AOs) but there will be many nonatomic centers wich will contribute to bond, lone pair
+as well as $\pi$\hyp{}orbital distributed moments, respectively. The centers can be grouped to reduce the number
+of expansion centers. The part of $\bf M$ which comes from atomic
+nuclei can be just added to electronic atomic moments.
+
+\printbibliography[heading=subbibintoc,title={References}]
+\end{refsection}
+
 \chapter{Experiments\label{a:exp-ftir}}
 
 Absorption frequencies of CN stretch modes in MeCN and MeSCN dissolved in various
@@ -5001,7 +5194,6 @@ Nonetheless, it is still possible to estimate the average frequency of the CN st
 
 
 \end{appendices}
-
 % --------------------------------------------------------------------------------------------------------------
 
 %\bibliographystyle{rsc}
