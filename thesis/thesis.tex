@@ -2491,8 +2491,17 @@ calculations, especially when specific interactions such as
 hydrogen bonds are present solute and its molecular environment.
 
 
+\section{Explicit model: Coarse-graining}
 
-\section{Coulombic Effects\label{s:dw-coul}}
+We now focus on the treatment of each molecule
+explicitly which enables one to take into account
+the intricate scenarios of intermolecular contacts
+starting from random collisions, weak van der Waals
+forces to more directional, specific interactions
+such as strong electrostatic forces, H-bonding and
+$\pi$-interactions.
+
+\subsection{Coulombic Effects\label{s:dw-coul}}
 
 In the first\hyp{}order of polarization perturbation
 theory\footnote{i.e., in the long\hyp{}distance limit 
@@ -2777,7 +2786,7 @@ systems the Reader is reffered to
 the Appendix~\ref{a:convergence-of-the-correction-terms}
 
 
-\section{Polarization and dispersion effects}
+\subsection{Polarization and dispersion effects}
 
 In Section~\ref{s:dw-coul} we have focused on a long\hyp{}range
 approximation of the electrostatic contribution to the frequency
@@ -2822,7 +2831,7 @@ U^{(2)} = - \sum_{mn\ne 00} \frac{
 \end{equation}
 %
 
-\subsection{Induction effects}
+\subsubsection{Induction effects}
 
 If we restrict the summation in Eq.~\eqref{e:eint-2} to run over such states
 that involve ground state of either monomer
@@ -3087,8 +3096,7 @@ the mass\hyp{}weighted eigenvectors
 ${\bf L}_x^{(i)}$ 
 are obtained from the harmonic vibrational analysis (see Appendix~\ref{asec:vibranal}).
 
-\subsubsection{Induced solvatochromic multipoles}
-
+\paragraph{Induced solvatochromic multipoles}
 It is useful to analyze the solvatochromic multipoles 
 when the induction effects are taken into account.
 In the single\hyp{}center limit, the solvatochromic
@@ -3143,7 +3151,7 @@ information on whether Stark theory based on the molecular
 solvatochromic multipoles is accurate or not. We will discuss 
 this aspect in more detail in Chapter X.
 
-\subsection{Dispersion effects\label{s:disp}}
+\subsubsection{Dispersion effects\label{s:disp}}
 
 The remaining part of the second\hyp{}order interaction
 energy from Eq.~\eqref{e:eint-2} which has to be considered
@@ -3466,8 +3474,7 @@ to all the normal coordinates are additionally needed,
 which makes this calculation of Eq.~\eqref{e:dw-disp-8} 
 very difficult to handle in practice. 
 
-\subsubsection{Distributed polarizability approach for dispersion}
-
+\paragraph{Distributed polarizability approach for dispersion}
 Similarly as in the case of the induction energy, 
 dispersion energy calculation based on the total molecular (single\hyp{}centered)
 multipole expansion as discussed in Section~\ref{s:disp} 
@@ -3583,7 +3590,7 @@ vibrational frequency shift, $\Delta\omega_{j,8}^{\rm Disp}$,
 in the future.
 
 
-\section{Exchange-repulsion effects}
+\subsection{Exchange-repulsion effects}
 
 The electrostatic contribution to the frequency shift is the dominant term 
 when the intermolecular distance is sufficiently large enough to ignore 
@@ -3900,7 +3907,7 @@ by numerical  differentiation (note, that they need to be evaluated only once).
 They can also be calculated analitically by using standard methods implemented
 in current QM packages like {\sc Gaussian} or {\sc Gamess}.
 
-\section{Charge transfer effects}
+\subsection{Charge transfer effects}
 
 When two molecules are sufficiently close enough
 their interactions can lead to transfer of the 
