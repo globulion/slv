@@ -55,7 +55,7 @@
 % bibliography
 %\usepackage{natbib}
 \usepackage[natbib=true,style=chem-acs,sorting=none]{biblatex}
-\addbibresource{bibliography.bib}
+\addbibresource{abbr,bibliography}
 
 % literate programming
 \usepackage{noweb}
@@ -2087,7 +2087,7 @@ derived in Sec.~\ref{s:str-dist-general-discussion} might become useful.
 
 % === Chapter 4 ===
 \begin{refsection}
-\chapter{Origins of the Vibrational Solvatochromism \label{c:my-model}}
+\chapter{Rigorous Models of Vibrational Solvatochromism \label{c:my-model}}
 
 Although the theory of the vibrational solvatochromism
 was developed before, it involved the solute\hyp{}solvent
@@ -2502,7 +2502,8 @@ between solute and solvent molecules can be safely ignored.},
 the intermolecular interaction potential
 can be understood as a Coulombic interaction
 of unperturbed solute and solvent molecules (i.e., 
-as if they were isolated).\citep{Jeziorski.Moszynski.Szalewicz.ChemRev.1994,Stone.TheTheoryOfIntermolecularForces.1996}
+as if they were isolated).\citep{Jeziorski.Moszynski.Szalewicz.ChemRev.1994,
+Stone.TheTheoryOfIntermolecularForces.1996}
 That is
 %
 \begin{equation} \label{e:eint-1}
@@ -2766,10 +2767,11 @@ the Coulombic frequency shift has the following form
 \begin{equation} \label{e:dw-solefp-coul-working}
 \Delta\omega_j^{\rm Coul} \cong \Delta\omega_j^{\rm SolDMA} + \frac{1}{2M_j\omega_j}
 \sum_i \frac{g_{ijj}}{M_i\omega_i^2} \sum_{x \in A}\sum_{y \in B}
-\left\{ q_x - 2\delta_{ij} \fderiv{q_y}{Q_i} \right\} \frac{q_y}{r_{xy}^3} {\bf L}_x^{(i)} \cdot {\bf r}_{xy} 
+\left\{ q_x - 2\delta_{ij} \frac{M_i\omega_i^2}{g_{ijj}} 
+\fderiv{q_y}{Q_i} \right\} \frac{q_y}{r_{xy}^3} {\bf L}_x^{(i)} \cdot {\bf r}_{xy} 
 \end{equation}
 %
-For the more detailed analysis of the convergence properties
+For more detailed analysis of the convergence properties
 of $\Delta\omega_j({\partial\phi})$ for some examplary model 
 systems the Reader is reffered to
 the Appendix~\ref{a:convergence-of-the-correction-terms}
@@ -3154,7 +3156,7 @@ U^{\rm Disp} = - \sum_{m\ne 0} \sum_{n\ne 0} \frac{
 \end{equation}
 %
 This is the dispersion interaction in the second\hyp{}order of RSPT.
-Using the Casimir-Polder identity
+Using the Casimir\hyp{}Polder identity
 %
 \begin{equation} \label{e:Casimir-Polder}
 \frac{1}{\omega_{m0_A}+\omega_{n0_B}} =\frac{2}{\pi} \int_0^{\infty} 
@@ -3185,9 +3187,10 @@ in Eq.~\eqref{e:sfaf} are\citep{Smith.Ruedenberg.Gordon.Slipchenko.JCP.2012}
 \end{equation}
 %
 since the terms containing charges will vanish due to orthogonality 
-of the monomer eigenstates. The second- and third-rank interaction tensors,
+of the monomer eigenstates. The second- and third\hyp{}rank interaction tensors,
 ${\bf T}^{AB,(2)}$ and ${\bf T}^{AB,(3)}$, 
-can be found in Ref.\citep{Stone.TheTheoryOfIntermolecularForces.1996}
+can be found in Eqs.~\eqref{e:interaction-tensors-2} 
+and \eqref{e:interaction-tensors-3}, respectively.
 Substituting Eq.~\eqref{e:x487395} into Eq.~\eqref{e:sfaf} we have
 %
 \begin{equation}
@@ -3243,7 +3246,7 @@ $i\Omega$ are, respectively, defined as
 %
 The terms in Eqs.~\eqref{e:udisp-6-7-8} depend on the intermolecular distance 
 $R_{AB}$ as $R^{-6}_{AB}$, $R^{-7}_{AB}$, and $R^{-8}_{AB}$, 
-respectively, so that $U^{\rm Disp}$ can be written as
+respectively, so that $U^{\rm Disp}$ can be recast as
 %
 \begin{equation} \label{e:udisp-cn-series}
  U^{\rm Disp} \cong -\frac{C_6}{R^{6}_{AB}} -\frac{C_7}{R^{7}_{AB}} -\frac{C_8}{R^{8}_{AB}} + \ldots
@@ -3263,7 +3266,7 @@ isotropic polarizabilities, $\alpha^A=\frac{1}{3}{\rm Tr}\;{\BM \alpha}$.
 Note that, when the charge distribution has the center of inversion, 
 the dipole\hyp{}quadrupole polarizabilities vanish by symmetry 
 and only even\hyp{}rank terms are non\hyp{}zero. Even in the case 
-of non-centrosymmetric molecules, the rotational average 
+of non\hyp{}centrosymmetric molecules, the rotational average 
 of the $R^{-7}_{AB}$ term in Eq.~\eqref{e:udisp-cn-series} 
 is often negligibly small.\citep{Stone.TheTheoryOfIntermolecularForces.1996}
 
@@ -3297,6 +3300,19 @@ T^{AB}_{\alpha\beta}T^{AB}_{\gamma\delta}
 \alpha_{\alpha\gamma}^{A}
 \right\}
 \alpha_{\beta\delta}^{B}
+\end{equation}
+%
+in which we used the vibrational force 
+%
+\begin{equation} \label{e:vibr-force-disp-6}
+ \fderiv{U^{\rm Disp}_6}{Q_i} = -\frac{\hbar}{2\pi} \int_0^\infty {\rm d}\Omega \;
+ \alpha^B_{\beta\delta}
+ \left\{
+     \fderiv{\left[T^{AB}_{\alpha\beta}T^{AB}_{\gamma\delta}\right]}{Q_i} 
+         \alpha^A_{\alpha\gamma}
+      + 
+     T^{AB}_{\alpha\beta}T^{AB}_{\gamma\delta} \fderiv{\alpha^A_{\alpha\gamma}}{Q_i}
+ \right\}
 \end{equation}
 %
 In Eq.~\eqref{e:dw-disp-6}, we ignored the electric anharmonicity contribution 
@@ -3464,7 +3480,7 @@ approach also for dispersion effects.\citep{Adamovic.Gordon.MolPhys.2005}
 This leads to the following expressions for the 
 dispersion\hyp{}induced vibrational frequency shifts 
 %
-\begin{multline}
+\begin{multline} \label{e:dw-disp-6-distr-working}
     \Delta\omega_{j,6}^{\rm Disp} \cong 
        \frac{1}{4\pi M_j\omega_j}\sum_i \frac{g_{ijj}}{M_i\omega_i^2} 
        \sum_{a\in  A}\sum_{b\in B}
@@ -3884,8 +3900,69 @@ by numerical  differentiation (note, that they need to be evaluated only once).
 They can also be calculated analitically by using standard methods implemented
 in current QM packages like {\sc Gaussian} or {\sc Gamess}.
 
+\section{Charge transfer effects}
+
+When two molecules are sufficiently close enough
+their interactions can lead to transfer of the 
+electron charge density from one molecule to another.
+This is called the charge transfer (CT) process.
+However, from molecular orbital point of view, this process can be 
+described by the same equation which governs the induction
+effects described in the previous Section. The only difference
+is that the summations over states in Eq.~\eqref{e:eint-2-ind} correspond to 
+the excitations of occupied orbitals in molecule $A$ to
+the virtual orbitals of molecule $B$ (and \emph{vice versa}).\footnote{We ignore similar effects
+associated with dispersion.} 
+When we discussed the induction effects, we silently assumed that
+the excitations take place within the same molecule. 
+
+In practice, 
+we use finite basis sets and if a monomer\hyp{}centered basis (MCBS)
+is used to compute $U^{(2)}$, the CT effects are not accounted for.
+However, if one uses the basis that spans both monomers, i.e., 
+dimer\hyp{}centered basis set (DCBS), then
+formally the solutions for electronic adiabatic states of $A$ ($B$) contain
+virtual orbitals on $B$ ($A$) and CT process can be evaluated.
+Perhaps the most straightforward way to do this is to compute
+the difference between DCBS and MCBS induction energies as proposed 
+by Stone and Misquitta\citep{Stone.Misquitta.CPL.2009}
+on the grounds of SAPT\citep{Jeziorski.Moszynski.Szalewicz.ChemRev.1994}
+%
+\begin{equation} \label{e:ct-int}
+ U^{\rm CT} = U^{\rm Ind}[{\rm DCBS}] - U^{\rm Ind}[{\rm MCBS}]
+\end{equation}
+%
+The $U^{\rm CT}$ term should also be corrected by short\hyp{}range
+exchange effects by including antisymmetrization of the
+wavefunction,\citep{Stone.Misquitta.CPL.2009} since CT occurs 
+in close contact.
+Unfortunately, evaluation of Eq.~\eqref{e:ct-int} (with its 
+exchange correction) is very
+time\hyp{}consuming and impractical for use in the condensed
+phase simulations. Li, Gordon and Jensen developed
+an approximate and much faster way to compute $U^{\rm CT}$
+at HF level of theory.\citep{Li.Gordon.Jensen.JCP.2006}
 
 
+\begin{equation} \label{e:dw-ct}
+\Delta \omega_j^{\rm CT} =
+\frac{1}{2M_j\omega_j} \left[ 
+\sderiv{U^{\rm CT}}{Q_j} -
+\sum_i \frac{g_{ijj}}{M_i\omega_i^2}\fderiv{U^{\rm CT}}{Q_i}
+\right]
+\approx 
+-\frac{1}{2M_j\omega_j}\sum_i \frac{g_{ijj}}{M_i\omega_i^2}\fderiv{U^{\rm CT}}{Q_i}
+\end{equation}
+
+\begin{equation} \label{e:force-ct}
+ \fderiv{U^{\rm CT}}{Q_i} = 
+\end{equation}
+
+CT term is the most time\hyp{}consuming contribution
+in the evaluation of the vibrational frequency shift.
+Fortunately, CT energies are usually quite small
+and can be neglected when extremely high accuracy is not
+a concern.
 
 \section{Modeling the solute's far environment}
 
@@ -4215,7 +4292,7 @@ have been derived and the resulting formulas are trivial to implement.
 However, our analysis is valid only for isotropic solutions and cannot be 
 applied when the molecular environment around the solute is strongly heterogeneous.
 
-\section{SolX models of vibrational solvatochromism}
+\section{Working models of vibrational solvatochromism}
 
 As the fundamental theory of the physical origins of the vibrational
 solvatochromism has been thoroughly presented, 
@@ -4231,21 +4308,24 @@ by method 'X'. We introduce this naming convention to quickly refer to a
 particular vibrational frequency shift approximation. 
 
 
-\subsection{Distributed muptipole models}
+\subsection{Distributed muptipole models: SolDMA, SolCAMM and SolLMTP}
 
 The easiest approach to approximate the Coulombic frequency shifts
 is to use multipoles. In the Appendix~\ref{c:dma}
 we describe in detail methods that can be used to obtain
 the distributed multipoles from the one\hyp{}particle density matrices
 obtain by \emph{ab initio} calculations: the distributed multipole analysis (DMA) of
-Stone \citep{Stone.JCTC.2005}, cumulative atomic multipole moments 
+Stone \citep{Stone.JCTC.2005}, cumulative atomic multipole moments (CAMM)
 of Sokalski and Poirier \citep{Sokalski.Poirier.CPL.1983}
 and the multipoles centered at the localized molecular orbital centroids (LMTP)
 by Etchebest \emph{et al} \citep{Etchebest.Lavery.Pullman.TheorChimActa.1982}.
-This leads to SolDMA, SolCAMM and SolLMTP models, accordingly, with the 
+Applying those methods leads to SolDMA, SolCAMM and SolLMTP models, accordingly, with the 
 solvatochromic multipoles defined by Eq.~\eqref{e:solvatochromic-multipoles}. 
+Note that, if the atomic centers are used (CAMM and DMA), the electrostatic potential
+correction terms can also be estimated.
 %If one wanted to use the distributed multipoles centered at the localized molecular orbitals
 %one could define the SolLMTP method for instance, 
+
 The SolLMTP model has the unique feature that all the solvatochromic 
 distributed charges vanish and the first non\hyp{}zero tensor elements
 are the distributed solvatochromic dipoles. In contrast, an approximate model 
@@ -4253,9 +4333,8 @@ with only distributed solvatochromic charges can be constructed based on the
 charges from electrostatic potentials using a grid\hyp{}based 
 method\citep{Breneman.Wiberg.JCC.1990} (ChelpG)
 which leads to a SolChelpG model.
-
+%
 \paragraph{Contracted models}
-
 When the distributed multipoles are summed (or contracted)
 to a single center we obtain the SolMMM model with MMM denoting 
 the molecular multipole moment. This model is useful when
@@ -4271,7 +4350,7 @@ for example describing methyl groups. In Figure~\ref{f:contr}
 we show the procedure of such a construction and Figure~\ref{f:solxn}
 depicts a few examples.
 %
-\begin{figure}[ht]
+\begin{figure}[!ht]
 \centering
 \setlength\fboxsep{0.4pt}
 \setlength\fboxrule{0.5pt}
@@ -4311,8 +4390,11 @@ is decreased. If the contraction involves atoms that
 are not affected by the vibrational mode of interest (e.g. 
 hydrogen atoms in the methyl group when one is interested
 in amide I mode) the contracted models give basically 
-the same results as uncontracted models (we 
-will discuss it in the next Chapter). 
+the same results as uncontracted models. However, one needs to 
+be aware that the united atom model obtained by this procedure
+does not include the rotational averaging which might be of
+interest when methyl groups are freely rotatable. These aspects 
+will be discussed in more detail in the next Chapter. 
 
 \subsection{SolEFP, SolEDS and SolSAPT models}
 
@@ -4332,43 +4414,101 @@ Gora.Bartkowiak.Roszak.Leszczynski.JCP.2004} (EDS)
 \end{enumerate}
 %
 These will lead to the SolEFP, SolEDS and SolSAPT methods, accordingly. 
-SolEFP method was already described in the previous sections
+
+\subsubsection{SolEFP model}
+
+In fact, SolEFP method was already described in Section~XXX
 and the frequency shift is given as
 %
 \begin{equation} \label{e:dw-solefp}
 \Delta\omega^{\rm SolEFP} = 
-\Delta\omega^{\rm Coul} + \Delta\omega^{\rm Ex-Rep} + 
-\Delta\omega^{\rm Ind} + \Delta\omega^{\rm Disp}_6 + \Delta\omega^{\rm CT}
+\Delta\omega^{\rm Coul} + \Delta\omega^{\rm Ind} + \Delta\omega^{\rm Disp}_6 +
+\Delta\omega^{\rm Ex-Rep} + \Delta\omega^{\rm CT}
 \end{equation}
 %
+with $\Delta\omega^{\rm Coul}$ given by Eq.~\eqref{e:dw-solefp-coul-working},  
+$\Delta\omega^{\rm Ind}$ by Eq.~\eqref{e:dw-ind-avec},
+$\Delta\omega^{\rm Disp}_6$ by Eq.~\eqref{e:dw-disp-6-distr-working},
+$\Delta\omega^{\rm Ex-Rep}$ by Eq.~\eqref{e:dw-exrep-base},
+and $\Delta\omega^{\rm CT}$ by Eq.~\eqref{e:dw-ct}.
+Thus, SolCAMM (or SolDMA) is a part of SolEFP method. 
+
 It is also strightforward to compute the 
 solvation\hyp{}induced transition dipole change
 with SolEFP vibrational forces according to the following prescription
 %
-\begin{equation} \label{e:dmu-solefp}
-d = c!
-\end{equation}
+\begin{multline} \label{e:dmu-solefp}
+\Delta\left(\frac{{\BM \upmu}}{Q_j}\right) \equiv 
+ \frac{\partial{\BM \upmu}({\bf F},U)}{\partial\overline {\bf Q}_j} \Bigg|_{\overline{\bf Q}_{0_A}} -  
+ \frac{\partial{\BM \upmu}({\bf F}={\bf 0},U=0)}{\partial {\bf Q}_j} \Bigg|_{{\bf Q}_{0_A}} \approx
 %
+\sum_a 
+\fderiv{{\BM \alpha}_{a}}{Q_j} \cdot {\bf F}({\bf r}_a) \\
++
+\sum_i 
+\frac{1}{M_i\omega_i^2} 
+\left[
+ U^{\rm Coul}_i   + 
+ U^{\rm Ind}_i    +
+ U^{\rm Disp}_{6;i}   +
+ U^{\rm Ex-Rep}_i +
+ U^{\rm CT}_i
+\right]
+%
+\left\{ 
+ \sderivd{{\BM \upmu}_0}{Q_j}{Q_i} 
+ + \sum_a \sderivd{{\BM \alpha}_{a}}{Q_j}{Q_i} \cdot {\bf F}({\bf r}_a)
+%
+\right\}  
+\end{multline}
+%
+where the vibrational forces along the $i$th normal coordinate
+$U_i$ due to Coulombic, induction, dispersion, exchange\hyp{}repulsion
+and charge transfer effects are given in Eqs.~\eqref{e:f-terms},
+\eqref{e:vibr-force-ind}, \eqref{e:vibr-force-disp-6}, 
+\eqref{e:force-exrep} and \eqref{e:force-ct}, respectively.
+Note that these terms correspond to the interaction\hyp{}induced
+molecular structure relaxation effect
+whereas the first term in Eq.~\eqref{e:dmu-solefp}
+refers to the induction effect originating purely from
+electronic relaxation (i.e., without structural distortion).
 
+%\paragraph{Features and limitations of SolEFP approach}
 Due to its intrinsic fragmentation framework\citep{Gordon.Fedorov.Pruitt.Slipchenko.ChemRev.2012}, 
 SolEFP is suitable for modeling very large systems
 ranging from bulk solutions to highly heterogeneous
-protein environments (see Chapter X). Note that in order
+protein environments \citep{Blasiak.Ritchie.Webb.Cho.XXX.2016} 
+(see Chapter X). Note that in order
 to compute the solvation\hyp{}induced frequency shift or the
 transition dipole moment change, one needs the information
 about the gas\hyp{}phase states of the molecules \emph{only}, 
 because the effects of their interactions do not require 
 any other specific solute\hyp{}solvent information.
-On the other hand, according to 
-previous sections, SolEFP espression in Eq.~\eqref{e:dw-solefp} 
-is an approximation of the local mode approximation from
-Eq.~\eqref{e:buckingham-2st-order-total-fund}. Let us 
-explicitly list all the approximations here:
+This is a great advantage over SolEDS and SolSAPT approaches
+which are limited to studying only small multimers because 
+they require calculations of the wavefunctions for the whole
+solute\hyp{}solvent complex. On the other hand, the price
+which we need to pay for coarse\hyp{}grained character of the SolEFP model
+is accuracy.
+%according to 
+%previous sections, SolEFP espression in Eq.~\eqref{e:dw-solefp} 
+%is an approximation of the local mode approximation from
+Eq.~\eqref{e:buckingham-2st-order-total-fund}. 
+Let us 
+explicitly list all the approximations upon which SolEFP presented in 
+this Thesis is based:
 %
 \begin{itemize}
+ %
  \item The charge\hyp{}penetration effects have been ignored, since they are likely to be weak. 
-Nevertheless, since they were found to be of importance in describing Coulomb interaction energy 
-(not frequency shift), such charge\hyp{}penetration effects need to be studied in the future.
+Nevertheless, since they were found to be of importance in accurately describing 
+the Coulomb interaction energy of many systems\citep{Slipchenko.Gordon.JCC.2007}, 
+such charge\hyp{}penetration 
+effects on the vibrational solvatochromism need to be studied in the future. Fortunately,
+the current distributed multipole approximation works well for vibrational frequency shifts
+when compared with exact results.\citep{Blasiak.Cho.JCP.2014,Blasiak.Cho.JCP.2015,
+Blasiak.Ritchie.Webb.Cho.XXX.2016,Blasiak.Maj.Cho.XXX.2016}
+ %
  \item Due to the complexity of the SolEFP equations, we did not take into account the electric 
 anharmonicity contributions, except for that associated with the Coulomb interaction\hyp{}induced 
 frequency shift. When the exchange\hyp{}repulsion, induction, and dispersion terms in the frequency 
@@ -4379,16 +4519,41 @@ Blasiak.Ritchie.Webb.Cho.XXX.2016}
 However, for completeness it will be necessary to further test the validity of this approximation 
 for other IR probes. In particular, we noticed that in the case of amide II mode
 electronic anharmonicity of exchange\hyp{}repulsion contribution cannot be ignored.\citep{Blasiak.Cho.JCP.2015}
+ %
  \item The exchange\hyp{}repulsion interaction\hyp{}induced frequency shift was based on the approximation 
 that only a single exchange of electron pair between solute and solvent is considered. 
-In fact, it is believed here that this is an excellent approximation because the direct comparisons 
+Fortunately, it was shown that higher\hyp{}order electron pair exchanges contribute
+negligibly to the Heitler\hyp{}London energies.\citep{Korona.Williams.Bukowski.Jeziorski.Szalewicz.JCP.1997}
+In fact, it is believed here that this is an excellent approximation also for vibrational
+solvatochromic frequency shifts because the direct comparisons 
 of the SolEFP results with completely \emph{ab initio}\footnote{SolEDS} calculation results indicate 
-that the current SolEFP exchange\hyp{}repulsion frequency shifts are quite accurate.
+that the current SolEFP exchange\hyp{}repulsion frequency shifts are quite accurate (see
+Chapter XXX).%chapter about SolEDS calculations, probably the next chapter
+ %
  \item Induction and dispersion interaction\hyp{}induced frequency shifts 
 were treated by taking into consideration only the dipole\hyp{}dipole interactions 
 between LMO polarizable centers. Perhaps, the dispersion interaction\hyp{}induced 
 contribution originating from distributed quadrupole\hyp{}dipole and quadrupole\hyp{}quadrupole 
 interactions could be of importance as well.
+ %
+ \item Exchange effects are taken into account only for the short\hyp{}range
+interactions such as first\hyp{}order exchange\hyp{}repulsion and charge\hyp{}transfer, whereas 
+they are ignored for induction and dispersion effects. On the other hand,
+the exchange\hyp{}dispersion interaction energy was found to be very small
+for H-bonded complexes.\citep{Langlet.Caillet.Caffarel.JCP.1995,
+Zierkiewicz.Jurecka.Hobza.ChemPhysChem.2005,Cybulski.Sadlej.JCTC.2008} 
+Also, induction vibrational frequency shifts
+under mechanical anharmonicity approximation
+are very well reproduced within SolEFP model as compared to benchmark 
+calculations.\citep{Blasiak.Cho.JCP.2014,Blasiak.Cho.JCP.2015,
+Blasiak.Ritchie.Webb.Cho.XXX.2016,Blasiak.Maj.Cho.XXX.2016}
+ %
+ \item Due to
+large computational demands, CT contributions are not computed at present implementation
+of SolEFP. Fortunately,
+it was shown that CT effects are negligible for the vibrational solvatochromic frequency shifts 
+of many important IR probes.\citep{Lee.Choi.Cho.PCCP.2010,Blasiak.Cho.JCP.2014}
+ %
  \item Since the SolEFP theory is to calculate all the vibrational solvatochromism parameters 
 that can be obtained from \emph{ab initio} calculations of the solute molecule in the gas phase, 
 the same structure should be used when the theory is applied to the solution systems 
@@ -4403,10 +4568,176 @@ since they are related to mechanical anharmonicity in the corresponding potentia
 energy surface. Therefore, the above difficulty may not be the most crucial one, 
 but still it needs to be investigated more in detail. We will refer to this issue as to
 the \emph{superimposition problem}.
+ %
 \end{itemize}
 %
-Thus, before SolEFP method is used, it has to be validated
-first agaist some more accurate approach. 
+It was reported that EFP2 interaction energies were shown to be
+in reasonable agreement 
+with SAPT.\citep{Flick.Kosenkov.Hohenstein.Sherrill.Slipchenko.JCTC.2012} 
+Nevertheless, before SolEFP method is used, first it has to be validated
+against more accurate approach -- SolEDS or SolSAPT. 
+
+\subsubsection{SolEDS model}
+
+One of easy ways of computing the total interaction energy
+between two molecules is to adopt the supramolecular approach
+in which the interaction energy is defined as
+%
+\begin{equation} \label{e:e-int-supramol}
+ U = E_{AB} - E_A - E_B
+\end{equation}
+%
+In the above calculations, the internal coordinates of molecules $A$ and $B$
+are the same with those of the dimer $AB$.
+According to the EDS scheme \citep{Sokalski.Roszak.Pecul.CPL.1988,
+Chalasinski.Szczesniak.MolPhys.1988,Cybulski.Chalasinski.Moszynski.JCP.1990,
+Gora.Bartkowiak.Roszak.Leszczynski.JCP.2004}, the HF
+intermolecular interaction energy in the supramolecular
+approach from Eq.~\eqref{e:e-int-supramol} can be decomposed
+into the following terms
+%
+\begin{equation}
+ U^{\rm HF} = \Delta E_{\rm el}^{(10)}    + 
+              \Delta E_{\rm ex}^{\rm HL}  +
+              \Delta E_{\rm del}^{\rm HF}
+\end{equation}
+%
+where $\Delta E_{\rm el}^{(10)}$ represents the first\hyp{}order 
+Coulombic interaction
+between unperturbed solute and solvent charge densities, 
+$\Delta E_{\rm ex}^{\rm HL}$ is the corresponding exchange\hyp{}repulsion
+correction to properly take into account the antisymmetry of the wavefunction,
+$\Delta E_{\rm del}^{\rm HF}$ is the remainder describing charge delocalization
+effects (induction, charge transfer and mixing terms). The first two terms
+are the Heitler\hyp{}London energy
+%
+\begin{equation}
+ \Delta E^{\rm HL} = \Delta E_{\rm el}^{(10)}    + 
+                     \Delta E_{\rm ex}^{\rm HL}
+  = \frac{
+\langle \mathscr{A} 0_A0_B \lvert \mathscr{V}_{AB} \rvert \mathscr{A} 0_A0_B \rangle 
+}{
+\langle \mathscr{A} 0_A0_B \vert \mathscr{A} 0_A0_B \rangle 
+}
+\end{equation}
+%
+The Coulombic contribution can be technically split into the following
+two
+%
+\begin{equation}
+ \Delta E_{\rm el}^{(10)} = \Delta E_{\rm el}^{\rm DMTP} + \Delta E_{\rm el}^{\rm PEN}
+\end{equation}
+%
+where $\Delta E_{\rm el}^{\rm DMTP}$ is obtained from the distributed multipole 
+analysis (DMTP) result\footnote{CAMM, DMA or LMTP} whereas
+$\Delta E_{\rm el}^{\rm PEN}$ accounts for the short\hyp{}range charge\hyp{}penetration
+effects. It is important to remember that the latter is purely quantum mechanical in
+nature and cannot be treated by any multipole expansion approach which also diverges
+quickly for small intermolecular separations.
+Charge penetration can be, however, included by using \emph{ad hoc} damping factors
+that appropriately scale the interactions between distributed multipole
+moments according to their relative distance.\citep{Slipchenko.Gordon.JCC.2007,Wang.Truhlar.JCTC.2010}
+Also, Stone recently derived fully \emph{ab initio} formulae
+for the damping factors based on the Gaussian multipoles.\citep{Stone.JPCA.2011}
+The potential future
+first\hyp{}principles solvatochromic
+models including $\Delta E_{\rm el}^{\rm PEN}$ should follow his study.
+
+So far, we have focused on the HF wavefunctions only. However, including
+electron correlation energies below the Fermi level is generally important
+for chemistry. One of the simplest approaches to include the 
+so called dynamic electron correlation\footnote{associated with
+the interactions of the occupied and virtual molecular orbitals}
+is to assume the 
+M{\o}ller\hyp{}Plesset approximation\citep{Moller.Plesset.PhysRev.1934}
+in which some specific forms of the doubly\hyp{}excited Slater
+determinants contribute to the ground state wavefunction.
+According to EDS technique, MP2 interaction energy is
+partitioned into
+%
+\begin{equation}
+ U^{\rm MP2} = U^{\rm HF}                    + 
+               \Delta E_{\rm el,r}^{(12)}    + 
+               \Delta E_{\rm ex}^{(2)}       +
+               \Delta E_{\rm disp}^{(20)}  
+\end{equation}
+%
+where $\Delta E_{\rm el,r}^{(12)}$ and $\Delta E_{\rm ex}^{(2)}$
+are the electron correlation corrections to the first\hyp{}order
+electrostatic interaction and the remaining effects at HF level,
+respectively. The second\hyp{}order dispersion energy
+is denoted by $\Delta E_{\rm disp}^{(20)}$. In EDS calculations
+of both HF or MP2 levels,
+all the interaction energy components are evaluated in DCBS.
+
+Now, we define the SolEDS method as
+%
+\begin{equation}
+ \Delta\omega_j^{\rm SolEDS} = \left(\hat{F}_j^{\rm EA} + \hat{F}_j^{\rm MA}\right)  U^{\rm HF\text{ or }MP2} 
+\end{equation}
+%
+which leads to the following contributions to the vibrational
+frequency shift
+%
+\begin{equation} \label{e:dw-soleds-hf}
+ \Delta\omega_j^{\rm SolEDS/HF} = 
+              \Delta \omega_{j;{\rm el}}^{(10)}    + 
+              \Delta \omega_{j;{\rm ex}}^{\rm HL}  +
+              \Delta \omega_{j;{\rm del}}^{\rm HF}
+\end{equation}
+%
+and
+%
+\begin{equation} \label{e:dw-soleds-mp2}
+ \Delta\omega_j^{\rm SolEDS/MP2} = 
+              \Delta \omega_{j;{\rm el}}^{(10)}    + 
+              \Delta \omega_{j;{\rm ex}}^{\rm HL}  +
+              \Delta \omega_{j;{\rm del}}^{\rm HF} +
+               \Delta \omega_{j;{\rm el,r}}^{(12)}    + 
+               \Delta \omega_{j;{\rm ex}}^{(2)}       +
+               \Delta \omega_{j;{\rm disp}}^{(20)}  
+\end{equation}
+%
+It is important to emphasize here that the vibrational analysis 
+calculations performed at the HF and MP2 levels are based on different
+vibrational potential energy surfaces so that the $\Delta \omega_{j;{\rm el}}^{(10)}$,
+$\Delta \omega_{j;{\rm ex}}^{\rm HL}$ and $\Delta \omega_{j;{\rm del}}^{\rm HF}$ 
+part of $\Delta\omega_j^{\rm SolEDS/MP2}$ quantitatively differs from
+$\Delta\omega_j^{\rm SolEDS/HF}$ obtained at the HF level of theory,
+though the same notation is used in both Eqs.~\eqref{e:dw-soleds-hf} 
+and \eqref{e:dw-soleds-mp2}.
+
+\subsubsection{SolSAPT model}
+
+If one wants to go beyond HF and MP2 levels and
+analyze the origins of the vibrational frequency 
+shifts at, for instance, coupled cluster
+level, one should use SAPT decomposition of the interaction
+energy which is
+the most rigorous and accurate method up to date for that purpose.
+
+The SolSAPT vibrational frequency shift is defined as
+%
+\begin{equation}
+ \Delta\omega_j^{\rm SolEDS} = \left(\hat{F}_j^{\rm EA} + \hat{F}_j^{\rm MA}\right) U^{\rm SAPT} 
+\end{equation}
+%
+
+\section{Summary}
+
+In this Chapter, we have developed rigorous implicit and
+explicit models of the vibrational solvatochromism under
+the local mode approximation, that take into account
+Coulombic, induction, dispersion, first\hyp{}order 
+exchange\hyp{}repulsion and charge transfer solute\hyp{}solvent
+interactions. We have also derived the long\hyp{}range
+corrections due to infinite extent of the isotropic medium. 
+We shall use the SolEFP and SolEDS explicit models
+in the forthcoming sections to study the vibrational solvatochromic
+frequency shifts of amide I mode in water and chloroform, 
+as well as nitrile stretch modes in a range of various molecular
+environments ranging from bulk solutions to proteins.
+
 
 %which is shown in Fig.~\ref{f:contr-uncontr-comparison}.
 %%
@@ -4431,232 +4762,6 @@ first agaist some more accurate approach.
 
 
 
-\chapter{Future}
-
-In this Thesis, we have focused primarily on changes of the vibrational
-properties of solute molecules upon solvation. In this Chapter, 
-we provide the scope of future perspectives of {\sc Solvshift}
-as well as the underlying theory of electronic and magnetic solvatochromism.
-
-\section{Electronic Solvatochromism}
-
-Let us consider the change in the electronic energy levels
-that occurs when solute molecule becomes solvated by $N$
-solvent molecules. Let $\mathscr{H}_A$ denote the Hamiltonian
-of isolated solute molecule with the associated 
-eigenstates and eigenenergies according to the time\hyp{}independent
-Schr{\:o}dinger equation:
-%
-\begin{subequations}
-\begin{align}
-\mathscr{H}_A \vert A_n \rangle &=  E^A_n \vert A_n \rangle \\
-\mathscr{H}_B^{\zeta} \vert B_m^{\zeta} \rangle &=  E^{\zeta}_m \vert B_m \rangle
-\end{align}
-\end{subequations}
-%
-The interaction Hamiltonian reads
-%
-\begin{equation}
-\mathscr{H}' = \sum_{\zeta} \mathscr{V}_{AB}^{\zeta} + \frac{1}{2} \sum_{\zeta\eta} \mathscr{V}_{BB}^{\zeta\eta}
-\end{equation}
-%
-The change of the $n\leftarrow 0$ transition energy
-due to solvation can be represented as
-%
-\begin{equation}
-\Delta E^A_{n0}({\bf \overline{Q}}_A, U) = E^A_n({\bf \overline{Q}}_A, U) - E^A_0({\bf \overline{Q}}_A, U)
-\end{equation}
-%
-where ${\bf \overline{Q}}_A$ denotes the solute's structure
-in ground state normal mode representation and 
-$U$ is the solute\hyp{}solvent interaction potential.
-It is customary to relate the above energy change as a function of the 
-gas\hyp{}phase molecular properties, rather than the properties 
-in solution. Therefore, let us Taylor\hyp{}expand the energy change
-around the solute's gas\hyp{}phase structure
-%
-\begin{multline}
-\Delta E^A_{n0}({\bf \overline{Q}}_A, U) \cong \Delta E^A_{n0}({\bf Q}_A, U) + 
-\sum_i  \fderiv{\Delta E^A_{n0}({\bf Q}_A, U)}{Q_i} 
-\left( \overline{Q}_i - Q_i \right) 
-\\
- \approx \Delta E^A_{n0}({\bf Q}_A, U) + 
-\sum_i \frac{1}{M_i\omega_i^2} \fderiv{\Delta E^A_{n0}({\bf Q}_A, U)}{Q_i} \fderiv{U}{Q_i}
-\end{multline}
-%
-where $M_i$ and $\omega_i$ denote the reduced mass and harmonic
-frequency of solute in electronic ground state. Here we assume that
-all the derivatives are evaluated at ${\bf {Q}}_A$ (gas\hyp{}phase).
-Note that in the above expression we have not expanded with respect to
-$U$ because the corresponding derivatives are very difficult to deal with.
-To treat the effects of $U$ we shall use perturbation theory.
-
-\subsection{Long-range approximation}
-
-If the wavefunction overlap can be neglected, the electronic state
-can be written as Hartree product of separate molecular eigenstates.
-
-Before we consider the full many\hyp{}body ensemble, for the first approximation
-let us consider the case when there is only
-one solvent molecule, i.e., $\mathscr{H}'=\mathscr{V}_{AB}$.
-From second\hyp{}order perturbation theory, the energy of $n$th electronic level
-is given by
-%
-\begin{equation}
-E_n = \langle A_nB_0 \vert \mathscr{H}' \vert A_nB_0 \rangle 
-+ \sum_{k\ne n} \sum_{m\ne 0} \frac{
-\lvert \langle A_nB_0 \vert \mathscr{H}' \vert A_kB_m \rangle  \rvert^2
-}{E^A_{nk} + E^B_{0m}}
-\end{equation}
-%
-It is straightforward to see that, in the first order, 
-the energy change due to solvation when solute is in gas\hyp{}phase
-structure is given by
-%
-\begin{multline}
-\delta^{(1)} E^A_{n0}({\bf Q}_A, U) = \sum_{x} \Bigg\{ 
-\left( q^A_{nn;x} - q^A_{00;x} \right) \phi({\bf r_x}) \\
-+ \left( {\BM \mu}^A_{nn;x} - {\BM \mu}^A_{00;x} \right) \cdot \nabla \phi({\bf r_x})  
-+ \frac{1}{3} \left( {\BM \Theta}^A_{nn;x} - {\BM \Theta}^A_{00;x} \right) \cdot \nabla \phi({\bf r_x}) 
-+ \ldots
-\Bigg\}
-\end{multline}
-%
-where we multipole\hyp{}expanded the solute\hyp{}solvent interaction 
-potential. For example, $q^A_{nn;x}$ denotes the monopole moment located at ${\bf r_x}$
-that refers to the $n$th electronic state charge density distribution (nuclei + electrons).
-Here, we assume first the vertical transition so that we can use the difference multipoles.
-If the structure upon excitation changes, one can use different positions 
-of distributed multipoles in both electronic states.
-The total first\hyp{}order effect, including the structural distortion due to solute-solvent
-interaction, can be expressed as
-%
-\begin{multline}
-\delta^{(1)} E^A_{n0}({\bf \overline{Q}}_A, U) \cong \sum_{x} \Bigg\{ 
-\left( q^A_{nn;x} - q^A_{00;x} \right) \phi({\bf r_x}) 
-+ \left( {\BM \mu}^A_{nn;x} - {\BM \mu}^A_{00;x} \right) \cdot \nabla \phi({\bf r_x})  \\
-+ \frac{1}{3} \left( {\BM \Theta}^A_{nn;x} - {\BM \Theta}^A_{00;x} \right) \cdot \nabla \phi({\bf r_x}) 
-+ \ldots
-\Bigg\} \\
-%
-+
-%
-\sum_{x} \sum_i \frac{1}{M_i\omega_i^2} \fderiv{U}{Q_i}
-\Bigg\{ 
-\fderiv{ q^A_{nn;x} }{Q_i} \phi({\bf r_x}) 
-+ \fderiv{  {\BM \mu}^A_{nn;x}}{Q_i} \cdot \nabla \phi({\bf r_x})  
-+ \frac{1}{3} \fderiv{ {\BM \Theta}^A_{nn;x} }{Q_i} \cdot \nabla \phi({\bf r_x}) 
-+ \ldots
-\Bigg\}
-\end{multline}
-%
-in which we neglected the derivatives of electrostatic potential since they are 
-a minor contribution.
-
-Now, let us analyze the second order energy shift. This can also
-be expanded as conventional interaction energy with making use
-of static and dynamic imaginary frequency dependent polarizabilities.
-However, such approach is not convenient because it is difficult
-to compute the excited state polarizability by using distributed
-site approach. Note that we aim in studying rather large molecules
-for which single polarizable point is definitely not sufficient to
-describe induction and dispersion effects.
-
-Therefore, we try to use different approach and keep using the 
-sum\hyp{}over\hyp{}states expression. Mainly,
-%
-\begin{equation}
-\delta^{(2)} E^A_{n0}({\bf Q}_A, U) = 
-\sum_{m\ne 0} 
-\left[
-\sum_{k\ne n}  \frac{ V_{n0,km}^2 }{E^A_{nk} + E^B_{0m}}
-%
-- \sum_{k\ne 0} \frac{
-V_{n0,km}^2
-}{E^A_{nk} + E^B_{0m}}
-\right]
-\end{equation}
-%
-where $V_{nk,0m}$ denotes the interaction between the 
-solute's $k\leftarrow n$ transition density with
-solvent's $m\leftarrow 0$ transition density. In principle,
-such densities can be also multipole expanded (exchange effects should
-be small compared to the electrostatic effects).
-The price we have to pay is to deal with the sum that do not need to
-converge fast. Here we hope that due to the increased number
-of nodes of the excited state wave functions, the multipole
-interactions will tend to cancel each other when raising the
-quantum numbers in the summations. This is because
-the integration is performed over the whole space, not
-just over one molecule (like in the SOS evaluation of polarizability which
-has significantly slow convergence).
-If one could obtain a reasonable estimate of this second order 
-effect by making use of transition multipoles (e.g. evaluated by TrCAMM) 
-referring to the solute and solvent electronic
-states, the model could be tested. One might also take into account
-electronic states that has substantial oscillator strength. Note that
-many electronic transitions have oscillator strengths that are
-close to zero suggesting that
-many terms in the above summations could be ignored.
-
-The total second order energy shift is thus given by
-%
-\begin{multline}
-\delta^{(2)} E^A_{n0}({\bf \overline{Q}}_A, U) \approx 
-\sum_{m\ne 0} ^{m_{\rm Max}}
-\left[
-\sum_{k\ne n} ^{k_{\rm Max}} \frac{ V_{n0,km}^2 }{E^A_{nk} + E^B_{0m}}
-%
-- \sum_{k\ne 0} ^{k_{\rm Max}} \frac{
-V_{n0,km}^2
-}{E^A_{nk} + E^B_{0m}}
-\right] \\
-+
-\sum_i \frac{1}{M_i\omega_i^2} \fderiv{U}{Q_i}
-\sum_{m\ne 0} ^{m_{\rm Max}}
-\Bigg\{
-  2 \left[ 
-\sum_{k\ne n} ^{k_{\rm Max}} \frac{ V_{n0,km} }{E^A_{nk} + E^B_{0m}} \fderiv{V_{n0,km} }{Q_i}
--
-\sum_{k\ne 0} ^{k_{\rm Max}} \frac{ V_{n0,km} }{E^A_{nk} + E^B_{0m}} \fderiv{V_{n0,km} }{Q_i}
-\right] \\
-+
-\left[
-\sum_{k\ne n} ^{k_{\rm Max}} \ln (E^A_{nk} + E^B_{0m}) \fderiv{E^A_{nk}}{Q_i} V_{n0,km}^2
--
-\sum_{k\ne 0} ^{k_{\rm Max}}  \ln (E^A_{nk} + E^B_{0m}) \fderiv{E^A_{nk}}{Q_i} V_{n0,km}^2
-\right]
-\Bigg\}
-\end{multline}
-%
-Here, the structural distortion contribution
-which is quite formidable, however, is straightforward. 
-This contribution contains the energy and 
-transition multipole (TrCAMM) first derivatives of the solute molecule with respect to
-ground state vibrational coordinate. They can be evaluated
-numerically without any problems. However, the tests need to be done in the future
-to determine whether it is possible to choose ${m_{\rm Max}}$ and ${k_{\rm Max}}$
-such that the sums are converged to a reasonable degree. 
-If the fully electrostatic approximation is employed, 
-the computation of first and second order energy shift 
-is very fast and the time consumption can be considered as negligible.
-Exchange\hyp{}repulsion, induction and dispersion effects
-affect the energy shift through the vibrational forces
-due to solvent and were already derived before
-inthe SolEFP model of vibrational solvatochromism. 
-Probably, those non\hyp{}Coulombic effects should be included
-in the accurate energy shift calculation.
-
-
-
-\subsection{Time-dependent response formalism}
-
-Let us consider the dynamics of the electronic excitation 
-by examining the time evolution of nuclear configuration and
-electronic eigenstates (and spectrum of energies) when solvated molecule absorbs one photon
-of electromagnetic energy. It is particularly important because
-such phenomena can be studied by ultrafast time-resolved spectroscopy.
-To be added later.
 
 % ==================== APPENDICES ================================
 
