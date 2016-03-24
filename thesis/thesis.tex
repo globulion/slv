@@ -1470,20 +1470,128 @@ The new quadratic force constants can be immediately found as
 }
 \end{equation}
 %
-This important result shows that the solute-solvent interaction
+This important result shows that the solute\hyp{}solvent interaction
 introduces the couplings between solute's gas phase
 normal modes that emerge from the non\hyp{}zero off\hyp{}diagonal
 Hessian matrix elements. Thus, the diagonalization of such
 Hessian leads to the new vibrational frequencies and normal
 coordinates. This can be very useful in studying the solute\hyp{}solvent 
 interaction\hyp{}induced intramolecular mode
-mixing processes.
+mixing processes. However, it is quite hard task to 
+compute the second derivatives of $U$
+with respect to all the normal coordinates and thus, the mode\hyp{}mixing
+problem is quite difficult to handle. 
 
-On the other hand, calculations of $U_{0,jk}$ could be quite difficult 
-in practice. It is useful to study the local approximation in which
-one neglects the mode mixing and assumes that only the diagonal Hessian
-matrix elements change. This leads to the frequency shift in Eq.~\eqref{e:buckingham-2st-order-total-fund}
-which can also be recast in the following form
+\subsection{Weak coupling approximation}
+
+To study the consequences of the above result in the weak interaction
+limit, let us first rewrite it
+in the mass\hyp{}weighted
+coordinates denoted by tilde (see Appendix~\ref{a:mw-coord}) to focus on vibrational
+frequencies:
+%
+\begin{equation} 
+ \tilde{k}_{jk} = \omega_j^2 \delta_{jk} + \frac{1}{\sqrt{M_jM_k}}\sderivd{U}{Q_j}{Q_k}  \Bigg|_{{\bf Q}_{0_A}} 
+                           - \frac{1}{\sqrt{M_jM_k}}\sum_i g_{ijk} 
+                             \frac{1}{M_i\omega_i^2}\fderiv{U}{Q_i}          \Bigg|_{{\bf Q}_{0_A}}        
+\end{equation}
+%
+The diagonalization of the above Hessian
+%
+\begin{equation} 
+ {\bf X}^T \tilde{\bf k} {\bf X} = \overline{\BM\Lambda}
+\end{equation}
+%
+leads to the solvation\hyp{}induced vibrational frequencies
+$\overline{\omega_j}=\sqrt{\overline{\Lambda_{jj}}}$ 
+and the new normal modes which are
+%
+\begin{equation} 
+ \overline{\bf L}  = {\bf L} {\bf X}
+\end{equation}
+%
+and
+%
+\begin{subequations} 
+ \begin{align}
+            {L}_{\alpha j}  &= \fderiv{x_\alpha}{         {Q}_j} \\
+   \overline{L}_{\alpha j}  &= \fderiv{x_\alpha}{\overline{Q}_j} \\
+                  X_{ij}    &= \fderiv{Q_i}{\overline{Q}_j}
+ \end{align}
+\end{subequations}
+%
+
+Now, 
+the matrix $\tilde{\bf k}$ can be written
+in the following form
+%
+\begin{equation} 
+ \tilde{\bf k} = \tilde{\bf k}_0 + \tilde{\bf U}
+\end{equation}
+%
+where the zeroth\hyp{}order Hessian matrix is diagonal
+with entries $\tilde{k}_{0;jj}=\omega_j^2$ whereas
+the perturbed Hessian matrix is equal to
+%
+\begin{equation} 
+ \tilde{\bf U} = \sum_{\rm Int} \tilde{\bf U}^{\rm Int}
+\end{equation}
+%
+with
+%
+\begin{equation} 
+ \tilde{U}^{\rm Int}_{jk} = \frac{1}{\sqrt{M_jM_k}} \left\{
+            \sderivd{U^{\rm Int}}{Q_j}{Q_k}  \Bigg|_{{\bf Q}_{0_A}} 
+           - \sum_i g_{ijk} \frac{1}{M_i\omega_i^2}\fderiv{U^{\rm Int}}{Q_i} \Bigg|_{{\bf Q}_{0_A}} 
+           \right\}
+\end{equation}
+%
+and $\rm Int$ denoting Coulombic, induction, dispersion, exchange\hyp{}repulsion
+and CT effects. Assuming that $\tilde{\bf U}\ll {\bf 1}$ and applying the
+matrix perturbation theory we can easily show that
+%
+\begin{equation} \label{e:W2-w2}
+ \overline{\omega}_j^2 - {\omega}_j^2 = 
+ \tilde{U}^{\rm Int}_{jj}
+\end{equation}
+%
+and
+%
+\begin{equation}
+ X_{ij} = \delta_{ij} + A_{ij}
+\end{equation}
+%
+where
+%
+\begin{equation}
+ A_{ij} = 
+\left\{\begin{matrix}
+0 &\text{for $i=j$}\\ 
+\frac{\tilde{U}^{\rm Int}_{ij}}{\omega_i^2-\omega_j^2} &\text{for $i\ne j$}
+\end{matrix}\right.
+\end{equation}
+%
+By noting that $\overline{\omega}_j^2 - {\omega}_j^2 \cong 2\omega_j\Delta\omega_j$
+for $\Delta\omega_j\ll \omega_j$ Eq.~\eqref{e:W2-w2} leads
+to Buckingham's formula from Eq.~\eqref{e:buckingham-2st-order-total-fund}.
+Thus, it is clear that, as long as the solute\hyp{}solvant
+interaction potential derivatives are small enough, Buckingham's theory
+is valid and the gas\hyp{}phase modes of solute become coupled
+through the coupling constant matrix $\bf A$. Moreover, the closer
+the two gas\hyp{}phase frequencies are to each other, the stronger the solvation\hyp{}induced
+mode mixing is. On the other hand, if off\hyp{}diagonal Hessian matrix elements are
+very small, mode mixing vanishes. Because Eq.~\eqref{e:buckingham-2st-order-total-fund}
+is based on small $\tilde{\bf U}$, we shall refer to it
+as to the \emph{weak coupling approximation}, or briefly WCA.
+%On the other hand, calculations of $U_{0,jk}$ could be quite difficult 
+%in practice. It is useful to study the local approximation in which
+%one neglects the mode mixing and assumes that only the diagonal Hessian
+%matrix elements change. This leads to the frequency shift 
+
+\subsection{Electric and mechanical anharmonicity}
+
+Let us recast the vibrational frequency shift in Eq.~\eqref{e:buckingham-2st-order-total-fund}
+in the following form
 %
 \begin{equation} 
  \Delta\omega_{1\leftarrow 0,j} = \left( \hat{F_j}^{\rm EA} + \hat{F_j}^{\rm MA}\right) U
@@ -1608,11 +1716,11 @@ looking at this problem from the perspectives of the two quite different approac
 
 First of all, from Eq.~\eqref{e:force-const-cho} it is clear 
 that Buckingham's theory is valid only
-when the intramolecular mode mixing can be neglected which
+when the intramolecular mode mixing is very small which
 is generally true for the vibrationally localized IR probes
 such as CN, N$_3$ or CO stretches. When one needs to consider
 strongly coupled intramolecular normal modes it is likely
-that off-diagonal Hessian matrix elements will not be vanishingly
+that off\hyp{}diagonal Hessian matrix elements will not be vanishingly
 small any more. It is also
 clear that the electronic anharmonicity effect on the frequency 
 shift is first\hyp{}order
@@ -2066,15 +2174,17 @@ vibrational solvatochromism theories of Buckingham and Cho which,
 although originate from different starting points, lead to the same results.
 Thus, the vibrational solvatochromic frequency shift of a spatially localized 
 IR probe normal mode can be described by Eq.~\eqref{e:buckingham-2st-order-total-fund}
-which is second-order in the perturbation of the isolated harmonic oscillator Hamiltonian.
+which is second\hyp{}order in the perturbation of the isolated harmonic oscillator Hamiltonian.
 This model i) assumes the first\hyp{}order structural distortion of solute, which takes 
 into account only the solute\hyp{}solvent interaction potential and neglects
 solute's anharmonicity, as well as ii) considers the solvation\hyp{}induced change of the diagonal
-Hessian matrix elements only. Therefore, we shall refer to this theory
-as to the \emph{local mode approximation}. The theory reproduces well the frequency shifts of
+Hessian matrix elements only, while the off\hyp{}diagonal elements
+contribute only to the mode mixing in the limit of small Hessian perturbation. 
+Therefore, we referred to this theory
+as to the \emph{weak coupling approximation} (WCA). The theory reproduces well the frequency shifts of
 simple localized vibrations as well as structural distortions
 when the exact solute\hyp{}solvent interaction potential
-is employed. However, since the local mode approximation cannot describe the normal modes
+is employed. However, since the WCA cannot describe the normal modes
 which are delocalized over many atoms, the approach of considering
 the Hessian matrix proposed by Cho in Eq.~\eqref{e:force-const-cho} is necessary. 
 In that case, particular caution should be made because the structural
@@ -2415,13 +2525,13 @@ within the Onsager model.
 When the structural relaxation effect on solute's dipole moment
 is neglected we can rewrite the frequency shift to be
 %
-\begin{multline} \label{e:f9f9f}
+\begin{equation} \label{e:f9f9f}
  \Delta\omega_j(\varepsilon, a) = 
 - \left[ {\BM \mu}_j + \frac{1}{2} {\BM \mu}_j^{\rm Ind} \right] \cdot {\bf F}^{\rm Ons} 
 - \frac{1}{2} {\BM \alpha}_j : {\bf F}^{\rm Ons} \otimes {\bf F}^{\rm Ons} 
 + \widetilde{\Delta\omega}_j({\bf F})
-\\ = \Delta\omega_j^{\rm Coul} + \Delta\omega_j^{\rm Ind}
-\end{multline}
+ = \Delta\omega_j^{\rm Coul} + \Delta\omega_j^{\rm Ind}
+\end{equation}
 %
 where the Coulombic and induction frequency shifts 
 are defined as
@@ -4594,7 +4704,7 @@ in which the interaction energy is defined as
  U = E_{AB} - E_A - E_B
 \end{equation}
 %
-In the above calculations, the internal coordinates of molecules $A$ and $B$
+In the above expression, the internal coordinates of molecules $A$ and $B$
 are the same with those of the dimer $AB$.
 According to the EDS scheme \citep{Sokalski.Roszak.Pecul.CPL.1988,
 Chalasinski.Szczesniak.MolPhys.1988,Cybulski.Chalasinski.Moszynski.JCP.1990,
@@ -4650,7 +4760,8 @@ The potential future
 first\hyp{}principles solvatochromic
 models including $\Delta E_{\rm el}^{\rm PEN}$ should follow his study.
 
-So far, we have focused on the HF wavefunctions only. However, including
+So far, we have focused on the HF wavefunctions only.\citep{Roothaan.RevModPhys.1951} 
+However, including
 electron correlation energies below the Fermi level is generally important
 for chemistry. One of the simplest approaches to include the 
 so called dynamic electron correlation\footnote{associated with
@@ -4729,6 +4840,129 @@ The SolSAPT vibrational frequency shift is defined as
  \Delta\omega_j^{\rm SolEDS} = \left(\hat{F}_j^{\rm EA} + \hat{F}_j^{\rm MA}\right) U^{\rm SAPT} 
 \end{equation}
 %
+
+\section{Going beyond weak coupling approximation}
+
+Weak coupling approximation, i.e., Eq.~\eqref{e:buckingham-2st-order-total-fund},
+was shown to be an excellent approximation
+for vibrational modes that are fairly local in character
+such as C$-$H, C$\equiv$N and C$=$O stretches. However, it
+is not in general valid for an arbitrary normal mode
+which is sensitive to coupling with other types of motion
+in the molecule when $U$ perturbs the Hamiltonian.
+In fact, the more atomic overlap two harmonic modes have,
+the easier for them is to mix with each other
+upon solvation to lower the energy
+of the system. As for now, it is unclear whether azides modes
+can be described by LMA or not, since no first\hyp{}principles
+evaluation of this approximation for azides was undertaken.
+It is well known that azide stretch mode has two frequencies,
+which is antisymmetric and symmetric stretch. They both
+are delocalized over 3 atoms. This situation is far more different
+from SCN group in which CN vibration is fairly isolated
+from much heavier and chemically different S atom.
+Therefore, it is necessary to extend LMA approximation
+within the framework of SolEFP (and SolEDS) models
+to take into account the intramolecular mode mixing
+phenomenon. As an extreme case, we will point this out
+in Chapter XXX where we analyze ring deformation modes
+of guanine which are delocalized over at least 4 atoms.
+
+\subsection{Towards quantitative modeling}
+
+The foundations of the necessary theory were developed
+by Cho.\citep{Cho.JCP.2009} Although he focused on the coarse\hyp{}grained
+vibrational electrochromism due to a set of surrounding
+multipoles, he derived the general form of the solute's
+Hessian matrix when $U$ is added to the vibrational potential
+energy function. Ideally, one could just compute all
+$\tilde{\bf U}^{\rm Int}$ matrices. However, in terms of
+computational demands this is very costly due to the
+need of computing all the second derivatives of $U$
+with respect to all the normal coordinates of solute.
+This gives $(3N-6)^2$ derivatives for each interaction
+type. Fortunately, it is likely that the normal modes
+are not coupled with each other equally strong. Therefore,
+one could partition force constant matrix into blocks
+and focus only on the normal modes of interest. As a limiting
+cases we shall study the two\hyp{} and three\hyp{}mode
+couplings. The first might be related to the azide IR probes
+while the fourth to the ring modes in guanine that appear around
+1500 cm$^{-1}$.
+
+\subsubsection{Coupling between two modes}
+
+When our mode of interest $j$ is strongly coupled
+with $k$th mode we need to diagonalize 2x2 Hessian matrix.
+Thus the two vibrational frequencies are given by
+%
+\begin{equation} \label{e:11aa11aa}
+ \overline{\omega}^2 = %\sqrt{
+\frac{ \tilde{k}_{jj} + \tilde{k}_{kk} }{2}
+\pm \frac{1}{2}
+\sqrt{\left( \tilde{k}_{jj} - \tilde{k}_{kk}\right)^2 - 4\tilde{k}_{jk}^2}
+%}
+\end{equation}
+%
+and the transformation matrix $\bf X$ becomes
+%
+\begin{equation}
+ {\bf X} = 
+\begin{bmatrix}
+\cos{\theta} &   \sin{\theta}\\ 
+\sin{\theta} &  -\cos{\theta}
+\end{bmatrix}
+\end{equation}
+%
+with
+%
+\begin{equation}
+\theta = \frac{1}{2} \tan^{-1}\left\{\frac{2\tilde{k}_{jk}}{\tilde{k}_{jj} - \tilde{k}_{kk}}\right\}
+ \approx \frac{\tilde{k}_{jk}}{\tilde{k}_{jj} - \tilde{k}_{kk}} \qquad\text{for small $\tilde{k}_{jk}$}
+\end{equation}
+%
+Expanding the argument within the square root of Eq.~\eqref{e:11aa11aa}
+we can keep the products of the lowest order only which leads to
+%
+\begin{equation}
+\left( \tilde{k}_{jj} - \tilde{k}_{kk}\right)^2 - 4\tilde{k}_{jk}^2
+\approx
+\frac{1}{M_jM_k} \sum_i \frac{1}{M_i\omega_i^2}
+\left\{ 
+\sderiv{U}{Q_k} g_{ijj} + \sderiv{U}{Q_j} g_{ikk} + 8\sderivd{U}{Q_j}{Q_k} g_{ijk}
+\right\} \equiv \Delta_{jk}
+\end{equation}
+%
+Then, the frequencies can be written as
+%
+\begin{equation}
+ \overline{\omega} = \sqrt{
+\omega_j\Delta\omega_j + \omega_k\Delta\omega_k \pm \frac{1}{2} \sqrt{\Delta_{jk}}
+}
+\end{equation}
+%
+Note that in this approximation the only new quantity which is to
+be computed is one off\hyp{}diagonal second derivative $\sderivd{U}{Q_j}{Q_k}$
+and additional diagonal $\sderiv{U}{Q_k}$ for the coupling mode. 
+
+\subsubsection{Coupling between three modes}
+
+Now let us assume that the mode $j$ is mixed with $k$th and $l$th modes
+due to solvation process. The frequencies will satisfy the following
+equation:
+%
+\begin{equation}
+\begin{vmatrix}
+\tilde{k}_{jj} - \overline{\omega}^2 & \tilde{k}_{jk}                       & \tilde{k}_{jl}                       \\ 
+\tilde{k}_{jk}                       & \tilde{k}_{kk} - \overline{\omega}^2 & \tilde{k}_{kl}                       \\ 
+\tilde{k}_{jl}                       & \tilde{k}_{kl}                       & \tilde{k}_{ll} - \overline{\omega}^2
+\end{vmatrix}
+= 0
+\end{equation}
+%
+This equation can be simplified
+
+
 
 \section{Summary}
 
@@ -4903,7 +5137,7 @@ or
 Therefore, diagonalizing ${\bf H}^{\rm Cart}$ one can find the orthogonal 
 set ${\bf Q}$. We note that the dimensions of ${\bf x}$ and ${\bf Q}$ are the unit distances.
 
-\section{Mass-weighted coordinates}
+\section{Mass-weighted coordinates\label{a:mw-coord}}
 
 It is much better to express the normal coordinates in terms of the mass-weighted coordinates.
 To see this, let us assume that we want to get the frequencies from Eq.\eqref{eq:pot_harm} by diagonalizing
