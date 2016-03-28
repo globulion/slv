@@ -1525,7 +1525,7 @@ Now,
 the matrix $\tilde{\bf k}$ can be written
 in the following form
 %
-\begin{equation} 
+\begin{equation} \label{e:jeden}
  \tilde{\bf k} = \tilde{\bf k}_0 + \tilde{\bf U}
 \end{equation}
 %
@@ -1533,13 +1533,13 @@ where the zeroth\hyp{}order Hessian matrix is diagonal
 with entries $\tilde{k}_{0;jj}=\omega_j^2$ whereas
 the perturbed Hessian matrix is equal to
 %
-\begin{equation} 
+\begin{equation} \label{e:dwa}
  \tilde{\bf U} = \sum_{\rm Int} \tilde{\bf U}^{\rm Int}
 \end{equation}
 %
 with
 %
-\begin{equation} 
+\begin{equation}  \label{e:trzy}
  \tilde{U}^{\rm Int}_{jk} = \frac{1}{\sqrt{M_jM_k}} \left\{
             \sderivd{U^{\rm Int}}{Q_j}{Q_k}  \Bigg|_{{\bf Q}_{0_A}} 
            - \sum_i g_{ijk} \frac{1}{M_i\omega_i^2}\fderiv{U^{\rm Int}}{Q_i} \Bigg|_{{\bf Q}_{0_A}} 
@@ -3737,7 +3737,7 @@ can be expanded in the following series
 %
 in which $\mathscr{P}_n$ is the permutation operator that exchanges the labels 
 of the $n$ electron pairs in between $\vert 0_A \rangle$ and $\vert 0_B \rangle$
-and summs over all possibilities to give an antisymmetrized product
+and sums over all possibilities to give an antisymmetrized product
 $\vert \mathscr{A} 0_A0_B \rangle $. When no electron exchange is
 assumed, i.e., $\mathscr{A}$ is just an identity operator $\mathbb{1}$, 
 Eq.~\eqref{e:eint-1-expol} becomes Eq.~\eqref{e:eint-1}. It is important to emphasize that, for 
@@ -4833,13 +4833,95 @@ shifts at, for instance, coupled cluster
 level, one should use SAPT decomposition of the interaction
 energy which is
 the most rigorous and accurate method up to date for that purpose.
-
-The SolSAPT vibrational frequency shift is defined as
+In the simplest correlated SAPT scheme, the energy operator
+is partitioned as follows
 %
 \begin{equation}
- \Delta\omega_j^{\rm SolEDS} = \left(\hat{F}_j^{\rm EA} + \hat{F}_j^{\rm MA}\right) U^{\rm SAPT} 
+ \mathscr{H}^{AB} = \mathscr{F}^{A} + \mathscr{F}^{B} + \lambda \mathscr{W}^{AB} + \varsigma \mathscr{U}^{AB}
 \end{equation}
 %
+where $\mathscr{F}^{A}$ is the Fock operator of isolated molecule $A$, 
+$\mathscr{W}^{AB}$ is the electron correlation operator 
+whereas $\mathscr{U}^{AB}$ is the interaction\hyp{}energy operator.
+Parameters $\lambda$ and $\varsigma$ refer to the two perturbations
+to the zeroth\hyp{}order operator $\mathscr{F}^{A}+\mathscr{F}^{B}$
+and define the orders of a double exchange\hyp{}perturbation theory
+for the interaction energies as
+%
+\begin{equation}
+  E^{(nm)} =  E^{(nm)}_{\rm pol} +  E^{(nm)}_{\rm ex}
+\end{equation}
+%
+where the superscripts $n$ and $m$ refer to the order in the
+intermolecular interaction and electron correlation correction,
+respectively. Each $nm$th order term can be split into the long\hyp{}range
+polarization term $E^{(nm)}_{\rm pol}$ ($\mathscr{A}=\mathbb{1}$)
+and the associated exchange\hyp{}repulsion correction $E^{(nm)}_{\rm ex}$,
+where usually single electron exchange is assumed.
+Thus, the solute\hyp{}solvent interaction potential can be written as
+%
+\begin{multline}
+U^{\rm SAPT} =
+         E^{(10)}_{\rm Coul} + E^{(10)}_{\rm Ex} + 
+         E^{(20)}_{\rm Ind}  + E^{(20)}_{\rm Ex-Ind} +
+         E^{(20)}_{\rm Disp} + E^{(20)}_{\rm Ex-Disp} \\ +
+     \sum_m \left\{ E^{(1m)}_{\rm Coul} + E^{(1m)}_{\rm Ex-Rep} + E^{(2m)}_{\rm Disp}\right\} 
+     + \ldots
+\end{multline}
+%
+Note that electron correlation manifests
+already in zeroth order in $m$ for $n=2$, which is the purely intermolecular
+dispersion energy. $E^{(1m)}_{\rm Coul}$ and $E^{(1m)}_{\rm Ex-Rep}$
+contain also intra\hyp{}molecular electron correlation corrections.
+In the Table~\ref{t:sapt-eds-efp2} we depict the approximate relationships
+between a few SAPT terms with EDS and EFP2 terms.
+%
+\begin{table}[ht]
+\caption{Approximate correspondence between a few SAPT interaction
+energy terms with EDS partitioning and EFP2 interaction potential
+contributions.
+\label{t:sapt-eds-efp2}}
+\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } l l l l}
+\hline\hline
+%\multicolumn{5}{c}{Amide I mode} \\
+SAPT                     & EDS                             & EFP2               \\
+\hline
+%\multirow{5}{*}{A}   & SolCAMM   & -39.4 (+6.2)  & 5.3 (+0.9) & -34.1 (+7.1) \\
+$E^{(10)}_{\rm Coul}$    & $\Delta E_{\rm el}^{(10)}$      &  $U^{\rm Coul}$    \\
+$E^{(10)}_{\rm Ex}$      & $\Delta E_{\rm ex}^{\rm HL}$    &  $U^{\rm Ex-Rep}$  \\
+$E^{(20)}_{\rm Ind}$     & $\sim\Delta E_{\rm del}^{\rm HF}$ &$U^{\rm Ind}$     \\
+$E^{(20)}_{\rm Disp}$    & $\Delta E_{\rm disp}^{(20)}$    &  $U^{\rm Disp}$    \\
+$E^{(12)}_{\rm Coul}$    & $\Delta E_{\rm el,r}^{(12)}$    &  --                \\
+$E^{(12)}_{\rm Ex}+E^{(20)}_{\rm Ex}$    & $\sim \Delta E_{\rm ex}^{(2)}$ &  -- \\
+$\left(E^{(20)}_{\rm Ind} + E^{(20)}_{\rm Ex-Ind}\right)$[DCBS] $-$
+   & \multirow{2}{*}{Included in $\Delta E_{\rm del}^{\rm HF}$  } & \multirow{2}{*}{$U^{\rm CT}$} \\
+$\left(E^{(20)}_{\rm Ind} + E^{(20)}_{\rm Ex-Ind}\right)$[MCBS] &       & & \\
+\hline\hline
+\end{tabular*}
+\end{table}
+%
+Analogously,
+the SolSAPT vibrational frequency shift is defined as
+%
+\begin{equation}
+ \Delta\omega_j^{\rm SolSAPT} = \left(\hat{F}_j^{\rm EA} + \hat{F}_j^{\rm MA}\right) U^{\rm SAPT} 
+\end{equation}
+%
+where we have 
+%
+\begin{multline}
+ \Delta\omega_j^{\rm SolSAPT} =
+        \Delta\omega^{(10)}_{j;{\rm Coul}} + \Delta\omega^{(10)}_{j;{\rm Ex}} + 
+        \Delta\omega^{(20)}_{j;{\rm Ind}}  + \Delta\omega^{(20)}_{j;{\rm Ex-Ind}} +
+        \Delta\omega^{(20)}_{j;{\rm Disp}} + \Delta\omega^{(20)}_{j;{\rm Ex-Disp}} \\ +
+     \sum_m \left\{\Delta\omega^{(1m)}_{j;{\rm Coul}} +
+                   \Delta\omega^{(1m)}_{j;{\rm Ex-Rep}} + 
+                   \Delta\omega^{(2m)}_{j;{\rm Disp}}\right\} + \ldots
+\end{multline}
+%
+In the above equation, the appropriate contributions can be
+more or less identified with SolEDS and SolEFP frequency shifts
+according to Table~\ref{t:sapt-eds-efp2}.
 
 \section{Going beyond weak coupling approximation}
 
@@ -4875,26 +4957,43 @@ by Cho.\citep{Cho.JCP.2009} Although he focused on the coarse\hyp{}grained
 vibrational electrochromism due to a set of surrounding
 multipoles, he derived the general form of the solute's
 Hessian matrix when $U$ is added to the vibrational potential
-energy function. Ideally, one could just compute all
+energy function:
+%
+\begin{equation} 
+ \tilde{k}_{jk} = \omega_j^2 \delta_{jk} + \frac{1}{\sqrt{M_jM_k}}\sderivd{U}{Q_j}{Q_k}  \Bigg|_{{\bf Q}_{0_A}} 
+                           - \frac{1}{\sqrt{M_jM_k}}\sum_i g_{ijk} 
+                             \frac{1}{M_i\omega_i^2}\fderiv{U}{Q_i}          \Bigg|_{{\bf Q}_{0_A}}        
+\end{equation}
+%
+which, within the SolEFP framework, can be recast in
+the form from Eq.~\eqref{e:jeden} with $\tilde{\bf U}^{\rm Int}$
+defined by Eqs.~\eqref{e:dwa} and \eqref{e:trzy}.
+Ideally, one could just compute all
 $\tilde{\bf U}^{\rm Int}$ matrices. However, in terms of
 computational demands this is very costly due to the
 need of computing all the second derivatives of $U$
 with respect to all the normal coordinates of solute.
 This gives $(3N-6)^2$ derivatives for each interaction
-type. Fortunately, it is likely that the normal modes
+type. Moreover, the diagonalization of the entire Hessian
+matrix would probably cause problems because the quantitative
+description of the structural distortions
+along the coordinates associated with low frequency modes
+is still not fully resolved issue (see Section~\ref{s:str-dist-general-discussion}). 
+Fortunately, it is likely that the normal modes
 are not coupled with each other equally strong. Therefore,
-one could partition force constant matrix into blocks
+one could partition force constant matrix into \emph{blocks}
 and focus only on the normal modes of interest. As a limiting
 cases we shall study the two\hyp{} and three\hyp{}mode
-couplings. The first might be related to the azide IR probes
-while the fourth to the ring modes in guanine that appear around
-1500 cm$^{-1}$.
+couplings. The first might be related to the azide symmetric
+and asymmetric stretches
+while the second could be considered to study the mode mixing of
+ring modes in guanine that appear around 1500 cm$^{-1}$.
 
-\subsubsection{Coupling between two modes}
+\subsection{Coupling between two modes}
 
 When our mode of interest $j$ is strongly coupled
 with $k$th mode we need to diagonalize 2x2 Hessian matrix.
-Thus the two vibrational frequencies are given by
+Thus, the two vibrational frequencies are given by
 %
 \begin{equation} \label{e:11aa11aa}
  \overline{\omega}^2 = %\sqrt{
@@ -4906,7 +5005,7 @@ Thus the two vibrational frequencies are given by
 %
 and the transformation matrix $\bf X$ becomes
 %
-\begin{equation}
+\begin{equation} \label{e:ohoho}
  {\bf X} = 
 \begin{bmatrix}
 \cos{\theta} &   \sin{\theta}\\ 
@@ -4917,38 +5016,121 @@ and the transformation matrix $\bf X$ becomes
 with
 %
 \begin{equation}
-\theta = \frac{1}{2} \tan^{-1}\left\{\frac{2\tilde{k}_{jk}}{\tilde{k}_{jj} - \tilde{k}_{kk}}\right\}
+\theta = \frac{1}{2} \tan^{-1}\left\{\frac{2\tilde{k}_{jk}}{\tilde{k}_{jj} - \tilde{k}_{kk}}\right\} 
  \approx \frac{\tilde{k}_{jk}}{\tilde{k}_{jj} - \tilde{k}_{kk}} \qquad\text{for small $\tilde{k}_{jk}$}
 \end{equation}
 %
-Expanding the argument within the square root of Eq.~\eqref{e:11aa11aa}
-we can keep the products of the lowest order only which leads to
+Let us analyze the relation in Eq.~\eqref{e:11aa11aa} more closely
+since, in fact, in some cases not all terms will strongly contribute to the new vibrational
+frequency. We can write that
+%
+\begin{multline}
+ \left( \tilde{k}_{jj} - \tilde{k}_{kk}\right)^2 = 
+ \left( \left[ \omega_j^2 - \omega_k^2 \right] 
+ +
+ 2\left[ \omega_j\Delta\omega_j - \omega_k\Delta\omega_k \right]\right)^2 \\
+ \approx \left( \omega_j^2 - \omega_k^2 \right)^2
+ + 4 \left[ \omega_j\Delta\omega_j - \omega_k\Delta\omega_k \right] \left( \omega_j^2 - \omega_k^2 \right)
+\end{multline}
+%
+where $\Delta\omega_j$ is the WCA frequency shift of $j$th mode
+and we assumed that $\Delta\omega_j\ll\omega_j$ and $\Delta\omega_k\ll\omega_k$
+by at least two orders of magnutude. For the
+normal modes of approximately 1400 cm$^{-1}$
+in frequency, the above approximation is acceptable
+when WCA absolute shifts are not grater than 30 cm$^{-1}$.
+Now, the next term
 %
 \begin{equation}
-\left( \tilde{k}_{jj} - \tilde{k}_{kk}\right)^2 - 4\tilde{k}_{jk}^2
+ \tilde{k}_{jk}^2 = \left[ \frac{1}{\sqrt{M_jM_k}}
+  \left( 
+   %\sum_{\rm Int} 
+   \sderivd{U}{Q_j}{Q_k} - \sum_i \frac{g_{ijk}}{M_i\omega_i^2} \fderiv{U}{Q_i}
+  \right)\right]^2 
+ \approx -\frac{2}{M_jM_k} \sderivd{U}{Q_j}{Q_k}
+ \sum_i \frac{g_{ijk}}{M_i\omega_i^2}  \fderiv{U}{Q_i}
+\end{equation}
+%
+Expanding the square root of Eq.~\eqref{e:11aa11aa}
+as a Taylor series of $\sqrt{x+\delta x}$ around $\delta x=0$ and
+truncating this series on the first\hyp{}order term 
+we get
+%
+\begin{multline}
+\sqrt{\left( \tilde{k}_{jj} - \tilde{k}_{kk}\right)^2 - 4\tilde{k}_{jk}^2}
 \approx
-\frac{1}{M_jM_k} \sum_i \frac{1}{M_i\omega_i^2}
-\left\{ 
-\sderiv{U}{Q_k} g_{ijj} + \sderiv{U}{Q_j} g_{ikk} + 8\sderivd{U}{Q_j}{Q_k} g_{ijk}
-\right\} \equiv \Delta_{jk}
-\end{equation}
+\omega_j^2 - \omega_k^2 + 2 \left( \omega_j\Delta\omega_j - \omega_k\Delta\omega_k \right) \\
++ \frac{8}{M_jM_k\left(\omega_j^2 - \omega_k^2\right)} \sderivd{U}{Q_j}{Q_k}
+ \sum_i \frac{g_{ijk}}{M_i\omega_i^2}  \fderiv{U}{Q_i}
+\end{multline}
 %
-Then, the frequencies can be written as
+%we can keep the products of the lowest order only which leads to
+%%
+%\begin{equation}
+%\left( \tilde{k}_{jj} - \tilde{k}_{kk}\right)^2 - 4\tilde{k}_{jk}^2
+%\approx
+%\frac{1}{M_jM_k} \sum_i \frac{1}{M_i\omega_i^2}
+%\left\{ 
+%\sderiv{U}{Q_k} g_{ijj} + \sderiv{U}{Q_j} g_{ikk} + 8\sderivd{U}{Q_j}{Q_k} g_{ijk}
+%\right\} \equiv \Delta_{jk}
+%\end{equation}
+%%
+Then, the solvatochromic change in quadratic force constants can be written as
+%
+\begin{subequations}
+ \begin{align}
+   \overline{\omega}^2_+ - \omega^2_j &= 2\omega_j\Delta\omega_j 
+  + \frac{4}{M_jM_k\left(\omega_j^2 - \omega_k^2\right)} \sderivd{U}{Q_j}{Q_k}
+ \sum_i \frac{g_{ijk}}{M_i\omega_i^2}  \fderiv{U}{Q_i} \\
+   \overline{\omega}^2_- - \omega^2_k &= 2\omega_k\Delta\omega_k 
+  - \frac{4}{M_jM_k\left(\omega_j^2 - \omega_k^2\right)} \sderivd{U}{Q_j}{Q_k}
+ \sum_i \frac{g_{ijk}}{M_i\omega_i^2}  \fderiv{U}{Q_i} 
+ \end{align}
+\end{subequations}
+%
+We can write to a good approximation that 
+$\overline{\omega}^2_+ - \omega^2_j\approx 2\omega_j\overline{\Delta\omega}_j$
+and similarly for $k$th mode. Here, $\overline{\Delta\omega}_j$
+is the vibrational frequency shift relative to $j$th gas\hyp{}phase
+frequency value beyond WCA limit. Thus, we obtain
+%
+\begin{subequations}
+ \begin{align}[box=\widebox]
+   \overline{\Delta\omega}_j &\approx \Delta\omega_j + \omega_j^{-1} \Xi_{jk}
+  \\
+   \overline{\Delta\omega}_k &\approx \Delta\omega_k - \omega_k^{-1} \Xi_{jk}
+ \end{align}
+\end{subequations}
+%
+where
 %
 \begin{equation}
- \overline{\omega} = \sqrt{
-\omega_j\Delta\omega_j + \omega_k\Delta\omega_k \pm \frac{1}{2} \sqrt{\Delta_{jk}}
-}
+ \Xi_{jk} \equiv \frac{2}{M_jM_k\left(\omega_j^2 - \omega_k^2\right)} \sderivd{U}{Q_j}{Q_k}
+ \sum_i \frac{g_{ijk}}{M_i\omega_i^2}  \fderiv{U}{Q_i}  
 \end{equation}
 %
+It is clear that the WCA frequency shifts need to be corrected
+by the coupling term, $\Xi_{jk}$, if there 
+is a weak but non\hyp{}negligible solvation\hyp{}induced coupling 
+between the two modes $j$ and $k$.
 Note that in this approximation the only new quantity which is to
-be computed is one off\hyp{}diagonal second derivative $\sderivd{U}{Q_j}{Q_k}$
-and additional diagonal $\sderiv{U}{Q_k}$ for the coupling mode. 
+be computed for the $j$th mode vibrational frequency shift 
+is only one off\hyp{}diagonal second derivative $\sderivd{U}{Q_j}{Q_k}$.
+%and additional diagonal $\sderiv{U}{Q_k}$ for the coupling mode. 
+However, if also $\sderiv{U}{Q_k}$ for the coupled mode
+is evaluated, then the frequencies and eigenvectors can be computed
+directly from the exact formulae in Eqs.~\eqref{e:11aa11aa}
+and \eqref{e:ohoho}.
+Yet another consequence of coupling is that 
+we no longer can partition the frequency shift into the
+separate contributions from various interactions due to the
+product terms $\fderiv{U}{Q_i}\sderivd{U}{Q_j}{Q_k}$.
 
-\subsubsection{Coupling between three modes}
+
+\subsection{Coupling between three modes}
 
 Now let us assume that the mode $j$ is mixed with $k$th and $l$th modes
-due to solvation process. The frequencies will satisfy the following
+due to solvation process. The frequencies in solution will satisfy the following
 equation:
 %
 \begin{equation}
@@ -4960,7 +5142,13 @@ equation:
 = 0
 \end{equation}
 %
-This equation can be simplified
+This equation can be simplified to some extent in a similar way
+as it was done in the previous paragraph. This will lead to the
+similar relations involving the WCA frequency shifts and
+corrections due to couplings between the three modes that are
+functions of the product terms of the first and second derivatives
+of $U$. This is straightforward but tedious task and will not
+be pursued here.
 
 
 
