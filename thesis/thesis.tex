@@ -84,6 +84,7 @@
 
 % symbols
 \usepackage{gensymb}
+\usepackage{textcomp}
 
 % footnotes
 \usepackage[symbol]{footmisc}
@@ -4903,7 +4904,7 @@ all the interaction energy components are evaluated in DCBS.
 
 Now, we define the SolEDS method as
 %
-\begin{equation}
+\begin{equation} \label{e:soleds}
  \Delta\omega_j^{\rm SolEDS} = \left(\hat{F}_j^{\rm EA} + \hat{F}_j^{\rm MA}\right)  U^{\rm HF\text{ or }MP2} 
 \end{equation}
 %
@@ -5366,7 +5367,7 @@ in a few solvents. We found that, although the Coulombic
 contributions to the vibrational frequency shift can approximate
 the experimental results, other effects such as induction,
 dispersion and exchange\hyp{}repulsion need to be included
-for quantitative agreement, though charge\hyp{}transfer
+for quantitative agreement with experiment, though charge\hyp{}transfer
 can be safely neglected. Moreover, we show that the electrostatic
 maps developed before worked well because of the strong
 orientation\hyp{}dependence of the Coulombic frequency shifts,
@@ -5377,9 +5378,511 @@ are very large in magnitude but opposite in sign: induction
 and dispersion cause strong red shifts whereas exchange\hyp{}repulsion
 causes sharp blue shifts.
 
+\section{Overview}
+
+Amide I mode vibrational frequency (like C$=$O stretches) 
+is known for its pronounced
+correlation with the external electrostatic potential or
+electric field and plenty of electrostatic solvatochromic
+ESF maps have been reported up to date.\citep{Hayashi.Zhuang.Mukamel.JPCA.2005,Jansen.Knoester.JCP.2006,
+Lee.Choi.Cho.JCP.2012,Torii.JPCL.2015}
+However, it is possible that the fitting procedures
+can take into account also non\hyp{}electrostatic effects,
+unless some maps were free from specific solute\hyp{}solvent
+geometry optimizations and frequency analyses,
+and have shown to be accurate for polar environments.\citep{Hayashi.Zhuang.Mukamel.JPCA.2005,Jansen.Knoester.JCP.2006}
+However, notable disagreement of the line shape and frequency shift was noticed for
+non\hyp{}polar solvents such as CHCl$_3$ by Jansen and Knoester \citep{Jansen.Knoester.JCP.2006}
+who later refined his study by improving CMD forcefield.\citep{Jansen.JPCB.2014}
+It is however noteworthy to realize that in such non\hyp{}polar
+environments electrostatic Coulombic interactions are no longer
+dominant and other effects can manifest more apparently
+in the vibrational solvatochromism. Therefore, application of
+SolEDS and SolEFP models could provide critical information
+on the general aspect of the vibrational solvatochromism of the amide I modes.
+
+In this Chapter, we first consider model solute\hyp{}solvent
+clusters and test the quality of the WCA limit with Onsager theory
+and SolEDS model. We also apply SolEFP theory to those model systems
+to directly compare the frequency shifts with exact quantum chemistry
+calculations. Finally, we combine SolEFP with CMD and compare the vibrational
+frequency shifts directly with experimental data.
+For the detailed computational procedures see the Appendix~\ref{a:computational-details}.
+%In general, electrostatics plays the dominant
+%role 
+
+
+
 \section{Model clusters}
 
+\subsection{Frequency shifts from Onsager model}
+
+We start with the testing of the vibrational solvatochromic 
+operator $\hat{F}_j$ for the simples case which is NMA
+placed in a spherical cavity of radius $a$ which is surrounded
+by continuum medium of dielectric constant $\varepsilon$.
+In Chapter 4, we have solved this problem exactly within
+WCA limit. 
+
+In the Fig.~\ref{f:onsager} we show the application of the rigid
+and flexible vibrational solvatochromism models that are directly
+compared with the full QM calculations. It is apparent that WCA
+limit is ineed working very well and when the reaction field\hyp{}induced 
+structural distortions
+are included for the NMA's dipole moment description 
+we achieved quantitative agreement
+with full QM results. Thus, the
+iterative algorithm developed in Chapter 4 improves the predicted
+dipole moments and reproduces the tangent line at the origin.
+However, the qualitative
+picture is still well\hyp{}reproduced even if we neglect
+structural distortions of NMA molecule. The maximal structural
+distortion effect on amide I frequency shift is as small
+as $\sim$6 cm$^{-1}$.
+
+\subsection{Frequency shifts from solvatochromic multipoles}
+
+In order to test our solvatochromic SolCAMM, SolMMM and SolChelpG models,
+we apply them to various NMA/water clusters
+with up to 35 water molecules. Previous attempts\citep{Lee.Choi.Cho.JCP.2012}
+to determine the vibrational solvatochromic parameters using the Cho's
+coarse\hyp{}grained models were undertaken by considering just the 
+vibrational solvatochromic charge\hyp{}electrostatic potential
+interaction terms. However, the solvatochromic charges
+were determined by carrying out the multivariate
+least square fitting analyses of the ab initio or DFT calculated
+amide I frequency shifts of NMA in water clusters. 
+
+Here, we compute these
+parameters fully from \emph{ab initio} calculations and include also 
+higher\hyp{}multipole terms. We apply the following models:
+%
+\begin{enumerate}
+ \item SolX-12 model which includes all the 12 atomic sites of NMA
+ \item SolX-6 contracted model which considers 5 heavy atoms (with united
+       atom approximation of two methyl groups) and the
+       amide hydrogen atom.
+ \item SolX-5 contracted model which is derived from SolX-6 by treating N--H
+       as a united atom at the nitrogen atom.
+\end{enumerate}
+%
+In the above, X denotes MMM, CAMM and ChelpG methods. 
+
+\subsubsection{Rigid molecule algorithm}
+
+Once these distributed vibrational solvatochromic
+charges and multipoles are calculated, one should properly
+place them on a given NMA molecule in either NMA/water
+clusters or CMD simulation trajectories for subsequent calculations
+of amide I frequency. However, there are certain
+difficulties. In geberal, there is no unique transformation matrix from the gas\hyp{}phase
+structure to a target structure of solute (and solvent) molecule
+because the molecular structures in solution
+undergo a continuous fluctuation in time.
+Therefore, the transfering the gas\hyp{}phase molecular
+properties onto the target structure
+is not straightforward at all, especially in the cases of vibrational
+solvatochromic multipoles because of their tensorial nature.
+Therefore, we needed to assume that molecular
+structure changes induced by solvation are negligibly small
+at least for the backbone atoms of NMA. Only then, it
+becomes possible to develop three\hyp{}stage rigid\hyp{}molecule
+algorithm:
+%
+\begin{enumerate}
+ \item {\bf Superimposition:} The first step is to obtain
+the rotation matrix minimizing the root mean square (RMS) deviation
+between the gas\hyp{}phase and target molecular structure. 
+In the present study, the rotation matrix $\bf R$ is calculated
+by using the Kabsch algorithm. From the singular value decomposition
+(SVD) of the covariance matrix constructed from the reference and target
+molecular geometries as ${\bf C} = {\bf r}^T {\bf r}_0$ (where ${\bf r}_0$
+and ${\bf r}$ are
+the molecular structures of the reference and target, respectively) we compute
+the optimal rotation matrix $\bf R$ as
+ %
+ \begin{equation}
+  {\bf R} = {\bf W} 
+ \begin{bmatrix}
+1  & 0 & 0\\ 
+0  & 1 & 0\\ 
+0  & 0 & d
+\end{bmatrix}
+  {\bf V}^T
+ \end{equation}
+ %
+where $d={\rm sign}\;\det{({\bf W}{\bf V}^T)}$ and SVD matrices are defined as 
+${\bf C}\overset{{\rm SVD}}{=} {\bf V}{\BM \Sigma}{\bf W}^T$.
+ %
+ \item {\bf Translation:} Since the origin for multipole moments
+of an isolated NMA can be different from that of
+target molecule, they should be translated properly. Such
+translation of (distributed) primitive multipole moment
+origin from ${\bf r}_i = {\bf 0}$ to a new origin at ${\bf r}_i$ is made by using
+the following formula:
+  %
+ \begin{equation}
+ M_{klm}({\bf r}_i) = M_{klm}({\bf 0}) - \sum_{k'\ge 0}^{k\ne k'} 
+                                         \sum_{l'\ge 0}^{l\ne l'} 
+                                         \sum_{m'\ge 0}^{m\ne m'}
+ \begin{pmatrix}
+k\\k' 
+\end{pmatrix}
+\begin{pmatrix}
+l\\l' 
+\end{pmatrix}
+\begin{pmatrix}
+m\\m' 
+\end{pmatrix}
+ x_i^{k-k'} y_i^{l-l'} z_i^{m-m'} M_{k'l'm'}({\bf r}_i)
+ \end{equation}
+ %
+Note that this step is performed when we want to
+change the origin of multipoles in local molecular coordinate
+frame. In the case of the SolCAMM method\footnote{and also SolMMM, since it is
+a limiting case of SolCAMM, i.e., recentered to the same origin and summed over},
+there is no need to go through this step because the distributed
+multipoles are located at atomic sites. However,
+the same translation procedure has to be performed to
+create the contracted SolCAMM parameters with united
+atom approximation. 
+ %
+ \item {\bf Rotation:} With the rotation matrix $\bf R$ obtained
+from Step 1, the tensorial multipoles can be properly
+rotated, i.e.,
+ %
+ \begin{equation}
+ M_{ijk\ldots}' = \sum_{i'j'k'\ldots} R_{ii'} R_{jj'} R_{kk'} \ldots M_{i'j'k'\ldots}
+ \end{equation}
+ %
+\end{enumerate}
+%
+Now, to calculate the solvent electric field and its gradients
+on the solute molecule, the same procedure is performed
+for each solvent molecule with benchmark solvent molecule
+(BSM) distributed multipole moments. For the sake of simplicity,
+we neglect the structural changes of water molecules
+as usual because the vibrational properties of solute are of
+our concern. The algorithm proposed here could be improved
+to some extent by making it more flexible, i.e., by considering
+the rotation matrices between respective fragments like
+the two methyl groups and O$=$C$–$N$–$H amide group of NMA
+in an \emph{ad hoc} manner. 
+Nevertheless, the estimated RMS values for all the
+cases were less than 0.07 a.u. for NMA and 0.04 a.u. for water
+molecules. Therefore, we believe that, for the purpose of
+the present study, this approximate algorithm is sufficiently
+accurate and acceptable.
+
+\subsubsection{Frequency shifts from molecular multipole moments}
+
+As the crudest approximation studied here, we consider 
+the vibrational solvatochromism model based on calculated
+molecular multipole moments that are calculated with respect to
+the center of square eigenvector element
+defined as
+%
+\begin{equation}
+ c = ?
+\end{equation}
+%
+First, we have compared the SolMMM moments up to octupoles
+with previously determined solvatochromic multipoles
+constructed from the vibrational solvatochromic charges
+according to the following relations\citep{Lee.Choi.Cho.JCP.2012}:
+%
+\begin{equation}
+ c = ?
+\end{equation}
+%
+We note that $l_x$ parameters were obtained from fitting procedure
+to the electrostatic potential evaluated
+at six sites of NMA-$d$ to reproduce the benchmark frequency shifts 
+from the formula
+%
+\begin{equation}
+ \Delta\omega = \sum_{x=1}^6 l_x \phi({\bf r}_x)
+\end{equation}
+%
+The results are shown in Table~\ref{t:solmmm-comparison}.
+%
+\begin{table}[ht]
+\caption{
+Vibrational solvatochromic molecular multipole moments (SolMMM) 
+for NMA-$d$ obtained by using 
+B3LYP/6-311++G** method. Here the origin
+of the molecule\hyp{}fixed coordinate frame is at the center of 
+square eigenvector element
+(COE). Thus obtained vibrational solvatochromic multipoles are 
+directly compared with
+those obtained from the multivariate least\hyp{}square fitted 
+distributed solvatochromic charges for a large collection of 
+NMA-$d$/water clusters.\citep{Lee.Choi.Cho.JCP.2012} Vibrational
+solvatochromic dipole, quadrupole, and octupole moments are given 
+in cm$^{-1}$/(MV/cm), 10$^{-8}$ cm$^{-1}$/(MV/cm$^2$), and 
+10$^{-16}$ cm$^{-1}$/(MV/cm$^3$), respectively. The
+definitions of the traceless quadrupole and octupole moments 
+as well as the orientation of NMA-$d$ molecule were taken from Ref.\citep{Lee.Choi.Cho.JCP.2012}
+\label{t:solmmm-comparison}}
+\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } l l l l l l l l }
+\hline\hline
+ &     \multicolumn{2}{c}{Dipole} & & \multicolumn{4}{c}{Quadrupole} \\
+ &  x    & z   & & xx & xz & yy & zz \\
+Ref.\citep{Lee.Choi.Cho.JCP.2012} & -0.04 & -1.19 && 2.72 & 0.56 & -3.96 & 1.24 \\
+This work                         & 0.32  & -0.67 && 5.43 & 1.17 & -1.89 & -3.54 \\
+ & \multicolumn{7}{c}{Octupole} \\
+ & xxx & zzz & xxz & yyx & yyz & zzx & \\
+Ref.\citep{Lee.Choi.Cho.JCP.2012} & -2.94 & 7.22  & -10.86 & 3.53 & 3.64 & -0.59 & \\
+This work                         &  7.33 & 2.58  & -1.25  &-5.94 &-1.32 &- 1.39 & \\
+\hline\hline
+\end{tabular*}
+\end{table}
+%
+The orientation of NMA-$d$ was such that the $z$-axis was taken to
+be collinear with the C$=$O bond and the O$=$C$-$N group lies on
+the $xz$ plane. Therefore, all the components containing odd number of 
+$y$ indices (e.g., $xy$ component of quadrupole and $yyy$ component of octupole)
+were zero or
+vanishingly small.
+
+We find that the SolMMM tensor elements
+obtained by using the two different approaches appear to be
+different from each other. The solvatochromic dipole obtained
+using the multivariate fitting analyses is almost parallel to
+the C$=$O bond, whereas the present fully \emph{ab initio} SolMMM dipole moment
+has considerably large $x$-component and forms the angle of
+25.5\textdegree with respect to the $z$-axis (C$=$O bond axis). 
+In addition,
+the magnitudes and signs of respective quadrupole and
+octupole tensor elements appear to be different as well. 
+Interestingly,
+despite these relatively large differences between the
+two sets of vibrational solvatochromic multipoles, the corresponding
+vibrational amide I' mode frequency shifts are found
+to be in very good agreement with each other and the predictions
+made by these models are similar (Fig.XXX).
+
+Let us analyze the convergence properties of SolMMM vibrational
+frequency shifts.
+The asymptotic distance dependence of the interaction between
+two multipoles of rank $n_1$ and $n_2$ is equal to $R^{-(n_1+n_2+1)}$
+where $R$ is the distance between the multipole origins.
+For instance, the $R^{-n}$\hyp{}dependence of the dipole\hyp{}quadrupole
+interaction is $R^{-4}$, or in other words, this interaction decays asymptotically
+as $R^{-4}$ when $R$ increases. It is useful to classify all the terms in the
+expansion of the Coulombic interaction energy (and frequency shift)
+according to their $R^{-n}$\hyp{}dependencies and study the convergence
+by including terms with larger $n$. In Fig.XXX we depict the
+vibrational frequency shifts of amide I (I') modes in water
+correlated with the full DFT results.
+  
+In most of the cases of the NMA amide I mode, the predicted
+shifts appeared to diverge when the dipole\hyp{}quadrupole
+interactions are taken into account. 
+There is a noticeable correlation only for the
+dipole\hyp{}dipole interactions ($R^{-3}$ terms).
+This is in contrast to the amide I'\hyp{}mode frequency shifts of
+NMA-$d$, where we observe acceptable convergence when
+even dipole\hyp{}octupole and quadrupole\hyp{}quadrupole
+interactions are included.
+This difference in convergence
+when the SolMMM model is applied for NMA and
+NMA-$d$ molecules can be understood by considering the isotopic
+effect on amide I mode. Substitution of amide hydrogen
+atom by deuterium makes the NMA-$d$ amide I' mode more localized
+on carbonyl group because deuterium is heavier than prot. 
+Thus, the vibrational solvatochromic charge
+density is more localized in space and, therefore, the effective
+size of vibrational probe is smaller. But it means that the divergence sphere
+of multipole expansion is smaller as well. 
+
+However, in the case of NMA,
+the methyl groups and amide proton center are also important for a solvatochromic
+response and one\hyp{}center model cannot capture the atomic
+granularity of a molecule. Thus, it is clear that, in general,
+the one\hyp{}centered multipole SolMMM model is not suitable in
+practical applications because of possible problem of convergence.
+In addition, SolMMM moments strongly depend on the choice of the
+origin\citep{Lee.Choi.Cho.JCP.2012} which makes the application
+of SolMMM more difficult.
+Thus, we conclude that the distributed\hyp{}interaction site
+models should be generally used.
+
+\subsubsection{Frequency shifts from distributed multipoles}
+
+Let us focus on SolChelpG and SolCAMM approaches. Both involve multipoles
+that are distributed on atoms. However, SolChelpG scheme is approximate
+becasue each ChelpG charge is obtained from fitting to reproduce the electrostatic
+potential. Therefore, numerical differentiation of ChelpG charges
+contains errors that are difficult to estimate quantitatively.
+
+In Fig.XXX we plot the corresponding SolChelpG-12, SolChelpG-6 and
+SolChelpG-5 vibrational frequency shifts for both NMA and NMA-$d$.
+Panels (c) and (f) in this figure show the most accurate estimations
+in which both mechanical and electric anharmonicities are included.
+Apparently, the results are far from the benchmark DFT frequencies.
+On the other hand, the SolChelpG results are clearly in correlation
+with the benchmark. Lack of the full agreement can be cause either
+by the neglect of other interactions or by errors introduced into
+the SolChelpG scheme when numerical differentiation is performed.
+
+It is also instructive to examine the importance of the
+mechanical and electric anharmonicities. In previous works
+the following assumption was made
+%
+\begin{equation} \label{e:approx-1}
+ \Delta \omega \approx -\frac{g_{jjj}}{2M_j^2\omega_j^3} \fderiv{U}{Q_j} 
+               \approx -\frac{g_{jjj}}{2M_j^2\omega_j^3} \sum_x \fderiv{q_x}{Q_j} \phi({\bf r}_x)
+\end{equation}
+%
+which defines the solvatochromic charge $l_x\equiv-\frac{g_{jjj}}{2M_j^2\omega_j^3} \fderiv{q_x}{Q_j} $.
+This is because it was difficult to compute all the derivatives 
+directly.
+Thus, by finding $l_x$ by fitting to benchmark frequencies, 
+the charge\hyp{}flow terms were inferred that tell about the
+response of the particular IR probe's atomic site against the external electric field.
+However, this approximation neglects off\hyp{}diagonal cubic anharmonic
+constants $g_{ijj} \text{for $i\ne j$}$. Also, this neglects $\sderiv{U}{Q_j} $
+which contributes to the electric anharmonicity. Our SolChelpG analysis
+can estimate the importance of these neglected previously factors.
+
+In Fig.XXXa and XXXd the results of estimating Eq.~\eqref{e:approx-1} are shown.
+There is an accidental agreement with the benchmark DFT results.
+When we used the following approximation
+%
+\begin{equation} \label{e:approx-2}
+ \Delta \omega \approx -\frac{1}{2M_j\omega_j} \sum_i \frac{g_{ijj}}{M_i\omega_i^2}\fderiv{U}{Q_i} 
+\end{equation}
+%
+which is shown in Fig.XXXb and XXXe, certain deterioration of the SolChelpG
+performance is found. Finally, when the electric anharmonicity is
+included
+%
+\begin{equation} \label{e:approx-3}
+ \Delta \omega \approx -\frac{1}{2M_j\omega_j} \left[
+ \sderiv{U}{Q_j} 
+ \sum_i \frac{g_{ijj}}{M_i\omega_i^2}\fderiv{U}{Q_i} 
+\right]
+\end{equation}
+%
+the results are even worse. Thus it is clear that both electric anharmonicity
+and off\hyp{}diagonal cubic anharmonic constants need to be properly taken into
+account. Also it is evident that the SolChelpG method does not work quantitatively
+correct.
+
+The most accurate model is to use
+distributed multipole analysis method such as SolCAMM
+which is also free from numerical differentiation errors,
+in contrast to SolChelpG method.
+In Figs.XXX and XXX we present the SolCAMM-6 results 
+for amide I and I' modes. It is clear that
+these models work very well and the predicted 
+vibrational frequency shifts are in fairly good correlation
+with benchmark DFT calculations, though in the case of NMA-$d$
+the red shifts are somewhat overestimated.
+It is also apparent that SolCAMM-6 results are
+convergent in both amide I and I' mode cases, which is
+an improvement over single\hyp{}centered SolMMM method.
+
+Now we can reinvestigate also the accidental good SolChelpG performance under the
+approximation Eq.~\eqref{e:approx-1}. We performed similar 
+calculations with the SolCAMM-6 method and found that when only $g_{jjj}$
+constants are included in the mechanical anharmonicity term, 
+the resulting vibrational frequency red shifts are strongly overestimated.
+This is still the case when also off\hyp{}diagonal cubic anharmonicity
+is taken into account but without electric anharmonicity.
+Thus, it is believed that a lack of adequate description
+of electrostatic potential distribution in the SolChelpG
+model might cause such an accidental agreement with full DFT results. Furthermore,
+as in the case of SolChelpG model, mechanical
+anharmonicities are negligible for amide I' mode shifts -- note
+that the data in Fig.XXXd are almost identical to those in
+Fig.XXXe.
+
+Before we close this Section, it is worth discussing 
+the performance of contracted SolChelpG and
+SolCAMM models. As can be seen in Figs.XXX and XXX, 
+the reduction of the number of distributed centers
+does not influence much the performance of the methods, even if united atom 
+model on nitrogen is created (resulting in just 5 distributed centers). 
+This fact can be used to reduce the computational cost of the method
+and the contracted models can be safely applied (at least for NMA amide I mode).
+Thus, from computational point of view SolCAMM-6 is the best of the methods
+presented here (we prefer to include amide proton just in case).
+
+\subsection{Beyond Coulombic approximation}
+
+So far we were elaborating on the accuracy and computational
+feasibility of using Coulombic models of the vibrational solvatochromism.
+Now let us study also other effects in detail.
+
+To gain deeper insight into the origin of the frequency
+shift of NMA amide I mode, we first analyzed the three simple
+NMA--water dimers A, B and C, and the NMA--CHCl$_3$ dimer D 
+shown in Fig.XXX. The frequency
+shifts evaluated by using (i) constrained\hyp{}solute SolEDS and
+SolEFP methods and (ii) analytical SolEFP equations applied
+for the fully optimized clusters are summarized in TableXXX.
+The
+column denoted as "MA" contains the calculated frequency
+shift values with taking into account the mechanical anharmonicity
+effects only, whereas the
+values in the column denoted and "MA+EA" are the results obtained
+by including both the mechanical and electric anharmonicity
+contributions. As can be seen in TableXXX, most of
+calculated total frequency shifts including both MA and EA
+terms are in reasonable quantitative agreement with the full
+quantum chemistry calculation results, with exceptions of
+constrained-solute SolEFP result for system A and analytical
+SolEFP result for system C -- note that, in these two cases,
+the resultant frequency shifts are slightly underestimated. The
+quantitative agreement found in these comparative investigations
+indicates that the frequency shift formula, Eq. (2), on
+which all the numerical calculation results presented in this
+work are based, is sufficiently accurate and reproduces frequency
+shifts with possible errors of about 5--10 cm$^{-1}$, which
+is believed to be fairly accurate.
+
 \section{Combining with molecular dynamics}
+
+\section{Discussion}
+
+\subsection{On the applicability of Onsager model}
+
+It is well known that the Onsager field theory describes
+the solvation phenomena of polar species surprisingly
+well provided that the solvent molecules do not interact
+specifically with the solute molecule, which suggests that the
+solute\hyp{}solvent interaction is primarily electrostatic. This led
+to believe that the vibrational frequency shift is also related
+to the dipole moment change of the solute in a polar
+environment. In fact, Boxer and co\hyp{}workers found that the
+frequency shifts of CN stretch modes of ethyl thiocyanate
+(EtSCN)%78 
+and some aromatic nitriles%79 
+are linearly proportional
+to the strength of Onsager reaction field in aprotic polar
+solvents. However, it was also found that there is a considerable
+disagreement with the Onsager theory for the cases
+when solute molecules are nonpolar or the permanent dipole
+moment is approximately perpendicular to the vibrational
+solvatochromic dipole%79 
+or, even more interestingly, when
+the solvent is protic, e.g., water and trifluoroethanol.%78 
+In
+the latter cases, the IR probe molecules interact with solvent
+molecules via hydrogen bonds -- note that such hydrogen bonding
+interaction is highly localized and substantially
+increase anisotropy of electrostatic potential around the vibrational
+probe of interest. This makes the simple Onsager
+dipolar field theory inapplicable in such situations and considering
+solvent molecules explicitly is \hyp{inevitable}. It is shown also in our 
+calculations: note that the frequency shift of amide I mode of NMA in water
+is at most 30 cm$^{-1}$ whereas it is well known that the experimental value
+is around 100 cm$^{-1}$. We shall return to discussion
+on the aspect of Onsager model and Stark spectroscopy in Chapter 5 
+where we directly show that Stark\hyp{}dipole
+theory fails in protic environments and is also not accurate in aprotic solvents.
 
 
 \printbibliography[heading=subbibintoc,title={References}]
@@ -5893,6 +6396,346 @@ nuclei can be just added to electronic atomic moments.
 
 \printbibliography[heading=subbibintoc,title={References}]
 \end{refsection}
+
+
+\begin{refsection}
+\chapter{Computational Details\label{a:computational-details}}
+
+Here we provide the details of computation for Chapters 4,5 and 6.
+
+\section{Chapter 4}
+
+$N$-methylacetamide (NMA) and its deuterated molecule
+(NMA-$d$ with deuterium at its amide position) 
+were chosen as model IR active solute molecules. 
+Gas phase equilibrium
+geometry optimizations and vibrational analyses of NMA
+and NMA-$d$ were performed
+to obtain harmonic vibrational frequencies, reduced
+masses and eigenvectors.
+We mark here that the harmonic frequencies were not scaled. 
+For all structure optimizations the convergence
+threshold of energy gradient was set to be 10$^{-6}$ a.u.
+which is a very tight criterion.
+Here, the Density Functional Theory (DFT) B3LYP%66-69
+or Hartree Fock (HF) methods were used,
+with Cartesian 6-311++G(d,p) basis set.\footnote{It is 
+important \emph{not} to use spherical harmonic bases
+because we have implemented only Cartesian basis sets 
+in our code. Therefore, the results will not be consistent
+with {\sc Solvshift} and {\sc Coulomb} if one used spherical basis sets!}%70 
+Cubic anharmonic constants were obtained from the numerical
+differentiation of the Hessian matrices retrieved from Gaussian
+\verb+fchk+ files.
+It is to be emphasized here that the cubic anharmonic constants
+that can be also calculated using Barone’s implementation%71 
+of
+the vibrational second\hyp{}order perturbation theory,
+cannot be used for SolEFP and SolEDS calculations because of the mismatch of the eigenvector
+phases.
+
+In all the calculations, SCF convergence threshold
+was set to 10$^{-10}$ a.u. for density matrix and dense grid with
+199 radial shells per atom and 974 angular points for each
+shell for numerical integration were applied.%72 
+Gemoetry optimizations and vibrational analyses were carried out
+by using {\sc Gaussian 09} program.%65
+
+\subsection{Onsager model}
+
+Self\hyp{}Consistent Reaction Field (SCRF) calculations
+using Onsager model%57, 58, 62–64 
+with the cavity radius of
+$a$ = 3.72 \AA, were performed by using the {\sc Gaussian 09} program package.
+The vibrational frequency shifts from that calculations can be directly
+compared with our continuum vibrational solvatochromism model
+based on Onsager theory. In the flexible model (including structural
+distortions) the threshold for converging the solvation energy
+was set to be 10$^{-14}$ a.u. and no more than 35 iterations were necessary
+to achieve this convergence.
+
+
+\subsection{SolCAMM, SolMMM, SolChelpG}
+
+Calculations
+of vibrational solvatochromic multipoles up to octupoles as
+well as vibrational frequency shift calculations were done by
+our in\hyp{}house code {\sc Solvshift} using various approaches:
+%
+\begin{itemize}
+\item {\bf Distributed solvatochromic charges.} These were derived
+via Charges from Electrostatic Potentials using a Grid
+based method (ChelpG).%73
+\item {\bf Molecular solvatochromic multipole moments}
+centered at molecular origin.%33
+\item {\bf Distributed solvatochromic multipoles} from Cumulative
+Atomic Multipole Moments (CAMM) expansion introduced
+by Sokalski and Poirier.%74
+Here, CAMMs were obtained using our code,
+{\sc Coulomb}, which uses one\hyp{}particle density matrices retrieved
+from GAUSSIAN 09 \verb+fchk+ (formatted checkpoint)
+files. 
+\end{itemize}
+%
+We also performed
+distributed multipole analysis (DMA) of Stone%81 
+for (benchmark
+solvent) water molecule. The distributed sites of water
+multipole moments are three atomic sites and two mid\hyp{}bond
+centers. The DMA calculations were performed by utilizing
+GAMESS package.%82
+
+\subsection{SolEFP calculations}
+
+The Fock matrices and distributed polarizabilities were
+evaluated with GAMESS program by utilizing MAKEFP routine.
+Pipek\hyp{}Mezey localization%83 
+of all the molecular orbitals was
+used. The Fock matrices and distributed polarizabilities of
+NMA were then numerically differentiated with respect to all
+the normal coordinates. We have also implemented the Pipek\hyp{}Mezey 
+localization procedure to obtain localized molecular
+orbitals (LMO) and extracted the unitary transformation matrices
+that are necessary for numerical differentiation of Fock
+matrices and wavefunction coefficients in the LMO basis,
+which are evaluated for each displaced structure for subsequent
+finite difference calculations. 
+The integrals over
+imaginary frequencies for the dispersion interactions were
+numerically calculated by using 12\hyp{}point Gauss\hyp{}Legendre
+quadrature which is of the form:%39
+%
+\begin{equation}
+ \int_0^\infty {\rm d}\Omega f(\Omega) \cong \sum_{n=1}^{12} w_n f_n
+\end{equation}
+%
+where DOKONCZ TO. Integration of the products of imaginary frequency
+polarizabilities and their functions are very convenient since
+these polarizabilities are well\hyp{}behaved and
+smoothly vanish to zero for large $\Omega$.
+
+\subsection{SolEDS calculations}
+
+To estimate the relative contributions from electrostatic,
+exchange\hyp{}repulsion, and the remaining charge\hyp{}delocalization
+effects to intermolecular interaction energy, we
+used the hybrid variational\hyp{}perturbational method (EDS)%58 
+with the
+method implemented by G{\'o}ra%84 
+in GAMESS. Also, to examine the electron correlation effects 
+we used EDS scheme at M{\o}ller\hyp{}Plessed level of theory.
+
+On the other
+hand, the electrostatic, polarization, dispersion and exchange\hyp{}repulsion
+interaction terms based on the analytical SolEFP scheme
+were calculated by using {\sc Solvshift}. In the
+case of the analytical SolEFP calculation, the rigid molecule
+algorithm%42 
+was used, where five backbone atoms of gasphase
+NMA structure were superimposed onto a given NMA
+in each fully optimized cluster. For comparison, the SolEFP
+frequency shifts were also calculated for structurally constrained
+clusters. In particular, from the latter analysis we
+obtained the contribution from the charge\hyp{}transfer effect,
+which was not implemented in the analytical SolEFP calculation
+procedure. 
+
+\subsubsection{Constrained cluster method}
+
+To apply SolEDS scheme properly one needs to be cautious 
+since its application to the molecular multimers is not at all
+straightforward as one could be possibly missled by seemingly simple
+Eqs.~\eqref{e:soleds}, \eqref{e:soleds-hf} and \eqref{e:soleds-mp2}. 
+Note that the vibrational analysis restrics us to keep the entire cluster
+in its equillibrium geometry. On the other hand, vibrational
+solvatochromic shift operator requires the evaluation of derivatives
+with respecto to solute's normal modes in the solute's gas\hyp{}phase
+structure. Therefore, we have developed so called 'constrained cluster method'
+which can deal with that problem. It consists of 3 steps:
+%
+\begin{enumerate}
+ \item Construct the system (solute\hyp{}solvent) cluster and
+       optimize it fully. Then compute the vibrational frequency
+       of interest and the frequency shift with respect to isolated
+       solute state.
+ \item Construct the \emph{constrained} system in the following way:
+       Take the (fylly optimized) solute molecule in its gas\hyp{}phase
+       geometry. Then add to it the remaining molecules to maximally resemble
+       the system from Point 1. That is to say, keep the internal coordinates
+       in the fully optimized complex possibly unchanged. If it is impossible,
+       focus on the most important coordinates that are likely to be critical
+       for the frequency shift.
+ \item Using constrained cluster from Point 2, perform calculations 
+       of the first and second derivatives of interaction energy between
+       solute and the rest of molecules. Note that displacements
+       are imposed only on solute atoms keeping solvent
+       molecules frozen. This sill ensure that the derivatives are evaluated
+       with respect to solute's gas\hyp{}phase coordinates.
+\end{enumerate}
+%
+Once all the derivatives are computed in the above manner, the frequency shifts
+can be evaluated afterwards. This method is necessary for SolEDS
+and SolSAPT calculations. It can also be applied for SolEFP
+in the case when EFP interaction potentials are evaluated numerically.
+
+The constrained\hyp{}cluster SolEFP calculations
+were performed by using GAMESS code: the EFP parameters
+of NMA molecule were evaluated separately for
+each finite\hyp{}displaced structure. The resulting EFP energies were then used
+to evaluate the vibrational derivatives of the intermolecular
+interaction potential and, in turn, the electrostatic, exchange\hyp{}repulsion,
+polarization, and charge\hyp{}transfer contributions to
+the frequency shift were calculated.
+
+In all the constrained cluster calculations, the
+structural difference between constrained cluster and fully
+optimized geometry was found to be very small. The two
+structures are in fact almost superimposable and the estimated
+root\hyp{}mean\hyp{}square values are typically less than 0.024
+a.u. All the quantum chemistry calculations were performed
+at the Hartree\hyp{}Fock level of theory with 6-311++G(d,p) basis
+set.%85
+
+\subsection{Numerical differentiation of molecular properties}
+
+The first derivatives of all the molecular properties
+(multipole moments including ChelpG charges, Fock matrices, LCAO\hyp{}MO
+wavefunction coefficients, LMO centroids, distributed polarizabilities)
+with respect to
+vibrational coordinates were obtained via both numerical differentiation
+in atomic Cartesian coordinate space and subsequent
+transformation of the derivatives to normal mode space
+spanned by mass\hyp{}weighted eigenvectors. The finite difference
+of 0.006 \AA was chosen for numerical differentiation. All the
+second derivatives of (distributed) multipoles with respect to
+amide I coordinate were performed by numerical differentiation
+with finite difference step of 0.085 \AA. Calculations
+of the first derivatives of total molecular dipole moments
+were done in GAUSSIAN 09 package from atomic polar
+tensors (APT) and the second derivatives were obtained by
+their numerical differentiation assuming Cartesian displacements
+of 0.006 \AA. For all the numerical differentiations, the
+5\hyp{}point central finite difference formulas were applied in all the
+cases:
+%
+\begin{subequations}
+ \begin{align}
+   f'(x) &= \frac{1}{12\delta x} \left[
+ \left( f_{-2} - f_{+2} \right) - 
+8\left( f_{-1} - f_{+1} \right)
+\right] \\
+  f''(x) &= \frac{1}{12(\delta x)^2} \left[
+ -\left( f_{-2} + f_{+2} \right) + 
+16\left( f_{-1} + f_{+1} \right) - 30f_0
+\right]
+ \end{align}
+\end{subequations}
+%
+where $\delta x$ is the finite difference and $f_j = f(x_o + j\delta x)$. 
+In the
+numerical differentiation of distributed multipoles, we evaluated
+the consecutive displaced moments with maintaining
+their origins in the gas phase structure because only then they
+can be added/subtracted during finite difference calculation
+procedures. Distributed solvatochromic multipoles transform
+much like normal multipole moments and to test their quality
+we added them up to calculate overall molecular moments
+with respect to molecular origin and compared them with directly
+calculated molecular multipole moments (MMM). All
+the calculated multipole tensor elements were found to be the
+same up to 3--4 significant digits.
+
+\subsection{Classical molecular dynamics simulations}
+
+Molecular dynamics simulations of NMA in H$_2$O and
+CDCl$_3$ at 300 K and under 1 atm were performed by using
+Sander module of {\sc Amber11} suite%55 
+with Parm99 force field.%56
+Water was described by TIP4P model%57 
+and the force field
+parameters of CDCl$_3$ were taken from the work of Fox and
+Kollman.%58 
+NMA molecule was optimized with the {\sc Gaussian 09}
+program (HF/6-311++G(d,p)) in its trans conformation
+and restrained electrostatic potential (RESP) fitting atomic
+charges%59 
+were obtained by utilizing {\sc Antechamber} package%60
+with employing HF/6-31G(d) method.%61 
+Then, the NMA
+molecule was solvated by 4520 water or 1180 CDCl$_3$
+molecules in a periodic box. Since the natural population of
+\emph{cis} form of NMA in CDCl$_3$ is just about 2\%, we neglected this
+conformation in our CMD simulations.%62 
+Energy minimization
+run with a steepest descent algorithm was undertaken (30 000
+steps) and subsequent cascade of NPT and NVT simulations
+was performed to equilibrate the system volume and to
+generate a canonical NVT ensemble (two cycles of NPT\hyp{}NVT
+100 ps simulations). Finally, 1 ns NVT run was performed
+and 5000 frames were collected for every 0.2 ps. For all these
+simulations, 12 \AA cut\hyp{}off distance for all the non-bonding
+interactions was used. The particle\hyp{}mesh Ewald procedure%63
+was used to treat long\hyp{}range electrostatic interaction. The
+bonds involving hydrogens were constrained by using SHAKE
+algorithm.%64 
+Langevin thermostat%65 
+with coupling frequency
+of 0.1 ps and Berendsen barostat%66 
+with pressure relaxation
+time 1.0 ps in the case of the NPT simulations were used
+throughout, and the time step of integration of equations of
+motion was set to 2 fs. NMA remained in the trans form.
+Once the equilibrium MD trajectory of NMA in water
+was obtained, we evaluated the SolEFP frequency shifts due
+to Coulomb, exchange\hyp{}repulsion, induction, and dispersion
+interactions. Superimposition of parameters was performed by
+using the rigid molecule algorithm%12 
+by utilizing the Kabsch
+method%67 
+implemented in the {\sc Biopython} code.%68 
+Processing
+of MD trajectories was interfaced by using MDAnalysis
+package.%69 
+The NMA\hyp{}water cut\hyp{}off distances for Coulomb,
+induction, dispersion, and exchange\hyp{}repulsion solvatochromic
+interactions were assumed to be 40, 17, 17, and 12 bohrs,
+respectively. The corresponding cut\hyp{}off distances in the case of
+CDCl$_3$ solution were 40, 14, 14, and 13 bohrs, respectively. To
+evaluate electrostatic frequency shifts, we did not implement
+any kind of Ewald summation and the interaction was taken
+into account in real space. The relatively large cutoff (about
+21 \AA) was needed for the convergence of the Coulombic
+frequency shifts. This is the main reason that we considered
+fairly large periodic boxes for the present CMD simulations. It is
+interesting to note that, despite the genuine complexity of our
+SolEFP theory and the large number of solvent molecules
+taken into account, the total time required to compute
+frequency shift decompositions from 5000 MD snapshots for
+water solution was just about 1 day, when a 4\hyp{}thread run (1
+frame in 1 thread) at 3.4 GHz Intel\textregistered Core\texttrademark I5\hyp{}3570 computer
+was performed.
+
+
+\printbibliography[heading=subbibintoc,title={References}]
+\end{refsection}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \chapter{Experiments\label{a:exp-ftir}}
 
