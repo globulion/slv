@@ -1,0 +1,33 @@
+\begin{table}[ht]
+\caption{Approximate correspondence between a few SAPT interaction
+energy terms with EDS partitioning and EFP2 interaction potential
+contributions.
+\label{t:sapt-eds-efp2}}
+\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } l l l l}
+\hline\hline
+%\multicolumn{5}{c}{Amide I mode} \\
+SAPT                     & EDS                             & EFP2               \\
+\hline
+%\multirow{5}{*}{A}  
+\hline\hline
+\end{tabular*}
+\end{table}
+
+
+\begin{equation} \label{e:dw-soleds-mp2}
+ \Delta\omega_j^{\rm SolEDS/MP2} = 
+              \Delta \omega_{j;{\rm el}}^{(10)}    + 
+              \Delta \omega_{j;{\rm ex}}^{\rm HL}  +
+              \Delta \omega_{j;{\rm del}}^{\rm HF} +
+               \Delta \omega_{j;{\rm el,r}}^{(12)}    + 
+               \Delta \omega_{j;{\rm ex}}^{(2)}       +
+               \Delta \omega_{j;{\rm disp}}^{(20)}  
+\end{equation}
+
+# EQUATIONS:
+e:dw-disp-6-iso-distributed
+e:dw-disp-6-iso-approx-distributed
+e:cj6-distributed
+e:dw-disp-6-distr-working
+s:disp
+\Delta \omega_{j,6}^{\rm Disp-Iso}
