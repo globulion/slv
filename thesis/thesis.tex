@@ -68,7 +68,8 @@
 % tables
 \usepackage{dcolumn}
 \usepackage{multirow}
-\usepackage{hhline} 
+\usepackage{hhline}
+\usepackage{booktabs}
 %\setlength{\tabcolsep}{0.5em} % for the horizontal padding
 %{\renewcommand{\arraystretch}{2.2}% for the vertical padding
 
@@ -3629,7 +3630,7 @@ the formula for the dipole\hyp{}dipole dispersion interaction\hyp{}induced
 frequency shift becomes
 %
 \begin{equation} \label{e:dw-disp-6-iso-approx}
-\Delta \omega_{j,6}^{\rm Disp-Iso} = \frac{3}{2\pi M_j\omega_j}
+\Delta \omega_{j,6}^{\rm Disp-Approx} = \frac{3}{2\pi M_j\omega_j}
 \sum_i \frac{g_{ijj}}{M_i\omega_i^2} 
 %\sum_{a\in  A}\sum_{b\in B}
 \frac{1}{R^6_{AB}} 
@@ -3753,7 +3754,7 @@ can be written as
 and 
 %
 \begin{equation} \label{e:dw-disp-6-iso-approx-distributed}
-\Delta \omega_{j,6}^{\rm Disp-Iso} = 
+\Delta \omega_{j,6}^{\rm Disp-Approx} = 
 - \sum_{a\in  A}\sum_{b\in B}
 C^{ab}_{j,6} R^{-6}_{ab}  
 \end{equation}
@@ -4808,7 +4809,7 @@ with SAPT.\citep{Flick.Kosenkov.Hohenstein.Sherrill.Slipchenko.JCTC.2012}
 Nevertheless, before SolEFP method is used, first it has to be validated
 against more accurate approach -- SolEDS or SolSAPT. 
 
-\subsubsection{SolEDS model}
+\subsubsection{SolEDS model\label{s:soleds}}
 
 One of easy ways of computing the total interaction energy
 between two molecules is to adopt the supramolecular approach
@@ -4904,7 +4905,7 @@ all the interaction energy components are evaluated in DCBS.
 
 Now, we define the SolEDS method as
 %
-\begin{equation} \label{e:soleds}
+\begin{equation} \label{e:dw-soleds}
  \Delta\omega_j^{\rm SolEDS} = \left(\hat{F}_j^{\rm EA} + \hat{F}_j^{\rm MA}\right)  U^{\rm HF\text{ or }MP2} 
 \end{equation}
 %
@@ -5354,7 +5355,7 @@ environments ranging from bulk solutions to proteins.
 % CHAPTER 4 ================================
 
 \begin{refsection}
-\chapter{Vibrational solvatochromism of isolated amide I mode}
+\chapter{Vibrational solvatochromism of amide I mode}
 
 Amide I mode which can be thought of C$=$O stretch within
 the CONH group in peptides has been studied for long time
@@ -5413,7 +5414,7 @@ For the detailed computational procedures see the Appendix~\ref{a:computational-
 
 
 
-\section{Model clusters}
+\section{Small model solute\hyp{}solvent clusters}
 
 \subsection{Frequency shifts from Onsager model}
 
@@ -5424,7 +5425,7 @@ by continuum medium of dielectric constant $\varepsilon$.
 In Chapter 4, we have solved this problem exactly within
 WCA limit. 
 
-In the Fig.~\ref{f:onsager} we show the application of the rigid
+In the Fig.XXX we show the application of the rigid
 and flexible vibrational solvatochromism models that are directly
 compared with the full QM calculations. It is apparent that WCA
 limit is ineed working very well and when the reaction field\hyp{}induced 
@@ -5606,7 +5607,7 @@ from the formula
 %
 The results are shown in Table~\ref{t:solmmm-comparison}.
 %
-\begin{table}[ht]
+\begin{table}[t]
 \caption{
 Vibrational solvatochromic molecular multipole moments (SolMMM) 
 for NMA-$d$ obtained by using 
@@ -5731,8 +5732,8 @@ mechanical and electric anharmonicities. In previous works
 the following assumption was made
 %
 \begin{equation} \label{e:approx-1}
- \Delta \omega \approx -\frac{g_{jjj}}{2M_j^2\omega_j^3} \fderiv{U}{Q_j} 
-               \approx -\frac{g_{jjj}}{2M_j^2\omega_j^3} \sum_x \fderiv{q_x}{Q_j} \phi({\bf r}_x)
+ \Delta \omega_j \approx -\frac{g_{jjj}}{2M_j^2\omega_j^3} \fderiv{U}{Q_j} 
+                 \approx -\frac{g_{jjj}}{2M_j^2\omega_j^3} \sum_x \fderiv{q_x}{Q_j} \phi({\bf r}_x)
 \end{equation}
 %
 which defines the solvatochromic charge $l_x\equiv-\frac{g_{jjj}}{2M_j^2\omega_j^3} \fderiv{q_x}{Q_j} $.
@@ -5751,7 +5752,7 @@ There is an accidental agreement with the benchmark DFT results.
 When we used the following approximation
 %
 \begin{equation} \label{e:approx-2}
- \Delta \omega \approx -\frac{1}{2M_j\omega_j} \sum_i \frac{g_{ijj}}{M_i\omega_i^2}\fderiv{U}{Q_i} 
+ \Delta \omega_j \approx -\frac{1}{2M_j\omega_j} \sum_i \frac{g_{ijj}}{M_i\omega_i^2}\fderiv{U}{Q_i} 
 \end{equation}
 %
 which is shown in Fig.XXXb and XXXe, certain deterioration of the SolChelpG
@@ -5759,8 +5760,8 @@ performance is found. Finally, when the electric anharmonicity is
 included
 %
 \begin{equation} \label{e:approx-3}
- \Delta \omega \approx -\frac{1}{2M_j\omega_j} \left[
- \sderiv{U}{Q_j} 
+ \Delta \omega_j \approx \frac{1}{2M_j\omega_j} \left[
+ \sderiv{U}{Q_j} -
  \sum_i \frac{g_{ijj}}{M_i\omega_i^2}\fderiv{U}{Q_i} 
 \right]
 \end{equation}
@@ -5812,38 +5813,555 @@ presented here (we prefer to include amide proton just in case).
 
 \subsection{Beyond Coulombic approximation}
 
-So far we were elaborating on the accuracy and computational
+Thus far we have elaborated on the accuracy and computational
 feasibility of using Coulombic models of the vibrational solvatochromism.
 Now let us study also other effects in detail.
+First we focus on the HF approximation
+so that it is possible to directly compare SolEFP calculations
+with SolEDS and full QM analysis results. The role of intermolecular dispersion interaction
+will be discussed later because it is virtually absent
+at HF level of theory. Also, we analyze the other electron correlation
+effects by using SolEDS/MP2 method. The orientation\hyp{}
+and distance\hyp{}dependencies of the various contributions
+to the frequency shifts are further studied to elucidate on
+the ranges of Coulombic, induction, dispersion and exchange\hyp{}repulsion
+effects on the vibrational solvatochromism of amide I mode.
+Finally, we challenge with modelling the bulk solutions
+and confront our SolEFP model with experiment.
+
+\subsubsection{Hartree-Fock approximation}
 
 To gain deeper insight into the origin of the frequency
 shift of NMA amide I mode, we first analyzed the three simple
 NMA--water dimers A, B and C, and the NMA--CHCl$_3$ dimer D 
-shown in Fig.XXX. The frequency
-shifts evaluated by using (i) constrained\hyp{}solute SolEDS and
+shown in Fig.XXX. 
+
+The frequency
+shifts evaluated by using (i) constrained\hyp{}cluster\footnote{See Appendix~\ref{a:constrained-models} for details about
+the constrained cluster method used here} SolEDS and
 SolEFP methods and (ii) analytical SolEFP equations applied
-for the fully optimized clusters are summarized in TableXXX.
+for the fully optimized clusters are summarized in Table~\ref{t:amide-I-soleds-solefp}.
+%
+\begin{table}[t!]
+\caption{
+SolEDS and SolEFP results (HF/6-311++G**) 
+on amide I frequency shifts of either constrained or unconstrained NMA--H$_2$O and NMA--CHCl$_3$ dimers. 
+Constrained calculations
+utilized numerical evaluation of interaction potential derivatives with respect to (wrt) normal coordinates of NMA whereas unconstrained calculations were
+based on analytical SolEFP formulae. All the components contributing to the amide I frequency shift are separately
+estimated for the sake of comparison. Also, not only the contribution from the mechanical anharmonicity (MA) term but also that from both MA and electric
+anharmonicity (EA) terms are given in this table. The negligible contributions to frequency shifts which were not implemented in SolEFP scheme are denoted
+as “n.i.” Those components that were not determined (calculated) due to numerical differentiation instabilities in constrained cluster estimations are indicated
+as “n.d.” Full QM (Hartree-Fock) harmonic frequencies were obtained for fully optimized cluster.
+\label{t:amide-I-soleds-solefp}}
+\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } l ccccccccc }
+\hline\hline
+ && \multicolumn{2}{c}{SolEDS$_{constr.}$} && \multicolumn{2}{c}{SolEFP$_{constr.}$} && \multicolumn{2}{c}{SolEFP$_{unconstr.}$} \\
+\cline{3-4}
+\cline{6-7}
+\cline{9-10}
+ && MA & MA+EA && MA & MA+EA && MA & MA+EA \\
+\hline
+ && \multicolumn{8}{c}{NMA--H$_2$O dimer A} \\
+\cline{3-10}
+Coul   && -38.2 & -33.9 && -38.8 & -32.5 && -48.5 & -39.7 \\
+Ex-Rep &&  19.7 &  22.8 &&  21.2 &  27.0 &&  20.7 &  n.i. \\
+Ind    &&  \multirow{2}{*}{-11.3} & \multirow{2}{*}{-13.2} && -7.7 & -9.9 && -9.5 & n.i. \\
+CT     &&       &       &&  -2.4 &  0.2  &&  n.i. &  n.i. \\
+Total  && -29.8 & -24.3 && -27.7 & -15.2 && -37.3 & -28.5 \\
+Full QM&& \multicolumn{8}{c}{-25.7} \\
+SolCAMM&& \multicolumn{8}{c}{-30.7} \\
+%
+ && \multicolumn{8}{c}{NMA--H$_2$O dimer B} \\
+\cline{3-10}
+Coul   &&  -2.0 &  -0.5 && -2.1  &  n.d. &&  -4.2 & -0.5 \\
+Ex-Rep &&  -5.1 &  -3.0 && -4.1  &  -2.9 &&  -5.2 &  n.i. \\
+Ind    &&  \multirow{2}{*}{1.2} & \multirow{2}{*}{0.8} && 0.1 & -0.7 && 0.3 & n.i. \\
+CT     &&       &       &&  1.1  &  0.6  &&   n.i.&  n.i. \\
+Total  && -5.8  &  -3.1 && -5.0  &  n.d. &&  -9.1 & -5.4 \\
+Full QM&& \multicolumn{8}{c}{-11.4} \\
+SolCAMM&& \multicolumn{8}{c}{-0.7} \\
+%
+ && \multicolumn{8}{c}{NMA--H$_2$O dimer C} \\
+\cline{3-10}
+Coul   && -42.6 & -36.9 && -43.7 & -44.0 && -51.3 & -36.2 \\
+Ex-Rep &&  24.2 &  25.9 &&  26.3 &  30.7 &&  28.5 &  n.i. \\
+Ind    &&  \multirow{2}{*}{-13.0} & \multirow{2}{*}{-14.4} && -8.9 & -12.2 && -11.2 & n.i. \\
+CT     &&       &       &&  -2.1 &  n.d. &&  n.i. &  n.i. \\
+Total  && -31.4 & -25.2 && -28.4 &  n.d. && -34.0 & -18.9 \\
+Full QM&& \multicolumn{8}{c}{-28.4} \\
+SolCAMM&& \multicolumn{8}{c}{-30.2} \\
+%
+ && \multicolumn{8}{c}{NMA--CHCl$_3$ dimer D} \\
+\cline{3-10}
+Coul   &&       &       &&       &       &&       &       \\
+Ex-Rep &&       &       &&       &       &&       &       \\
+Ind    &&  \multirow{2}{*}{ X } & \multirow{2}{*}{ X } &&   &   &&   &   \\
+CT     &&       &       &&       &       &&       &       \\
+Total  &&       &       &&       &       &&       &       \\
+Full QM&& \multicolumn{8}{c}{-28.4} \\
+SolCAMM&& \multicolumn{8}{c}{-30.2} \\
+\hline\hline
+\end{tabular*}
+\end{table}
+%
 The
 column denoted as "MA" contains the calculated frequency
 shift values with taking into account the mechanical anharmonicity
 effects only, whereas the
 values in the column denoted and "MA+EA" are the results obtained
 by including both the mechanical and electric anharmonicity
-contributions. As can be seen in TableXXX, most of
-calculated total frequency shifts including both MA and EA
-terms are in reasonable quantitative agreement with the full
-quantum chemistry calculation results, with exceptions of
-constrained-solute SolEFP result for system A and analytical
-SolEFP result for system C -- note that, in these two cases,
-the resultant frequency shifts are slightly underestimated. The
-quantitative agreement found in these comparative investigations
-indicates that the frequency shift formula, Eq. (2), on
-which all the numerical calculation results presented in this
-work are based, is sufficiently accurate and reproduces frequency
-shifts with possible errors of about 5--10 cm$^{-1}$, which
-is believed to be fairly accurate.
+contributions. As can be seen in Table~\ref{t:amide-I-soleds-solefp}, 
+the non\hyp{}Coulombic contributions to the vibrational frequency shift
+of amide I mode are rather large and definitely cannot be neglected.
+For instance, the exchange\hyp{}repulsion frequency shift causes very
+strong blue shifts in dimers A, C and D. Interestingly, strictly Coulombic
+model
+overestimates the red shifts considerably but approximate SolCAMM approach
+(that neglects electrostatic potential correction terms from Eq.~\eqref{e:dw-solefp-coul-correction})
+gives results that are somewhat closer to the full HF frequency shifts.
+On the other hand, in order to obtain
+quantitative agreement with the benchmark, induction and exchange\hyp{}repulsion
+have to be included whereas charge transfer can be safely neglected since it does
+not contribute more than 1 cm$^{-1}$. Note that SolEDS delocalization component
+is approximately split here into CT and induction contributions. SolEFP induction
+term reproduces well SolEDS delocalization term.
 
-\section{Combining with molecular dynamics}
+Clearly, SolEDS frequency shifts are in excellent agreement with full HF results
+but SolEFP in general underestimates the red shifts by about 5-9 cm$^{-1}$.
+This is probably due to the neglect of the electric anharmonicity
+contribution for induction and exchange\hyp{}repulsion. Nevertheless, 
+SolEFP model is considered to work quite well.
+
+Finally, to complete the test of the validity of our SolEFP
+analytical model with rigid molecule algorithm, we directly
+compare the \emph{ab initio} (HF) calculated frequency shifts of
+larger NMA--(H$_2$O)$_{n = 1-35}$ clusters with the SolEFP results
+(Fig.XXX). One can immediately find that the overall
+agreement is quantitative -- note that the black circles representing
+the SolEFP frequency shifts are on the linear line with
+slope of 1. For the sake of comparison, we also plot the SolCAMM 
+results (red open squares) here. In most cases, the
+exchange\hyp{}repulsion interaction between NMA and surrounding
+water molecules induces a frequency blueshift, whereas
+the polarization interaction does a redshift. The error associated
+with the neglect of charge transfer effect is estimated to
+be smaller than 5 cm$^{-1}$.
+
+\paragraph{Non\hyp{}additivity of induction effects}
+
+Before we go further and investigate electron correlation
+effects, let us analyze the induction effects more closely.
+It is apparent from our SolEFP theory that, except from induction, 
+all the other contributions to the vibrational solvatochromism
+are pair\hyp{}wise additive.\footnote{This is of course approximation
+but works very well for $\Delta\omega^{\rm Coul}$ and $\Delta\omega^{\rm Ex-Rep}$
+and also reasonably well for $\Delta\omega^{\rm Disp}$.} 
+We have quantitatively estimated
+the extent of two and three\hyp{}body effects for $\Delta\omega^{\rm Ind}$
+for a model NMA--(H$_2$O)$_3$ cluster shown in Fig.XXX. 
+We compare the frequency shifts computed for the whole cluster 
+with the sum of frequency shifts of three
+separate dimers. Here, the sets of internal coordinates of
+involved molecules are deliberately set to be the same for
+direct comparisons. Then, we considered the excess induction
+frequency shift of NMA--(H$_2$O)$_3$
+complex, which is defined as
+%
+\begin{equation}
+\Delta\Delta\omega^{\rm Ind}(\text{ABC}) = \Delta\omega^{\rm Ind}(\text{ABC})
+ - \Delta\omega^{\rm Ind}(\text{A}) - \Delta\omega^{\rm Ind}(\text{B}) - \Delta\omega^{\rm Ind}(\text{C})
+\end{equation}
+%
+The excess frequency shift can be partitioned into two\hyp{} and three\hyp{}water components as follows 
+%
+\begin{equation}
+\Delta\Delta\omega^{\rm Ind}(\text{ABC}) = 
+\Delta^2\Delta\omega^{\rm Ind}(\text{AB}) +
+\Delta^2\Delta\omega^{\rm Ind}(\text{AC}) +
+\Delta^2\Delta\omega^{\rm Ind}(\text{BC}) +
+\Delta^3\Delta\omega^{\rm Ind}(\text{ABC})
+\end{equation}
+%
+with
+%
+\begin{subequations}
+\begin{align}
+\Delta^2\Delta\omega^{\rm Ind}(\text{AB}) &= 
+   \Delta\omega^{\rm Ind}(\text{AB}) - 
+   \Delta\omega^{\rm Ind}(\text{A})  -
+   \Delta\omega^{\rm Ind}(\text{B}) \\
+\Delta^3\Delta\omega^{\rm Ind}(\text{ABC})&=
+   \Delta\omega^{\rm Ind}(\text{ABC}) -
+\sum_\text{X} \Delta\omega^{\rm Ind}(\text{X}) -
+\sum_{\text{X}<\text{Y}} \Delta^2\Delta\omega^{\rm Ind}(\text{XY})
+\end{align}
+\end{subequations}
+%
+In the above equations, $\Delta^2\Delta\omega^{\rm Ind}(\text{AB})$
+and $\Delta^3\Delta\omega^{\rm Ind}(\text{ABC})$
+mean the two\hyp{} and three\hyp{}water effect on the excess induction frequency shift,
+respectively. These contributions are gathered in Table~\ref{t:ind-nonadd}
+%
+\begin{table}[t!]
+\caption{
+Many\hyp{}body analysis of excess polarization frequency
+shift (in cm$^{-1}$) of NMA--(H$_2$O)$_3$ tetramer obtained by using 
+HF/6-311++G**/SolEFP method. Water molecules occupy the H-bonding sites
+A, B, and C as depicted in Fig.XXX.
+\label{t:ind-nonadd}}
+\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } l cccccc }
+\hline\hline
+\multicolumn{7}{c}{$\Delta\omega^{\rm Ind}$} \\
+\hline
+ABC     &&   AB      &&    AC     &&     BC \\
+-24.08  &&   -10.24  &&   -22.08  && -11.95 \\
+        &&   A       &&    B      &&     C  \\
+        &&  -9.40    &&    0.34   &&  -11.13 \\
+$\Delta\Delta\omega^{\rm Ind}$ && \multicolumn{3}{c}{$\Delta^2\Delta\omega^{\rm Ind}$} && $\Delta^3\Delta\omega^{\rm Ind}$ \\
+\cline{1-1}
+\cline{3-5}
+\cline{7-7}
+-3.89 && AB && -1.18 && 0.00 \\
+      && AC && -1.55 &&      \\
+      && BC && -1.16 &&      \\
+\hline\hline
+\end{tabular*}
+\end{table}
+%
+We found that the total enhancement of the induction effect
+due to the three\hyp{}body interactions (NMA--two water molecules)
+constitutes 16\% of the total frequency shift whereas the four\hyp{}body
+effect (NMA--three water molecules) is zero.
+This clearly demonstrates that induction effect on the vibrational
+frequency shift is strongly non\hyp{}additive and at least three\hyp{}body
+interactions need to be properly considered in the calculations.
+
+\subsubsection{Electron correlation effects}
+
+HF approximation does not take into account the correlation
+of electronic motion other than Fermi correlation
+that is due to the Pauli repulsion of electrons occupying the same
+molecular orbital. Let us reinvestigate the same NMA--H$_2$O
+and NMA--CHCl$_3$ clusters A, B, C and D that are now optimized
+at MP2/6-311++G** level. The associated SolEDS frequency shifts
+of the amide I mode are gathered in Table~\ref{t:mp2-soleds-amide-I}.
+For the sake of comparison, we also analyze the amide II mode.
+%
+\begin{table}[t!]
+\caption{
+SolEDS (constrained cluster) frequency shifts of amide I mode computed for three NMA--H$_2$O dimers 
+and NMA--CHCl$_3$ dimer by using second
+order M{\o}ller-Plesset (MP2) perturbation theory and the 6-311++G** basis set. 
+Full QM (MP2) harmonic
+frequencies were obtained for fully optimized clusters shown in Fig.XXX. The root\hyp{}mean\hyp{}square (RMS) of
+superimposition between all atoms of constrained and fully optimized clusters is also given. The RMS between
+C--C--N--C atoms of NMA is put in parentheses. See Section~\ref{s:soleds} and Eq.~\eqref{e:dw-soleds-mp2}
+for the description of the frequency shift terms analyzed here.
+\label{t:mp2-soleds-amide-I}}
+\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } l ccccccccccc }
+\hline\hline
+ & \multicolumn{8}{c}{NMA--H$_2$O} && \multicolumn{2}{c}{NMA--CHCl$_3$} \\
+\cline{2-9}
+\cline{11-12}
+ & \multicolumn{2}{c}{dimer A} && 
+    \multicolumn{2}{c}{dimer B} && 
+    \multicolumn{2}{c}{dimer C} && 
+    \multicolumn{2}{c}{dimer D} \\
+ & \multicolumn{2}{c}{0.06 (0.06) a.u.} && 
+    \multicolumn{2}{c}{1.6 (0.1) a.u.}   && 
+    \multicolumn{2}{c}{0.2 (0.04) a.u.}  && 
+    \multicolumn{2}{c}{0.08 (0.01) a.u.} \\
+\cline{2-12}
+ & \multicolumn{11}{c}{Amide I mode} \\
+\cline{2-12}
+ & MEA & MEA+EA &&  MEA & MEA+EA && MEA & MEA+EA && MEA & MEA+EA \\
+\hline
+ $\Delta \omega_{{\rm el}}^{(10)}$      & -67.5  & -64.3   && -26.0  & -24.6   && -63.7  & -56.4  && -64.0 & -64.3 \\
+ $\Delta \omega_{{\rm ex}}^{\rm HL}$    &  58.2  &  60.7   &&  13.5  &  15.7   &&  40.8  &  41.3  &&  60.1 &  65.9 \\
+ $\Delta \omega_{{\rm del}}^{\rm HF}$   & -26.7  & -27.5   &&  -6.1  &  -6.6   && -21.3  & -22.8  && -26.3 & -30.7 \\
+ $\Delta \omega_{{\rm el,r}}^{(12)}$    &  11.3  &  16.0   &&   3.2  &   3.6   &&   9.5  &  13.1  &&  15.1 &  17.0 \\
+ $\Delta \omega_{{\rm ex}}^{(2)}$       &  11.7  &  13.1   &&   1.5  &   2.3   &&  10.5  &  11.5  &&  11.4 &  16.2 \\
+ $\Delta \omega_{{\rm disp}}^{(20)}$    & -12.2  & -13.0   &&  -2.3  &  -3.0   &&  -8.5  &  -8.8  && -14.2 & -14.8 \\
+ $\Delta \omega_{\rm MP2}$              & -25.2  & -15.0   &&  -16.2 & -12.6   && -32.7  & -22.0  && -17.9 & -10.7 \\
+ Full QM                                &        & -17.8   &&        &  -8.4   &&        & -21.3  &&       & -15.4 \\
+\hline
+ & \multicolumn{11}{c}{Amide II mode} \\
+\cline{2-12}
+ & MEA & MEA+EA &&  MEA & MEA+EA && MEA & MEA+EA && MEA & MEA+EA \\
+\hline
+ $\Delta \omega_{{\rm el}}^{(10)}$      &  -6.9  & -10.2   &&  17.3  &  18.3   &&   7.2  &   5.7  &&  -4.3 &   0.1 \\
+ $\Delta \omega_{{\rm ex}}^{\rm HL}$    &  30.7  &  35.4   &&  -3.0  &   6.1   &&   1.6  &   2.0  &&  30.2 &  28.9 \\
+ $\Delta \omega_{{\rm del}}^{\rm HF}$   &  -5.7  &  -7.5   &&   4.4  &   2.1   &&   1.9  &   1.2  &&  -4.7 &  -3.5 \\
+ $\Delta \omega_{{\rm el,r}}^{(12)}$    &  -0.6  &   0.0   &&  -2.3  &  -3.3   &&  -0.9  &   0.1  &&  -0.9 &  -1.3 \\
+ $\Delta \omega_{{\rm ex}}^{(2)}$       &   5.0  &   6.4   &&   0.2  &   1.7   &&   0.45 &   0.7  &&   5.0 &   4.8 \\
+ $\Delta \omega_{{\rm disp}}^{(20)}$    &  -6.7  &  -8.5   &&   0.7  &  -1.1   &&  -0.5  &  -1.0  &&  -8.2 &  -8.2 \\
+ $\Delta \omega_{\rm MP2}$              &  15.8  &  15.6   &&  17.3  &  23.8   &&   9.75 &   8.7  &&  17.1 &  20.8 \\
+ Full QM                                &        &  14.7   &&        &  25.3   &&        &  12.4  &&       &  11.8 \\
+\hline\hline
+\end{tabular*}
+\end{table}
+%
+From the above analysis results we can see that the dispersion
+interaction\hyp{}induced frequency shift is smaller than that from
+the other effects at HF level. In
+addition, it is confirmed that
+the mechanical anharmonicity
+contribution is much larger than the electric
+anharmonicity contribution in all the cases
+studied here except from the $\Delta \omega_{{\rm el}}^{(10)}$ contribution for amide I mode 
+in dimer C and the amide II mode
+$\Delta \omega_{{\rm ex}}^{\rm HL}$ values when
+water molecule interacts with the amide proton
+(dimer B).
+In the latter exceptional case the second derivatives of exchange\hyp{}
+repulsion energy with respecto to the amide II normal coordinate
+cannot be neglected at all. 
+This can also be seen in the similar analysis at HF level from Table~\ref{t:amide-I-soleds-solefp}.
+Nevertheless, in the case of the amide I mode, the
+electric anharmonicity contributions are negligible except for
+the first\hyp{}order electrostatic interaction
+which is relatively easy to evaluate within SolEFP model, in contrast to
+other contributions.
+
+Electron correlation manifests in the intermolecular
+dispersion interaction energy and in the resulting vibrational
+frequency shift of the amide I mode, though they are negligibly
+small in the case of the amide II mode. Unfortunately, it is
+not possible to directly compare our SolEFP solvatochromism
+results with the SolEDS calculations because of the difference
+in theoretical levels describing the vibrational potential energy
+surface of NMA (SolEFP uses HF wavefunctions). Therefore,
+we rather focus on the frequency shift derived from the HF
+wavefunctions as well as that from the electron correlation
+effect induced by intermolecular dispersion interaction. The
+SolEDS analysis shows that the frequency shifts due to dispersion
+interactions between NMA and water as well as between
+NMA and chloroform are negative for the studied model
+dimers and they are non\hyp{}negligible. It is especially interesting
+to note that, in the case of the NMA\hyp{}CHCl$_3$ dimer, the amide
+II mode frequency shift is dictated by exchange\hyp{}repulsion
+interaction with negligibly small Coulomb contribution.
+
+\paragraph{Solvatochromic dispersion coefficients}
+
+Now we focus strictly on the intermolecular dispersion
+interaction contribution to the vibrational frequency shifts.
+Within SolEFP model, dispersion is derived from properties
+at HF level by using first\hyp{}order response theory
+and coupled\hyp{}perturbed Hartree\hyp{}Fock theory.
+Thus, already at HF level, we can estimate the intermolecular
+electron correlation effects.
+
+We have computed the solvatochromic dispersion coefficients
+$C_{j,6}$ (see Eq.~\eqref{e:cj6}) for amide I, II and A modes for the pairs NMA--X
+where X is H$_2$O, methanol (MeOH), ethanol (EtOH), DMSO,
+dimethylformamide (DMF), dichloromethane (CH$_2$Cl$_2$), chloroform
+(CHCl$_3$), tetrachloromethane (CCl$_4$), tetrahydrofuran
+(THF), benzene, and cyclohexane (Table~\ref{t:cj6}),
+and compared them with the conventional $C_6$ dispersion coefficients
+computed at the same level HF/6-311++G**. 
+%
+\begin{table}[t!]
+\caption{
+Isotropic solvatochromic dispersion $C_{j,6}$ coefficients of various
+molecular pairs involving NMA molecule computed
+by using Eq.~\eqref{e:cj6} and HF/6-311++G(d,p) method. Conventional dispersion
+isotropic $C_6$ coefficients evaluated from Eq.~\eqref{e:c6} at the same level are also
+shown for comparison. All values in a.u.
+\label{t:cj6}}
+\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } l cccccccc }
+\hline\hline
+ && \multicolumn{5}{c}{Dispersion $C_{j,6}$} && \\
+\cline{3-7}
+NMA && Amide I && Amide II && Amide A && $C_6$ \\
+\hline
+H$_2$O       && 0.78 && 2.40  && 11.59 && 158.0 \\
+MeOH         && 2.06 && 5.86  && 28.82 && 405.8 \\
+EtOH         && 3.76 && 11.46 && 55.38 && 748.1 \\
+DMSO         && 5.05 && 13.35 && 66.85 && 980.7 \\
+DMF          && 5.74 && 17.35 && 83.98 && 1141.6 \\
+CH$_2$Cl$_2$ && 3.74 && 10.00 && 49.93 && 727.2 \\
+CHCl$_3$     && 4.96 && 13.17 && 65.89 && 963.6 \\
+CCl$_4$      && 6.94 && 20.01 && 97.96 && 1361.5 \\
+THF          && 5.92 && 17.42 && 84.84 && 1165.4 \\
+Benzene      && 7.26 && 20.15 && 99.61 && 1429.6 \\
+Cyclohexane  && 8.28 && 23.96 && 117.2 && 1620.1 \\
+\hline\hline
+\end{tabular*}
+\end{table}
+%
+The values of $C_6$ coefficients
+can
+be rough indications of the relative strength of dispersion interactions
+between two molecules (when all the molecules are separated by the same
+distance). We found that the dispersion solvatochromic coefficients
+increase with the increase of the dispersion coefficient for the interaction
+energy. Moreover, the extent of increase in both coefficient series
+is similar. For instance, the $C_{j,6}$ coefficient of the
+amide I mode of NMA--CHCl$_3$ is about 6 times larger than
+that of NMA--H$_2$O and that the $C_6$ value of NMA--CHCl$_3$ is
+also about 6 times larger than that of NMA--H$_2$O. Therefore,
+it is possible to conclude that the dispersion interaction
+strength is generally in good correlation with the dispersion
+interaction\hyp{}induced frequency shift. This is particularly important
+because, when a given IR probe is in a non\hyp{}polar or aprotic
+environment such as inner region of protein, the vibrational
+frequency shift of the IR probe is likely to be determined
+by the short\hyp{}range interactions like repulsive and dispersive
+terms.
+
+The approach based on the molecular $C_{j,6}$ coefficients 
+is definitly too crude approximation and the distributed approaches
+should be used for quantitative calculations. 
+In Section ~\ref{s:disp} we have developed two
+approximate schemes of the most accurate expression in Eq.~\eqref{e:dw-disp-6-distr-working}
+representing $\Delta\omega^{\rm Disp}_6$. The simplest
+one is based on the isotropic distributed coefficients $C_{j,6}^{ab}$
+that are computed for the particular LMO-LMO pair, and is given
+in Eq.~\eqref{e:dw-disp-6-iso-approx-distributed}. 
+The second one is more involved (Eq.~\eqref{e:dw-disp-6-iso-distributed}) since
+it includes terms proportional to $r^{-7}_{ab}$ but still neglects the anizotropy
+of the dispersion effect. Here we tested the two approximations
+and compared them with the most accurate, anisotropic dispersion
+interaction\hyp{}induced frequency shifts where
+the off\hyp{}diagonal dynamic polarizability tensor components
+are also considered.
+
+Generally, $\Delta \omega_{6}^{\rm Disp-Approx}$ approximation
+underestimates the frequency red shift roughly by a factor of 1.6,
+as compared to $\Delta\omega^{\rm Disp}_6$ calculation results.
+The inclusion of $r^{-7}_{ab}$\hyp{}dependent terms contribute 
+only little to the shifts. Thus, the anisotripic dispersion effects
+are not completely negligible for the amide I mode frequency shift
+in water and they should be included. On the other hand, it is interesting
+to note that, on average, all the $\Delta \omega_{6}^{\rm Disp-Approx}$
+estimations can by scaled by 1.62 to reproduce the corresponding $\Delta\omega^{\rm Disp}_6$
+values. This could be used as a way of fast and easy to implement
+procedure of computing dispersion frequency shifts from isotropic
+coefficients with including anisotropic effects by a scaling factor.
+Unfortunately, such a scaling
+factor is different for other solvents 
+(we show later in Section.XXX that 
+$\Delta \omega_{6}^{\rm Disp-Approx}\approx\Delta \omega_{j,6}^{\rm Disp}$
+in CDCl$_3$). 
+Nevertheless, from the present calculations, we conclude that the dispersion
+interaction between NMA and surrounding water molecules
+induces an amide I frequency shift of about --30 cm$^{-1}$, which is
+comparable to $\Delta \omega^{\rm Ind}$.
+
+\subsubsection{Orientation and distance\hyp{}dependence of frequency shift components}
+
+It is well known that Coulombic interactions are relatively long range forces
+and can be either attractive or repulsive, depending on the orientation
+of molecules.
+Induction and dispersion effects are shorter\hyp{}range attractive forces but still
+can be considered as moderately long\hyp{}range since they typically
+extend over a few solvation shells. Exchange\hyp{}repulsion interactions
+and charge\hyp{}transfer decay very fast with intermolecular distances
+and they are short\hyp{}range effects, mostly extending only to the first
+neighbour molecule. The first is always repulsive and the second is attractive.
+
+Similarly, vibrational frequency shifts that originate due to the above
+forces will have distinct characteristics. Let us first investigate
+the simple situation when NMA interacts with one water or CHCl$_3$ molecule.
+We have performed the calculations in which solvent molecule were rotated
+and translated away from NMA. In Figs.XXX, the corresponding scans are presented.
+The starting point was solute\hyp{}solvent complex in its equilibrium geometry
+with $\theta=0$ and $R_d=0$, where $\theta$ is the angle of rotation of solvent
+molecule (see the insets in Figs.XXX) and $R_d$ is the displacement along the H-bond axis.
+Positive values of $R_d$ denote moving solvent away from solute. We have performed
+the total scan on a grid of 80 translations for $R_d\in [-1.0,3.0]\text{a.u.}$ 
+and 360 rotations every 1\textdegree.
+
+We found that only $\Delta\omega^{\rm Coul}$ is a strongly directional
+contribution (i.e., it contributes to blue or red shifts depending on the
+relative orientation of the molecules) whereas all the remaining effects
+give either blue shifts \emph{or} red shifts. Interestingly, $\Delta\omega^{\rm Disp}$
+is red-shifting when
+the water molecule interacts with the NMA carbonyl oxygen,
+whereas it is positive blue-shifting when water interacts with
+the amide proton of NMA.
+
+We also found that $\Delta\omega^{\rm Ex-Rep}$
+decays the fastest among all contributions to the vibrational frequency shift
+and is short\hyp{}range effect, much like the conventional Coulombic interaction energy.
+Induction and dispersion frequency shifts decay quite fast as well. To see the
+distance\hyp{}dependences more clearly we have computed frequency shifts
+of NMA in a bulk aqueous and CHCl$_3$ solutions by taking into account
+the first $N$ solvent molecules within $R_{\rm Max}$ distance between center of
+mass. They are plotted in Figs.XXX. It is clear that $\Delta\omega^{\rm Ind}$
+and $\Delta\omega^{\rm Disp}$ effects are rather long\hyp{}range
+and on average 3--4 solvation shells are necessary to converge them with increasing $R_{\rm Max}$.
+In contrast, $\Delta\omega^{\rm Ex-Rep}$ requires only the first and second solvation
+shells and 13 bohr cutoff is sufficient.
+
+
+
+\section{Modelling vibrational solvatochromism in bulk}
+
+In order to model real systems it is desirable to consider
+models of bulk solutions rather than small solute\hyp{}solvent
+clusters. We have performed CMD simulations of NMA (in \emph{trans}
+conformation) in water and CDCl$_3$ and we have applied the rigid
+molecule algorithm for SolEFP to the resulting CMD trajectories 
+(see Chapter X for the detailed
+discussion and implementation), and the results are gathered
+in Table~\ref{t:amide-I-bulk}.
+%
+\begin{table}[t!]
+\caption{
+Experimental vibrational frequencies of the amide I mode of
+NMA in gas phase, H$_2$O and CDCl$_3$, and frequency shifts relative to gas
+phase state obtained by SolEFP/6-311++G(d,p)//Parm99 method. In this
+Table, we also show full width at half maximum (FWHM) of vibrational
+frequency shift static distributions obtained from SolEFP//Parm99 calculations.
+All values in cm$^{-1}$.
+\label{t:amide-I-bulk}}
+\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } l ccccc }
+\hline\hline
+\multirow{5}{*}{Gas phase} & 1731$^a$ & \multirow{5}{*}{$\Delta\omega^{\rm Expt.}$} 
+                                      & \multirow{5}{*}{$\Delta\omega^{\rm SolEFP//Parm99}$} 
+                                      & \multirow{5}{*}{Error} & \\
+                           & 1714$^a$ & &&&\\
+                           & 1731$^b$ & &&&\\
+                           & 1713$^b$ & &&&\\
+                           & 1728$^c$ & &&&\\
+\hline
+\multirow{3}{*}{H$_2$O}    & 1619$^d$ & \multirow{3}{*}{-100 $\pm$8} 
+                                      & \multirow{3}{*}{-95.1$\pm$3} 
+                                      & \multirow{3}{*}{+4.9} & \\
+                           & 1625$^a$ & &&&\\
+                           & 1628$^e$ & &&&\\
+CDCl$_3$                   & 1669$\pm$3$^f$ & -55$\pm$6 & -39.1$\pm$3 & +15.9 &\\
+%
+\hline\hline
+        &  \multicolumn{5}{c}{Static distribution} \\
+\cline{2-6}
+Solvent & $\Gamma^{\rm Coul}$ & $\Gamma^{\rm Ex-Rep}$ & $\Gamma^{\rm Ind}$ & $\Gamma^{\rm Disp}_6$ & $\Gamma^{\rm SolEFP}$ \\
+\hline
+H$_2$O  &     62 $\pm$ 3      &    112 $\pm$ 10       &     47 $\pm$ 4     &    34 $\pm$ 2         &       69 $\pm$ 3      \\
+CDCl$_3$&     37 $\pm$ 3      &     25 $\pm$ 5        &      9 $\pm$ 1     &    22 $\pm$ 2         &       51 $\pm$ 3      \\
+\hline\hline
+\end{tabular*}
+\begin{footnotesize}
+$^a$Ref.; $^b$Ref.; $^c$Ref.; $^d$Ref.; $^e$Ref.; $^f$Ref.
+\end{footnotesize}
+\end{table}
+%
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \section{Discussion}
 
@@ -6540,12 +7058,12 @@ obtained the contribution from the charge\hyp{}transfer effect,
 which was not implemented in the analytical SolEFP calculation
 procedure. 
 
-\subsubsection{Constrained cluster method}
+\subsubsection{Constrained cluster method\label{a:constrained-models}}
 
 To apply SolEDS scheme properly one needs to be cautious 
 since its application to the molecular multimers is not at all
 straightforward as one could be possibly missled by seemingly simple
-Eqs.~\eqref{e:soleds}, \eqref{e:soleds-hf} and \eqref{e:soleds-mp2}. 
+Eqs.~\eqref{e:dw-soleds}, \eqref{e:dw-soleds-hf} and \eqref{e:dw-soleds-mp2}. 
 Note that the vibrational analysis restrics us to keep the entire cluster
 in its equillibrium geometry. On the other hand, vibrational
 solvatochromic shift operator requires the evaluation of derivatives
