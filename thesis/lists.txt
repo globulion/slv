@@ -13,6 +13,22 @@ SAPT                     & EDS                             & EFP2               
 \end{tabular*}
 \end{table}
 
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.9\linewidth]{FILE}
+}
+\caption{
+CAPTION
+\label{LABEL}}
+\end{figure}
+%
+
+# correcting EPS bounding boxes
+gs -dNOPAUSE -dBATCH -q -sDEVICE=bbox <file>
 
 \begin{equation} \label{e:dw-soleds-mp2}
  \Delta\omega_j^{\rm SolEDS/MP2} = 

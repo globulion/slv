@@ -29,6 +29,8 @@
 \usepackage{hyphenat}
 \hyphenation{di-men-sio-nal}
 \hyphenation{e-lec-tro-sta-tic sol-va-to-chro-mic sol-va-to-chro-mism}
+\hyphenation{Sol-MMM Sol-ChelpG Sol-CAMM Sol-SAPT Sol-EDS}
+%\hyphenation{Sol-CAMM-5 Sol-CAMM-6 Sol-CAMM-12}
 \usepackage[shortcuts]{extdash}
 \frenchspacing
 
@@ -5425,14 +5427,33 @@ by continuum medium of dielectric constant $\varepsilon$.
 In Chapter 4, we have solved this problem exactly within
 WCA limit. 
 
-In the Fig.XXX we show the application of the rigid
+In the Fig.~\ref{f:onsager} we show the application of the rigid
 and flexible vibrational solvatochromism models that are directly
 compared with the full QM calculations. It is apparent that WCA
-limit is ineed working very well and when the reaction field\hyp{}induced 
+limit is indeed working very well and when the reaction field\hyp{}induced 
 structural distortions
 are included for the NMA's dipole moment description 
 we achieved quantitative agreement
-with full QM results. Thus, the
+with full QM results. 
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.97\linewidth]{NMA-Onsager-Freq.eps}
+}
+\caption{
+(a) Ratio of the total NMA dipole moment with respect to its gas\hyp{}phase
+value obtained from the DFT/6-311++G** calculation results with rigid and flexible
+models (b) The NMA amide I mode frequencies calculated by using the same method
+method are compared with the theoretical results using the Onsager model. 
+Both rigid and flexible model calculations are shown here. The cavity radius was set
+to be 3.72 \AA.
+\label{f:onsager}}
+\end{figure}
+%
+Thus, the
 iterative algorithm developed in Chapter 4 improves the predicted
 dipole moments and reproduces the tangent line at the origin.
 However, the qualitative
@@ -5567,7 +5588,7 @@ as usual because the vibrational properties of solute are of
 our concern. The algorithm proposed here could be improved
 to some extent by making it more flexible, i.e., by considering
 the rotation matrices between respective fragments like
-the two methyl groups and O$=$C$–$N$–$H amide group of NMA
+the two methyl groups and O$=$C$-$N$-$H amide group of NMA
 in an \emph{ad hoc} manner. 
 Nevertheless, the estimated RMS values for all the
 cases were less than 0.07 a.u. for NMA and 0.04 a.u. for water
@@ -5661,7 +5682,7 @@ despite these relatively large differences between the
 two sets of vibrational solvatochromic multipoles, the corresponding
 vibrational amide I' mode frequency shifts are found
 to be in very good agreement with each other and the predictions
-made by these models are similar (Fig.XXX).
+made by these models are similar which are plotted in Fig.~\ref{f:solmmm}b.
 
 Let us analyze the convergence properties of SolMMM vibrational
 frequency shifts.
@@ -5673,10 +5694,29 @@ interaction is $R^{-4}$, or in other words, this interaction decays asymptotical
 as $R^{-4}$ when $R$ increases. It is useful to classify all the terms in the
 expansion of the Coulombic interaction energy (and frequency shift)
 according to their $R^{-n}$\hyp{}dependencies and study the convergence
-by including terms with larger $n$. In Fig.XXX we depict the
+by including terms with larger $n$. In Fig.~\ref{f:solmmm} we depict the
 vibrational frequency shifts of amide I (I') modes in water
 correlated with the full DFT results.
-  
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.97\linewidth]{NMA-SolMMM-COE.eps}
+}
+\caption{
+Amide I and I' harmonic frequency shifts of NMA (a) and NMA-$d$ (b) 
+are compared with the B3LYP/6-311++G**/SolMMM(COE) coarse\hyp{}grained
+model results. In the case of NMA-$d$ (b) the frequency shifts obtained 
+by using solvatochromic molecular multipole moments from Ref.\citep{Lee.Choi.Cho.JCP.2012} 
+are also shown (see black squares). Here, the convergence of multipole expansion 
+is examined by calculating interaction energies and vibrational frequency shifts 
+that are summed up to $R^{-3}$ (blue), $R^{-4}$ (red), and $R^{-5}$ (green) terms, 
+respectively.
+\label{f:solmmm}}
+\end{figure}
+%
 In most of the cases of the NMA amide I mode, the predicted
 shifts appeared to diverge when the dipole\hyp{}quadrupole
 interactions are taken into account. 
@@ -5694,7 +5734,8 @@ atom by deuterium makes the NMA-$d$ amide I' mode more localized
 on carbonyl group because deuterium is heavier than prot. 
 Thus, the vibrational solvatochromic charge
 density is more localized in space and, therefore, the effective
-size of vibrational probe is smaller. But it means that the divergence sphere
+size of vibrational probe is smaller. 
+But it means that the divergence sphere
 of multipole expansion is smaller as well. 
 
 However, in the case of NMA,
@@ -5717,7 +5758,7 @@ becasue each ChelpG charge is obtained from fitting to reproduce the electrostat
 potential. Therefore, numerical differentiation of ChelpG charges
 contains errors that are difficult to estimate quantitatively.
 
-In Fig.XXX we plot the corresponding SolChelpG-12, SolChelpG-6 and
+In Fig.~\ref{f:solchelpg} we plot the corresponding SolChelpG-12, SolChelpG-6 and
 SolChelpG-5 vibrational frequency shifts for both NMA and NMA-$d$.
 Panels (c) and (f) in this figure show the most accurate estimations
 in which both mechanical and electric anharmonicities are included.
@@ -5726,6 +5767,25 @@ On the other hand, the SolChelpG results are clearly in correlation
 with the benchmark. Lack of the full agreement can be cause either
 by the neglect of other interactions or by errors introduced into
 the SolChelpG scheme when numerical differentiation is performed.
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.97\linewidth]{NMA-SolCHELPG.eps}
+}
+\caption{
+Harmonic frequency shifts of amide I mode of NMA (a-c) and amide II mode
+of NMA-$d$ (d-f) calculated using
+B3LYP/6-311++G**/SolChelpG (n = 12, 6, and 5) coarse\hyp{}grained model
+are compared with full DFT results. (a) and (d) Mechanical anharmonicity with the
+diagonal cubic anharmonic constant only; (b) and (e) mechanical anharmonicity with
+all the diagonal and off\hyp{}diagonal cubic anharmonic constants included; and
+(c) and (f) both mechanical and electronic anharmonicities.
+\label{f:solchelpg}}
+\end{figure}
+%
 
 It is also instructive to examine the importance of the
 mechanical and electric anharmonicities. In previous works
@@ -5743,11 +5803,11 @@ Thus, by finding $l_x$ by fitting to benchmark frequencies,
 the charge\hyp{}flow terms were inferred that tell about the
 response of the particular IR probe's atomic site against the external electric field.
 However, this approximation neglects off\hyp{}diagonal cubic anharmonic
-constants $g_{ijj} \text{for $i\ne j$}$. Also, this neglects $\sderiv{U}{Q_j} $
+constants $g_{ijj} \text{for $i\ne j$}$. Also, this neglects $\sderiv{U}{Q_j}$
 which contributes to the electric anharmonicity. Our SolChelpG analysis
 can estimate the importance of these neglected previously factors.
 
-In Fig.XXXa and XXXd the results of estimating Eq.~\eqref{e:approx-1} are shown.
+In Fig.~\ref{f:solchelpg}a and \ref{f:solchelpg}d the results of estimating Eq.~\eqref{e:approx-1} are shown.
 There is an accidental agreement with the benchmark DFT results.
 When we used the following approximation
 %
@@ -5755,7 +5815,7 @@ When we used the following approximation
  \Delta \omega_j \approx -\frac{1}{2M_j\omega_j} \sum_i \frac{g_{ijj}}{M_i\omega_i^2}\fderiv{U}{Q_i} 
 \end{equation}
 %
-which is shown in Fig.XXXb and XXXe, certain deterioration of the SolChelpG
+which is shown in Fig.~\ref{f:solchelpg}b and \ref{f:solchelpg}e, certain deterioration of the SolChelpG
 performance is found. Finally, when the electric anharmonicity is
 included
 %
@@ -5775,7 +5835,7 @@ The most accurate model is to use
 distributed multipole analysis method such as SolCAMM
 which is also free from numerical differentiation errors,
 in contrast to SolChelpG method.
-In Figs.XXX and XXX we present the SolCAMM-6 results 
+In Figs.~\ref{f:solcamm} we present the SolCAMM-6 results 
 for amide I and I' modes. It is clear that
 these models work very well and the predicted 
 vibrational frequency shifts are in fairly good correlation
@@ -5784,6 +5844,29 @@ the red shifts are somewhat overestimated.
 It is also apparent that SolCAMM-6 results are
 convergent in both amide I and I' mode cases, which is
 an improvement over single\hyp{}centered SolMMM method.
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.97\linewidth]{NMA-SolCAMM-6.eps}
+}
+\caption{
+Harmonic frequency shifts of amide I mode of NMA (a-c) and amide II mode
+of NMA-$d$ (d-f) calculated using
+B3LYP/6-311++G**/SolCAMM-6 coarse\hyp{}grained model
+are compared with full DFT results. (a) and (d) Mechanical anharmonicity with the
+diagonal cubic anharmonic constant only; (b) and (e) mechanical anharmonicity with
+all the diagonal and off\hyp{}diagonal cubic anharmonic constants included; and
+(c) and (f) both mechanical and electronic anharmonicities.
+The convergence of multipole
+expansion is examined by calculating interaction energies and vibrational frequency
+shifts that are summed up to $R^{-1}$ (black), $R^{-2}$ (red), $R^{-3}$ (green), and
+$R^{-4}$ (blue) terms, respectively.
+\label{f:solcamm}}
+\end{figure}
+%
 
 Now we can reinvestigate also the accidental good SolChelpG performance under the
 approximation Eq.~\eqref{e:approx-1}. We performed similar 
@@ -5797,12 +5880,12 @@ of electrostatic potential distribution in the SolChelpG
 model might cause such an accidental agreement with full DFT results. Furthermore,
 as in the case of SolChelpG model, mechanical
 anharmonicities are negligible for amide I' mode shifts -- note
-that the data in Fig.XXXd are almost identical to those in
-Fig.XXXe.
+that the data in Fig.~\ref{f:solcamm}d are almost identical to those in
+Fig.~\ref{f:solcamm}e.
 
 Before we close this Section, it is worth discussing 
 the performance of contracted SolChelpG and
-SolCAMM models. As can be seen in Figs.XXX and XXX, 
+SolCAMM models. As can be seen in Fig.~\ref{f:solchelpg}, 
 the reduction of the number of distributed centers
 does not influence much the performance of the methods, even if united atom 
 model on nitrogen is created (resulting in just 5 distributed centers). 
@@ -5835,6 +5918,24 @@ To gain deeper insight into the origin of the frequency
 shift of NMA amide I mode, we first analyzed the three simple
 NMA--water dimers A, B and C, and the NMA--CHCl$_3$ dimer D 
 shown in Fig.XXX. 
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.97\linewidth]{NMA-ABCDE.eps}
+}
+\caption{
+Model NMA--(H$_2$O)$_{n = 1,3}$ and NMA--CHCl$_3$ clusters 
+for SolEDS and SolEFP analyses. The NMA has three H-bonding sites so that three dimers A, B, and C are
+considered here. In addition, to examine the many\hyp{}body effects on polarization contribution 
+to the amide I frequency shift, we also carried out quantum
+chemistry calculations for the NMA with three H-bonded water molecules in configurations
+AB, AC and BC.
+\label{f:nma-abcde}}
+\end{figure}
+%
 
 The frequency
 shifts evaluated by using (i) constrained\hyp{}cluster\footnote{See Appendix~\ref{a:constrained-models} for details about
@@ -5845,7 +5946,8 @@ for the fully optimized clusters are summarized in Table~\ref{t:amide-I-soleds-s
 \begin{table}[t!]
 \caption{
 SolEDS and SolEFP results (HF/6-311++G**) 
-on amide I frequency shifts of either constrained or unconstrained NMA--H$_2$O and NMA--CHCl$_3$ dimers. 
+on amide I frequency shifts of either constrained or unconstrained NMA--H$_2$O and NMA--CHCl$_3$ dimers
+shown in Figure~\ref{f:nma-abcde}. 
 Constrained calculations
 utilized numerical evaluation of interaction potential derivatives with respect to (wrt) normal coordinates of NMA whereas unconstrained calculations were
 based on analytical SolEFP formulae. All the components contributing to the amide I frequency shift are separately
@@ -5937,7 +6039,7 @@ Finally, to complete the test of the validity of our SolEFP
 analytical model with rigid molecule algorithm, we directly
 compare the \emph{ab initio} (HF) calculated frequency shifts of
 larger NMA--(H$_2$O)$_{n = 1-35}$ clusters with the SolEFP results
-(Fig.XXX). One can immediately find that the overall
+(Fig.~\ref{f:nma-water-rhf}a). One can immediately find that the overall
 agreement is quantitative -- note that the black circles representing
 the SolEFP frequency shifts are on the linear line with
 slope of 1. For the sake of comparison, we also plot the SolCAMM 
@@ -5947,6 +6049,34 @@ water molecules induces a frequency blueshift, whereas
 the polarization interaction does a redshift. The error associated
 with the neglect of charge transfer effect is estimated to
 be smaller than 5 cm$^{-1}$.
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.97\linewidth]{NMA-water-RHF.eps}
+}
+\caption{
+(a) The amide I mode frequency shift components that were computed
+for various NMA-(H$_2$O)$_{n = 1-35}$ clusters using 
+RHF/6-311++G**/SolEFP method. The repulsion interaction induces amide I
+frequency blueshifts, whereas the induction (distributed multipole\hyp{}induced
+dipole interaction) interaction causes amide I frequency redshifts.
+(b) Frequency shift decomposition as a function of the number of water molecules.
+Here, the first\hyp{} and second\hyp{}order frequency shift contributions,
+$\Delta\omega^{(1)}$ and $\Delta\omega^{(2)}$, are explicitly shown. It is clear
+that second\hyp{}order (dispersion and induction) effects are even stronger 
+that first\hyp{}order effect due to Heitler\hyp{}London solute\hyp{}solvent
+interaction potential.
+(c) Various levels of theoretical approximation of dispersion frequency
+shifts of amide I mode that were computed for $\Delta\omega^{\rm Disp}$,
+$\Delta\omega^{\rm Disp-Iso}$ and $\Delta\omega^{\rm Approx}$ 
+from Eqs.~\eqref{e:dw-disp-6-distr-working}, \eqref{e:dw-disp-6-iso-distributed} 
+and \eqref{e:dw-disp-6-iso-approx-distributed}, respectively.
+\label{f:nma-water-rhf}}
+\end{figure}
+%
 
 \paragraph{Non\hyp{}additivity of induction effects}
 
@@ -5959,7 +6089,7 @@ but works very well for $\Delta\omega^{\rm Coul}$ and $\Delta\omega^{\rm Ex-Rep}
 and also reasonably well for $\Delta\omega^{\rm Disp}$.} 
 We have quantitatively estimated
 the extent of two and three\hyp{}body effects for $\Delta\omega^{\rm Ind}$
-for a model NMA--(H$_2$O)$_3$ cluster shown in Fig.XXX. 
+for a model NMA--(H$_2$O)$_3$ cluster E shown in Fig.~\ref{f:nma-abcde}. 
 We compare the frequency shifts computed for the whole cluster 
 with the sum of frequency shifts of three
 separate dimers. Here, the sets of internal coordinates of
@@ -6008,7 +6138,7 @@ respectively. These contributions are gathered in Table~\ref{t:ind-nonadd}
 Many\hyp{}body analysis of excess polarization frequency
 shift (in cm$^{-1}$) of NMA--(H$_2$O)$_3$ tetramer obtained by using 
 HF/6-311++G**/SolEFP method. Water molecules occupy the H-bonding sites
-A, B, and C as depicted in Fig.XXX.
+A, B, and C as depicted in Fig.~\ref{f:nma-abcde}.
 \label{t:ind-nonadd}}
 \begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } l cccccc }
 \hline\hline
@@ -6054,7 +6184,8 @@ SolEDS (constrained cluster) frequency shifts of amide I mode computed for three
 and NMA--CHCl$_3$ dimer by using second
 order M{\o}ller-Plesset (MP2) perturbation theory and the 6-311++G** basis set. 
 Full QM (MP2) harmonic
-frequencies were obtained for fully optimized clusters shown in Fig.XXX. The root\hyp{}mean\hyp{}square (RMS) of
+frequencies were obtained for fully optimized clusters shown in Fig.~\ref{f:nma-abcde}. 
+The root\hyp{}mean\hyp{}square (RMS) of
 superimposition between all atoms of constrained and fully optimized clusters is also given. The RMS between
 C--C--N--C atoms of NMA is put in parentheses. See Section~\ref{s:soleds} and Eq.~\eqref{e:dw-soleds-mp2}
 for the description of the frequency shift terms analyzed here.
@@ -6228,7 +6359,8 @@ interaction\hyp{}induced frequency shifts where
 the off\hyp{}diagonal dynamic polarizability tensor components
 are also considered.
 
-Generally, $\Delta \omega_{6}^{\rm Disp-Approx}$ approximation
+As can be seen from Fig.~\ref{f:nma-water-rhf}c,
+$\Delta \omega_{6}^{\rm Disp-Approx}$ approximation generally
 underestimates the frequency red shift roughly by a factor of 1.6,
 as compared to $\Delta\omega^{\rm Disp}_6$ calculation results.
 The inclusion of $r^{-7}_{ab}$\hyp{}dependent terms contribute 
@@ -6266,10 +6398,11 @@ Similarly, vibrational frequency shifts that originate due to the above
 forces will have distinct characteristics. Let us first investigate
 the simple situation when NMA interacts with one water or CHCl$_3$ molecule.
 We have performed the calculations in which solvent molecule were rotated
-and translated away from NMA. In Figs.XXX, the corresponding scans are presented.
+and translated away from NMA. In Figures~\ref{f:nma-orient-a}, \ref{f:nma-orient-b}
+and \ref{f:nma-orient-d}, the corresponding scans are presented.
 The starting point was solute\hyp{}solvent complex in its equilibrium geometry
 with $\theta=0$ and $R_d=0$, where $\theta$ is the angle of rotation of solvent
-molecule (see the insets in Figs.XXX) and $R_d$ is the displacement along the H-bond axis.
+molecule (see the insets in these figures) and $R_d$ is the displacement along the H-bond axis.
 Positive values of $R_d$ denote moving solvent away from solute. We have performed
 the total scan on a grid of 80 translations for $R_d\in [-1.0,3.0]\text{a.u.}$ 
 and 360 rotations every 1\textdegree.
@@ -6282,6 +6415,118 @@ is red-shifting when
 the water molecule interacts with the NMA carbonyl oxygen,
 whereas it is positive blue-shifting when water interacts with
 the amide proton of NMA.
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.97\linewidth]{NMA-orient-A.eps}
+}
+\caption{
+Scan of amide I mode frequency shifts for NMA interacting 
+with one water molecule via carbonyl oxygen atom. 
+The NMA--water dimer was first optimized
+by using the HF/6-311++G(d,p) method 
+($R_d = 0$ and $\theta = 0$). 
+The water molecule was then translated with respect to 
+NMA and rotated around its center of mass (COM) in the plane 
+of NMA backbone atoms (C--C--N--C). $R_d$ stands for the translation 
+distance along the direction specified by the NMA
+carbonyl oxygen atom and COM of water. The orientation of the water 
+molecule is also schematically depicted in the inset at the 
+right\hyp{}hand side of the figure.
+\label{f:nma-orient-a}}
+\end{figure}
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.97\linewidth]{NMA-orient-B.eps}
+}
+\caption{
+Scan of amide I mode frequency shifts for NMA interacting 
+with one water molecule via amide proton of NMA.
+The NMA--water dimer was first optimized
+by using the HF/6-311++G(d,p) method 
+($R_d = 0$ and $\theta = 0$). 
+The water molecule was then translated with respect to 
+NMA and rotated around its center of mass (COM) in the plane 
+of NMA backbone atoms (C--C--N--C). $R_d$ stands for the translation 
+distance along the direction specified by the NMA
+carbonyl oxygen atom and COM of water. The orientation of the water 
+molecule is also schematically depicted in the inset at the 
+right\hyp{}hand side of the figure.
+\label{f:nma-orient-b}}
+\end{figure}
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.97\linewidth]{NMA-orient-D.eps}
+}
+\caption{
+Scan of amide I mode frequency shifts for NMA interacting 
+with one CHCl$_3$ molecule via oxygen atom.
+The NMA--CHCl$_3$ dimer was first optimized
+by using the HF/6-311++G(d,p) method 
+($R_d = 0$ and $\theta = 0$). 
+The CHCl$_3$ molecule was then translated with respect to 
+NMA and rotated around its center of mass (COM) in the plane 
+of NMA backbone atoms (C--C--N--C). $R_d$ stands for the translation 
+distance along the direction specified by the NMA
+carbonyl oxygen atom and COM of CHCl$_3$. The orientation of the CHCl$_3$
+molecule is also schematically depicted in the inset at the 
+right\hyp{}hand side of the figure.
+\label{f:nma-orient-d}}
+\end{figure}
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.97\linewidth]{cut-tip4p.eps}
+}
+\caption{
+The convergence of the SolEFP frequency shifts with increasing $R_{\rm Max}$
+for NMA in water: a) Coulomb, b) exchange\hyp{}repulsion, 
+c) induction and d) dispersion frequency shifts. 
+12 randomly chosen NMA--(H$_2$O)$N$ configurations from 1 ns 
+NVT MD simulation at 300 K are considered. Different colors 
+are used just to make it easy to distinguish results from 
+different configurations sampled from MD trajectories. 
+In this Figure, the numbers of water molecules averaged 
+over the 12 sample configurations are also shown here 
+(brown circles and line). 
+\label{f:nma-water-dist}}
+\end{figure}
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.97\linewidth]{cut-cdcl3.eps}
+}
+\caption{
+The convergence of the SolEFP frequency shifts with increasing $R_{\rm Max}$
+for NMA in CDCl$_3$: a) Coulomb, b) exchange\hyp{}repulsion, 
+c) induction and d) dispersion frequency shifts. 
+12 randomly chosen NMA--(CDCl$_3$)$N$ configurations from 1 ns 
+NVT MD simulation at 300 K are considered. Different colors 
+are used just to make it easy to distinguish results from 
+different configurations sampled from MD trajectories. 
+In this Figure, the numbers of water molecules averaged 
+over the 12 sample configurations are also shown here 
+(brown circles and line). 
+\label{f:nma-cdcl3-dist}}
+\end{figure}
+%
 
 We also found that $\Delta\omega^{\rm Ex-Rep}$
 decays the fastest among all contributions to the vibrational frequency shift
