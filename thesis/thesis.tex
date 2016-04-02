@@ -7002,6 +7002,114 @@ frequency shifts of amide I mode in aprotic, weakly polar solvents.
 
 
 
+
+
+
+\begin{refsection}
+\chapter{The {\sc Solvshift} program}
+
+In this part of the Thesis, we briefly present the {\sc Solvshift}
+package. The basic concept behind it is to develop the fragment\hyp{}based
+approach to calculation of the solvation or interaction induced
+molecular properties such as changes in vibrational frequency and vibrational 
+transition dipole, nonlinear optical properties, magnetic shielding
+constants or electronic energy levels. Here, we focus on the
+vibrational property calculations using {\sc Solvshift}.
+
+\section{Overview}
+
+{\sc Solvshift} is a further development of {\sc Coulomb} package
+that is designed for calculations of electrostatic properties of molecules
+by means of quantum chemsistry methods and it has been developed
+since 2010. Originally, written in pure Python, {\sc Coulomb} utilized
+the so called Gaussian Lobe Orbitals (GLO) introduced in early quantum chemistry
+times by Whitten in 1960s. GLO imitate the GTFs by linear combinations
+of $s$-thype functions so that the computational procedure of solving
+Hartree\hyp{}Fock or Kohn\hyp{}Sham equations are relatively simple
+in implementation. In early form of {\sc Coulomb}, the integral package, i.e.,
+the module that manages the evaluation of the one\hyp{}electron overlap (SI), multipole (MI),
+kinetic (KI) and
+potential (VI) integrals as well as the two\hyp{}electron
+repulsion integrals (ERI) was implemented in a straightforward way
+so that the performance of the code was quite limited to small molecules
+and small basis sets (the largest molecule studied by GLO\hyp{}Python version
+was acetic acid in a basis which is comparable to 6-31G(p) with additional polarization
+$p$ functions imitaiting $d$-orbitals on carbon and oxygen atoms). Nevertheless,
+the code was able to compute basic electrostatic molecular properties such as
+molecular multipole moments and CAMMs up to octupoles.
+ 
+In 2011 {\sc Coulomb} was upgraded and coupled with the two codes to shift to GTF\hyp{}based
+basis sets up to $g$-functions and increase its efficiency:
+%
+\begin{itemize}
+\item {\sc PyQuante} -- Python implementation of LCAO-MO method by Richard Muller~\citep{Muller.PyQuante.2009}
+\item {\sc LibInt} -- Highly efficient integral package by Edward Valeev~\citep{Valeev.LibInt.2013}
+\item {\sc Gaussian 09} -- High\hyp{}performance quantum chemistry suite of programs~\citep{Frisch.Gaussian.2009}
+\end{itemize}
+%
+The coupling with {\sc Gaussian 09} enabled reading the one\hyp{}particle 
+density matrices (and transition density matrices in case of excited state
+calculations) based on which electrostatic calculations could be performed
+for methods not implemented (or quite slow) in {\sc Coulomb} such as the 
+configuration interaction theory (CI), the
+coupled\hyp{}cluster theory (CC) or the density functional theory (DFT).
+In particular, {\sc Coulomb} was able to compute the exact first\hyp{}order
+Coulombic interaction energy (including charge\hyp{}penetration),
+and the associated exchange\hyp{}repulsion correction to account
+for the antisymmetric nature of electronic wavefunctions.
+Also, the
+approximate Coulombic interaction energy derived from CAMM or DMA
+was also available.
+
+Since 2012, I was developing the code to manage effective fragment
+potentials (EFP) for induction, exchange\hyp{}repulsion and dispersion
+effects. As a result, {\sc Solvshift} package was introduced
+to manage the EFP\hyp{}based approaches in the calculations
+of the vibrational frequency shifts and so on. As for now, 
+the functionalities of the code are as follows
+%
+\begin{itemize}
+ \item {\sc Coulomb}
+  \begin{itemize}
+  \item Computing CAMM and MMM at arbitrary origin
+  \item Managmenent of CAMM/DMA distribitions: rotations, translations, recentering of origins
+  \item Calculation of exact first\hyp{}order 
+        electrostatic and exchange\hyp{}repulsion interaction energy for a dimer
+  \item Calculation of multiple expansion\hyp{}derived interaction energy
+  \item Coupling with {\sc Gaussian 09}: reading one\hyp{}particle 
+                                        density matrices
+  \item Computation of transition cumulative atomic multipole moments (TrCAMM)
+        and excitonic energy transfer (EET) couplings~\citep{Blasiak.Maj.Cho.Gora.JCTC.2015}
+  \end{itemize}
+ \item {\sc Solvshift}
+  \begin{itemize}
+  \item Computing EFP Coulombic, induction, dispersion, exchange\hyp{}repulsion and approximate CT
+        interaction potential
+  \item Computing SolEFP frequency shifts and transition dipole moment change:
+        i) Coulombic term under mechanical and electric anharmonicity, 
+        ii) induction, dispersion and exchange\hyp{}repulsion terms under mechanical anharmonicity
+  \item Onsager model of solvation: rigid and flexible models
+  \item Rigid molecule algorithm for Coulomb, induction, dispersion and exchange\hyp{}repulsion
+        parameters
+  \item Management of classicial molecular dynamics trajectory files from Gromacs, Amber and NAMD
+  \item Implementation of EFP fragmentation model for protein environment within SolEFP model
+  \end{itemize}
+\end{itemize}
+%
+In the following Sections, we describe the structure, main classes,
+usage examples and future development of the {\sc Solvshift} code.
+
+\section{Modules}
+
+\subsection{Rigid molecule algorithm}
+
+\section{Usage}
+
+\section{Summary and outline of future development}
+
+\printbibliography[heading=subbibintoc,title={References}]
+\end{refsection}
+
 % ==================== APPENDICES ================================
 
 \begin{appendices}
