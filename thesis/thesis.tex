@@ -320,7 +320,7 @@ So, let's start!
 \end{refsection}
 
 \begin{refsection}
-\chapter{Vibrational Solvatochromism}
+\chapter{Vibrational Solvatochromism\label{c:vibr-solv}}
 
 Molecules have various energetic properties that 
 depend on their interactions with environment. In particular,
@@ -502,7 +502,7 @@ Definitely, the electrostatic effects were considered to be the most important
 electric fields on the vibrational properties.\citep{Kim.Cho.ChemRev.2013} 
 In particular, the effects of the
 uniform external electric field was thoroughly examined.\citep{Hush.Reimers.JPC.1995,
-Reimers.Zeng.Hush.JPC.1996,Andrews.Boxer.JCPA.2002,Cho.JCP.2009} 
+Reimers.Zeng.Hush.JPC.1996,Andrews.Boxer.JPCA.2002,Cho.JCP.2009} 
 In the vibrational Stark spectroscopy (VSE)\citep{Hush.Reimers.JPC.1995,Reimers.Zeng.Hush.JPC.1996}, 
 which was pioneered experimentally by Boxer's laboratory\citep{Bublitz.Boxer.AnnuRevPhysChem.1997}, 
 the change of the frequency, absorbance
@@ -524,7 +524,7 @@ can be safely neglected.
 %For example, for the maximal electric field
 %value reported so far (~160 MV/cm\citep{Fried.Bagchi.Boxer.Science.2014}) and the (assumed) upper bound for 
 %$\Delta \alpha=1\times10^{-6}$ 
-%cm$^{-1}\times \left({\rm cm}/{\rm MV}\right)^2$\citep{Andrews.Boxer.JCPA.2000,Andrews.Boxer.JCPA.2002}, 
+%cm$^{-1}\times \left({\rm cm}/{\rm MV}\right)^2$\citep{Andrews.Boxer.JPCA.2000,Andrews.Boxer.JPCA.2002}, 
 %the frequency shifts is less than 0.03 cm$^{-1}$. For the sake 
 %of comparison, the frequency shifts caused by linear term in Eq.~\eqref{e:vse-shift-full}
 %can range from 3--100 cm$^{-1}$.
@@ -537,7 +537,7 @@ widely used by VSE spectroscopists,
 %
 Stark tuning rates have been reported for many IR probes.\citep{Suydam.Boxer.Biochem.2003,Levinson.Fried.Boxer.JPCB.2012}
 They also were computed by using quantum chemistry calculations\citep{Dalosto.Vanderkooi.Sharp.JPCB.2004,
-Andrews.Boxer.JCPA.2002,Andrews.Boxer.JCPA.2000}
+Andrews.Boxer.JPCA.2002,Andrews.Boxer.JPCA.2000}
 and they are typically in a range of 0.4-1.0 cm$^{-1}$/(MV/cm). 
 Since Eq.~\eqref{e:vse-shift-dipole} is proportional to solute's
 dipole property, VSE-d have been correlated with Onsager's dipole
@@ -956,7 +956,7 @@ vibrationally diatomic approximation.\citep{McDowell.Buckingham.SpectrChimActaA.
 Buckingham.CPL.2008,Herrebout.Delanoye.vanderVeken.JPCA.2004}
 
 At the turn of XXth century, Hush and Reimers\citep{Hush.Reimers.JPC.1995,Reimers.Zeng.Hush.JPC.1996} 
-and Andrews and Boxer\citep{Andrews.Boxer.JCPA.2002,Andrews.Boxer.JCPA.2000} 
+and Andrews and Boxer\citep{Andrews.Boxer.JPCA.2002,Andrews.Boxer.JPCA.2000} 
 were considering the vibrational electrochromism
 to quantitatively relate vbrational properties with the external electric fields.
 In their theoretical foundations of the vibrational Stark spectroscopy,
@@ -1956,10 +1956,10 @@ of Q-space distortions:
 \end{equation}
 %
 As one can see, this approach is also translational because 
-we needed to approximate the non-linear Eq.~\eqref{dQ-new} into
+we needed to approximate the non\hyp{}linear Eq.~\eqref{dQ-new} into
 linear form in Eq.~\eqref{dQ-new-s}.
 Nevertheless, the new translation vector takes into account
-higher-order effects because it contains the second derivative matrix $\bf K$
+higher\hyp{}order effects because it contains the second derivative matrix $\bf K$
 and anharmonicity $\bf g$.
 
 To study the leading terms in the polynomial expansion of Eq.~\eqref{dQ-T1}, 
@@ -3324,7 +3324,7 @@ the mass\hyp{}weighted eigenvectors
 ${\bf L}_x^{(i)}$ 
 are obtained from the harmonic vibrational analysis (see Appendix~\ref{asec:vibranal}).
 
-\paragraph{Induced solvatochromic multipoles}
+\paragraph{Induced solvatochromic multipoles\label{p:solindmult}}
 It is useful to analyze the solvatochromic multipoles 
 when the induction effects are taken into account.
 In the single\hyp{}center limit, the solvatochromic
@@ -3350,14 +3350,14 @@ ${\bf a}_j$ by
 %
 \begin{subequations}
 \begin{align}
-{\bf L}_j^{\rm ind}({\bf r}_0)       &=   \sum_a {\BM \mu}_a^{\rm ind} \\
+{\bf L}_j^{\rm ind}({\bf r}_0)       &=   \sum_a {\BM \mu}_a^{\rm ind} \label{e:34e1} \\
 {\BM \lambda}_j^{\rm ind}({\bf r}_0) &= - \sum_a \Big[ {\BM \mu}_a^{\rm ind} \otimes \left( {\bf r}_0 
                                        - {\bf r}_a \right) + \left( {\bf r}_0 
-                                       - {\bf r}_a \right) \otimes {\BM \mu}_a^{\rm ind} \Big] \\
+                                       - {\bf r}_a \right) \otimes {\BM \mu}_a^{\rm ind} \Big] \label{e:34e2} \\
 {\BM \Lambda}_j^{\rm ind}({\bf r}_0) &=   {\bf r}_0 \otimes {\BM \mu}_j^{\rm ind}({\bf r}_0) \otimes {\bf r}_0 \nonumber \\ 
                                     &  + \sum_a \Big[ \left( {\bf r}_0^2 - {\bf r}_a^2 \right) \otimes {\BM \mu}_a^{\rm ind} 
                                        + {\BM \mu}_a^{\rm ind} \otimes \left( {\bf r}_0^2 - {\bf r}_a^2 \right) 
-                                       - {\bf r}_a \otimes {\BM \mu}_a^{\rm ind} \otimes {\bf r}_a \Big]
+                                       - {\bf r}_a \otimes {\BM \mu}_a^{\rm ind} \otimes {\bf r}_a \Big] \label{e:34e3}
 \end{align}
 \end{subequations}
 %
@@ -4650,7 +4650,7 @@ Gora.Bartkowiak.Roszak.Leszczynski.JCP.2004} (EDS)
 %
 These will lead to the SolEFP, SolEDS and SolSAPT methods, accordingly. 
 
-\subsubsection{SolEFP model}
+\subsubsection{SolEFP model\label{s:solefp-working-model}}
 
 In fact, SolEFP method was already described in Section~XXX
 and the frequency shift is given as
@@ -7084,13 +7084,942 @@ frequency shifts of amide I mode in aprotic, weakly polar solvents.
 \printbibliography[heading=subbibintoc,title={References}]
 \end{refsection}
 
-
-
-
-
+% ------------------- CHAPTER 6 ------------------------
 
 \begin{refsection}
-\chapter{The {\sc Solvshift} program}
+
+\chapter{Vibrational solvatochromism of CN and NC modes}
+
+While amide I mode can be used as a sensor of the global conformation
+of proteins, isolated nitrile (CN) or azide (N$_3$) 
+stretch modes can be useful IR probes for sensing the local molecular environment
+around them. The chemical nature of CONH and triple bonded groups
+is different. In particular, recently proposed isonitrile (NC) 
+IR probe exhibits substantial sensitivity towards H-bonding.
+Here we study in detail the physical origins
+of the vibrational frequency shifts of CN and NC modes
+in various molecular environments -- ranging from bulk solutions
+to highly heterogeneous protein interiors and interfaces.
+We believe that the present work could provide a set of clues 
+that could be potentially used to design a rigorous
+theoretical model linking vibrational solvatochromism 
+and molecular topology in complex heterogeneous environments.
+
+\section{Overview}
+
+In the previous Chapter we were surprised by the fact that the remarkably strong
+contributions to the vibrational frequency shifts by exchange\hyp{}repulsion,
+induction and dispersion do not blur the directionality of the (strong)
+Coulombic effects within the medium and large solute\hyp{}solvent separation ranges. 
+This makes electrostatic maps generally succesfull for 
+reproducing experimental amide I mode vibrational frequency shifts
+in most types of environments. However, as we pointed out in Chapter~\ref{c:vibr-solv}, 
+the solvatochromism of CN
+stretch vibration in various solvents is quite complicated and
+cannot be explained simply by the Coulombic interaction of
+vibrational dipole with local electric field produced by
+surrounding molecules,%12-17
+which is in notable contrast to the
+solvatochromism of CO stretch modes.%1, 18, 19 
+By the analysis
+of the forces computed from the classical molecular dynamics
+simulations and their effects on the vibrational frequency, it
+was found that the vibrational frequency blue\hyp{}shifts of CN
+stretches of acetonitrile or CN$^-$ anion in water result from van
+der Waals interactions.%15,16
+Boxer group experimentally showed that the non\hyp{}specific electrostatic and specific H-bonding
+effects contribute differently to the vibrational shifts
+by combining IR and NMR methods.%13, 25, 
+Recently, Zhang et al.%26 
+studied
+the specific and nonspecific nitrile frequency shifts in analogs
+of 5-cyanotryptophan by utilizing empirically determined
+Kamlet\hyp{}Taft parameters%27-29 
+of various solvents. They found a
+simple three\hyp{}parameter linear formula that can be used to
+relate the CN absorption frequency with the solvent polarity
+and H-bonding properties. However, this and other similar
+approaches%12 
+are based on the empirical data and, therefore,
+cannot provide detailed insights into the physical origins of the
+vibrational frequency shifts. Nevertheless, it is apparent that
+H-bonding interaction between nitrile and protic solvent exerts
+a blue\hyp{}shift of nitrile stretch frequency, which is probably
+beyond Coulomb interaction effect. 
+
+SolEFP and SolEDS models are
+perfectly suited to study these issues. As model 
+IR probes, we study methyl thiocyanate and methyl\hyp{} 
+or phenyl\hyp{}substituted (iso)nitriles.
+We showed in Figure~\ref{f.MeCN.MeSCN.vs.solvents} 
+that the vibrational solvatochromism of MeSCN is
+quantitatively similar to that of MeCN. In addition, 
+MeSCN probe is theoretically more convenient to study
+because, unlike in MeCN case%50, 
+its CN stretch band is not
+contaminated by other Fermi resonance bands.
+
+First, we investigate
+the vibrational solvatochromic properties of isolated
+MeSCN. Next, relatively small model systems
+involving hydrogen bonds are considered. The direct
+comparisons with experimental results are also made for the bulk
+solutions when SolEFP method is combined with QM/MM forcefield. 
+The nature of the specific
+solvatochromic frequency shifts of nitrile probes in proteins
+are discussed further. At the end of this Chapter we compare
+the CN and NC vibrational probes and explain the consequences of the 
+interchange of N and C atoms, mainly the increase of the sensitivity
+of the vibrational NC frequency
+towards H-bonding and absorption intensity increase of NC stretch mode.
+
+\section{Electrostatic vibrational properties of CN and NC stretch modes}
+
+The vibrational
+solvatochromic multipole moments up to octupoles for the model
+(iso)nitrile stretch modes in MeCN, MeSCN and MeNC were calculated by using
+SolCAMM technique. In Table~\ref{t:mescn-solcamm}, the
+vibrational solvatochromic (molecular not distributed) dipoles
+and quadrupoles calculated with a few different
+methods are directly compared. 
+%
+\begin{table}[t!]
+\caption{
+Vibrational solvatochromic dipole and traceless quadrupole moments
+(at the mid\hyp{}point of CN bond) of MeSCN that were obtained with our SolMMM
+method. Solvatochromic dipole and quadrupole moments are given in 
+cm$^{-1}$/(MV/cm) and 10$^{-8}\times$ cm$^{-1}$/(MV/cm2), respectively.
+The fitting results in this table were obtained by carrying out
+multivariate least square fitting analyses of HF and density functional theory
+(B3LYP) calculations of MeSCN--water clusters.
+\label{t:mescn-solcamm}}
+\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } l ccc}
+\hline\hline
+\multicolumn{2}{c}{Method}  & $\mu_{\rm CN}$ & $\Theta_{\rm CN}$$^{e)}$  \\
+\hline
+\multirow{4}{*}{SolMMM/6-311++G**}   & HF             & 0.47 & 1.16 \\
+                                     & MP2            & 0.20 & 0.96 \\
+                                     & CCSD           & 0.31 & 1.06 \\
+                                     & B3LYP          & 0.43 & 1.26 \\
+\multirow{2}{*}{Fitting}             & HF$^{a)}$      & 0.54 &      \\
+                                     & B3LYP$^{b)}$   & 0.43 & 1.02 \\
+Exp.$^{c)}$                          &                & 0.55--0.64$^{d)}$   & - \\
+\hline\hline
+\end{tabular*}
+%
+\begin{footnotesize}
+$^{a)}$ Ref.\citep{Choi.Oh.Lee.Lee.Cho.JCP.2008}, 
+$^{b)}$ Ref.\citep{Lee.Choi.Cho.JCP.2012}, 
+$^{c)}$ Ref.\citep{Suydam.Boxer.Biochem.2003}, 
+$^{d)}$ Local field correction factor is assumed to be in
+the range of 1.1--1.3, 
+$^{e)}$ The average value of the traceless quadrupole was
+estimated from the formula: 
+$\sqrt{Q_{zz}^2 + \frac{4}{3}(Q_{xy}^2+Q_{xz}^2+Q_{yz}^2) + \frac{1}{3}(Q_{xx}-Q_{yy})^2}$.
+Note that in
+Ref.\citep{Lee.Choi.Cho.JCP.2012} and Ref.\citep{Blasiak.Lee.Cho.JCP.2013} 
+the traceless quadrupole is defined according to Jackson~\citep{Jackson.ClassicalElectrodynamics.1998}
+whereas we use Buckingham's convention here~\citep{Buckingham.QRevChemSoc.1959} 
+(to convert value of
+traceless quadrupole element $Q_{ij}$ from Jackson's to Buckingham's
+convention multiply it by $\frac{1}{2}$).
+\end{footnotesize}
+\end{table}
+%
+
+Our \emph{ab initio} calculated values
+of the Stark dipole of the CN stretch mode in MeSCN are in the range
+from 0.2 to 0.5 cm$^{-1}$/(MV/cm), which is close to the
+experimental value of MeSCN in 2-methyltetrahydrofuran
+glass at 74 K (0.55--0.64 au).\citep{Suydam.Boxer.Biochem.2003} 
+Evidently, our MP2 estimation
+somewhat underestimates the value of the Stark dipole (0.2
+cm$^{-1}$/(MV/cm)) and method treating the electron correlation
+more accurately is needed (CCSD gives the result 0.31
+cm$^{-1}$/(MV/cm), closer to the experimental value). This might be
+also a result of too small basis set used for such calculations
+but we did not extend it beyond 6-311++G** because of the
+resource limitations. Nevertheless, except for MP2 results,
+SolCAMM/6-311++G** method predicts the Stark tuning
+rate well. In Table 1, for the sake of comparison we also
+present the Stark tuning rates estimated by using the
+distributed vibrational solvatochromic charges that were
+obtained from multivariate least square fitting analyses of the
+HF and DFT (density functional theory) calculation results from
+a number of MeSCN--water clusters. They are in good
+agreement with the experimental value. Nevertheless, it
+should be emphasized that the present SolCAMM calculation
+results for the (molecular not distributed) vibrational
+solvatochromic dipole and quadrupole moments are fully
+derived from the first\hyp{}principles without using any empirical or
+fitting procedure.
+
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.9\linewidth]{Fig.2.eps}
+}
+\caption{
+Electric potential produced by the vibrational solvatochromic multipole moments of the vibrational 0-1
+transition of nitrile (CN) stretch mode in MeSCN, that were computed by using 
+SolCAMM//CCSD/6-311++G** method. (a) potential derived from SolCAMM (up to octupoles) distributed over all 
+atoms; (b), (c) and (d) potential derived from the total molecular multipole moments (SolMMM) centered at the middle
+of CN bond.
+\label{f:mescn-maps}}
+\end{figure}
+%
+In Figure~\ref{f:mescn-maps}(a), the spatial distribution of the electric
+potential produced by the vibrational solvatochromic
+multipole moments is plotted. Clearly, the distribution of this
+electric potential around MeSCN differs from that of the
+vibrational solvatochromic dipole (Figure~\ref{f:mescn-maps}(b)). Interestingly, if
+the vibrational solvatochromic quadrupole contribution is
+additionally taken into account (Figure~\ref{f:mescn-maps}(c)), the corresponding
+electric potential around the H-bond accepting N-atom of the
+nitrile changes its sign (compare Figures~\ref{f:mescn-maps}(b) with~\ref{f:mescn-maps}(c)). Note
+that this important change in the distribution of electric
+potential produced by the vibrational solvatochromic
+multipoles cannot be described by the Stark dipole theory at
+all. Thus, even within the approximation that the vibrational
+solvatochromic frequency shift solely results from the
+interactions of the vibrational solvatochromic multipoles of
+the solute molecule with the electric field produced by the
+atomic charges of surrounding solvent molecules, the simple
+dipolar description of the complicated vibrational
+solvatochromism is not acceptable.
+
+\section{H-bonding effect on nitrile frequency shift}
+
+Although the H-bonding interaction\hyp{}induced frequency shifts
+of various nitrile stretches in protic solvents have been
+observed, an all\hyp{}encompassing theory for such phenomena has
+not been developed yet. To theoretically study such H-bonding
+effects on the nitrile frequency shift, we considered sixty seven
+MeSCN--water clusters that were fully optimized at HF/6-311++G** 
+level of theory. For the sake of comparisons, we
+also considered fifteen MeSCN--DMSO clusters, where DMSO is
+not a protic solvent molecule. The SolEFP\hyp{}calculated frequency
+shifts are then directly compared with the full HF/6-311++G**
+harmonic analysis results. Our SolEFP results are found to be in
+good agreement with the benchmark HF/6-311++G** results,
+despite the approximate nature of the SolEFP theory (see
+Section~\ref{s:solefp-working-model}).
+
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.9\linewidth]{Fig.3.eps}
+}
+\caption{
+SolEFP(HF/6-311++G**) frequency shift components. (a) The SolEFP components contributing to the CN
+frequency shifts of MeSCN in various water and DMSO clusters, MeSCN--(H$_2$O)$_{n=1-27}$ 
+and MeSCN--(DMSO)$_{n=1-7}$.
+The total SolEFP frequency shifts are also directly compared with the results from HF/6-311++G**
+calculations. (b) The SolEFP components for MeSCN--water dimer with varying intermolecular distance are
+plotted with respect to the distance between H(water) and N(MeSCN) atoms. The optimum H-bond distance
+is at 2.2536 \AA.
+\label{f:mescn-solefp-qm}}
+\end{figure}
+%
+Our SolEFP calculation results (Figure~\ref{f:mescn-solefp-qm}(a)) show that the
+exchange\hyp{}repulsion contribution (blue dots) to the nitrile
+frequency shift is in general very large. In fact, the $\Delta\omega^{\rm Ex-Rep}$
+contributions are almost comparable to or even larger than
+the Coulomb (red dot) and induction (green dot) contributions.
+To further examine the intermolecular distance dependences
+of each contribution, we calculated them separately for
+varying H-bond distance between nitrile's N atom and water
+H-atom (see Figure~\ref{f:mescn-solefp-qm}(b)). What is surprising to us is that the
+exchange repulsion contribution, $\Delta\omega^{\rm Ex-Rep}$, is the largest among
+all the other contributions in the distance range around the
+equilibrium (optimum) H-bond distance ($\sim$2.25 \AA). The
+electrostatic contribution, which is the sum of the Coulomb
+and induction terms, is rather constant in the distance range
+from 2.0 to 2.5 \AA. To examine both the distance- and
+orientation\hyp{}dependence of the vibrational frequency shift
+induced by its interaction with a water molecule, we carried
+out further SolEFP calculations at the level of HF/6-311++G**
+(Figure~\ref{f:mescn-scan}). 
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.9\linewidth]{Fig.4.eps}
+}
+\caption{
+Distance- and orientation\hyp{}dependence of CN stretch mode frequency shift of MeSCN interacting with water
+molecule. Frequency shifts were calculated by using SolEFP method. Water molecule was translated in the
+direction along the line between N and O atoms by a distance $R_d$. Water molecule was then rotated in a
+plane of SCN--O atoms around its center of mass by angle $\theta$. The structure at $R_d=0$ and $\theta=0$ corresponds to
+the equilibrium (optimal H-bonding) geometry of MeSCN-H2O dimer, which was obtained with
+HF/6-311++G** method.
+\label{f:mescn-scan}}
+\end{figure}
+%
+Starting from the optimized geometry of MeSCN--H$_2$O
+dimer, the intermolecular distance $R_d$ was increased with
+a distance interval of 0.05 Bohr along the H-bond direction. In
+addition, the water molecule on the plane of SCN---HOH was
+in\hyp{}plane rotated by angle $\theta$ (with 1\textdegree interval) around the center
+of mass of H$_2$O. Thus, we considered 25,200 such
+MeSCN--HOH configurations in total and the resulting SolEFP
+frequency shifts are plotted in Figure~\ref{f:mescn-scan}. From the distributions
+of the vibrational frequency shift components with respect to
+$R_d$ and $\theta$, one can easily note that the frequency shifting
+behavior of the Coulomb contribution, $\Delta\omega^{\rm Coul}$, is highly
+directional, similar to the case of the amide I frequency shift of
+NMA by H-bonded water molecules~\citep{Blasiak.Cho.JCP.2015}. 
+However, the overall
+frequency shift near the optimum H-bonding configuration is
+still mainly determined by the exchange\hyp{}repulsion
+contribution, which was not expected and differs from the
+vibrational solvatochromic frequency shift of the amide I mode
+of NMA in water reported previously by us.\citep{Blasiak.Cho.JCP.2014,Blasiak.Cho.JCP.2015} 
+Note that, in
+the case of NMA, the Coulomb contribution, $\Delta\omega^{\rm Coul}$, was found
+to be the largest. This clearly indicates that the origin of the
+nitrile frequency shift induced by the solute\hyp{}solvent
+interaction is very different from that of all the other carbonyl
+stretch modes. In particular, if the nitrile experiences a strong
+steric (repulsive) interaction with surrounding molecules or
+chemical groups, most of the previous vibrational
+solvatochromism models based on purely electrostatic
+interaction\hyp{}induced effects may not be quantitatively reliable.
+
+
+
+\section{CN stretch in bulk solution}
+
+As shown in Figure~\ref{f.MeCN.MeSCN.vs.solvents}, 
+the nitrile frequency shifts are strongly
+solvent\hyp{}dependent. Therefore, we now apply our SolEFP
+theory to the vibrational frequency shift calculations in
+combination with QM/CMD simulations of MeSCN dissolved in four
+representative solvents. The main results are presented in
+Figure~\ref{t:mescn-solefp-md-exp}. Because the application of SolEFP theory is the main
+issue here, we did not attempt to re\hyp{}parameterize any force
+field parameters of the solvent molecules. The four solvents
+are aprotic non\hyp{}polar CCl$_4$, aprotic and weakly polar CHCl$_3$,
+aprotic and strongly polar DMSO, and protic polar H$_2$O.
+Fortunately, fairly accurate force field parameters for these
+solvent molecules are available so that we could use them
+without any further re\hyp{}parameterization or re\hyp{}optimization of
+the classical QM/CMD force fields.
+
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.9\linewidth]{Fig.5.eps}
+}
+\caption{
+The ensemble\hyp{}averaged values of the frequency shifts of CN stretch mode of MeSCN dissolved in four
+different solvents at room temperature, that were obtained by applying the SolEFP model of MeSCN CN
+stretch mode to the snapshot configurations taken from the QM/CMD trajectories. The experimental data (black
+diamonds) are also shown for comparison. In this Table, "Dipole" denotes the Stark\hyp{}dipole model (with the
+dipole centered at CN mid\hyp{}bond) whereas "Multipoles" describes the site\hyp{}distributed field\hyp{}dependent
+frequency shift in Eq. (14), with the solvatochromic multipole moments and polarizabilities distributed over
+all atoms and LMO\hyp{}centroids, respectively. Both take into account induction effects.
+\label{t:mescn-solefp-md-exp}}
+\end{figure}
+%
+The experimentally measured average nitrile frequency
+shifts are cyan squares in Figure~\ref{t:mescn-solefp-md-exp}. 
+The total frequency shifts
+calculated with SolEFP and MD simulation methods are black
+diamonds in the same figure. Although the differences
+between SolEFP and experimental results are found to be nonnegligibly
+large by about 10 cm$^{-1}$, the overall trend of the
+vibrational frequency shift with respect to the solvent polarity
+and H-bonding ability is correctly described by the SolEFP
+model. In contrast, the Stark\hyp{}dipole theory predicts even a
+very large red shift when MeSCN interacts with water
+molecules. Here, it should also be noted that the previous ab
+initio semi\hyp{}empirical maps for nitrile frequency shift18, 41
+cannot describe the relative blue shift of nitrile stretch mode
+in water, because they were based on the assumption that the
+vibrational solvatochromic frequency shifts are induced by
+electrostatic interactions only.
+
+As can be seen in Figure~\ref{t:mescn-solefp-md-exp}, the exchange\hyp{}repulsion
+contribution, $\Delta\omega^{\rm Ex-Rep}$, to the nitrile frequency blue shift in
+water is about 8 to 10 cm$^{-1}$ larger than those in aprotic
+solvents considered here (compare blue bars in Figure~\ref{t:mescn-solefp-md-exp}). To
+further understand the H-bond strength\hyp{}dependence of the
+nitrile frequency shift, we performed first\hyp{}principles SolEDS
+calculations for Me(S)CN--X dimers with X being H$_2$O, MeOH or
+CF$_3$CH$_2$OH, which are presented in Table~\ref{t:mescn-soleds} (the corresponding
+molecular structures are depicted in Figure S6). 
+%
+\begin{table}[t!]
+\caption{
+The nature of the frequency shifts of CN stretch mode in various 
+H-bonding complexes involving MeCN or MeSCN and H$_2$O, MeOH 
+and CF$_3$CH$_2$OH (structures are shown in Figure S6 in ESI). 
+The frequency shift partitioning was performed by using 
+SolEDS//MP2/6-311++G** method. Bond lengths are in Bohr and frequency shifts in
+cm$^{-1}$.
+\label{t:mescn-soleds}}
+\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } l ccc c ccc}
+\hline\hline
+                                 & \multicolumn{3}{c}{MeCN}            && \multicolumn{3}{c}{MeSCN}             \\
+                                 & H$_2$O &    MeOH  &  CF$_3$CH$_2$OH &&  H$_2$O   &  MeOH   &  CF$_3$CH$_2$OH \\
+\hline
+$R_{\rm H-bond}$                 & 3.9814 &   3.9570 &  3.7894         &&  3.9569   &  3.9285 &    3.7550       \\ 
+$\Delta\omega^{(10)}_{\rm el}$   & -7.32  &    -8.71 &     -19.45      &&  -14.08   &  -15.89 &    -21.12       \\
+$\Delta\omega^{\rm HL}_{\rm ex}$ & +32.31 &   +36.63 &     +44.36      &&  +40.60   &  +46.06 &    +58.16       \\
+$\Delta\omega^{\rm HF}_{\rm del}$& -10.49 &   -11.29 &     -17.97      &&  -14.06   &  -15.35 &    -23.83       \\
+$\Delta\omega^{(12)}_{\rm el,r}$ &  +4.55 &    +3.48 &     +17.76      &&   +7.80   &   +7.20 &     +6.49       \\
+$\Delta\omega^{(2)}_{\rm ex}$    &  +6.79 &    +8.40 &      +3.89      &&   +6.23   &   +7.73 &     +9.84       \\
+$\Delta\omega^{(20)}_{\rm disp}$ & -10.63 &   -13.51 &     -15.83      &&  -12.64   &  -16.00 &    -20.62       \\
+$\Delta\omega^{\rm MP2}$         & \bf{+15.21} & \bf{+15.00} &  \bf{+12.76}   &&  \bf{+13.85} &  \bf{+13.75} & \bf{+8.92} \\
+$\Delta\omega^{(10)}_{\rm el}$+
+$\Delta\omega^{(12)}_{\rm el,r}$ &  -2.77 &    -5.23 &      -1.69      &&   -6.28   &   -8.69 &    -14.63       \\
+$\Delta\omega^{\rm HL}_{\rm ex}$+
+$\Delta\omega^{(2)}_{\rm ex}$    & +39.10 &   +45.03 &     +48.25      &&  +46.83   &  +53.79 &    +68.00       \\
+$\Delta\omega^{\rm HF}_{\rm del}$+
+$\Delta\omega^{(20)}_{\rm disp}$ & -21.12 &   -24.80 &     -33.80      &&  -26.70   &  -31.35 &    -44.45       \\
+Full QM                          & \bf{+12.83} & \bf{+12.58} &  \bf{+8}$^{a)}$ && \bf{+10.54} &  \bf{+10.16} & \bf{+2.86} \\
+\hline\hline
+\end{tabular*}
+%
+\begin{footnotesize}
+$^{a)}$ Partially optimized due to energy optimization problem.
+\end{footnotesize}
+\end{table}
+%
+The exchange\hyp{}repulsion
+interaction contributes to the very strong frequency
+blue shift $\Delta\omega^{\rm HL}_{\rm ex}$. Furthermore, the magnitude of
+$\Delta\omega^{\rm HL}_{\rm ex}$
+increases as the H-bond length of X molecule increases.
+This can be understood by noting that the stronger H-bond
+becomes the closer solute and solvent molecules are brought
+to each other. This in turn causes a sharp increase in the
+exchange\hyp{}repulsion contribution to the frequency shift (see
+Figure 3(b)). This approximately explains all the
+frequency blue shifts induced by the interaction between
+nitrile and protic solvent molecules, when compared to aprotic
+solvents. It is also interesting that, after taking into account
+the electron correlation effects
+($\Delta\omega^{(12)}_{\rm el,r}$,
+$\Delta\omega^{(2)}_{\rm ex}$
+and $\Delta\omega^{(20)}_{\rm disp}$ terms in Table~\ref{t:mescn-soleds}), 
+the Coulombic effects on the nitrile stretch mode
+frequency shifts in these dimers are roughly 6-10 times smaller
+than the non\hyp{}Coulombic effects, and the red shifting
+contribution is thus due to the charge delocalization and
+dispersion interactions. For example, in the case of the
+MeSCN-MeOH dimer, the Coulombic frequency shift is just
+--8.7 cm$^{-1}$, while the shifts by exchange\hyp{}repulsion effect and
+the sum of charge\hyp{}delocalization and dispersion effects are
++53.8 and --31.4 cm$^{-1}$, respectively. The relative contributions
+to the frequency shifts from them are similarly found in all the
+other dimers studied here (see Table~\ref{t:mescn-soleds}). Therefore, not only
+the short\hyp{}range repulsive interaction but also the 
+non\hyp{}Coulombic electrostatic effects like induction and dispersion
+are also quite important in quantitatively describing the nitrile
+frequency shifts in H-bonded systems. Indeed, among the redshifting
+attractive interaction\hyp{}induced contributions, the
+dispersion term is dominant, not just in aprotic solvents, but
+even in water too (Figure~\ref{t:mescn-solefp-md-exp}). Note also that in the case of CCl$_4$,
+Coulomb contribution completely vanishes, but yet the
+induction contribution is not negligible.
+
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.9\linewidth]{Fig.6.eps}
+}
+\caption{
+Static frequency shift distributions of CN stretch mode in MeSCN dissolved in four different solvent at room
+temperature that were obtained by applying the SolEFP model of MeSCN CN stretch mode to QM/CMD simulation
+trajectories.
+\label{f:mescn-solefp-md-distr}}
+\end{figure}
+%
+In Figure~\ref{f:mescn-solefp-md-distr}, 
+we plot the distributions of different frequency
+shift components separately with the full width at half
+maximum (FWHM) values listed in Table~\ref{t:mescn-solefp-md-fwhm}. 
+%
+\begin{table}[t!]
+\caption{
+Full width at half maximum (FWHM) in cm$^{-1}$ of the distribution of
+MeSCN CN stretch mode frequency shift. Frequency shift distributions were
+obtained by combining SolEFP method with QM/CMD simulation.
+\label{t:mescn-solefp-md-fwhm}}
+\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } l ccccc}
+\hline\hline
+  & $\Gamma^{\rm Coul}_{\rm static}$
+  & $\Gamma^{\rm Ex-Rep}_{\rm static}$
+  & $\Gamma^{\rm Ind}_{\rm static}$
+  & $\Gamma^{\rm Disp}_{\rm static}$
+  & $\Gamma^{\rm SolEFP}_{\rm static}$ \\
+\hline
+CCl$_4$            &  4.0 $\pm$ 0.5 & 24 $\pm$ 3 & 1.4 $\pm$ 0.5 & 5.6 $\pm$ 1.0 & 21 $\pm$ 4   \\
+CHCl$_3$           & 12.0 $\pm$ 0.5 & 21 $\pm$ 3 & 2.5 $\pm$ 1.5 & 5.1 $\pm$ 1.0 & 22 $\pm$ 4   \\
+DMSO               & 16.4 $\pm$ 0.5 & 23 $\pm$ 3 & 4.8 $\pm$ 1.5 & 6.4 $\pm$ 1.0 & 25 $\pm$ 4   \\
+H$_2$O             & 18.2 $\pm$ 0.5 & 23 $\pm$ 5 & 12.9 $\pm$ 3.0& 6.2 $\pm$ 1.5 & 27 $\pm$ 5   \\
+\hline\hline
+\end{tabular*}
+%
+%\begin{footnotesize}
+%$^{a)}$
+%\end{footnotesize}
+\end{table}
+%
+The distributions
+(blue curve in Figure~\ref{f:mescn-solefp-md-distr}) 
+of exchange\hyp{}repulsion frequency shifts
+are quite broad for all four solutions. As the solvent polarity
+increases from CHCl$_3$ to water, the red\hyp{}shifting Coulomb
+contribution (red curve) increases. However, the dispersion
+contribution remains more or less the same. From the present
+SolEFP results shown in Figures~\ref{t:mescn-solefp-md-exp} 
+and \ref{f:mescn-solefp-md-distr}, it is quite clear now
+that the nitrile frequency shift cannot be fully described by the
+contributions, $\Delta\omega^{\rm Coul}$ and $\Delta\omega^{\rm Ind}$, 
+that are linearly dependent on
+electric field.
+
+
+
+\section{SCN label at the interface of two proteins}
+
+
+
+
+\section{Effects of atom order reversal within CN group}
+
+To explain the molecular origins of such greatly enhanced sensitivity to H-bonding 
+interactions, we carried out extensive QM calculations of interaction energy decomposition, 
+from which individual contributions to vibrational shift were determined based on recently 
+developed model of solvatochromism. For the study, we chose two simple models of 
+acetonitrile and methyl isocyanide, hydrogen\hyp{}bonded to a water and chloroform molecule. 
+The results showing each interaction energy contributions to vibrational frequency shift are 
+given in Table~\ref{t:cnnc-soleds}, whereas the molecular structures are depicted in Figure~\ref{f:cnnc-soleds-str}.
+%
+\begin{table}[t!]
+\caption{SolEDS//HF/6-311++G** frequency shifts of the CN/NC stretch mode with
+respect to gas phase that were computed for the model solute\hyp{}solvent systems 
+(Figure~\ref{f:cnnc-soleds-str}). The 
+lengths of hydrogen bonds are shown in parentheses below the system label.
+Excact frequency shifts ("Full QM") computed for the fully 
+optimized structures are also shown.
+Frequency shift values are given in cm$^{-1}$.
+\label{t:cnnc-soleds}}
+\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } l cccc}
+\hline\hline
+              & MeCN--H$_2$O & MeNC--H$_2$O & MeCN--CHCl$_3$ & MeNC--CHCl$_3$ \\
+              & R$_{\rm NH}$ = 2.245\AA 
+              & R$_{\rm CH}$ = 2.421\AA 
+              & R$_{\rm NH}$ = 2.375\AA 
+              & R$_{\rm CH}$ = 2.575\AA \\
+\hline
+$\Delta\omega^{(10)}_{\rm el}$       & --4.6   &  +9.0    &  --5.3         &  +7.8  \\
+$\Delta\omega^{\rm HL}_{\rm ex}$     & +16.0   & +14.3    & +8$\pm$4*      & +11.7  \\
+$\Delta\omega^{\rm HF}_{\rm del}$    & --4.9   & --2.8    & $\sim$0$\pm$4* & --1.3  \\
+$\Delta\omega^{\rm SolEDS}$          &  +6.5   & +20.5    &   +4.4         & +18.2  \\
+\hline
+Full QM                              &  +5.9   & +20.1    &   +4.1         & +18.0  \\
+\hline\hline
+\end{tabular*}
+\end{table}
+%
+\begin{figure}[b!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.9\linewidth]{cnnc.SolEDS.structures.eps}
+}
+\caption{
+Molecular structures of the model systems used for SolEDS//HF/6-311++G**
+analyses. (a) MeCN--H$_2$O (b) MeNC--H$_2$O (c) MeCN--CHCl$_3$ and (d) MeNC--CHCl$_3$
+\label{f:cnnc-soleds-str}}
+\end{figure}
+%
+It is clear that the 
+frequency blue\hyp{}shifts due to (both proper and improper) H-bond are significantly larger in the 
+case of isocyanide probes, with the almost four\hyp{}fold increase in frequency shift as compared
+to the gas\hyp{}phase states of MeCN and MeNC. It is interesting that the origins of these 
+frequency shifts in terms of the exchange\hyp{}repulsion and charge\hyp{}delocalization effects are 
+virtually the same. On the other hand, the first\hyp{}order electrostatic contribution (which is 
+mostly due to the multipolar interactions) changes its sign in the case of isonitriles causing 
+the electrostatic blue shift instead of red shift. Note that this change in sign enforces blue 
+shifts due to exchange\hyp{}repulsion in stark contrast to the nitrile frequency shift where 
+Coulombic and exchange\hyp{}repulsion cancel one another. To understand this sign change in the 
+Coulombic contribution to the vibrational frequency shifts of isonitrile stretch mode we have 
+computed the ab initio solvatochromic vibrational multipole moments%50 
+of CN/NC stretches which are shown in Table~\ref{t:cnnc-solcamm}.
+%
+\begin{table}[t!]
+\caption{Solvatochromic dipole and quadrupole moments of CN/NC stretches of
+acetonitrile (MeCN) and methyl isocyanide (MeNC) in cm$^{-1}$/(MV/cm) and 10$^{-8}\times$\
+cm$^{-1}$/(MV/cm2), respectively. Principal symmetry axes of all the molecules are collinear with 
+$z$-axis so that $x$ and $y$ dipole as well as $xy$, $xz$, $yz$ quadrupole components vanish. 
+$z$-axis is 
+pointing towards N atom in nitrile or C atom in isonitrile group, respectively. Solvatochromic 
+quadrupole has its origin in CN or NC mid\hyp{}bond.
+\label{t:cnnc-solcamm}}
+\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } ll ccc c ccc}
+\hline\hline
+Method & Basis set    & \multicolumn{3}{c}{MeCN} && \multicolumn{3}{c}{MeNC}                 \\
+       &              & \multicolumn{7}{c}{\emph{ab initio}}                                 \\
+       &              & $z$     &  $xx=yy$  & $zz$     &&    $z$    &  $xx=yy$    &    $zz$  \\
+\cline{3-5} \cline{7-9}
+B3LYP  & 6-311++G**   & --0.29  &  --0.77   &  +1.40   &&   +0.28   &   --0.70    &   +0.96  \\
+HF     & 6-311++G**   & --0.38  &  --0.83   &  +1.35   &&   +0.38   &   --0.80    &   +0.74  \\
+MP2    & 6-311++G**   & --0.059 &  --0.75   &  +0.98   &&   +0.014  &   --0.77    &   +1.26  \\
+CCSD   & 6-311++G**   &         &           &          &&           &             &          \\
+CCSD   & aug-cc-pVDZ  &         &           &          &&           &             &          \\
+CCSD   & aug-cc-pVTZ  &         &           &          &&           &             &          \\
+%\hline
+       &              & \multicolumn{7}{c}{Fitting}                                          \\
+       &              & $z$     &  $xx=yy$  & $zz$     &&    $z$    &  $xx=yy$    &    $zz$  \\
+\cline{3-5} \cline{7-9}
+B3LYP  & 6-311++G(3df,2pd) 
+                      &  --0.32$^{a)}$ &  --1.23$^{a)}$  & +2.47$^{a)}$  && & &              \\
+%\hline
+       &              & \multicolumn{7}{c}{Exp.$^{b)}$}                                      \\
+       &              & \multicolumn{3}{c}{$\vert z\vert$}    && \multicolumn{3}{c}{$\vert z\vert$} 
+                                                                                             \\
+\cline{3-5} \cline{7-9}
+       &              & \multicolumn{3}{c}{0.33--0.39$^{c)}$} && \multicolumn{3}{c}{-}       \\
+\hline\hline
+\end{tabular*}
+\begin{footnotesize}
+$^{a)}$ Ref.\citep{Lee.Choi.Cho.JCP.2012}, 
+$^{b)}$ Ref.\citep{Andrews.Boxer.JPCA.2000}, 
+$^{c)}$ assuming that the local field correction factor is between 1.1--1.3.
+\end{footnotesize}
+\end{table}
+%
+
+Generally, the B3LYP and HF values of ${\BM \upmu}_{\rm CN}$ are in good agreement with experiment.
+For
+instance, the B3LYP/6-311++G** \emph{ab initio} calculation and B3LYP/6-311++G(3df,2pd) 
+empirical estimation give the absolute magnitudes of 0.29 and 0.32 cm$^{-1}$/(MV/cm), 
+respectively, with the experimental range of 0.32--0.39 cm$^{-1}$/(MV/cm). Interestingly, MP2 
+significantly underestimates the absolute magnitude of the CN solvatochromic dipole which 
+is predicted to be less than 0.06 cm$^{-1}$/(MV/cm) in its absolute magnitude. The fact that 
+HF level provides correct order of magnitude (0.38 cm$^{-1}$/(MV/cm)) is surprising and 
+apparently more refined electron\hyp{}correlation method than MP2 is necessary in the case of 
+correlated \emph{ab initio} calculations. Unfortunately, there are no available measurements of ${\BM \upmu}_{\rm NC}$
+for MeNC in the literature. Nevertheless, all of our \emph{ab initio} and empirical estimates 
+consistently show that ${\BM \upmu}_{\rm CN}$ and ${\BM \upmu}_{\rm NC}$ 
+point in the opposite directions along the
+corresponding CN/NC bond axes. Note also that the vibrational quadrupole, unlike dipole, is 
+not affected much by flipping C and N atoms within IR probe.
+Therefore, the differences in the
+sign of $\Delta\omega^{(10)}_{\rm el}$
+are caused primarily by the reversal the corresponding solvatochromic 
+dipole directions.
+
+To understand the reasons behind the significantly enhanced intensities of NC probes over
+CN probes, we have analyzed the dipole derivatives with respect to XY (X,Y=N,C) stretch
+modes, $\fderiv{{\BM \upmu}}{Q_{\rm XY}} \Bigg|_{{\bf Q}_{0}}$,
+since the IR intensities are proportional to its modulus squared.
+Assuming that
+%
+\begin{equation}
+ {\BM \upmu} \approx \sum_x^{\rm atoms} q_x {\bf r}_x 
+\end{equation}
+%
+where $q_a$ and ${\bf r}_x$ are the position and partial charge of $x$th atom, respectively,
+the dipole derivative can be expressed as a sum of the two contributions
+%
+\begin{equation} \label{e:torii-partitioning}
+ \fderiv{{\BM \upmu}}{Q_{\rm XY}} \Bigg|_{{\bf Q}_{0}} \approx
+ \sum_x^{\rm atoms} \fderiv{q_x}{Q_{\rm XY}} \Bigg|_{{\bf Q}_{0}} {\bf r}_x 
+  +
+ \sum_x^{\rm atoms} q_x \fderiv{{\bf r}_x}{Q_{\rm XY}} \Bigg|_{{\bf Q}_{0}}
+ \equiv 
+ \partial {\BM \upmu}_{\rm XY}^{\rm cf} + \partial {\BM \upmu}_{\rm XY}^{\rm vib}
+\end{equation}
+%
+In the above equation, $\partial {\BM \upmu}_{\rm XY}^{\rm cf}$ denotes the
+charge\hyp{}flow term due to the charge density
+redistribution that occurs during the vibrational displacement of atoms, 
+whereas $\partial {\BM \upmu}_{\rm XY}^{\rm vib}$
+associated with the structural character of the vibration itself. 
+Note that, in the case of XY
+stretches, the vibrational motion is dominated by the change 
+in XY bond length. The 
+partitionings according to Eq.~\eqref{e:torii-partitioning} 
+were performed for C-XY (C=CH$_3$ or phenyl), and the 
+results are shown in Table~\ref{t:cnnc-mu-part}.
+%
+\begin{table}[t!]
+\caption{Charge\hyp{}flow $\left( \partial {\BM \upmu}_{\rm XY}^{\rm cf} \right)$
+and structural\hyp{}vibrational $\left( \partial {\BM \upmu}_{\rm XY}^{\rm vib} \right)$
+1$^{\rm st}$ derivative with respect to XY (X,Y=C,N) stretch normal coordinate 
+that were obtained by using MP2/6-311++G** method combined with ChelpG atomic charge 
+analysis (Eq.~\eqref{e:torii-partitioning}). 
+Principal symmetry axes of all the molecules are collinear with $z$-axis so that $x$ and $y$ 
+components vanish. $z$-axis is pointing towards N atom in nitrile or C atom in isonitrile group, 
+respectively. Positive (negative) sign of $Q_{\rm XY}$ corresponds to XY bond elongation (stretching). 
+Analytical dipole derivative ("Full QM") is also presented in this table for the sake of 
+comparison. All values in a.u. 
+\label{t:cnnc-mu-part}}
+\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } l cccc}
+\hline\hline
+                                          & MeCN      & MeNC     & PheCN    & PheNC    \\
+\hline
+%
+& \multicolumn{4}{c}{MP2/6-311++G**}                                                   \\
+$\partial\mu_{z,{\rm XY}}^{\rm cf}$       &   +0.60   &   +1.64  &   +0.54  &   +1.94  \\
+$\partial\mu_{z,{\rm XY}}^{\rm vib}$      &  --0.62   &  --0.59  &  --0.59  &  --0.63  \\
+$\fderiv{\mu_z}{Q_{\rm XY}}$              &  --0.02   &   +1.05  &  --0.05  &   +1.31  \\
+Full QM                                   &  --0.0008 &  +1.0616 & --0.0585 & +1.2955  \\
+%
+& \multicolumn{4}{c}{CCSD/6-311++G**}                                                  \\
+$\partial\mu_{z,{\rm XY}}^{\rm cf}$       &  &&&  \\
+$\partial\mu_{z,{\rm XY}}^{\rm vib}$      &  &&&  \\
+$\fderiv{\mu_z}{Q_{\rm XY}}$              &  &&&  \\
+Full QM                                   &  &&&  \\
+%
+& \multicolumn{4}{c}{CCSD/aug-cc-pVDZ}                                                 \\
+$\partial\mu_{z,{\rm XY}}^{\rm cf}$       &  &&&  \\
+$\partial\mu_{z,{\rm XY}}^{\rm vib}$      &  &&&  \\
+$\fderiv{\mu_z}{Q_{\rm XY}}$              &  &&&  \\
+Full QM                                   &  &&&  \\
+%
+& \multicolumn{4}{c}{CCSD/aug-cc-pVTZ}                                                 \\
+$\partial\mu_{z,{\rm XY}}^{\rm cf}$       &  &&-&-  \\
+$\partial\mu_{z,{\rm XY}}^{\rm vib}$      &  &&-&-  \\
+$\fderiv{\mu_z}{Q_{\rm XY}}$              &  &&-&-  \\
+Full QM                                   &  &&-&-  \\
+\hline\hline
+\end{tabular*}
+\end{table}
+%
+From our analyses it is clear that the structural contribution is 
+very similar in all the studied model systems but the charge\hyp{}flow contribution is substantially 
+increased in the case of NC probes. To get a deeper insight into the origins of this increase we 
+have plotted the 3D map of the electron density flow, $\fderiv{\rho}{Q_{\rm XY}} \Bigg|_{{\bf Q}_{0}}$, 
+in Figure~\ref{f:cnnc-maps}.
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.9\linewidth]{cnnc.map.mp2.iso-0.20.eps}
+}
+\caption{
+First derivatives of the electron density distribution $\left( \fderiv{\rho}{Q_{\rm XY}} \Bigg|_{{\bf Q}_{0}} \right)$
+with respect to CN/NC stretch mode calculated at the MP2/6-311++G** level. 
+Positive (negative) sign of $Q_{\rm XY}$
+corresponds to elongation (stretching) of the CN or NC bonds. The isocontours were 
+plotted for $\pm$0.2 a.u. with red and blue colors representing positive and negative values, 
+respectively.
+\label{f:cnnc-maps}}
+\end{figure}
+%
+
+Obviously, as the
+the XY bond length increases ($Q>0$), the electron density on XY bond decreases. However, 
+when NC bond is elongated, there is a notable density flow from carbon lone pair and NC 
+bond towards N--C(H$_3$) bond (mechanism 'I'). In contrast, in the case of CN bond elongation 
+the density flows from CN bond in two opposite directions: towards C--C(H$_3$) bond 
+(mechanism 'I') and towards nitrogen lone pair (mechanism 'II'). This indicates that the net 
+charge flow is dictated by the position of the more electronegative (nitrogen) atom in XY group 
+which results in much smaller $\partial {\BM \upmu}_{\rm XY}^{\rm cf}$ contribution in the case of
+nitrile stretching vibration,
+and in turn, in a very small dipole derivative. This explains the significant increase in the 
+intensity of NC stretch absorption relative to CN stretch in both aliphatic and aromatic 
+(iso)nitriles. This phenomenon might be also responsible for the sign reversal in the
+solvatochromic dipole of NC stretch mode because ${\BM \upmu}_{\rm XY}$ is approximately proportional to
+%
+\begin{equation}
+ {\BM \upmu}_{\rm XY} \propto \fderiv{{\BM \upmu}}{Q_{\rm XY}} \Bigg|_{{\bf Q}_{0}} 
+    \qquad\text{(approximately)}
+\end{equation}
+%
+We believe that the interaction energy decomposition scheme and the electron density
+analysis presented in this study may become useful approaches to study origins of 
+solvatochromism and intensity enhancements of many different molecular probes.
+
+
+\section{Discussion}
+
+\subsection{Origins of the vibrational frequency shifts of CN stretch mode}
+
+Our analysis is consistent with the previous empirical
+calculation of the CN stretch mode of acetonitrile12, in which
+Reimers and Hall found, by applying the solvent descriptor
+model of Fawcett et al.53, that the dispersion interaction
+contributes the most to the observed frequency red shifts.
+They also found a drastic increase in 'specific' frequency blue
+shifts as they were using more protic solvents like water, 
+2,2,2\hyp{}trifluoroethanol and trifluoroacetic acid. For instance, the nonspecific
+electrostatic, dispersion and specific (electrostatic and
+non-electrostatic) frequency shifts of CN mode of acetonitrile
+in water were found to be --6.4, --9.7 and +6.7 cm$^{-1}$, whereas in
+CCl$_4$ --1.9, --13.0 and 0.0 cm$^{-1}$, respectively. Therefore, it is
+evident that those short\hyp{}range blue\hyp{}shifting effects originate
+from the exchange\hyp{}repulsion interactions that were previously
+analyzed by Rey and Hynes15 and Morales and Thompson16
+from a perspective of a repulsive part of the van der Waals
+intermolecular potential.
+
+\subsection{Does Stark-dipole theory describes induction effects accurately?}
+
+It is necessary to point out the limitation of the
+extended Stark theory discussed at the end of Section 2. Since
+the SolEFP approach is the first\hyp{}principles theory that includes
+all the vibrational solvatochromic induced multipole moments,
+we could test the validity of the extended but still approximate
+expression for the Stark\hyp{}dipole model in Eq. (19). 
+In page~\pageref{p:solindmult} we showed that the
+evaluation of the solvatochromic induced dipole and quadrupole moments is
+straightforward within the SolEFP theory, and are given by Eqs.~\eqref{e:34e1} and \eqref{e:34e2}.
+
+\begin{table}[t!]
+\caption{
+Frequency shifts originating from the Coulomb interaction and induction 
+(polarization) contributions of CN stretch mode of MeSCN in four different solvents. 
+Here,
+the exact SolEFP induction frequency shift is compared with the approximate schemes 
+(see the main text for explanation). The vibrational solvatochromic dipole and
+quadrupole magnitudes are presented in the last two columns. ${\bf F}$ denotes 
+the set of electric fields at 19 distributed sites of MeSCN whereas ${\bf F}_{\rm CN}$ 
+is the electric field at the CN
+mid\hyp{}bond. Frequency shifts are given in cm$^{-1}$ and solvatochromic dipoles and quadrupoles 
+in cm$^{-1}$/(MV/cm) and $10^{-8}\times$ cm$^{-1}$/(MV/cm$^2$), respectively.
+\label{t:stark-dipole-ind}}
+\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } l cccc c cc}
+\hline\hline
+ &\multicolumn{4}{c}{Frequency shifts}  && \multicolumn{2}{c}{Multipoles}\\
+\cline{2-5} \cline{7-8} 
+  & $\Delta\omega_{\rm CN}^{\rm Coul}$ & $\Delta\omega_{\rm CN}^{\rm Ind}$ 
+  & $\langle-\frac{1}{2}\langle{\BM\upmu}_{\rm CN}^{\rm Ind}\rangle\cdot{\bf F}_{\rm CN}\rangle$
+  & $\langle-\frac{1}{2}\langle{\bf a}_{\rm CN}'\rangle\cdot{\bf F}\rangle$
+ && $\lvert\langle{\BM\upmu}_{\rm CN}\rangle\rvert$
+  & $\lvert\langle{\BM\Theta}_{\rm CN}\rangle\rvert$ \\
+\hline
+Vacuum     &      0.0  &   0.0  &  0.0 &  0.0  &&  0.466 &  1.16 \\
+CCl$_4$    &     -0.7  &  -3.3  &  0.0 &  0.0  &&  0.436 &  1.05 \\
+CHCl$_3$   &     -5.6  &  -3.8  &  0.0 & -0.6  &&  0.477 &  1.05 \\
+DMSO       &    -10.6  &  -5.2  & -0.2 & -1.6  &&  0.506 &  1.07 \\
+H$_2$O     &    -18.5  & -10.1  & -3.2 & -4.3  &&  0.639 &  1.04 \\
+\hline\hline
+\end{tabular*}
+%
+%\begin{footnotesize}
+%$^{a)}$
+%\end{footnotesize}
+\end{table}
+%
+In Table~\ref{t:stark-dipole-ind}, we compare the exact induction frequency
+shifts that can be calculated with Eq. (12) with (i) those
+obtained by considering time\hyp{}averaged vibrational
+solvatochromic induced dipole in Eq. (20) interacting with the
+instantaneous electric field evaluated at the CN mid\hyp{}bond, i.e.,
+$\langle-\frac{1}{2}\langle{\BM\upmu}_{\rm CN}^{\rm Ind}\rangle\cdot{\bf F}_{\rm CN}\rangle$
+and (ii) those obtained by
+considering time\hyp{}averaged vibrational solvatochromic induced
+dipoles distributed over 19 different locations in MeSCN
+molecule that interact with the instantaneous electric fields at
+those polarizable sites, i.e., 
+$\langle-\frac{1}{2}\langle{\bf a}_{\rm CN}'\rangle\cdot{\bf F}\rangle$
+(see
+Eqs.(7), (8), and (12)). In addition, the total magnitudes of the
+solvatochromic dipole and quadrupole moments, as well as
+the Coulomb frequency shifts, are also given in Table~\ref{t:stark-dipole-ind}.
+
+As can be seen in Table~\ref{t:stark-dipole-ind}, it is concluded that the exact
+induction frequency shift $\Delta\omega_{\rm CN}^{\rm Ind}$ 
+in Table~\ref{t:stark-dipole-ind}) cannot be
+reproduced by the two approximate calculation methods (i)
+and (ii) discussed above. To examine the directionality of the
+vibrational solvatochromic induced dipoles, we examined the
+relative orientation of the total vibrational solvatochromic
+induced dipole with respect to the permanent vibrational
+solvatochromic dipole of the nitrile stretch mode (Figure S7 in
+ESI). It turns out that the relative angle between the two
+dipoles varies from 0 to 180\textdegree in all the aprotic solvents. This
+means that the induction frequency shifts are determined by
+instantaneous solute\hyp{}solvent configurations so that the
+averaged value over all possible solute\hyp{}solvent configurations
+cannot provide information on local electric field [note that
+the total magnitudes of the molecular vibrational
+solvatochromic dipoles and quadrupoles do not depend on
+solvent much (see Table~\ref{t:stark-dipole-ind})]. However, in the case of water, the
+vector component of the average induced vibrational
+solvatochromic dipole is large and it induces small red shift
+(Table~\ref{t:stark-dipole-ind}). This indicates that the extended Stark\hyp{}dipole theory
+including both the molecular vibrational solvatochromic dipole
+and solvent\hyp{}induced dipole contributions49 is still incapable of
+fully describing even the induction effects correctly in the
+cases of nitrile probes. To prove this quantitatively, for both a
+small cluster consisting of one MeSCN and three water
+molecules (Figure~\ref{f:mescn-aj}(a)) and a large cluster taken from MD
+trajectory (Figure~\ref{f:mescn-aj}(b)), we calculated the instantaneous distributed
+vibrational solvatochromic dipoles (${\bf a}_j'$ in Eq. (12)) and depict
+them with arrows. 
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.9\linewidth]{Fig.7.eps}
+}
+\caption{
+Vibrational solvatochromic (SolEFP) induced dipole moments (gray arrows, ${\bf a}'$ in the main text) of CN stretch
+mode of MeSCN interacting with water molecules. Note that the induced dipoles are delocalized even on
+water molecules. (a) A cluster consisting of MeSCN and three water molecules. (b) A configuration taken
+from QM/CMD trajectory.
+\label{f:mescn-aj}}
+\end{figure}
+%
+Note that quite a few dipoles at different
+sites contribute to $\Delta\omega_{\rm CN}^{\rm Ind}$, 
+where they all have quite different
+directions and magnitudes. If they all are added up at the midpoint
+of the CN bond, they would largely cancel out with one
+another. Furthermore, they are spatially delocalized even on
+surrounding water molecules so that $\Delta\omega_{\rm CN}^{\rm Ind}$
+cannot be simply
+estimated by considering the induced dipoles of MeSCN only.
+We emphasize that the SolEFP induction theory fully takes into
+account such non\hyp{}additive nature in calculating $\Delta\omega^{\rm Ind}$ 
+and that
+${\bf a}_j'$ \emph{spans the entire system} including both solute and solvent
+molecules.\citep{Blasiak.Cho.JCP.2014} 
+Therefore, it becomes clear that the Stark-dipole
+model is a highly approximate approach to predict the
+frequency shifts of nitrile stretch mode not only because it
+does not include other important contributions from
+vibrational solvatochromic quadrupolar, exchange\hyp{}repulsion
+and dispersion effects, but also because it does not take into
+account even the induction effect correctly.
+
+\section{Summary}
+
+\printbibliography[heading=subbibintoc,title={References}]
+\end{refsection}
+
+% ------------------- CHAPTER 8 ------------------------
+
+\begin{refsection}
+\chapter{The Solvshift program}
 
 In this part of the Thesis, we briefly present the {\sc Solvshift}
 package. The basic concept behind it is to develop the fragment\hyp{}based
@@ -7705,9 +8634,9 @@ nuclei can be just added to electronic atomic moments.
 \begin{refsection}
 \chapter{Computational Details\label{a:computational-details}}
 
-Here we provide the details of computation for Chapters 4,5 and 6.
+Here we provide the details of computation for Chapters 5, 6, 7 and 8.
 
-\section{Chapter 4}
+\section{Chapter 5}
 
 $N$-methylacetamide (NMA) and its deuterated molecule
 (NMA-$d$ with deuterium at its amide position) 
@@ -8019,6 +8948,47 @@ water solution was just about 1 day, when a 4\hyp{}thread run (1
 frame in 1 thread) at 3.4 GHz Intel\textregistered Core\texttrademark I5\hyp{}3570 computer
 was performed.
 
+\section{Chapter 6}
+
+\section{Chapter 7}
+
+To study the sensitivity of the CN/NC stretch mode to H-bonding, we chose methylnitrile
+(MeCN) and methylisonitrile (MeNC) as model IR probe molecules that are interacting with 
+H$_2$O and CHCl$_3$ via H-bonds. Energy optimizations (with gradient RMS threshold of 10$^{-6}$ a.u.) 
+and subsequent harmonic frequency analyses of single MeCN and MeNC molecules as well 
+as the MeCN--X and MeNC--X (X=H$_2$O, CHCl$_3$) complexes were performed by using 
+HF/6-311++G** method%51, 52 
+as implemented in the Gaussian09 suite of programs.%53 
+Cubic 
+anharmonic constants were calculated numerically in our in\hyp{}house code by evaluating the 
+first derivatives of Hessian matrices. The interaction energies between IR probe and solvent 
+molecules were computed by the variational\hyp{}perturbational method%45-48 
+implemented by G{\'o}ra%54 
+in the GAMESS package%55. 
+The calculations of the interaction energy derivatives with respect 
+to the gas\hyp{}phase normal coordinates were performed numerically. All the first derivatives 
+(interaction energies and Hessians) were computed in Cartesian coordinates assuming 0.006 \AA
+Cartesian atomic displacements, and they were subsequently transformed to the normal 
+coordinate space by using the eigenvector elements obtained from the harmonic vibrational 
+analyses of the isolated IR probe molecules. The second derivatives were computed directly 
+in the normal mode space with a displacement of 0.085 \AA. 
+The computations of the dipole derivatives of MeXY and PheXY (X,Y=C,N) were 
+undertaken by using MP2/6-311++G** method.%51, 52 
+The atomic charges were computed by 
+using ChelpG method%56 
+with an additional constraint to reproduce the total dipole moment, 
+and the first derivatives of the atomic charges $q_x$ with respect to XY 
+stretch mode $Q_{\rm XY}$ were estimated from the least\hyp{}squares fitting to a curve 
+%
+\begin{equation}
+q_x=f(Q_{\rm XY}) = a_0 + a_1 q_x + a_2 q_x^2 + a_3 q_x^3 + a_4 q_x^4 + a_5 q_x^5 + a_6 q_x^6
+\end{equation}
+%
+All numerical differentiations were undertaken by using the 4-point central finite 
+difference method except for density derivative 3D maps where we used 3-point central 
+method with displacement of 0.03 \AA.
+
+\section{Chapter 8}
 
 \printbibliography[heading=subbibintoc,title={References}]
 \end{refsection}
