@@ -58,3 +58,12 @@ f.MeCN.MeSCN.vs.solvents
 \label{e:34e2}                 quadrupole
 \label{e:34e3}                 octupole
 p:solindmult
+s:solefp-working-model
+a:nma-esp-fit
+s:vibr-solv-explicit-models
+s:dw-cn-bulk
+p:solindmult
+e:dw-ind-avec-alternative
+e:avec-prime
+f:mescn-solefp-qm
+t:mescn-solefp-md-exp

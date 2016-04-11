@@ -135,7 +135,7 @@
 % SHORTCUTS
 \newcolumntype{,}{D{.}{,}{2}}
 \newcommand{\citee}[1]{\ensuremath{\scriptsize^{\citenum{#1}}}}
-\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\newcommand{\HRule}{\rule{\linewidth}{0.2mm}}
 % Quantum notation
 \newcommand{\bra}[1]{\ensuremath{\bigl\langle {#1} \bigl\lvert}}
 \newcommand{\ket}[1]{\ensuremath{\bigr\rvert {#1} \bigr\rangle}}
@@ -2685,7 +2685,7 @@ whereas the solvatochromic polarizability is
    \sum_i \frac{g_{ijj}}{M_i\omega_i^2} \fderiv{{\BM\alpha}_0}{Q_i}
 \end{equation}
 %
-In Eq.~\eqref{e:f9f9f}, we separated the 'electric-field correction'
+In Eq.~\eqref{e:f9f9f}, we separated the 'electric\hyp{}field correction'
 term from the Coulombic term due to technical reasons,
 %
 \begin{equation} 
@@ -2719,7 +2719,7 @@ calculations, especially when specific interactions such as
 hydrogen bonds are present solute and its molecular environment.
 
 
-\section{Explicit model: Coarse-graining}
+\section{Explicit model: Coarse-graining\label{s:vibr-solv-explicit-models}}
 
 We now focus on the treatment of each molecule
 explicitly which enables one to take into account
@@ -3220,12 +3220,28 @@ located at the polarizable centers of the system:
 \end{equation}
 %
 whereas ${\bf A}_j$ is the generalized (in a similar fashion as ${\bf D}^{-1}$ 
-from Eq.~\eqref{e:eint-2-ind-dip-distr}) \emph{solvatchromic polarizability} of the $j$th mode.
+from Eq.~\eqref{e:eint-2-ind-dip-distr}) \emph{solvatochromic polarizability} of the $j$th mode.
 While ${\bf A}_j$ is relatively small in many cases, ${\bf a}_j$ is non\hyp{}negligible.
 Note also that, since our formalism includes $N$\hyp{}body interactions,
 ${\bf a}_j$ is non\hyp{}zero at the centers located on solvent molecules.
 This means that the polarization interaction\hyp{}induced vibrational solvatochromism
-is a delocalized phenomenon.
+is a delocalized phenomenon. 
+
+It may appear convenient in certain cases
+to recast Eq.~\eqref{e:dw-ind-avec} as
+%
+\begin{equation}\label{e:dw-ind-avec-alternative}
+\Delta\omega_j^{\rm Ind} = - \frac{1}{2}   {\bf a}_j' \cdot {\bf F} 
+\end{equation}
+%
+which defines the effective solvatochromic induced dipoles as 
+%
+\begin{equation}\label{e:avec-prime}
+{\bf a}_j' \equiv {\bf a}_j + {\bf F}^T \cdot {\bf A}_j
+\end{equation}
+% 
+by including also vibrational polarizabilities. We shall use this definition
+later in Chapter~6.
 
 Now, we need the explicit expressions for the vibrational
 derivatives of $\bf D$ and $\bf F$. The derivatives of the first are straightforward
@@ -4652,7 +4668,7 @@ These will lead to the SolEFP, SolEDS and SolSAPT methods, accordingly.
 
 \subsubsection{SolEFP model\label{s:solefp-working-model}}
 
-In fact, SolEFP method was already described in Section~XXX
+In fact, SolEFP method was already described in Section~\ref{s:vibr-solv-explicit-models}
 and the frequency shift is given as
 %
 \begin{equation} \label{e:dw-solefp}
@@ -7088,7 +7104,7 @@ frequency shifts of amide I mode in aprotic, weakly polar solvents.
 
 \begin{refsection}
 
-\chapter{Vibrational solvatochromism of CN and NC modes}
+\chapter{Vibrational solvatochromism of CN modes}
 
 While amide I mode can be used as a sensor of the global conformation
 of proteins, isolated nitrile (CN) or azide (N$_3$) 
@@ -7201,8 +7217,10 @@ multivariate least square fitting analyses of HF and density functional theory
                                      & MP2            & 0.20 & 0.96 \\
                                      & CCSD           & 0.31 & 1.06 \\
                                      & B3LYP          & 0.43 & 1.26 \\
+\hline
 \multirow{2}{*}{Fitting}             & HF$^{a)}$      & 0.54 &      \\
                                      & B3LYP$^{b)}$   & 0.43 & 1.02 \\
+\hline
 Exp.$^{c)}$                          &                & 0.55--0.64$^{d)}$   & - \\
 \hline\hline
 \end{tabular*}
@@ -7396,7 +7414,7 @@ interaction\hyp{}induced effects may not be quantitatively reliable.
 
 
 
-\section{CN stretch in bulk solution}
+\section{CN stretch in bulk solution\label{s:dw-cn-bulk}}
 
 As shown in Figure~\ref{f.MeCN.MeSCN.vs.solvents}, 
 the nitrile frequency shifts are strongly
@@ -7600,6 +7618,506 @@ electric field.
 
 \section{SCN label at the interface of two proteins}
 
+In the above Sections, we showed that the vibrational
+solvatochromism of CN probes originates not only from the
+electrostatic interaction with solvent electric field but also
+from other short\hyp{}range effects that \emph{cannot} be directly
+correlated with solvent electric field. In particular, the
+exchange\hyp{}repulsion contribution caused by the steric contacts
+of the IR probe with surrounding molecules or chemical groups
+causes a strong blue shift of the nitrile stretch modes and the
+dispersion interaction\hyp{}induced term makes it red\hyp{}shifted. Such
+delicate balance among many different contributions to the
+vibrational frequency shift is particularly important when
+those IR probes are incorporated into proteins. To study these
+aspects in detail, one needs to construct a rigorous vibrational
+solvatochromism model for protein environment, which
+properly takes into account Coulomb, induction, dispersion,
+and exchange\hyp{}repulsion interaction\hyp{}induced terms
+systematically. Here, we make the first attempt to develop
+such \emph{ab initio} model.
+
+\subsection{Constructing the model for a protein environment}
+
+This task is
+extremely challenging because, unlike the simple cases of
+MeSCN in various bulk solutions, we need to consider
+vibrational probe which is covalently attached to the
+macromolecule (denoted as Prot-SCN) -- note that there is no
+well\hyp{}defined theoretical procedure to decouple any IR probe
+vibration from the protein backbone. However, we believe
+that the vibrational solvatochromism of any Prot-SCN probe
+can still be modeled, to a reasonable level of accuracy, by
+using the model MeSCN molecule because CN stretch modes
+are fairly localized and isolated from other intramolecular
+protein vibrations.
+
+To test the transferability of the \emph{ab initio}\hyp{}calculated SolEFP
+solvatochromic parameters we studied a few SCN probe
+systems embedded in model amino acids of which structures
+can be found in the upper panel of Figure~\ref{f:mescn-prot-struct}. 
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.98\linewidth]{MeSCN-Prot.struct.eps}
+}
+\caption{
+\emph{Upper:} Structures of six Prot-SCN model compounds.
+\emph{Lower:} Structures of MeSCN-peptide dimers used for testing the EFP fragmentation
+scheme.
+\label{f:mescn-prot-struct}}
+\end{figure}
+%
+We assume that the vibrational
+frequency shift induced by neighboring peptide groups could
+be described by the following two factors: (i) Coulombic
+frequency shift due to the electric field by the distributed
+charges on the amide group (CONH); and (ii) through\hyp{}bond
+effects that are associated with frequency shift originating
+from change of relative configuration of covalently bonded
+chemical group such as methylene. The first effect can be
+modeled by considering the interaction of MeSCN
+vibrational solvatochromic multipoles with atomic partial
+charges of CONH group. The second effect (ii) cannot be
+directly quantified, but we could approximately estimate its
+nature by performing additional analyses of the CN stretch
+mode frequencies of several MeSCN analogs,
+where the relative configuration of neighboring methylene (or
+methyl) groups are different from one another. 
+This is shown in Figure~\ref{f:mescn-prot-through-bond}(a). 
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.98\linewidth]{Fig.8.eps}
+}
+\caption{
+Through-bond effect on CN frequency shift. (a) The CN stretch mode frequency depends on the length and
+configuration of the attached aliphatic chain. (b) For a few representative model peptides containing SCN IR
+probe (see upper panel of Figure~\ref{f:mescn-prot-struct}), 
+we carried out HF/6-311++G** vibrational analyses and the resulting frequency shifts are
+compared with the approximate Equation~\ref{e:dw-pept-scn}.
+\label{f:mescn-prot-through-bond}}
+\end{figure}
+%
+If one more
+methyl (methylene) group is added to the MeSCN, the CN
+stretch mode frequency is red\hyp{}shifted by about 3 cm$^{-1}$. Thus,
+the overall frequency shift of Prot-SCN due to the local sidechain
+configuration of Prot-SCN such as proteins with
+cyanylated cysteine residues and the two neighboring amide
+groups of the cyanylated cysteine can be approximately
+written as
+%
+\begin{equation} \label{e:dw-pept-scn}
+ \Delta\omega_{\text{Pept-SCN}} = \Delta\omega_{\text{MeSCN-CONH}}^{\rm Coul} + \Delta\omega_{\text{Through-bond}}
+\end{equation}
+%
+where $\Delta\omega_{\text{MeSCN-CONH}}^{\rm Coul}$
+is evaluated from the interaction of
+SolCAMM with ESP charges fitted on $N$-methylacetamide
+(NMA) peptide group (see Appendix~\ref{a:nma-esp-fit} for details). Using the above
+scheme, we could calculate the vibrational frequency shifts
+and compare them with \emph{ab initio} calculation results in Figure~\ref{f:mescn-prot-through-bond}(b). 
+The correlation is very good. The constant offset, which is
+roughly equal to --3.1 cm$^{-1}$, can indeed be attributed to the
+through\hyp{}bond (or additional methylene group) effect, which is
+fully consistent with the through\hyp{}bond effect (shifting the
+frequency by --2.8 cm$^{-1}$ on average) traced 
+in Figure~\ref{f:mescn-prot-through-bond}(a) when
+the methyl group of MeSCN is replaced with ethyl or even
+longer alkyl chain. The results here show that the SolEFP
+parameters extracted from the ab initio calculations of MeSCN
+can indeed be used to describe the vibrational
+solvatochromism of any Prot-SCN's.
+
+The next and perhaps the more difficult task is to model
+the vibrational solvatochromic influences of surrounding
+amino\hyp{}acid side chains in protein on the CN frequency of Prot-SCN. 
+To use our SolEFP approach, a properly chosen set of
+building blocks that faithfully mimic the amino\hyp{}acid side chains
+as well as the remaining peptide groups are need. Here we use
+the following procedure: i) aliphatic group of side chain is
+represented by an appropriately superimposed methane; 
+ii) aromatic side chain of phenylalanine is by benzene; 
+iii) histidine side chain is modeled by imidazole; iv) polar groups
+can be modeled by the methylated group (for example MeOH
+is the model for the serine side chain); and v) peptide bond is
+modeled by NMA. 
+%
+\begin{table}[t!]
+\caption{
+The minimalistic model of amino acid side chains that is used in Eq.~\ref{e:dw-solefp-prot}.
+In this model, the protein is mimicked by a set of small EFP2 fragments that
+capture the fundamental physical components of the interaction between the IR
+probe and molecular environment. Peptide units are treated by NMA molecules
+except those two being attached next to SCN probes (see the main text).
+\label{t:solefp-prot-residues}}
+\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } ||l|l|l||}
+\hline\hline
+Aminoacid side-chain     & EFP2 fragments                    & Modelled fragment \\
+\hline
+\multirow{1}{*}{Asp}     & \textbullet CH$_3$COO$^-$         & \textbullet Carboxyl group (deprotonated) \\ \hline
+\multirow{2}{*}{Asn}     & \textbullet CHONH$_2$             & \textbullet Amide group \\
+                         & \textbullet CH$_4$                & \textbullet C$\beta$H$_2$ \\ \hline
+\multirow{2}{*}{Glu}     & \textbullet CH$_3$COO$^-$         & \textbullet Carboxyl group (deprotonated) \\
+                         & \textbullet CH$_4$                & \textbullet C$\beta$H$_2$ \\ \hline
+\multirow{2}{*}{Gln}     & \textbullet CHONH$_2$             & \textbullet Amide group \\
+                         & \textbullet 2 $\times$ CH$_4$     & \textbullet C$\beta$H$_2$, C$\gamma$H$_2$ \\ \hline
+\multirow{1}{*}{Ser}     & \textbullet CH$_3$OH              & \textbullet C-OH group \\ \hline
+\multirow{2}{*}{Thr}     & \textbullet CH$_3$OH              & \textbullet C-OH group \\ 
+                         & \textbullet CH$_4$                & \textbullet C$\beta$H$_2$ \\ \hline
+\multirow{2}{*}{Tyr}     & \textbullet PhOH                  & \textbullet Ar-OH group \\
+                         & \textbullet CH$_4$                & \textbullet C$\beta$H$_2$ \\ \hline
+\multirow{2}{*}{Phe}     & \textbullet Benzene               & \textbullet Aromatic ring \\
+                         & \textbullet CH$_4$                & \textbullet C$\beta$H$_2$ \\ \hline
+\multirow{2}{*}{Lys}     & \textbullet CH$_3$NH$_3^+$        & \textbullet Amine group (protonated) \\
+                         & \textbullet 3 $\times$ CH$_4$     & \textbullet C$\beta$H$_2$, C$\gamma$H$_2$, C$\delta$H$_2$ \\ \hline
+\multirow{2}{*}{Arg}     & \textbullet Methylguanidinium$^+$ & \textbullet Guanidinium group (protonated) \\
+                         & \textbullet 2 $\times$ CH$_4$     & \textbullet C$\beta$H$_2$, C$\gamma$H$_2$ \\ \hline
+\multirow{1}{*}{Gly}     & -                                 & - \\ \hline
+\multirow{2}{*}{His}     & \textbullet Imidazole             & \textbullet Imidazole ring (not protonated) \\
+                         & \textbullet CH$_4$                & \textbullet C$\beta$H$_2$ \\ \hline
+\multirow{2}{*}{Trp}     & \textbullet Indole                & \textbullet Indole group \\
+                         & \textbullet CH$_4$                & \textbullet C$\beta$H$_2$ \\ \hline
+\multirow{2}{*}{Met}     & \textbullet (CH$_3$)$_2$S         & \textbullet Methyl sulfide group \\
+                         & \textbullet CH$_4$                & \textbullet C$\beta$H$_2$ \\ \hline
+\multirow{1}{*}{Cys}     & \textbullet CH$_3$SH              & \textbullet C-SH group \\ \hline
+\multirow{1}{*}{Pro}     & \textbullet 3 $\times$ CH$_4$     & \textbullet Ring \\ \hline
+\multirow{1}{*}{Ala}     & \textbullet CH$_4$                & \textbullet C$\beta$H$_2$ \\ \hline
+\multirow{1}{*}{Leu}     & \textbullet 3 $\times$ CH$_4$     & \textbullet \emph{sec}-buthyl chain \\ \hline
+\multirow{1}{*}{Ile}     & \textbullet 3 $\times$ CH$_4$     & \textbullet 2-methyl-$n$-propyl chain \\ \hline
+\multirow{1}{*}{Val}     & \textbullet 3 $\times$ CH$_4$     & \textbullet \emph{iso}-propyl chain \\
+\hline\hline
+\end{tabular*}
+%
+%\begin{footnotesize}
+%$^{a)}$
+%\end{footnotesize}
+\end{table}
+%
+In Table~\ref{t:solefp-prot-residues}, 
+the model chemical groups
+representing twenty amino acids are summarized and we
+obtained the EFP2's of those model compounds. One of the
+problems originates from the overlap between an EFP2
+fragment and an NMA modelling an amide group. Here, we
+assume that the 'spurious' atoms introduced by all of the
+EFP2's do not contribute much to the vibrational frequency
+shift. Then, we adopt the following strategy:
+%
+\begin{itemize}
+ \item The SolEFP pairwise\hyp{}additive frequency shifts originating
+from Coulomb, dispersion, and exchange\hyp{}repulsion
+interactions between model amino acid side chains and
+nitrile are evaluated by using the standard SolEFP method
+described here.
+ \item The (polarization) induction effects are included as
+follows: the vibrational frequency shifts due to the
+interaction of nitrile with all the overlapping fragments
+such as CH$_4$ and NMA are considered separately. The
+remaining fragments including polar fragments as well as
+solvent water molecules are considered by taking into
+account the many\hyp{}body induction effects.
+\end{itemize}
+%
+This scheme is formulated as
+%
+\begin{equation} \label{e:dw-solefp-prot}
+ \Delta\omega^{\rm SolEFP} \approx 
+ \left(
+   \sum_{\rm X}^{\text{all EFP2's}}
+    \Delta\omega_{\text{Solute-X}}^{\rm Coul}
+   +\Delta\omega_{\text{Solute-X}}^{\rm Ex-Rep}
+   +\Delta\omega_{\text{Solute-X}}^{\rm Disp}
+ \right)
+  + \Delta\omega^{\rm Ind}
+\end{equation}
+%
+where
+%
+\begin{equation} \label{e:dw-solefp-prot-ind}
+ \Delta\omega^{\rm Ind} \approx
+  \Delta\omega^{\rm Ind}_{\text{Polar EFP2's}} + 
+    \sum_{\rm X}^{\text{remaining EFP2's}}
+      \Delta\omega_{\text{Solute-X}}^{\rm Ind}
+\end{equation}
+%
+To test the validity of the above approach, 
+Eqs.~\ref{e:dw-solefp-prot} and \ref{e:dw-solefp-prot-ind},
+we specifically considered five dimeric complexes consisting of
+one MeSCN and serine, tyrosine, or lysine model peptide which are shown
+in lower panel of Figure~\ref{f:mescn-prot-struct}. 
+First, we carried out \emph{ab initio} harmonic
+vibrational analyses of those complexes to obtain the CN
+frequency shifts. Then, we utilized the fragment approach with the
+SolEFP parameters of MeSCN and the EFP2's representing the
+serine, tyrosine, and lysine model peptides and the results
+are shown in Table~\ref{t:solefp-prot-fragmentation}. 
+%
+\begin{table}[t!]
+\caption{
+Test of the EFP fragmentation model used in the minimalistic model of the protein
+(Table~\ref{t:solefp-prot-residues}). 
+In this Table, the test protein environment mimicking molecules ["Ser1", "Ser2c",
+"Ser2n", "Tyr1", "Lys1"; see the structures above in Figure~\ref{f:mescn-prot-struct}] 
+are treated by SolEFP
+method. First, the interaction with an entire EFP parameter ("Full") set is considered. Then,
+the same molecules are approximated by small EFP models and Eq.~\eqref{e:dw-solefp-prot} 
+is used to evaluate
+SolEFP shifts ("Frag"). To test our solvatochromic theory we also show more accurate
+SolEDS calculations in this table and compare it with "Full QM" frequency shifts, those
+which were obtained from harmonic normal mode analysis. To compare SolEFP results with
+SolEDS at HF level, the SolEFP frequency shifts without dispersion ($\Delta\omega^{\rm SolEFP}_{\text{no disp}}$) 
+are presented
+here as well. Note that, while the SolEDS method takes into account both mechanical and
+electronic anharmonicities for all the interaction energy contributions, in the SolEFP method
+the electronic anharmonicity is included only for $\Delta\omega^{\rm Coul}$ 
+(see Section~\ref{s:solefp-working-model}). 
+All calculations were performed at HF/6-311++G** level of
+theory.
+\label{t:solefp-prot-fragmentation}}
+\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } ll ccccc }
+\hline\hline
+&& "Ser1" & "Ser2c" & "Ser2n" & "Tyr1" & "Lys1" \\
+\multicolumn{7}{c}{SolEFP} \\ \hline
+\multirow{2}{*}{$\Delta\omega^{\rm Coul}$}     & Frag &   -8.3   &  -5.9   &   -7.7   &   -5.7   & -39.9   \\
+                                               & Full &   -9.0   &  -7.2   &  -10.8   &   -6.7   & -38.3   \\
+\multirow{2}{*}{$\Delta\omega^{\rm Ex-Rep}$}   & Frag &   24.9   &  14.4   &   10.3   &   24.4   &  70.0   \\
+                                               & Full &   24.0   &  14.9   &   11.1   &   22.5   &  72.7   \\
+\multirow{2}{*}{$\Delta\omega^{\rm Ind}$}      & Frag &   -6.1   &  -4.4   &   -4.1   &  -10.8   & -46.9   \\
+                                               & Full &   -7.4   &  -8.0   &   -6.4   &  -14.6   & -51.0   \\
+\multirow{2}{*}{$\Delta\omega^{\rm Disp}_6$}   & Frag &   -6.9   &  -6.3   &   -6.2   &   -4.6   & -13.9   \\
+                                               & Full &   -6.1   &  -6.4   &   -6.1   &   -5.0   & -14.9   \\
+\multirow{2}{*}{$\Delta\omega^{\rm SolEFP}$}   & Frag &    3.6   &  -2.2   &   -7.7   &    3.3   & -30.7   \\
+                                               & Full &    1.5   &  -6.7   &  -12.2   &   -3.8   & -31.5   \\
+\multirow{2}{*}{$\Delta\omega^{\rm SolEFP}_{\text{no disp}}$}   
+                                               & Frag &   10.5   &   4.1   &   -1.5   &    7.9   & -16.8   \\
+                                               & Full &    7.6   &  -0.3   &   -6.1   &    1.2   & -16.6   \\
+\multicolumn{7}{c}{SolEDS} \\  \hline
+\multicolumn{2}{l}{$\Delta\omega^{(10)}_{\rm el}$}    &  -11.9   & -10.1   &  -11.8   &   -9.7   & -34.5   \\
+\multicolumn{2}{l}{$\Delta\omega^{\rm HL}_{\rm ex}$}  &   25.0   &  16.4   &   14.7   &   26.4   &  69.2   \\
+\multicolumn{2}{l}{$\Delta\omega^{\rm HF}_{\rm del}$} &  -12.5   &  -8.5   &   -7.6   &  -10.1   & -44.6   \\
+\multicolumn{2}{l}{$\Delta\omega^{\rm HF}$}           &    0.6   &  -2.2   &   -4.7   &    6.6   & -10.0   \\
+\multicolumn{7}{c}{Ful QM} \\  \hline
+\multicolumn{2}{l}{$\Delta\omega^{\rm HF}$}           &   -0.5   &  -3.1   &   -5.4   &    5.3   & -10.7   \\
+\hline\hline
+\end{tabular*}
+%
+%\begin{footnotesize}
+%$^{a)}$
+%\end{footnotesize}
+\end{table}
+%
+Surprisingly, the fragment approach reproduces
+both $\Delta\omega^{\rm Disp}$ and $\Delta\omega^{\rm Ex-Rep}$ very well. 
+Our Eq.~\ref{e:dw-solefp-prot-ind} however
+underestimates the induction effect (compare "Full" and
+"Frag" entries in Table~\ref{t:solefp-prot-fragmentation}). 
+Perhaps this is because the
+cooperative induction effects by bonding orbital electrons of
+two different fragments were ignored, which is the problem
+that cannot be easily resolved and is beyond the scope of the
+present work. Nonetheless, our SolEDS/HF frequency shifts are
+in excellent agreement with full \emph{ab initio} results with the errors
+of just $\sim$1~cm$^{-1}$ or lesser. When dispersion is not included in
+SolEFP, those analysis results can be compared to SolEDS/HF
+results. Overall, the SolEFP, as compared to the SolEDS,
+underestimates the frequency shifts by about 4--10 cm$^{-1}$.
+This is mainly due to the approximate nature of the SolEFP
+method in taking into account the non\hyp{}Coulombic
+interactions. Nevertheless, Eq.~\ref{e:dw-solefp-prot}
+works reasonably well, though the present approach is highly
+simple and approximate in nature. What is important here is
+that the short\hyp{}range repulsion and dispersion effects, which
+are often the main contributions to the nitrile frequency shifts
+in solutions, are at least correctly described by the present
+fragment SolEFP model for vibrational solvatochromism of
+nitrile IR probes in protein environments.
+
+\subsection{Short\hyp{}range frequency shifts of CN stretch in Ras\hyp{}binding
+domain of RalGDS}
+
+To get the detailed insight into the origin of
+the short\hyp{}range interaction\hyp{}induced vibrational frequency
+shifts of CN probes embedded in proteins, we have specifically
+studied the Ral guanine nucleotide dissociation stimulator
+(RalGDS), which is a downstream effector of Rap1A (Rap). The
+Ras\hyp{}binding domain of RalGDS was systematically mutated at six
+different positions to introduce an SCN probe (Figure~\ref{f:prot}).54 
+Andrew W. Ritchie, which was doing his PhD course in Prof. Lauren J. Webb's 
+group in the University of Texas at Austin,
+has performed the umbrella sampling molecular dynamics
+simulations of the six mutants of RalGDS in water and the same
+mutants docked to human oncoprotein p21$^{\rm Ras}$ (Ras) mutant
+(here labeled as Ras'; see Computations). 
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.98\linewidth]{prot.eps}
+}
+\caption{
+(a) Locations of the SCN probes within RalGDS protein bound to Ras' (Ras D30E{\textunderscore}E31).
+(b) and (c) The vicinities of SCN label in free RalGDS at Y31 position (a)
+and complex RalGDS/Ras D30E{\textunderscore}E31 at G28 position. The left probability maps show the
+non\hyp{}aqueous residues with the transparency approaching zero for the most probable
+configurations based on WHAM analysis. The white, brown, red and blue areas around SCN (red balls and sticks
+in the middle) 
+denote hydrogen, carbon, oxygen and nitrogen atoms of protein environment. The right insets are the representative
+snapshots.
+}
+\label{f:prot}
+\end{figure}
+%
+From
+those CMD trajectories, we have considered the local
+environments within 10~\AA from SCN probes (see Figure S10 for
+example), where the most probable configurations were taken
+into consideration based on the weighted histogram analysis
+method. In total, about 1000 Prot-SCN configurations were
+taken from the MD trajectories for our SolEFP fragment
+analyses. The average values of the short\hyp{}range frequency
+shifts of SCN stretch modes in free RalGDS and RalGDS\hyp{}Ras' 
+complexes are presented in Figure~\ref{f:radial-plots}
+%
+\afterpage{
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.9\linewidth]{radial-diag.eps}
+}
+\caption{
+The SolEFP short\hyp{}range frequency shift components of CN stretch mode of SCN probe incorporated at six
+different sites of free RalGDS protein (\emph{upper}) amd RalGDS that is non\hyp{}covalently bound to Ras'
+(\emph{lower}). 
+The frequency shifts were averaged
+over roughly 80 configurations in each case, taken from the umbrella sampling simulations. Only 
+configurations with the highest WHAM probabilities were selected. 
+The standard deviations for each frequency shift contribution are
+displayed with black error bars. All values in cm$^{-1}$.
+}
+\label{f:radial-plots}
+\end{figure}
+\clearpage
+}
+%
+
+In the cases of RalGDS proteins without binding to Ras',
+all the SCN probes are highly exposed to water so
+that the contributions from protein environment to the SCN
+stretch frequency shifts are relatively small and mainly are
+Coulombic in nature. $\Delta\omega^{\rm Ex-Rep}$ due to solvating water molecules
+is very large, about 35 cm$^{-1}$. This is even larger than that of
+MeSCN in water, which is about 26~cm$^{-1}$ (see Figure~\ref{t:mescn-solefp-md-exp}).
+This difference is likely to be caused by the differences in
+the force field parameters (of SCN group and water) that were
+used to simulate bulk solutions in Section~\ref{s:dw-cn-bulk} and the protein
+systems in water. The induction and dispersion effects are
+generally similar to those in bulk water and the Coulomb
+contribution varies from case to case, because the SCN probes
+have quite different orientations with respect to water phase --
+note that $\Delta\omega^{\rm Coul}$ is strongly dependent on the angle between
+SCN and H-bonded water molecule.
+
+The situation is much more complicated when SCN probe is
+located at the interface of RalGDS and Ras' proteins. 
+The calculated $\Delta\omega^{\rm Ex-Rep}$ values are still quite large, which
+range from +24 cm$^{-1}$ in RalGDS/G28+Ras' to +40 cm$^{-1}$ in
+RalGDS/Y31C+Ras'. Furthermore, the blue shifts have quite
+different origins depending on the specific position of the SCN
+probe. Non\hyp{}bonding close\hyp{}contact of SCN with aliphatic or
+aromatic part of amino acid side chain (Val, Leu, Ile or Phe) is
+the dominant interaction contributing to $\Delta\omega^{\rm Ex-Rep}$ in the case of
+G28. On the other hand, in the cases of K32 and N29, the
+interaction of SCN with protein backbone induces a substantial
+blue shift, where the H-bond between SCN and amide proton
+and the repulsive interaction between peptide\hyp{}oxygen and
+SCN-nitrogen atoms are important. In the case of Y31, SCN
+probe is located in the vicinity of Ser residues that form strong
+hydrogen bonds through OH groups with SCN and induce a
+substantial blue shift. It is interesting to note here that when
+Ras' protein is not docked to RalGDS, SCN probe does not
+make such H-bonding interaction with Ser residue because, in
+that case, the probe prefers to interact with water rather than
+protein. This results in a lack of the exchange\hyp{}repulsion blue
+shift due to Ser. Also, in the case of RalGDS/G28 (without
+docked protein), SCN interacts with Tyr residue via making an
+H-bond with OH group of Tyr. However, typical H-bond
+lengths, estimated from the CMD trajectory, are longer than
+those of RalGDS/Y31+Ras’ so that the exchange-repulsion
+interaction\hyp{}induced frequency shift due to the tyrosine OH
+group is small (note that $\Delta\omega^{\rm Ex-Rep}$ is a very short\hyp{}range effect
+and becomes vanishingly small as solute\hyp{}solvent distance
+increases; Figure~\ref{f:mescn-solefp-qm}(b). %and also Appendix~\ref{}). % add graphs from R_max scans for MeSCN in four solvents
+Finally, the SCN probe in the case of
+N54 can form H-bonding interactions with water molecules
+penetrated into the protein-protein interface, which induces a
+strong blue shift. This is an exceptional position at the RalGDS
+protein that is likely to be exposed to water in both free and
+bound states of RalGDS, whereas the SCN group at the other
+positions does not form an H-bonding interaction with water
+molecules when RalGDS binds to the Ras mutant studied here.
+Now, it is clear that both water and protein residues can cause
+a large blue shift of SCN stretch frequency due to their
+exchange\hyp{}repulsion interactions with SCN. Another distinctive
+feature found here is that the dispersion effects are generally
+larger at the protein interface (by about 5 to 10 cm$^{-1}$), when
+compared with those in the cases of free RalGDS proteins. This
+is mainly because many\hyp{}electron hydrocarbon groups including
+aromatic rings are close to the SCN probe in the cases of
+RalGDS--Ras complexes. Unfortunately, our calculations of the
+SCN frequency shifts in RalGDS proteins cannot be directly
+compared with experimental results previously reported in
+Ref.54 since our Prot-SCN CMD simulation systems considered in
+this work are still too small because of the short cut\hyp{}off
+distance of 10~\AA used in the present Coulombic interaction\hyp{}induced
+frequency shift calculation. Furthermore, it should be noted
+that the experimentally measured frequency shifts differ from
+one another by at most 3~cm$^{-1}$ -- note that none of the existing
+vibrational solvatochromic maps have this chemical accuracy
+yet. Therefore we do not aim to reproduce those relative
+frequency shifts in this work. Rather, our qualitative analysis
+results presented here shows the importance of the exchangerepulsion
+and the dispersion interaction effects, which cannot
+be described with other electric field\hyp{}based theories previously
+used. Our results suggest also that the magnitudes of
+$\Delta\omega^{\rm Ex-Rep}$ at the protein surface are larger than those in bulk
+solutions. Interestingly, the repulsion effects are quantitatively
+similar in both aqueous and protein environments (note that
+$\Delta\omega^{\rm Ex-Rep}$ of CN stretch mode of MeSCN in water is higher by
+about 7~cm$^{-1}$ than that in DMSO, CHCl$_3$ or CCl$_4$). The spatial
+confinement effects at the interface between RalGDS and Ras'
+proteins is of particular importance because the environment
+around SCN is crowded and congested, which results in a
+strong repulsion interaction. Only in the case of
+RalGDS/G28C+Ras', the repulsion frequency shift is smaller
+than 30~cm$^{-1}$. From this, it is shown that the frequency blueshift
+due to the H-bonding interactions of SCN with water
+molecules cannot be distinguished from that to the repulsive
+interactions of SCN with protein residues.
+
+We have to mark here that the amount of protein samples
+taken from CMD is very little at a present time (roughly 80-100
+CMD snapshots per system) so that a further study along this
+line is necessary. Still, we believe that most of the probable
+configurations based on the weighted histogram analysis
+method were taken into consideration in the present
+calculation study and that most of the salient features about
+the distribution of the frequency shifts of CN IR probe
+embedded in a highly heterogeneous protein environment
+were captured here. Nevertheless, it will be desirable to carry
+out further works for comparatively small proteins to test the
+validity of the SolEFP approach developed here.
 
 
 
@@ -7878,17 +8396,67 @@ analyzed by Rey and Hynes15 and Morales and Thompson16
 from a perspective of a repulsive part of the van der Waals
 intermolecular potential.
 
-\subsection{Does Stark-dipole theory describes induction effects accurately?}
+\subsection{Does Stark-dipole theory describe induction effects accurately?}
 
 It is necessary to point out the limitation of the
-extended Stark theory discussed at the end of Section 2. Since
+vibrational Stark theory. 
+In the paragraph on page~\pageref{p:solindmult} we showed that the
+evaluation of the solvatochromic induced dipole and quadrupole moments is
+straightforward within the SolEFP theory, and are given by Eqs.~\eqref{e:34e1} and \eqref{e:34e2}.
+Assuming Stark\hyp{}dipole model the frequency shift
+is
+%
+\begin{equation} \label{e:dmtp-solmmm-dipole}
+ \Delta\omega_j^{\rm Elect} \approx  -
+                       \left\{ {\bf L}_j + \frac{1}{2} {\bf L}_j^{\rm ind} \right\} 
+                       \cdot {\bf F}({\bf r}_0) = {\bf L}_j^{\rm Stark} \cdot {\bf F}({\bf r}_0)
+\end{equation}
+%
+with ${\bf L}_j^{\rm Stark}$ denoting the effective Stark tuning rate.
+In fact, the induction part of ${\bf L}_j^{\rm Stark}$ depends on the electric field.
+Therefore, the ensemble\hyp{}averaged vibrational frequency shift
+is
+%
+\begin{equation} 
+ \langle \Delta\omega_j^{\rm Elect} \rangle =  -
+                        {\bf L}_j  \cdot  \langle  {\bf F}({\bf r}_0) \rangle 
+                     - \frac{1}{2} \langle {\bf L}_j^{\rm ind}  \cdot {\bf F}({\bf r}_0) \rangle
+\end{equation}
+%
+The dot product in last term in the above equation need to be averaged out.
+In order to make such an extended Stark-dipole model (that handles also induction)
+applicable for experimentalist, we are forced to approximate this second term
+by assuming that solvatochromic induced dipole ${\bf L}_j^{\rm ind}$ does not
+changes its direction much due to thermal fluctuations of the solvent molecules around.
+In other words,
+%
+\begin{equation} \label{e:dmtp-solmmm-dipole-assumption} 
+\langle {\bf L}_j^{\rm ind}  \cdot {\bf F}({\bf r}_0) \rangle \approx 
+{\bf L}_j^{\rm ind} \cdot  \langle  {\bf F}({\bf r}_0) \rangle 
+\qquad \text{(assumption)}
+\end{equation}
+%
+When the polarizability projected onto
+the bond axis of nitrile is taken into consideration,
+the electric field\hyp{}induced vibrational frequency
+shift is approximately given as
+%
+\begin{equation}  \label{e:extended-stark-model}
+\langle \Delta\omega_j^{\rm Elect} \rangle \approx - L_j^{\rm Stark} F
+\end{equation}
+%
+where the modified Stark tuning rate, which includes the
+induction term approximately, is given as
+%
+\begin{equation}  
+L_j^{\rm Stark}  = L_j + \frac{1}{2} \langle L_j^{\rm Ind} \rangle
+\end{equation}
+%
+Since
 the SolEFP approach is the first\hyp{}principles theory that includes
 all the vibrational solvatochromic induced multipole moments,
 we could test the validity of the extended but still approximate
-expression for the Stark\hyp{}dipole model in Eq. (19). 
-In page~\pageref{p:solindmult} we showed that the
-evaluation of the solvatochromic induced dipole and quadrupole moments is
-straightforward within the SolEFP theory, and are given by Eqs.~\eqref{e:34e1} and \eqref{e:34e2}.
+expression for the Stark\hyp{}dipole model in Eq.~\eqref{e:extended-stark-model}. 
 
 \begin{table}[t!]
 \caption{
@@ -7934,7 +8502,7 @@ instantaneous electric field evaluated at the CN mid\hyp{}bond, i.e.,
 $\langle-\frac{1}{2}\langle{\BM\upmu}_{\rm CN}^{\rm Ind}\rangle\cdot{\bf F}_{\rm CN}\rangle$
 and (ii) those obtained by
 considering time\hyp{}averaged vibrational solvatochromic induced
-dipoles distributed over 19 different locations in MeSCN
+dipoles distributed over nineteen different locations in MeSCN
 molecule that interact with the instantaneous electric fields at
 those polarizable sites, i.e., 
 $\langle-\frac{1}{2}\langle{\bf a}_{\rm CN}'\rangle\cdot{\bf F}\rangle$
@@ -7951,8 +8519,29 @@ and (ii) discussed above. To examine the directionality of the
 vibrational solvatochromic induced dipoles, we examined the
 relative orientation of the total vibrational solvatochromic
 induced dipole with respect to the permanent vibrational
-solvatochromic dipole of the nitrile stretch mode (Figure S7 in
-ESI). It turns out that the relative angle between the two
+solvatochromic dipole of the nitrile stretch mode (Figure~\ref{f:solv-dip-directionality}(a)). 
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.98\linewidth]{Fig.7.with.eps}
+}
+\caption{
+(a) The distributions of the angles between the induced molecular solvatochromic
+dipole moments of CN stretch mode in MeSCN with the static solvatochromic dipole,
+centered at CN mid\hyp{}bond. The analysis was performed by applying the SolEFP model of
+MeSCN CN stretch mode to QM/CMD simulation trajectories. Angles are given in degrees.
+(b) and (c) Vibrational solvatochromic (SolEFP) induced dipole moments 
+(gray arrows, ${\bf a}'$ in Eq.~\eqref{e:avec-prime}) of CN stretch
+mode of MeSCN interacting with water molecules. Note that the induced dipoles are delocalized even on
+water molecules: (b) A cluster consisting of MeSCN and three water molecules. (c) A configuration taken
+from QM/CMD trajectory.
+\label{f:solv-dip-directionality}}
+\end{figure}
+%
+It turns out that the relative angle between the two
 dipoles varies from 0 to 180\textdegree in all the aprotic solvents. This
 means that the induction frequency shifts are determined by
 instantaneous solute\hyp{}solvent configurations so that the
@@ -7969,26 +8558,24 @@ and solvent\hyp{}induced dipole contributions49 is still incapable of
 fully describing even the induction effects correctly in the
 cases of nitrile probes. To prove this quantitatively, for both a
 small cluster consisting of one MeSCN and three water
-molecules (Figure~\ref{f:mescn-aj}(a)) and a large cluster taken from MD
-trajectory (Figure~\ref{f:mescn-aj}(b)), we calculated the instantaneous distributed
-vibrational solvatochromic dipoles (${\bf a}_j'$ in Eq. (12)) and depict
+molecules (Figure~\ref{f:solv-dip-directionality}(b)) and a large cluster taken from QM/CMD
+trajectory (Figure~\ref{f:solv-dip-directionality}(c)), we calculated the instantaneous distributed
+vibrational solvatochromic dipoles (${\bf a}_j'$ in Eq.~\eqref{e:dw-ind-avec-alternative}) 
+and depict
 them with arrows. 
+%%
+%\begin{figure}[t!]
+%\centering
+%\setlength\fboxsep{0.4pt}
+%\setlength\fboxrule{0.5pt}
+%\fbox{
+%\includegraphics[width=0.9\linewidth]{Fig.7.eps}
+%}
+%\caption{
 %
-\begin{figure}[t!]
-\centering
-\setlength\fboxsep{0.4pt}
-\setlength\fboxrule{0.5pt}
-\fbox{
-\includegraphics[width=0.9\linewidth]{Fig.7.eps}
-}
-\caption{
-Vibrational solvatochromic (SolEFP) induced dipole moments (gray arrows, ${\bf a}'$ in the main text) of CN stretch
-mode of MeSCN interacting with water molecules. Note that the induced dipoles are delocalized even on
-water molecules. (a) A cluster consisting of MeSCN and three water molecules. (b) A configuration taken
-from QM/CMD trajectory.
-\label{f:mescn-aj}}
-\end{figure}
-%
+%\label{f:mescn-aj}}
+%\end{figure}
+%%
 Note that quite a few dipoles at different
 sites contribute to $\Delta\omega_{\rm CN}^{\rm Ind}$, 
 where they all have quite different
@@ -8003,15 +8590,105 @@ account such non\hyp{}additive nature in calculating $\Delta\omega^{\rm Ind}$
 and that
 ${\bf a}_j'$ \emph{spans the entire system} including both solute and solvent
 molecules.\citep{Blasiak.Cho.JCP.2014} 
-Therefore, it becomes clear that the Stark-dipole
+Therefore, it becomes clear that the Stark\hyp{}dipole
 model is a highly approximate approach to predict the
 frequency shifts of nitrile stretch mode not only because it
 does not include other important contributions from
 vibrational solvatochromic quadrupolar, exchange\hyp{}repulsion
 and dispersion effects, but also because it does not take into
-account even the induction effect correctly.
+account even the induction effect correctly. Indeed, the assumption
+from Eq.~\eqref{e:dmtp-solmmm-dipole-assumption} appears to be \emph{incorrect}.
+
+\subsection{CN probes inside proteins}
+
+One of the related works was reported by Zou et al.55 Carrying
+out MD simulations, they obtained van der Waals and
+electrostatic forces exerting on the CN group of benzonitrile
+embedded at four different sites in a model ion channel
+protein to elucidate the origins of the CN frequency change
+caused by the binding of halothane molecule. They found that
+electrostatic forces are roughly 2--2.5 times larger in magnitude
+than van der Waals forces and they used Stark dipole model
+for further analyses. The agreement with average
+experimental value of the frequency shift (about 6~cm$^{-1}$) was
+found to be quite good (roughly 3 and 6~cm$^{-1}$ obtained from
+two separate MD simulations). However, their approach does
+not provide all the contributions to the vibrational frequency
+shifts separately. In fact, their analysis of the van der Waals
+forces included not only blue\hyp{}shifting exchange\hyp{}repulsion but
+also red\hyp{}shifting dispersion effect that have opposite signs and
+very different distance\hyp{}dependences [dispersion is a relatively
+long\hyp{}range effect as compared to exchange\hyp{}repulsion; see
+Fig.S2-S5]. Therefore, the actual importance of the non\hyp{}Coulombic 
+frequency shifts was not traced fully in the study of
+Zou et al.55 due to the cancellation of attractive and repulsive
+contributions that result in the frequency shifts of different
+nature.
+
+Recently, Zhang~\emph{et al.} have proposed a new IR probe based on
+2-cyanoindole that was found to be a good candidate for
+monitoring the local dynamics in proteins, especially because
+of its sensitivity to the molecular environment and notably
+long vibrational lifetime (12.3~ps for the ground state bleach
+decay).26 However, they showed that the vibrational response
+of their probe is governed by the local electrostatic potential
+around CN group, i.e., intermolecular H-bonds with CN group
+and intramolecular H-bond of CN with indole's NH group. This
+cannot be easily modeled by the Stark dipole theory.
+Moreover, it is expected that even the contemporary
+(empirical or first\hyp{}principles) solvatochromic maps based on
+the distributed site multipoles18, 41, 42 might have faced certain
+problems in quantitatively describing the vibrational frequency
+shifts of such IR probes due to the complicate nature of H-bonding
+interaction in general. We believe that the SolEFP
+model along with its protein\hyp{}model extension presented in this
+work for the first time is a promising first step toward
+developing more refined and chemically accurate model
+capable of capturing all the vibrational solvatochromic effects
+from many\hyp{}body intermolecular interactions, especially when
+an IR probe is surrounded by highly heterogeneous molecular
+environments like proteins.
+
 
 \section{Summary}
+
+In this study, we have analyzed the solvatochromic vibrational
+frequency shifts of nitrile stretch mode in a variety of different
+molecular environments by using the first principles SolEFP
+model. Our model is
+capable of reproducing the relative experimental vibrational
+frequency shifts of CN stretch of MeSCN dissolved various solvents. 
+The
+electric\hyp{}field\hyp{}based theories cannot properly describe the CN
+vibrational frequency shift induced by H-bonding interaction of
+water molecules because they ignored the exchange\hyp{}repulsion
+effect that causes a strong frequency blue shift.
+In addition, we here showed that the dispersion interaction
+between polarizable CN group and polarizable solvent
+molecules is yet another important red\hyp{}shifting contribution to
+the frequency shift. Therefore, Stark\hyp{}dipole
+theory is highly inappropriate in case of CN probes. 
+Our extended vibrational solvatochromism
+theory was used to elucidate the origin of CN frequency shifts
+of SCN probes in highly heterogeneous protein environments. We found that 
+the exchange\hyp{}repulsion frequency
+blue\hyp{}shifts result not just from H-bonding interaction with
+solvent water molecules but also from the close contacts with
+neighbouring aliphatic or aromatic side chains inside the
+proteins. Once the accuracy of the present
+approach is improved in the future, it will be possible to make
+quantitative and direct comparisons of computational results
+with experimentally measured frequency shifts. 
+
+Finally, we examined the effect on the interchange of N anc C
+atoms resulting in a formation of isonitrile (NC) probe
+which is better than CN probe. Due to reversed direction
+of the charge flow during stretching CN bond the vibrational
+dipole derivative is significantly enhanced in NC probe.
+This leads to strong intensity enhancement and reversal
+of the direction of the solvatochromic dipole. Because other
+components of the vibrational frequency shifts are unchanged,
+NC probe is much more sensitive towards H-bonding.
 
 \printbibliography[heading=subbibintoc,title={References}]
 \end{refsection}
@@ -8792,13 +9469,13 @@ which can deal with that problem. It consists of 3 steps:
        of interest and the frequency shift with respect to isolated
        solute state.
  \item Construct the \emph{constrained} system in the following way:
-       Take the (fylly optimized) solute molecule in its gas\hyp{}phase
+       Take the (fully optimized) solute molecule in its gas\hyp{}phase
        geometry. Then add to it the remaining molecules to maximally resemble
-       the system from Point 1. That is to say, keep the internal coordinates
+       the system from Point~1. That is to say, keep the internal coordinates
        in the fully optimized complex possibly unchanged. If it is impossible,
        focus on the most important coordinates that are likely to be critical
        for the frequency shift.
- \item Using constrained cluster from Point 2, perform calculations 
+ \item Using constrained cluster from Point~2, perform calculations 
        of the first and second derivatives of interaction energy between
        solute and the rest of molecules. Note that displacements
        are imposed only on solute atoms keeping solvent
@@ -8947,6 +9624,22 @@ frequency shift decompositions from 5000 MD snapshots for
 water solution was just about 1 day, when a 4\hyp{}thread run (1
 frame in 1 thread) at 3.4 GHz Intel\textregistered Core\texttrademark I5\hyp{}3570 computer
 was performed.
+
+\subsection{Fitting of atomic charges located at the peptide group of NMA\label{a:nma-esp-fit}}
+
+NMA molecule was optimized by using HF/6-311++G** method (Cartesian basis set
+as implemented in {\sc Gaussian09} package. Subsequently, the four
+electrostatic charges that were placed at C, N, O and amide-H atoms of NMA were fit from
+electrostatic potential derived from the cumulative atomic multipole moments (CAMM). In
+the variational fitting of the charges, the CAMM electrostatic potential was calculated in
+30000 randomly selected points around an NMA molecule in a rectangular box of size 
+26 x 29 x 23 Bohrs with the origin at the center of geometry of NMA molecule (orientation of the
+structure is given below). The above fitting procedure resulted in the following charges (in
+a.u.): $q_{\rm C}=+0.486770$, $q_{\rm O}=-0.568832$, $q_{\rm N}=-0.038462$ and 
+$q_{\rm H}=+0.120524$. The distribution of
+charges obtained in this way creates the dipole moment of 1.633~a.u. in magnitude which is
+reasonably close to the exact dipole moment magnitude of NMA molecule at 
+HF/6-311++G** level of theory (1.623~a.u.).
 
 \section{Chapter 6}
 
