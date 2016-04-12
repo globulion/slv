@@ -30,6 +30,7 @@
 \hyphenation{di-men-sio-nal}
 \hyphenation{e-lec-tro-sta-tic sol-va-to-chro-mic sol-va-to-chro-mism}
 \hyphenation{Sol-MMM Sol-ChelpG Sol-CAMM Sol-SAPT Sol-EDS}
+\hyphenation{Ral-GDS}
 %\hyphenation{Sol-CAMM-5 Sol-CAMM-6 Sol-CAMM-12}
 \usepackage[shortcuts]{extdash}
 \frenchspacing
@@ -7979,8 +7980,8 @@ snapshots.
 %
 From
 those CMD trajectories, we have considered the local
-environments within 10~\AA from SCN probes (see Figure S10 for
-example), where the most probable configurations were taken
+environments within 10~\AA from SCN probes, 
+where the most probable configurations were taken
 into consideration based on the weighted histogram analysis
 method. In total, about 1000 Prot-SCN configurations were
 taken from the MD trajectories for our SolEFP fragment
@@ -8054,7 +8055,7 @@ shift due to Ser. Also, in the case of RalGDS/G28 (without
 docked protein), SCN interacts with Tyr residue via making an
 H-bond with OH group of Tyr. However, typical H-bond
 lengths, estimated from the CMD trajectory, are longer than
-those of RalGDS/Y31+Ras’ so that the exchange-repulsion
+those of RalGDS/Y31+Ras' so that the exchange-repulsion
 interaction\hyp{}induced frequency shift due to the tyrosine OH
 group is small (note that $\Delta\omega^{\rm Ex-Rep}$ is a very short\hyp{}range effect
 and becomes vanishingly small as solute\hyp{}solvent distance
@@ -8791,9 +8792,172 @@ usage examples and future development of the {\sc Solvshift} code.
 
 \section{Modules}
 
-\subsection{Rigid molecule algorithm}
+The structure and basic idea of {\sc Solvshift} (SLV) is shown
+in Figure~\ref{f:slv-structure}.
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+%\fbox{
+\includegraphics[width=0.90\linewidth]{slv-diagram.eps}
+%}
+\caption{
+Structure of {\sc Solvshift}. It imports the following 
+{\sc Coulomb} modules: {\tt MULTIP}, {\tt QMFile}, {\tt Ints}, 
+{\tt Freq}, {\tt Atoms} and {\tt UNITS}. 
+\label{f:slv-structure}}
+\end{figure}
+%
+For the sake of efficiency, any type of one\hyp{}particle
+density matrix (HF, MP2 or coupled cluster (CC))
+as well as the coupled\hyp{}perturbed Hartree\hyp{}Fock calculations
+are to be performed by external quantum chemistry packages.
+The output files become the inputs for {\sc Solvshift}
+which
+processes them to produce output(s) on the screen
+or output file(s).
+On the other hand, one\hyp{}electron integral 
+code\footnote{working on
+the Gaussian Type Functions} is handled by {\sc Coulomb}
+module \verb+Ints+. {\sc Coulomb} communicates with {\sc Solvshift}
+also via distributed multipole analysis \verb+DMA+ objects which generalize
+methods such as ESP charges, CAMM, DMA, LMTP, molecular multipole
+moments or any other kind of multipole expansions. 
+\verb+DMA+'s are therefore usefull when working with
+electrostatic SolX models such as SolCAMM etc.
+
+Figure~\ref{f:slv-solefp} presents the overall procedure 
+of SolX methods implemented in the program. 
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+%\fbox{
+\includegraphics[width=0.98\linewidth]{slv-fig-2.eps}
+%}
+\caption{
+\emph{Left:} Evaluation of vibrational property by using SolX methods.
+\emph{Right:} Applying SolX models to molecular systems.
+\label{f:slv-solefp}}
+\end{figure}
+%
+The principle of operation depends on the method chosen:
+%
+\begin{itemize}
+  \item Run by using {\bf Constrained cluster algorithm (CCA)}:
+        SolEDS, SolSAPT and SolEFP\footnote{evaluation of vibrational derivatives numerically} 
+        methods (Section~XXX). The vibrational derivatives are evaluated numerically.
+  \item Run by using {\bf Rigid molecule algorithm (RMA)}: 
+        SolCAMM, SolDMA, SolChelpG, SolLMTP, SolMMM and SolEFP methods (Section~XXX).
+        The vibrational derivatives are evaluated by using analytical approximate formulae.
+\end{itemize}
+%
+The CCA method is designed for analysis of small model systems
+and can serve also as a validation tool for methods based on RMA
+since no multipole expansion is introduced and the frequency shift
+components are evaluated without additional approximations.
+However, for the analysis of large systems RMA needs 
+to be utilized. In the latter case, the solvatochromic model is constructed 
+from the independent benchmark molecule parameters (IBM's)
+which are the representations of the isolated molecules in their gas\hyp{}phase states.
+These parameters serve as templates to be superimposed later onto
+the target system. 
+
+In Table~\ref{t:slv-rma-parameters}
+we present the list of parameters that
+build IBM's. In the case of solvent molecule,
+IBM is equivalent to the conventional EFP2 parameters.
+In the case of IR active molecules additionally first and second
+derivatives with respect to normal coordinates as well as
+harmonic and anharmonic vibrational analysis parameters
+need to be computed. The amount of data per one IBM is 
+substantial as can be seen in Table~\ref{t:slv-rma-parameters}.
+However, the present implementation handles all of these parameters
+efficiently and the net computer usage regarding handling IBM's 
+can be considered as negligible.
+
+The most time\hyp{}consuming part of SLV RMA run is the computation
+of vibrational displacements $\delta Q_i$ due to each intermolecular
+interaction potential. These displacements are then used to compute the
+solvation\hyp{}induced vibrational frequency shifts 
+and the transition dipole moment changes with negligible computational effort.
+Therefore, development should be undertaken to improve the
+performance of the $\delta Q_i$ evaluation, especially 
+$\delta Q_i^{\rm Ind}$, $\delta Q_i^{\rm Ex-Rep}$
+and $\delta Q_i^{\rm CT}$.
+
+IBM's are handled by {\tt Frag} class, instances of which are passed to
+{\tt EFP} instance that sets and performs the calculations.
 
 \section{Usage}
+
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+%\fbox{
+\begin{scriptsize}
+\begin{verbatim}
+$Frag
+SCNProbe
+mescn
+atoms      7883               1
+supl       14
+reorder    5 6 4 1 0 3 2
+$endFrag
+$Frag
+TyrosineCH4
+methane
+atoms 292294
+1
+supl 13
+reorder 1 2 3 0 0
+$endFrag
+$Frag
+TyrosineOH,
+Serine meoh
+atoms 300302
+1
+atoms 129131
+1
+atoms 200202
+1
+atoms 281283
+1
+supl 1,2,6
+reorder 1 2 0 0 0 3
+$endFrag
+$Frag
+Glutamine comenh2
+atoms 9097
+1
+atoms 362369
+1
+atoms 256263
+1
+atoms 6471
+1
+supl 1,2,4
+reorder 4 5 1 6 8 7 0 2 3
+$endFrag
+$Frag
+CH4 methane
+!cl atoms 235238
+1
+atoms 425428 1
+supl 13
+reorder 1 2 3 4 0
+$endFrag
+\end{verbatim}
+\end{scriptsize}
+%}
+\caption{
+Examplary input file for SLV/MD routine.
+\label{f:slv-inp-example}}
+\end{figure}
+
 
 \section{Summary and outline of future development}
 
