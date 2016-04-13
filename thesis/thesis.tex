@@ -180,6 +180,17 @@
 \newcommand{\sderivd}[3]{\ensuremath{
 \frac{\partial^2 #1}{\partial #2 \partial #3}
 }}
+% derivatives for tables
+\newcommand{\fderivm}[2]{\ensuremath{
+{\partial #1}/{\partial #2}}}
+% diagonal second derivative
+\newcommand{\sderivm}[2]{\ensuremath{
+{\partial^2 #1}/{\partial #2^2}
+}}
+% off-diagonal second derivative
+\newcommand{\sderivdm}[3]{\ensuremath{
+{\partial^2 #1}/{\partial #2 \partial #3}
+}}
 %---------------------------------------------------
 
 % subtitle
@@ -7942,7 +7953,7 @@ fragment SolEFP model for vibrational solvatochromism of
 nitrile IR probes in protein environments.
 
 \subsection{Short\hyp{}range frequency shifts of CN stretch in Ras\hyp{}binding
-domain of RalGDS}
+domain of RalGDS\label{s:ral-solefp}}
 
 To get the detailed insight into the origin of
 the short\hyp{}range interaction\hyp{}induced vibrational frequency
@@ -8124,7 +8135,7 @@ validity of the SolEFP approach developed here.
 
 \section{Effects of atom order reversal within CN group}
 
-To explain the molecular origins of such greatly enhanced sensitivity to H-bonding 
+To explain the molecular origins of such greatly enhanced sensitivity towards H-bonding 
 interactions, we carried out extensive QM calculations of interaction energy decomposition, 
 from which individual contributions to vibrational shift were determined based on recently 
 developed model of solvatochromism. For the study, we chose two simple models of 
@@ -8694,6 +8705,289 @@ NC probe is much more sensitive towards H-bonding.
 \printbibliography[heading=subbibintoc,title={References}]
 \end{refsection}
 
+% ------------------- CHAPTER 7 ------------------------
+
+\begin{refsection}
+\chapter{Mode mixing in guanines}
+
+As we discussed in Chapters 3 and 4, the WCA limit assumes
+that solute's normal modes are coupled very weakly and the intramolecular
+solvation\hyp{}induced mode mixing is neglected. However, we shall
+show that it is not always the case. Here we study the ring deformation
+and carbonyl stretch modes of guanine solvated by a few water
+molecules. We demonstrate the severe mode mixing that occurs
+between all the ring modes considered, even when just single water molecule
+is interacting via H-bond with guanine's CO group. 
+
+\section{Overview}
+
+Guanine is one of the nucleobases that are building blocks of
+nucleic acids and similar polymers. Therefore, modeling the
+IR spectra requires detailed understanding of the vibrational
+solvatochromism of the nucleic bases. However, unlike amide I modes
+in proteins which couple only with other amide I modes, 
+internal guanine modes can couple also due to solvation
+which drastically complicates the development of a robust, 
+theoretical model.
+
+\section{$N$-methylguanine in D$_2$O: Normal mode analysis}
+
+We have considered a derivative of guanine, $N$-methylguanine, which is 
+shown in Figure~\ref{f:guanine-vacuum-modes} along with the selected
+normal mode vibrations with frequencies and intensities listed
+in Table~\ref{t:guanine-vacuum-modes}.
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+%\fbox{
+\includegraphics[width=0.9\linewidth]{guanine-1.eps}
+%}
+\caption{
+Atomic amplitudes of selected normal modes of isolated $N$-methylguanine that were obtained by using 
+TPSS-TPSS+GD3/def2-TZVP method (see Table~\ref{t:guanine-vacuum-modes}).
+\label{f:guanine-vacuum-modes}}
+\end{figure}
+%
+%
+\begin{table}[t!]
+\caption{
+Selected normal mode frequencies of isolated $N$-methylguanine that were obtained by using 
+TPSS-TPSS+GD3/def2-TZVP method. These modes are served as basis modes
+for the analysis of the solvation\hyp{}induced intramolecular mode\hyp{}mixing.
+\label{t:guanine-vacuum-modes}}
+\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } l l l l}
+\hline\hline
+Mode ID & Name & Frequency [cm$^{-1}$] & Relative intensity \\
+\hline
+0  & C$=$O stretch        & 1740  & 1.00 \\ 
+1  & Ring deformation     & 1562  & 0.62 \\
+2  & Ring deformation     & 1562  & 0.24 \\
+3  & Ring deformation     & 1525  & 0.28 \\
+\hline\hline
+\end{tabular*}
+\end{table}
+\end{refsection}
+%
+The most intensive mode, C$=$O stretch (0), is also the most localized
+vibration. Ring deformation modes 1 and 2 affect six\hyp{} and five\hyp{}member rings within
+guanine moiety. Mode 3 deforms both rings and is the most delocalized
+vibration. Since Modes 1-3 have mutual atomic overlap in
+vibration amplitudes it is expected that they will tend to couple
+more strongly with themselves rather than with the carbonyl stretch mode.
+
+We have constructued thirty three $N$-methylguanine--(D$_2$O)$_{n=1-32}$ clusters.
+Their description is shown in Figure~\ref{f:guanine-clusters-description}.
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.9\linewidth]{guanine-2.eps}
+}
+\caption{
+Number of solvent molecules and 
+types of interactions in $N$-methylguanine--(D$_2$O)$_{n=1-32}$ that were analyzed
+by using TPSS-TPSS+GD3/def2-TZVP method.
+\label{f:guanine-clusters-description}}
+\end{figure}
+%
+The computed model spectral lineshapes, for which we assumed Lorenzian linewidth to be 10~cm$^{-1}$,
+are shown in Figure~\ref{f:guanine-clusters-spectra}.
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.97\linewidth]{123.eps}
+}
+\caption{
+Model infrared spectra
+of $N$-methylguanine--(D$_2$O)$_{n=1-32}$ clusters from 
+Figure~\ref{f:guanine-clusters-description} that were analyzed
+by using TPSS-TPSS+GD3/def2-TZVP method. The position and height of red bars
+indicate frequencies and integrated intensities, respectively. Lorenzian linewidth of 10~cm$^{-1}$
+was assumed for the simulation of line shape. Spectra were normalized to
+isolated $N$-methylguanine spectrum ("g" in this Figure). In each column we show
+the "g" spectrum to empahsize the solvatochromic changes.
+\label{f:guanine-clusters-spectra}}
+\end{figure}
+%
+All four modes are quite sensitive to interactions with water. On the right side
+of spectra we observe mostly red shifts whereas on the left side (ring modes)
+blue shifts.
+
+To investigate the nature of the normal modes of solvated guanine
+more in detail we analyzed their delocalization. The inverse
+participation ratio, which is a measure of delocalization, 
+is defined as 
+%
+\begin{equation}  \label{e:ipr}
+ N_j = \frac{1}{\langle P_j \rangle}
+\end{equation}
+%
+where $j$ denotes the normal mode and $P_j$
+is equal to
+%
+\begin{equation}  
+ P_j = \sum_m^{\rm atoms} \left( 
+         \sum_{x \in m}^{x,y,z} \left( v^{(j)}_x \right)^2
+              \right)^2
+\end{equation}
+%
+$N_j$ is the average number of atoms over which vibration of the $j$th
+mode is delocalized. Figure~\ref{f:guanine-clusters-ipr} shows $N_j$ values
+plotted for each of 33 clusters. The highest frequency mode
+is delocalized over 2-3 atoms and it is mostly the C$=$O stretch mode.
+Ring modes however exhibit substantial degree of delocalization changes
+and mode mixing is strong between them.
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.97\linewidth]{ipr.eps}
+}
+\caption{
+Inverse participation ratios $N_j$ computed for selected normal modes
+for each of
+$N$-methylguanine--(D$_2$O)$_{n=1-32}$ clusters from 
+Figure~\ref{f:guanine-clusters-description} that were analyzed
+by using TPSS-TPSS+GD3/def2-TZVP method. Modes 0, 1, 2 and 3
+are defined in Table~\ref{t:guanine-vacuum-modes}.
+\label{f:guanine-clusters-ipr}}
+\end{figure}
+%
+
+It is important to keep track of which normal mode of isolated
+$N$-methylguanine become coupled with one another.
+We construct the tool that helps to determine
+the mode mixing between eigenvectors.
+Let $S$ be the similarity function between the two
+vectors ${\bf c}_1$ and ${\bf c}_2$ designed in such a way that
+$S=1$ when ${\bf c}_1={\bf c}_2$ and $S=0$ when the vectors
+are linearly independent (i.e., ${\bf c}_1\cdot {\bf c}_2={\bf 0}$).
+This task requires anjusting properly the relative phases
+of the eigenvectors from the vibrational analysis.
+
+The simplest choice of $S$ is the following
+%
+\begin{equation}  
+  S({\bf c}_1,{\bf c}_2) = {\bf c}_1\cdot {\bf c}_2 \sin{\phi}
+\end{equation}
+%
+where $\phi$ is the phase factor. Such form of $S$ ensures that
+vibration is periodic and we only need to adjust the relative phase
+between the vibrations to maximize the dot product.
+It can be done by minimizing the following function
+%
+\begin{equation}  
+  I(\phi) = \sum_i \left\{ c_{1,i} - c_{2,i} \sin{\phi}\right\}^2
+\end{equation}
+%
+The result can be found by using the least\hyp{}squares method
+and the similarity function reads
+%
+\begin{equation}  \label{e:similarity-function}
+  S({\bf c}_1,{\bf c}_2) = \frac{ \left[{\bf c}_1\cdot {\bf c}_2 \right]^2}{{\bf c}_1\cdot {\bf c}_1}
+\end{equation}
+%
+Figure~\ref{f:guanine-clusters-umat} shows all the similarity
+matrices computed by using Eq.~\eqref{e:similarity-function}. 
+Now, the mode mixing is fully revealed and
+we can see clearly that ring modes become mixed in many cases. 
+In particular,
+modes 1 and 2 are mixed even when only one water molecule
+interacts with oxygen and N--H group of $N$-methylguanine. In contrast, mode 0 is mostly
+isolated which means that C$=$O stretching motion does not flow into
+low frequency motions. We speculate that WCA limit is applicable only for that
+mode.
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.94\linewidth]{u-mat.eps}
+}
+\caption{
+Similarity matrices between selected normal modes of
+$N$-methylguanine and its solvated counterparts
+in $N$-methylguanine--(D$_2$O)$_{n=1-32}$ clusters from 
+Figure~\ref{f:guanine-clusters-description} that were analyzed
+by using TPSS-TPSS+GD3/def2-TZVP method. Modes 0, 1, 2 and 3
+are defined in Table~\ref{t:guanine-vacuum-modes}.
+\label{f:guanine-clusters-umat}}
+\end{figure}
+%
+The mode mixing can be also seen qualitatively
+from the atomic vibration amplitude maps shown
+in Figure~\ref{f:guanine-clusters-amplitudes}.
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.98\linewidth]{mol.amplitudes.eps}
+}
+\caption{
+Atomic vibration amplitudes for selected normal modes of
+$N$-methylguanine
+in $N$-methylguanine--(D$_2$O)$_{n=1-32}$ clusters from 
+Figure~\ref{f:guanine-clusters-description} that were analyzed
+by using TPSS-TPSS+GD3/def2-TZVP method.
+\label{f:guanine-clusters-amplitudes}}
+\end{figure}
+%
+
+The effects of water molecules on the mode mixing
+within guanine rings are summarized in Figure~\ref{f:guanine-clusters-summary}.
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\fbox{
+\includegraphics[width=0.97\linewidth]{guanine-3.eps}
+}
+\caption{
+Effects of water H-bonding to various accepting sites
+of $N$-methylguanine on its interaction\hyp{}induced mode mixing.
+\label{f:guanine-clusters-summary}}
+\end{figure}
+%
+It is seen that the the interactions of water with easily accessible sites (when guanine
+forms nucleic acid or G-quadruplex) can induce strong mixing.
+This is particularly important when one wants to use model that
+is based on isolated nucleobases. Indeed, in such a case WCA
+limit cannot be accepted at all for ring modes and one needs to consider
+solute's Hessian matrix in more detail.
+
+\section{Summary}
+
+In this Chapter we discussed the solvation\hyp{}induced
+intramolecular mode mixing which is a difficult problem
+when modelling the IR spectra for nucleic acids based on
+isolated nucleobases. The first\hyp{}principles theory
+of the vibrational solvatochromism beyond WCA should be studied
+in the future. More specifically, one could evaluate
+the new eigenvectors and compute similarity matrices
+which are to be compared with similarity matrices from
+Figure~\ref{f:guanine-clusters-umat}. This work is in progress.
+
+
+
+
+
+
+
+
+
 % ------------------- CHAPTER 8 ------------------------
 
 \begin{refsection}
@@ -8709,7 +9003,7 @@ vibrational property calculations using {\sc Solvshift}.
 
 \section{Overview}
 
-{\sc Solvshift} is a further development of {\sc Coulomb} package
+{\sc Solvshift} (SLV) is a further development of {\sc Coulomb} package
 that is designed for calculations of electrostatic properties of molecules
 by means of quantum chemsistry methods and it has been developed
 since 2010. Originally, written in pure Python, {\sc Coulomb} utilized
@@ -8790,9 +9084,230 @@ the functionalities of the code are as follows
 In the following Sections, we describe the structure, main classes,
 usage examples and future development of the {\sc Solvshift} code.
 
-\section{Modules}
+\section{Idea}
 
-The structure and basic idea of {\sc Solvshift} (SLV) is shown
+SLV program implements mostly all of the equations that were derived
+and presented in this Thesis. 
+The principle of operation of SLV depends on the SolX method chosen:
+%
+\begin{itemize}
+  \item Run by using {\bf Constrained cluster algorithm (CCA)}:
+        SolEDS, SolSAPT and SolEFP\footnote{evaluation of vibrational derivatives numerically} 
+        methods (Section~XXX). The vibrational derivatives of interaction
+        energies are evaluated numerically through interface with EDS code
+        written by my previous Supervisor Robert W. G{\'o}ra~\citep{Gora.EDS.1998-2010}
+        or EFP2 method implemented in {\sc GAMESS}~CITATION.
+  \item Run by using {\bf Rigid molecule algorithm (RMA)}:
+        SolCAMM, SolDMA, SolChelpG, SolLMTP, SolMMM and SolEFP methods (Section~XXX).
+        The vibrational derivatives are evaluated by using analytical approximate formulae.
+\end{itemize}
+%
+The CCA method is designed for analysis of small model systems
+and can serve also as a validation tool for methods based on RMA
+since no multipole expansion is introduced and the frequency shift
+components are evaluated without additional approximations.
+
+However, for the analysis of large systems RMA needs 
+to be utilized. In this case, the solvatochromic model is constructed 
+from the independent benchmark molecule parameters (IBM's)
+which are the representations of the isolated molecules in their gas\hyp{}phase states.
+These parameters serve as \emph{ab initio} templates to be superimposed later onto
+the target system and they are computed once and for all.
+In Table~\ref{t:slv-rma-parameters}
+we present the list of such parameters that
+build IBM's. In the case of solvent molecule,
+IBM is equivalent to the conventional EFP2 parameters.\footnote{with 
+CAMM's instead of DMA's in the current implementation}
+%
+\begin{table}[t!]
+\caption{
+ Parameters of independent benchmark molecule (IBM's) used in SLV code grouped
+ into four main categories: Molecule specification (I.), Electrostatic population
+ parameters (II.), Frequency analysis (III.) and Wavefunction and electronic structure (IV.).
+ Abbreviations for symbols: $N$ - number of atoms, $D$ - number of distributed multipole centers,
+ $M$ - number of normal modes, $M'$ - number of normal modes for which diagonal derivatives
+ are to be computed, $P$ - number of polarizable centers, $n$ - number of localized (occupied) molecular
+ orbitals (LMO's), $c$ - number of canonical (occupied and virtual) molecular orbitals (CMO's) which is equal to
+ number of basis functions $\beta$, $a$ and $b$ - labels for LMO's, $x$ - label for atomic center, 
+ $X$ - label for molecule.
+\label{t:slv-rma-parameters}}
+\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } lllll}
+\hline\hline
+%\multicolumn{5}{c}{Amide I mode} \\
+ Category   & Parameter & Label & Symbol$^{a)}$ & Dimension \\
+\hline
+\multirow{3}{*}{I.}
+&Atomic numbers                         &\tt{atno    } &   $Z_x$                                     &      $N$                                 \\                                        
+&Atomic masses                          &\tt{atms    } &   $m_x$                                     &      $N$                                 \\
+&Atomic coordinates                     &\tt{pos     } &   ${\bf r}_x$                               &      $N\times 3$                         \\
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+\hline                                                                                                   
+\multirow{20}{*}{II.}                                                                                    
+&ESP charges                            &\tt{esp     } &   $q_x$                                     &      $N$                                 \\
+&ChelpG charges                         &\tt{chlpg   } &   $q_x$                                     &      $N$                                 \\
+&DMTP centers                           &\tt{rdma    } &   ${\bf r}_x$                               &      $D\times 3$                         \\    
+&DMTP charges                           &\tt{dmac    } &   $q_x$                                     &      $D$                                 \\
+&\textbullet 1$^{\rm st}$ derivatives   &\tt{dmac1   } &   $\fderivm{q_x}{Q_i}$                      &      $M\times D$                         \\
+&\textbullet 2$^{\rm nd}$ derivatives   &\tt{dmac2   } &   $\sderivm{q_x}{Q_j}$                      &      $M'\times D$                        \\                                           
+&DMTP dipoles                           &\tt{dmad    } &   ${\BM\upmu}_x$                            &      $D\times 3$                         \\  
+&\textbullet 1$^{\rm st}$ derivatives   &\tt{dmad1   } &   $\fderivm{{\BM\upmu}_x}{Q_i}$             &      $M\times D\times 3$                 \\    
+&\textbullet 2$^{\rm nd}$ derivatives   &\tt{dmad2   } &   $\sderivm{{\BM\upmu}_x}{Q_j}$             &      $M'\times D\times 3$                \\
+&DMTP quadrupoles                       &\tt{dmaq    } &   ${\BM\Theta}_x$                           &      $D\times 6$                         \\ 
+&\textbullet 1$^{\rm st}$ derivatives   &\tt{dmaq1   } &   $\fderivm{{\BM\Theta}_x}{Q_i}$            &      $M\times D\times 6$                 \\   
+&\textbullet 2$^{\rm nd}$ derivatives   &\tt{dmad2   } &   $\sderivm{{\BM\Theta}_x}{Q_j}$            &      $M'\times D\times 6$                \\
+&DMTP octupoles                         &\tt{dmao    } &   ${\BM\Omega}_x$                           &      $D\times 10$                        \\
+&\textbullet 1$^{\rm st}$ derivatives   &\tt{dmao1   } &   $\fderivm{{\BM\Omega}_x}{Q_i}$            &      $M\times D\times 10$                \\  
+&\textbullet 2$^{\rm nd}$ derivatives   &\tt{dmao2   } &   $\sderivm{{\BM\Omega}_x}{Q_j}$            &      $M'\times D\times 10$               \\
+&Polarizable centers                    &\tt{rpol    } &   ${\bf r}_a$                               &      $P\times 3$                         \\
+&Distributed polarizabilities           &\tt{dpol    } &   ${\BM\alpha}_a(0)$                        &      $P\times 9$                         \\      
+&\textbullet 1$^{\rm st}$ derivatives   &\tt{dpol1   } &   $\fderivm{{\BM\alpha}_a(0)}{Q_i}$         &      $M\times P\times 9$                 \\                                          
+&Dist. pol. wrt imaginary freq          &\tt{dpoli   } &   ${\BM\alpha}_a(i\Omega)$                  &      $P\times 12\times 9$                \\
+&\textbullet 1$^{\rm st}$ derivatives   &\tt{dpoli1  } &   $\fderivm{{\BM\alpha}_a(i\Omega)}{Q_i}$   &      $M\times P\times 12\times 9$        \\
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+\hline                                                                                            
+\multirow{4}{*}{III.}                                                                             
+&Harmonic frequencies                   &\tt{freq    } &   $\omega_i$                                &      $M$                                 \\ 
+&Reduced masses                         &\tt{redmass } &   $M_i$                                     &      $M$                                 \\
+&Mass-weighted eigenvectors             &\tt{lvec    } &   ${\bf v}^{(i)}_x$                         &      $M\times N\times 3$                 \\
+&Cubic anharmonic constants             &\tt{gijk    } &   $g_{ijk}$                                 &      $M\times M\times M$                 \\
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+\hline                                                                                            
+\multirow{10}{*}{IV.}                                                                             
+&LMO centroids                          &\tt{lmoc    } &   ${\bf r}_a$                               &      $n\times 3$                         \\                                                 
+&\textbullet 1$^{\rm st}$ derivatives   &\tt{lmoc1   } &   $\fderivm{{\bf r}_x}{Q_i}$                &      $M\times n\times 3$                 \\                                              
+&Fock matrix                            &\tt{fock    } &   $G^{\rm X}_{ab}$                          &      $n\times n$                         \\
+&\textbullet 1$^{\rm st}$ derivatives   &\tt{fock1   } &   $\fderivm{G^{\rm X}_{ab}}{Q_i}$           &      $M\times n\times n$                 \\                                             
+&Canonical Fock matrix                  &\tt{fckc    } &   $G^{\rm X}_{\alpha\beta}$                 &      $c\times c$                         \\
+&\textbullet 1$^{\rm st}$ derivatives   &\tt{fckc1   } &   $\fderivm{G^{\rm X}_{\alpha\beta}}{Q_i}$  &      $M\times c\times c$                 \\    
+&LCAO-LMO matrix                        &\tt{vecl    } &   $C_{a\alpha}$                             &      $n\times \beta$                     \\       
+&\textbullet 1$^{\rm st}$ derivatives   &\tt{vecl1   } &   $\fderivm{C_{a\alpha}}{Q_i}$              &      $M\times n\times \beta$             \\                                             
+&LCAO-CMO matrix                        &\tt{vecc    } &   $C_{a\alpha}$                             &      $c\times \beta$                     \\
+&\textbullet 1$^{\rm st}$ derivatives   &\tt{vecc1   } &   $\fderivm{C_{a\alpha}}{Q_i}$              &      $M\times c\times \beta$             \\                                                
+\hline\hline
+\end{tabular*}
+%
+\begin{footnotesize}
+$^{a)}$ Mathematical symbols which are used throughout the Thesis.
+\end{footnotesize}
+\end{table}
+%
+In the case of IR active molecules additionally first and second
+derivatives with respect to normal coordinates as well as
+harmonic and anharmonic vibrational analysis parameters
+need to be computed. As can be seen, the amount of data per one IBM is quite
+substantial with exchange\hyp{}repulsion parameters consituting of mostly 90\% 
+of all parameters. This is because the basis sets for EFP2 calculations
+should be of at least 6-31++G** quality.
+For instance, in the case of MeSCN and 6-311++G** basis set, 
+the amount of Fock matrix elements in LMO basis
+and its first derivatives
+is 190 and 2850, respectively,
+whereas the amount of LCAO-MO wavefunction coefficients and their derivatives
+hits as far as accordingly 2299 and 34485 numbers!
+Despite all this, the present implementation handles IBM's parameters
+efficiently and the associated net computer usage while reading, writing
+or processing the parameters
+can be considered as negligible.
+
+SLV has already decent set of built-in parameters computed 
+by using 6-311++G** basis set. The currently implemented IBM's
+are shown in Table~\ref{t:slv-ibm-buitin}
+%
+\begin{table}[t!]
+\caption{
+Built-in intependent benchmark molecule parameters that are implemented
+in the current version of {\sc Solvshift}. Abbreviations: "EINT" - interaction
+energy, "FREQ" - vibrational properties.
+\label{t:slv-ibm-buitin}}
+\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } lllll}
+\hline\hline
+ SLV Label             & Molecule                        & EINT &   FREQ   &     Comment                              \\
+\multicolumn{5}{c}{SolEFP parameters} \\                                                           
+\hline                                                                      
+ \tt{meoac           } & Methyl acetate                  & YES  &   YES    &     C$=$O stretch                        \\ 
+ \tt{nma             } & $N$-Methyl Acetamide            & YES  &   YES    &     amide I mode                         \\
+ \tt{nma-d7          } & NMA$_{d_7}$ $^{a)}$             & YES  &   YES    &     amide I' mode                        \\
+ \tt{mescn           } & Methyl Thiocyanide              & YES  &   YES    &     C$\equiv$N stretch                   \\
+ \tt{mecn            } & Methyl Nitrile                  & YES  &   YES    &     C$\equiv$N stretch                   \\
+ \tt{et2coo          } & Diethyl Carbonate               & YES  &   YES    &     C$=$O stretch                        \\
+\multicolumn{5}{c}{EFP parameters} \\                                                                                   
+\hline                                                                                                                  
+ \tt{water           } & H$_2$O                          & YES  &   NO     &     with DMA-5                           \\
+ \tt{water2          } & H$_2$O                          & YES  &   NO     &     with CAMM-3                          \\
+ \tt{dmso            } & DMSO                            & YES  &   NO     &                                          \\
+ \tt{meoh            } & Methanol                        & YES  &   NO     &                                          \\
+ \tt{etoh            } & Ethanol                         & YES  &   NO     &                                          \\
+ \tt{mesh            } & Methanothiol                    & YES  &   NO     &                                          \\
+ \tt{dms             } & Dimethylsylfide                 & YES  &   NO     &                                          \\
+ \tt{menh2           } & Methylamine                     & YES  &   NO     &                                          \\
+ \tt{ccl4            } & Tetrachloromethane              & YES  &   NO     &                                          \\
+ \tt{chcl3           } & Chloroform                      & YES  &   NO     &                                          \\
+ \tt{dcm             } & Dichloromethane                 & YES  &   NO     &                                          \\
+ \tt{li+             } & Lithium Cation                  & YES  &   NO     &                                          \\
+ \tt{na+             } & Sodium Cation                   & YES  &   NO     &                                          \\
+ \tt{me-so3-         } & Methyl Sulphonate (-1)          & YES  &   NO     &                                          \\
+ \tt{so3--           } & SO$_3^{2-}$ anion               & YES  &   NO     &                                          \\
+ \tt{imidazole       } & Imidazole                       & YES  &   NO     &                                          \\
+ \tt{4-me-imidazole  } & 4-Methyl Imidazole              & YES  &   NO     &                                          \\
+ \tt{4-me-phenol     } & 4-Methyl Phenol                 & YES  &   NO     &                                          \\
+ \tt{chonh2          } & Formamide                       & YES  &   NO     &                                          \\
+ \tt{chonhme         } & N-Methyl Formamide              & YES  &   NO     &                                          \\
+ \tt{comenh2         } & Acetamide                       & YES  &   NO     &                                          \\
+ \tt{mecoo-          } & Acetate (-1) Anion              & YES  &   NO     &                                          \\
+ \tt{menh3+          } & Methyl Ammonium (+1) Cation     & YES  &   NO     &                                          \\
+ \tt{me-guanidinium+ } & Methyl Guanidinium (+1) Cation  & YES  &   NO     &                                          \\
+ \tt{methane         } & Methane                         & YES  &   NO     &                                          \\
+ \tt{ethane          } & Ethane                          & YES  &   NO     &                                          \\
+ \tt{n-propane       } & $n$-Propane                     & YES  &   NO     &                                          \\
+ \tt{cyclohexane     } & Cyclohexane                     & YES  &   NO     &                                          \\
+ \tt{benzene         } & Benzene                         & YES  &   NO     &                                          \\
+ \tt{phenole         } & Phenole                         & YES  &   NO     &                                          \\
+ \tt{dmf             } & Dimethylformamide               & YES  &   NO     &                                          \\
+ \tt{thf             } & Tetrahydrofurane                & YES  &   NO     &                                          \\
+ \tt{cho-ch-nh2-ch3  } & 2-Aminopropanal                 & YES  &   NO     &                                          \\
+\hline\hline
+\end{tabular*}
+%
+\begin{footnotesize}
+$^{a)}$ all H deuterated.
+\end{footnotesize}
+\end{table}
+%
+
+
+
+\section{Structure}
+
+Figure~\ref{f:slv-solefp} shows the outline of the overall procedure 
+of applying RMA\hyp{}based methods that are implemented in the SLV program.
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+%\fbox{
+\includegraphics[width=0.92\linewidth]{slv-fig-2.eps}
+%}
+\caption{
+\emph{Left:} Evaluation of vibrational property by using SolX methods based 
+             on the rigid molecule algorithm.
+\emph{Right:} Applying SolX models to molecular systems.
+\label{f:slv-solefp}}
+\end{figure}
+%
+The most time\hyp{}consuming part of SLV RMA run is the computation
+of vibrational displacements $\delta Q_i$ due to each intermolecular
+interaction potential. These displacements are then used to compute the
+solvation\hyp{}induced vibrational frequency shifts 
+and the transition dipole moment changes with negligible computational effort.
+Therefore, development should be undertaken to improve the
+performance of the $\delta Q_i$ evaluation, especially 
+$\delta Q_i^{\rm Ind}$, $\delta Q_i^{\rm Ex-Rep}$
+and $\delta Q_i^{\rm CT}$. Yet another heavy quantity is
+the distributed solvatochromic induced dipole moments ${\bf a}_j$.
+Their computation is not necessary but may be useful in some cases.
+
+The basic structure of {\sc Solvshift} is shown
 in Figure~\ref{f:slv-structure}.
 %
 \begin{figure}[t!]
@@ -8803,12 +9318,22 @@ in Figure~\ref{f:slv-structure}.
 \includegraphics[width=0.90\linewidth]{slv-diagram.eps}
 %}
 \caption{
-Structure of {\sc Solvshift}. It imports the following 
+Structure of {\sc Solvshift}. The program imports the following 
 {\sc Coulomb} modules: {\tt MULTIP}, {\tt QMFile}, {\tt Ints}, 
-{\tt Freq}, {\tt Atoms} and {\tt UNITS}. 
+{\tt Freq}, {\tt Atoms} and {\tt UNITS}. Decisive classes
+are highlighted by yellow (numerical differentiation), 
+red (effective fragment potentials) and storage\hyp{}communication
+classes are shown in violet.
 \label{f:slv-structure}}
 \end{figure}
 %
+It consists of two main modules: i) IBM fragment generators 
+and ii) vibrational observable evaluators. The major driving classes
+are {\tt DIFF} (which handles the numerical differentiations of
+all the tensorial property), {\tt EFP} (with SolEFP equations)
+and {\tt Frag} (describing an IBM object). Instances of {\tt Frag} are passed to
+{\tt EFP} instance that sets and performs the calculations.
+
 For the sake of efficiency, any type of one\hyp{}particle
 density matrix (HF, MP2 or coupled cluster (CC))
 as well as the coupled\hyp{}perturbed Hartree\hyp{}Fock calculations
@@ -8826,140 +9351,275 @@ methods such as ESP charges, CAMM, DMA, LMTP, molecular multipole
 moments or any other kind of multipole expansions. 
 \verb+DMA+'s are therefore usefull when working with
 electrostatic SolX models such as SolCAMM etc.
-
-Figure~\ref{f:slv-solefp} presents the overall procedure 
-of SolX methods implemented in the program. 
-%
-\begin{figure}[t!]
-\centering
-\setlength\fboxsep{0.4pt}
-\setlength\fboxrule{0.5pt}
-%\fbox{
-\includegraphics[width=0.98\linewidth]{slv-fig-2.eps}
-%}
-\caption{
-\emph{Left:} Evaluation of vibrational property by using SolX methods.
-\emph{Right:} Applying SolX models to molecular systems.
-\label{f:slv-solefp}}
-\end{figure}
-%
-The principle of operation depends on the method chosen:
-%
-\begin{itemize}
-  \item Run by using {\bf Constrained cluster algorithm (CCA)}:
-        SolEDS, SolSAPT and SolEFP\footnote{evaluation of vibrational derivatives numerically} 
-        methods (Section~XXX). The vibrational derivatives are evaluated numerically.
-  \item Run by using {\bf Rigid molecule algorithm (RMA)}: 
-        SolCAMM, SolDMA, SolChelpG, SolLMTP, SolMMM and SolEFP methods (Section~XXX).
-        The vibrational derivatives are evaluated by using analytical approximate formulae.
-\end{itemize}
-%
-The CCA method is designed for analysis of small model systems
-and can serve also as a validation tool for methods based on RMA
-since no multipole expansion is introduced and the frequency shift
-components are evaluated without additional approximations.
-However, for the analysis of large systems RMA needs 
-to be utilized. In the latter case, the solvatochromic model is constructed 
-from the independent benchmark molecule parameters (IBM's)
-which are the representations of the isolated molecules in their gas\hyp{}phase states.
-These parameters serve as templates to be superimposed later onto
-the target system. 
-
-In Table~\ref{t:slv-rma-parameters}
-we present the list of parameters that
-build IBM's. In the case of solvent molecule,
-IBM is equivalent to the conventional EFP2 parameters.
-In the case of IR active molecules additionally first and second
-derivatives with respect to normal coordinates as well as
-harmonic and anharmonic vibrational analysis parameters
-need to be computed. The amount of data per one IBM is 
-substantial as can be seen in Table~\ref{t:slv-rma-parameters}.
-However, the present implementation handles all of these parameters
-efficiently and the net computer usage regarding handling IBM's 
-can be considered as negligible.
-
-The most time\hyp{}consuming part of SLV RMA run is the computation
-of vibrational displacements $\delta Q_i$ due to each intermolecular
-interaction potential. These displacements are then used to compute the
-solvation\hyp{}induced vibrational frequency shifts 
-and the transition dipole moment changes with negligible computational effort.
-Therefore, development should be undertaken to improve the
-performance of the $\delta Q_i$ evaluation, especially 
-$\delta Q_i^{\rm Ind}$, $\delta Q_i^{\rm Ex-Rep}$
-and $\delta Q_i^{\rm CT}$.
-
-IBM's are handled by {\tt Frag} class, instances of which are passed to
-{\tt EFP} instance that sets and performs the calculations.
+For more specific information the Reader is referred 
+to the SLV documentation.
 
 \section{Usage}
 
+Solvshift is very easy in use. It can be accessed 
+from Python shell (like {\sc Coulomb} and any externally
+available Python modules and packages\footnote{For example: NumPy, MDAnalysis, PyMol.}).
+User can also communicate via command line using main {\tt slv} script.
+SolEFP//CMD calculations are run by script {\tt slv{\textunderscore}md} which reads the
+special input file.
+
+\subsection{Steps of setting up EFP environment for SLV calculations}
+
+The completely general way for defining the fragments within the target system
+is through the input file. 
+Instance of {\tt MDInput} class
+will read the input file and will provide the appropriate fields to {\tt EFP} instance. 
+The syntax of specifying one fragment
+is shown in Figure~\ref{f:slv-inp-file-syntax}.
+%
+\begin{figure}[t!]
+\centering
+\setlength\fboxsep{0.4pt}
+\setlength\fboxrule{0.5pt}
+\begin{verbatim}
+$Frag
+  [name]     [(Sol)EFP parameter file]
+  reorder    [reorder list]
+  supl       [superimposition list]
+  atoms      [atomic locations]             [number of EFP fragments]
+  ...
+$endFrag
+\end{verbatim}
+\caption{
+The syntax of SolEFP input file.
+\label{f:slv-inp-file-syntax}}
+\end{figure}
+%
+For example, for NMA--(H$_2$O)$_{918}$ system 
+with water described by Tip4P model we could 
+write the following input:
+%
+\begin{verbatim}
+$Frag
+    NMA     nma-d7
+    reorder 1 3 5 2 7 10 11 12 4 6 8 9
+    supl    0-4
+    atoms   1-12                           1
+$endFrag
+
+$Frag
+    water   water
+    atoms   13­-3684                        918
+    supl    0-2
+$endFrag
+\end{verbatim}
+%
+First line refers to molecule name and file name with parameters. 
+The names of built-in IBM's are listed in the first column
+of Table~\ref{t:slv-ibm-buitin}.
+However, it is also possible to generate a new IBM fragment file
+by using fully automatized SLV routines.
+
+We can reorder atoms in the next line
+by keyword {\tt reorder [list]}. Also, we can provide 
+superimposition list for that fragment. It can be
+provided in this example either by {\tt 0 1 2 3 4} 
+or {\tt 0-­}4 (both work the same). {\tt reorder} and {\tt supl} are
+optional. The last entry or entries refer to atomic positions in CMD trajectory 
+files and the number of
+(Sol)EFP fragments. Note, that if frequency shift calculation is set, the first fragment
+is assumed to be an IR probe molecule.\footnote{SLV can also perform
+EFP2 interaction energy calculation and frequency shift calculation
+can be switched off.} 
+Note also that the turn of entries within one fragment is
+arbitrary, except for the first line where fragment name and parameter file is provided. The more
+detailed explanation and discussion about working with Tip4P water model and fragments of big
+molecules is presented in Section~\ref{s:superimposition-practical}.
+
+%If the order of atoms associated with a particular fragment differs between their parameter file
+%and CMD file this has to be changed at the beginning of the calculation. 
+
+%It is also extremely important to remember that the 
+%object has to be properly placed in the space according to CMD frame. I.e., 
+%rotation and translation
+%has to be performed. 
+%It is particularly important when dealing with fragments being parts of larger molecule. For instance --SO$_3$
+%moiety can be described
+%based on CH$_3$--SO$_3$ IBM.
+%Here, we have to specify atoms of sulfonate groups and carbon atom in the
+%backbone (just to properly place this fragment in space such that it is 
+%superimposed with sulfonate group in target system). 
+
+\subsection{Superimposition problem\label{s:superimposition-practical}}
+
+In order to provide the topology for SolEFP/EFP calculations it is necessary to specify where particular
+SolEFP and EFP objects need to be superimposed within the structure from CMD trajectory. This brings
+the need of explicit specifications of the atomic identities within (Sol)EFP model and their
+assignment to the set of atoms in the target system. Since (Sol)EFP can be used not only to model
+the same molecules but also certain fragments of larger molecules, the caution has to be kept because
+the atomic orders will almost for sure be different when comparing (Sol)EFP model and the
+corresponding fragment of the modelled system. Moreover, the atoms that correspond to the
+(Sol)EFP model do not need to be in a continuous order -- there can be other atoms in between that
+do not 'belong' to the IBM model.
+
+Therefore two constructs have been introduced to SLV to unambiguously define the relationships
+between SolEFP/EFP and target topologies:
+%
+\begin{itemize}
+\item Reordering lists
+\item Superimposition lists
+\end{itemize}
+%
+Those lists simply contain the atomic indices in some particular order or additional masks. In SLV, the
+following convention is used: reordering lists refer to atomic indices in CMD (target) topology whereas
+superimposition lists refer to (Sol)EFP atomic indices.
+Here we discuss superimposition lists and atom rearrangement
+in more detail. We shall do it on a few examples.
+
+\subsubsection{Working with Tip4P water model}
+
+Let us assume that in our CMD simulation file stores water molecules in the following order: 
+O, H1, H2, X (for Tip4P model) where X is the additional non\hyp{}atomic
+site near oxygen atom. On the other hand, our IBM water parameters
+contain only 3 atoms in the order: O, H1, H2. Therefore we see from comparison that
+%
+\begin{verbatim}
+   MD : O H1 H2 X
+   EFP: O H1 H2
+\end{verbatim}
+%
+so the corresponding superimposition list for water is [0,1,2] (we superimpose IBM onto CMD
+fragment). In the input file we can specify this superimposition
+list as {\tt supl 0-2} or {\tt supl 0 1 2}.
+
+\subsubsection{Working with EFP fragment being a part of molecule}
+
+It is more complicated and requires some caution. 
+Let us first examine the tyrosine residue which is one of
+building blocks of proteins (Figure~\ref{f:tyr-res-lists}).
+%
 \begin{figure}[t!]
 \centering
 \setlength\fboxsep{0.4pt}
 \setlength\fboxrule{0.5pt}
 %\fbox{
-\begin{scriptsize}
-\begin{verbatim}
-$Frag
-SCNProbe
-mescn
-atoms      7883               1
-supl       14
-reorder    5 6 4 1 0 3 2
-$endFrag
-$Frag
-TyrosineCH4
-methane
-atoms 292294
-1
-supl 13
-reorder 1 2 3 0 0
-$endFrag
-$Frag
-TyrosineOH,
-Serine meoh
-atoms 300302
-1
-atoms 129131
-1
-atoms 200202
-1
-atoms 281283
-1
-supl 1,2,6
-reorder 1 2 0 0 0 3
-$endFrag
-$Frag
-Glutamine comenh2
-atoms 9097
-1
-atoms 362369
-1
-atoms 256263
-1
-atoms 6471
-1
-supl 1,2,4
-reorder 4 5 1 6 8 7 0 2 3
-$endFrag
-$Frag
-CH4 methane
-!cl atoms 235238
-1
-atoms 425428 1
-supl 13
-reorder 1 2 3 4 0
-$endFrag
-\end{verbatim}
-\end{scriptsize}
+\includegraphics[width=0.92\linewidth]{m.reorder.eps}
 %}
 \caption{
-Examplary input file for SLV/MD routine.
-\label{f:slv-inp-example}}
+Assignment of reordering and superimposition lists for Tyr residue
+whith phenol as a model EFP2 molecule. First atom is indicated by
+number 1.
+Tyr residue is assumed to be
+a part of large peptide, hence the atomic numbers for that residue start
+from 11 (for explanatory purposes).
+\label{f:tyr-res-lists}}
 \end{figure}
+%
+The first and last atoms in MD residue considered here are shown by green squares. In pink, the actual
+atomic indices (starting from 1) are depicted. It is clear that the orders 
+of atoms are completely different in IBM model and Tyr residue from CMD topology.
+
+The following formula is used to determine the reordering list:
+%
+\begin{equation}   \label{e:reord-list}
+{\rm reord}_i = 
+\left\{\begin{matrix}
+{\rm IDX}_{\rm CMD}^{(i)}
+ - {\rm IDX}_{\rm First} + 1
+                      & \text{If (Sol)EFP atom is in CMD topology}\\ 
+0                     & \text{If (Sol)EFP atom is \emph{not} in CMD topology}
+\end{matrix}\right.
+\end{equation}
+%
+where ${\rm IDX}_{\rm First}$ is the index of the first atom 
+within a given CMD topology residue.
+The length of the {\tt reord} list is \emph{always} equal 
+to the number of atoms in (Sol)EFP model. Thus
+the reordering list will have 13 entries in this case.
+To determine {\tt reord} and {\tt supl} we need to answer the following questions:
+%
+\begin{enumerate}
+ \item Which atom in Tyr corresponds to first atom in IBM? Atom with index 24 -- but it is
+14th atom within considered residue. So the first entry in {\tt reord} list is 14.
+ \item Which atom in Tyr corresponds to seventh atom in EFP? Atom with index 22 -- but it is
+12th atom within considered residue. So the 7th entry in {\tt reord} list is 12.
+\item Which atom in Tyr corresponds to the last atom in EFP? Well, there is no corresponding
+atom here. So this entry in reord list is 0.
+\end{enumerate}
+%
+Thus, the final reord list for that example is 
+%
+\begin{verbatim}
+   14, 15, 13, 16, 11, 9, 12, 18, 17, 8, 10, 19, 0
+\end{verbatim}
+%
+
+The superimposition list has to be determined in such a way in order to prevent undefined EFP
+orientations. In the example given above, we chose the superimposed atoms to be as indicated in green
+open circles.
+Why? Because only then we can be sure that the orientation of the OH group and the plane of the ring
+is correct. The superimposition list is 
+%
+\begin{verbatim}
+   1, 2, 3, 11
+\end{verbatim}
+%
+
+As another example let us consider sulfonate group --SO$_3$
+in organic sulphonates. It is attached to a carbon atom, but we want to consider only four atoms
+and neglect the aliphatic chains. 
+Let us assume that the order of the atoms in CMD file is: 
+S, O1, O2, O3. However, our EFP fragment is based on methyl sulfonate anion CH$_3$--SO$_3^-$
+for which the turn of atoms appears to be different: S, O1, O3, O2, C, H1, H2, H3. Note, that in our
+example, EFP oxygen atoms have different absolute configuration than in CMD trajectory!\footnote{we have to treat
+each atom as if it was different because of superimposition mathematics does not know atomic symbol,
+just coordinate vectors!} So, even if we have the arrangement:
+%
+\begin{verbatim}
+   MD : S O1 O2 O3
+   EFP: S O1 O3 O2 C H1 H2 H3
+\end{verbatim}
+%
+the corresponding reordering list is not [1,2,3,4]. In SLV it is assumed
+that the subset of atoms that is shared between CMD and EFP has the same order which also refers to the
+absolute configuration! To adjust the not matching oxygens here we have to \emph{rearrange}
+them as well. The correct list is
+%
+\begin{verbatim}
+   1, 2, 4, 3
+\end{verbatim}
+%
 
 
 \section{Summary and outline of future development}
+
+In this Chapter, we described briefly the {\sc Solvshift} package
+which is believed to serve well for every member of Scientific Community
+in the world who is interested in detailed understanding of the
+vibrational solvatochromism phenomenon and explaining
+the multidimensional vibrational spectra. It has parallel 
+implementation which enables one to compute frequency shifts
+for many frames at a time. It can also predict the changes in the
+transition dipole moment within WCA limit. However, there is still a lot room for improvement.
+
+It may be quite tedious to write the large input files manually especially when one has to analyze many
+structures with different atomic indexing (for example when some fragments from CMD trajectory were
+cut and saved in PDB file: topologies are still the same but the absolute atomic indices may be different.
+Therefore one can use the fact that the topology is constant and refer to the particular residues by their
+name. In that case, the SLV input file with reordering and superimposing lists can be generated
+automatically by the program. This feature is just initialized but need to be extended (we used
+this only for certain forcefields implemented in {\sc Gromacs} for the purposes
+of the analyses in Section~\ref{s:ral-solefp}.
+
+The computation speed is very slow for evaluating the exchange\hyp{}repulsion and induction
+contributions. The algorithm can be much improved to optimize the
+evaluation of molecular integrals and inversions of sparse $\bf D$ matrixes.
+In the latter case, it is possible to design block algorithm which
+will detect zero blocks in $\bf D$ matrixes and subsequently speed up their
+diagonalizations. It will also enable using larger $R_{\rm Max}$ cut\hyp{}offs.
+
+The severe problem related to the differentiation of quantities that are
+derived from the molecular orbital localization is the molecular symmetry.
+At present, we have designed the approximate algorithm of detecting the
+molecular orbitals corresponding to various finite\hyp{}difference displaced
+molecular structures. This algorithm is probably not working well in case of
+symmetric orbitals present in, for example, MeCN molecule. This aspect needs 
+to be carefully checked and, if necessary, definitely resolved.
 
 \printbibliography[heading=subbibintoc,title={References}]
 \end{refsection}

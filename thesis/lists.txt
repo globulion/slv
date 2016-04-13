@@ -43,6 +43,11 @@ gs -dNOPAUSE -dBATCH -q -sDEVICE=bbox <file>
                \Delta \omega_{j;{\rm disp}}^{(20)}  
 \end{equation}
 
+%
+\begin{equation}  \label{LABEL}
+\end{equation}
+%
+
 # EQUATIONS:
 e:dw-disp-6-iso-distributed
 e:dw-disp-6-iso-approx-distributed
