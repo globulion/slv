@@ -1,0 +1,338 @@
+# EQUATIONS
+e:kbm          # Kirkwood-Bauer-Magat
+e:vse-shift-full
+e:vse-shift-dipole
+e:vse-shift-dipole-corr
+e:vse-shift-multipoles
+e:kamlet-taft
+e:fawcett
+e:ben-amotz
+e:ben-amotz-ro   # more explicit form
+e:esf
+
+# Buckingham theory
+e:h_harm
+e:h_anh
+e:RSPT-Hamiltonian
+e:u_taylor
+e:gwlevels
+eq:general_state_vibr
+e:ge
+e:dw-first-order-pt
+e:buckingham-1st-order
+e:buckingham-1st-order-fundamental
+e:anharm-1st-order
+e:dw-second-order-pt
+eq:domega2
+eq:domega2approx
+eq:1x3
+e:x552
+e:x553
+e:buckingham-2st-order
+e:anharm-2nd-order
+e:buckingham-2st-order-total
+e:buckingham-2st-order-total-fund
+e:buckingham-struct-dist
+
+# Cho's model
+e:vib-pot-energy-function
+e:vib-pot-energy-function-new
+e:vib-pot-energy-function-new.condition
+e:x863
+e:struct-dist-cho
+e:struct-dist-cho-transl
+exp   # full expansion of e:vib-pot-energy-function-new
+exp2  # interchanged exp
+e:force-const-cho
+# WCA
+e:jeden
+e:trzybulak
+e:W2-w2
+e:dw-fea-fma
+  e:dw-fea
+  e:dw-fma
+e:dmtp
+e:dmtp-sol
+e:quad-trac
+e:oct-trac
+e:solvatochromic-multipoles
+# str dist
+e:Q-space-transform
+e:Q-space-transform-theory-0
+e:T-th-0
+e:R-th-0
+e:V
+e:dQ-new
+e:dQ-new-c
+e:dQ-new-s
+e:dQ-T1
+e:A
+e:Q-new-T1
+e:B-approx
+e:B-approx
+e:A-approx-expl
+e:Q-new-T2-approx
+e:dQ-approx-T1-expl
+e:dQ-approx-T1-expl-lead
+
+# transition dipole change
+e:dipole-solution
+e:dipole-der-solution
+e:dipole-der-diff-solution
+e:dipole-der-diff-solution-field
+e:trans-dip-cho-pot-ind-effect
+e:trans-dip-cho-pot-ind-effect-quadratic
+e:dipole-der-diff-solution-distributed
+
+# implicit models
+e:esol-onsager
+e:fons
+e:dw-ons-gen
+e:mu-qf
+e:dw-ons-working-form
+e:ons-dq-init
+e:ons-si-iter
+e:ons-ki-iter
+e:mu-qf-derivative
+e:ons-field
+e:a-matrix
+e:ons-field-deriv
+
+# explicit models: Coulomb
+e:eint-1
+e:potential-gradients
+e:interaction-tensors
+  e:interaction-tensors-1
+  e:interaction-tensors-2
+  e:interaction-tensors-3
+  e:interaction-tensors-4
+e:deriv-operators
+  e:deriv-operators-1
+  e:deriv-operators-2
+e:f-terms
+  e:f-terms-1
+  e:f-terms-2
+  e:f-terms-3
+  e:f-terms-4
+e:k-terms
+  e:k-terms-1
+  e:k-terms-2
+  e:k-terms-3
+  e:k-terms-4
+e:dw-solefp-coul
+e:dw-solefp-coul-correction
+e:dw-solefp-coul-working
+
+# explicit models: Pol+Disp
+e:eint-2
+e:eint-2-ind
+e:eint-2-ind-mult
+e:polarizability
+e:eint-2-ind-dip-distr
+e:pf        # induced dipoles EFP
+e:D-matrix
+e:dw-ind-base
+e:vibr-force-ind
+e:dw-ind-avec
+e:a-A
+e:a-vec
+e:dw-ind-avec-alternative  # dw with a'
+e:avec-prime
+e:dmtp-solmmm
+e:dmtp-solmmm-ind
+e:eint-2-disp
+e:Casimir-Polder
+e:sfaf   # U_disp after casimir-polder
+e:udisp-6-7-8
+e:iomega-polarizabilities
+e:udisp-cn-series
+e:c6
+e:dw-disp-6
+e:vibr-force-disp-6
+e:happylabel
+e:dw-disp-6-iso
+e:dw-disp-6-iso-approx
+e:dw-disp-6-iso-approx-cj6
+e:cj6
+e:dw-disp-8
+e:dw-disp-6-distr-working
+e:dw-disp-6-iso-distributed
+e:dw-disp-6-iso-approx-distributed
+e:cj6-distributed
+# explicit models: Ex-Rep
+e:eint-1-expol
+e:antisymmetrizer-series
+e:u-exrep-efp
+e:dw-exrep-base
+e:force-exrep
+e:dr
+e:derSij
+e:derTij
+e:derXij
+e:orbder
+e:muorb
+e:sdd
+# far environment
+e:OKF
+# SolX models
+e:dw-solefp
+e:dw-solefp-electric-nonelectric
+e:dw-solefp-electric
+e:dw-solefp-nonelectric
+e:dmu-solefp
+e:e-int-supramol
+e:dw-soleds
+e:dw-soleds-hf
+e:dw-soleds-mp2
+e:dw-solsapt
+
+e:approx-1     # g_jjj  (MEA)
+e:approx-2     # g_ijj  (MEA)
+e:approx-3     # g_ijj  (MEA + EA)
+
+e:coe
+e:farag
+e:pstro        # dw wtth dQ version
+e:cooo         # dQ = sum over interactions
+e:cooo2        # farav dw (a raczej dv)
+
+e:dw-pept-scn
+e:dw-solefp-prot
+e:dw-solefp-prot-ind
+
+e:torii-partitioning
+
+e:dmtp-solmmm-dipole
+e:dmtp-solmmm-dipole-assumption
+e:extended-stark-model
+
+e:ipr
+e:similarity-function
+
+e:reord-list
+
+# SECTIONS
+c:vibr-solv             # chapter 2
+c:background            # chapter 3
+c:my-model              # chapter 4
+c:nma-amide-I           # chapter 5
+c:cn-modes              # chapter 6
+c:mode-mixing-guanines  # chapter 7
+c:slv                   # chapter 8
+
+s:signs-non-elect-solv
+s:theory       # overview of first-principles theories
+s:buckingham-theory
+s:structural-distortion-buckingham
+s:cho-model
+s:wca
+s:ea-mea
+s:vibr-electrochromism
+s:str-dist-general-discussion
+s:vibr-trans-dipole
+s:implicit-model
+s:vibr-solv-explicit-models
+s:dw-coul
+s:dw-poldisp
+s:dw-poldisp-pol
+p:solindmult
+s:disp
+s:disp-distributed
+s:dw-exrep
+s:dw-ct
+s:far-environ
+s:solx-models-working
+s:solx-electrost
+p:solx-electrost-contracted
+s:solefp-soleds-solsapt
+s:solefp-working-model
+s:soleds
+s:solsapt
+s:beyond-wca
+s:coupling-between-2-modes
+s:coupling-between-3-modes
+s:amide-I-onsager
+s:amide-I-solvatochr-multipoles
+s:amide-I-orient
+s:amide-I-bulk
+s:amide-I-discuss-origins
+s:rigid-molecule-algorithm
+s:scn-protein-interfac
+s:scn-protein-interfac-model-environ
+s:ral-solefp
+s:cn-nc
+s:stark-dipole-cn
+s:superimposition-practical
+
+a:vibrational-analysis
+a:harmonic-oscillator
+a:matrix-elements       # of harmonic oscillator
+a:mw-coord              # mass-weigheted coordinates
+
+
+# FIGURES
+f.MeCN.MeSCN.vs.solvents
+f.NMA.dq
+f.MeN3.dq
+f:contr
+f:solxn
+f:onsager
+f:solmmm  # for NMA
+f:solchelpg
+f:solcamm
+f:nma-abcde   # structures of NMA-water and chloroform
+f:nma-orient-a
+f:nma-orient-b
+f:nma-orient-d
+f:nma-water-rhf
+f:nma-water-dist
+f:nma-cdcl3-dist
+f:nma-solefp-md
+f:nma-solefp-md-distr
+f:mescn-maps
+f:mescn-maps-all
+f:mescn-soleds
+f:mescn-solefp-qm
+f:mescn-scan
+f:mescn-solefp-md-distr
+f:mescn-solefp-md-dist
+f:mescn-prot-struct
+f:mescn-prot-through-bond
+f:prot      # beautiful proteins
+f:radial-plots
+f:cnnc-maps
+f:solv-dip-directionality
+f:guanine-vacuum-modes
+f:guanine-clusters-description
+f:guanine-clusters-spectra
+f:guanine-clusters-ipr
+f:guanine-clusters-umat
+f:guanine-clusters-amplitudes
+f:guanine-clusters-summary
+f:slv-solefp
+f:slv-structure
+f:slv-inp-file-syntax
+f:tyr-res-lists
+
+# TABLES
+t:NMA.MeNNN.dq.freq
+t:sapt-eds-efp2
+t:solmmm-comparison
+t:amide-I-soleds-solefp
+t:ind-nonadd
+t:mp2-soleds-amide-I
+t:cj6
+t:amide-I-bulk
+t:farag
+t:mescn-solcamm
+t:mescn-solefp-md-exp
+t:mescn-soleds
+t:mescn-solefp-md-fwhm
+t:solefp-prot-residues
+t:cnnc-soleds
+t:cnnc-solcamm
+t:cnnc-mu-part
+t:stark-dipole-ind
+t:guanine-vacuum-modes
+t:slv-rma-parameters
+t:slv-ibm-buitin

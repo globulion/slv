@@ -1,0 +1,5386 @@
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=latex 2015.11.7)  8 APR 2016 14:04
+entering extended mode
+ %&-line parsing enabled.
+**thesis.tex
+(./thesis.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ukenglish, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/book.cls
+Document Class: book 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/fleqn.clo
+File: fleqn.clo 1998/08/17 v1.1c Standard LaTeX option (flush left equations)
+\mathindent=\dimen102
+)
+(/usr/share/texmf-texlive/tex/latex/base/bk12.clo
+File: bk12.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@chapter=\count80
+\c@section=\count81
+\c@subsection=\count82
+\c@subsubsection=\count83
+\c@paragraph=\count84
+\c@subparagraph=\count85
+\c@figure=\count86
+\c@table=\count87
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen103
+)
+(/usr/share/texmf-texlive/tex/latex/titlesec/titlesec.sty
+Package: titlesec 2007/08/12 v2.8 Sectioning titles
+\ttl@box=\box26
+\beforetitleunit=\skip43
+\aftertitleunit=\skip44
+\ttl@plus=\dimen104
+\ttl@minus=\dimen105
+\ttl@toksa=\toks14
+\titlewidth=\dimen106
+\titlewidthlast=\dimen107
+\titlewidthfirst=\dimen108
+)
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+Package: geometry 2008/12/21 v4.2 Page Geometry
+
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks15
+)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty
+Package: ifpdf 2009/04/10 v2.0 Provides the ifpdf switch (HO)
+Package ifpdf Info: pdfTeX in pdf mode not detected.
+)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty
+Package: ifvtex 2008/11/04 v1.4 Switches for detecting VTeX and its modes (HO)
+Package ifvtex Info: VTeX not detected.
+)
+\Gm@cnth=\count88
+\Gm@cntv=\count89
+\c@Gm@tempcnt=\count90
+\Gm@bindingoffset=\dimen109
+\Gm@wd@mp=\dimen110
+\Gm@odd@mp=\dimen111
+\Gm@even@mp=\dimen112
+\Gm@dimlist=\toks16
+)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+Package: fontenc 2005/09/27 v1.99g Standard LaTeX package
+
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def
+File: t1enc.def 2005/09/27 v1.99g Standard LaTeX file
+LaTeX Font Info:    Redeclaring font encoding T1 on input line 43.
+))
+(/usr/share/texmf-texlive/tex/generic/babel/babel.sty
+Package: babel 2008/07/06 v3.8l The Babel package
+
+(/usr/share/texmf-texlive/tex/generic/babel/english.ldf
+Language: english 2005/03/30 v3.3o English support from the babel system
+
+(/usr/share/texmf-texlive/tex/generic/babel/babel.def
+File: babel.def 2008/07/06 v3.8l Babel common definitions
+\babel@savecnt=\count91
+\U@D=\dimen113
+)
+\l@canadian = a dialect from \language\l@american 
+\l@australian = a dialect from \language\l@british 
+\l@newzealand = a dialect from \language\l@british 
+))
+(/usr/share/texmf-texlive/tex/latex/fancyhdr/fancyhdr.sty
+\fancy@headwidth=\skip45
+\f@ncyO@elh=\skip46
+\f@ncyO@erh=\skip47
+\f@ncyO@olh=\skip48
+\f@ncyO@orh=\skip49
+\f@ncyO@elf=\skip50
+\f@ncyO@erf=\skip51
+\f@ncyO@olf=\skip52
+\f@ncyO@orf=\skip53
+)
+(/usr/share/texmf-texlive/tex/latex/fourier/fourier.sty
+Package: fourier 2005/01/01 1.4 fourier-GUTenberg package
+
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+Package: fontenc 2005/09/27 v1.99g Standard LaTeX package
+
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def
+File: t1enc.def 2005/09/27 v1.99g Standard LaTeX file
+LaTeX Font Info:    Redeclaring font encoding T1 on input line 43.
+))
+(/usr/share/texmf-texlive/tex/latex/base/textcomp.sty
+Package: textcomp 2005/09/27 v1.99g Standard LaTeX package
+Package textcomp Info: Sub-encoding information:
+(textcomp)               5 = only ISO-Adobe without \textcurrency
+(textcomp)               4 = 5 + \texteuro
+(textcomp)               3 = 4 + \textohm
+(textcomp)               2 = 3 + \textestimated + \textcurrency
+(textcomp)               1 = TS1 - \textcircled - \t
+(textcomp)               0 = TS1 (full)
+(textcomp)             Font families with sub-encoding setting implement
+(textcomp)             only a restricted character set as indicated.
+(textcomp)             Family '?' is the default used for unknown fonts.
+(textcomp)             See the documentation for details.
+Package textcomp Info: Setting ? sub-encoding to TS1/1 on input line 71.
+
+(/usr/share/texmf-texlive/tex/latex/base/ts1enc.def
+File: ts1enc.def 2001/06/05 v3.0e (jk/car/fm) Standard LaTeX file
+)
+LaTeX Info: Redefining \oldstylenums on input line 266.
+Package textcomp Info: Setting cmr sub-encoding to TS1/0 on input line 281.
+Package textcomp Info: Setting cmss sub-encoding to TS1/0 on input line 282.
+Package textcomp Info: Setting cmtt sub-encoding to TS1/0 on input line 283.
+Package textcomp Info: Setting cmvtt sub-encoding to TS1/0 on input line 284.
+Package textcomp Info: Setting cmbr sub-encoding to TS1/0 on input line 285.
+Package textcomp Info: Setting cmtl sub-encoding to TS1/0 on input line 286.
+Package textcomp Info: Setting ccr sub-encoding to TS1/0 on input line 287.
+Package textcomp Info: Setting ptm sub-encoding to TS1/4 on input line 288.
+Package textcomp Info: Setting pcr sub-encoding to TS1/4 on input line 289.
+Package textcomp Info: Setting phv sub-encoding to TS1/4 on input line 290.
+Package textcomp Info: Setting ppl sub-encoding to TS1/3 on input line 291.
+Package textcomp Info: Setting pag sub-encoding to TS1/4 on input line 292.
+Package textcomp Info: Setting pbk sub-encoding to TS1/4 on input line 293.
+Package textcomp Info: Setting pnc sub-encoding to TS1/4 on input line 294.
+Package textcomp Info: Setting pzc sub-encoding to TS1/4 on input line 295.
+Package textcomp Info: Setting bch sub-encoding to TS1/4 on input line 296.
+Package textcomp Info: Setting put sub-encoding to TS1/5 on input line 297.
+Package textcomp Info: Setting uag sub-encoding to TS1/5 on input line 298.
+Package textcomp Info: Setting ugq sub-encoding to TS1/5 on input line 299.
+Package textcomp Info: Setting ul8 sub-encoding to TS1/4 on input line 300.
+Package textcomp Info: Setting ul9 sub-encoding to TS1/4 on input line 301.
+Package textcomp Info: Setting augie sub-encoding to TS1/5 on input line 302.
+Package textcomp Info: Setting dayrom sub-encoding to TS1/3 on input line 303.
+Package textcomp Info: Setting dayroms sub-encoding to TS1/3 on input line 304.
+
+Package textcomp Info: Setting pxr sub-encoding to TS1/0 on input line 305.
+Package textcomp Info: Setting pxss sub-encoding to TS1/0 on input line 306.
+Package textcomp Info: Setting pxtt sub-encoding to TS1/0 on input line 307.
+Package textcomp Info: Setting txr sub-encoding to TS1/0 on input line 308.
+Package textcomp Info: Setting txss sub-encoding to TS1/0 on input line 309.
+Package textcomp Info: Setting txtt sub-encoding to TS1/0 on input line 310.
+Package textcomp Info: Setting futs sub-encoding to TS1/4 on input line 311.
+Package textcomp Info: Setting futx sub-encoding to TS1/4 on input line 312.
+Package textcomp Info: Setting futj sub-encoding to TS1/4 on input line 313.
+Package textcomp Info: Setting hlh sub-encoding to TS1/3 on input line 314.
+Package textcomp Info: Setting hls sub-encoding to TS1/3 on input line 315.
+Package textcomp Info: Setting hlst sub-encoding to TS1/3 on input line 316.
+Package textcomp Info: Setting hlct sub-encoding to TS1/5 on input line 317.
+Package textcomp Info: Setting hlx sub-encoding to TS1/5 on input line 318.
+Package textcomp Info: Setting hlce sub-encoding to TS1/5 on input line 319.
+Package textcomp Info: Setting hlcn sub-encoding to TS1/5 on input line 320.
+Package textcomp Info: Setting hlcw sub-encoding to TS1/5 on input line 321.
+Package textcomp Info: Setting hlcf sub-encoding to TS1/5 on input line 322.
+Package textcomp Info: Setting pplx sub-encoding to TS1/3 on input line 323.
+Package textcomp Info: Setting pplj sub-encoding to TS1/3 on input line 324.
+Package textcomp Info: Setting ptmx sub-encoding to TS1/4 on input line 325.
+Package textcomp Info: Setting ptmj sub-encoding to TS1/4 on input line 326.
+)
+(/usr/share/texmf-texlive/tex/latex/fourier/fourier-orns.sty
+Package: fourier-orns 2004/01/30 1.1 fourier-ornaments package
+)
+LaTeX Font Info:    Redeclaring symbol font `operators' on input line 50.
+LaTeX Font Info:    Encoding `OT1' has changed to `T1' for symbol font
+(Font)              `operators' in the math version `normal' on input line 50.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
+(Font)                  OT1/cmr/m/n --> T1/futs/m/n on input line 50.
+LaTeX Font Info:    Encoding `OT1' has changed to `T1' for symbol font
+(Font)              `operators' in the math version `bold' on input line 50.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
+(Font)                  OT1/cmr/bx/n --> T1/futs/m/n on input line 50.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
+(Font)                  T1/futs/m/n --> T1/futs/b/n on input line 51.
+LaTeX Font Info:    Redeclaring symbol font `letters' on input line 59.
+LaTeX Font Info:    Encoding `OML' has changed to `FML' for symbol font
+(Font)              `letters' in the math version `normal' on input line 59.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `normal'
+(Font)                  OML/cmm/m/it --> FML/futmi/m/it on input line 59.
+LaTeX Font Info:    Encoding `OML' has changed to `FML' for symbol font
+(Font)              `letters' in the math version `bold' on input line 59.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `bold'
+(Font)                  OML/cmm/b/it --> FML/futmi/m/it on input line 59.
+\symotherletters=\mathgroup4
+LaTeX Font Info:    Overwriting symbol font `letters' in version `bold'
+(Font)                  FML/futmi/m/it --> FML/futmi/b/it on input line 61.
+LaTeX Font Info:    Overwriting symbol font `otherletters' in version `bold'
+(Font)                  FML/futm/m/it --> FML/futm/b/it on input line 62.
+LaTeX Font Info:    Redeclaring math symbol \Gamma on input line 63.
+LaTeX Font Info:    Redeclaring math symbol \Delta on input line 64.
+LaTeX Font Info:    Redeclaring math symbol \Theta on input line 65.
+LaTeX Font Info:    Redeclaring math symbol \Lambda on input line 66.
+LaTeX Font Info:    Redeclaring math symbol \Xi on input line 67.
+LaTeX Font Info:    Redeclaring math symbol \Pi on input line 68.
+LaTeX Font Info:    Redeclaring math symbol \Sigma on input line 69.
+LaTeX Font Info:    Redeclaring math symbol \Upsilon on input line 70.
+LaTeX Font Info:    Redeclaring math symbol \Phi on input line 71.
+LaTeX Font Info:    Redeclaring math symbol \Psi on input line 72.
+LaTeX Font Info:    Redeclaring math symbol \Omega on input line 73.
+LaTeX Font Info:    Redeclaring symbol font `symbols' on input line 113.
+LaTeX Font Info:    Encoding `OMS' has changed to `FMS' for symbol font
+(Font)              `symbols' in the math version `normal' on input line 113.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `normal'
+(Font)                  OMS/cmsy/m/n --> FMS/futm/m/n on input line 113.
+LaTeX Font Info:    Encoding `OMS' has changed to `FMS' for symbol font
+(Font)              `symbols' in the math version `bold' on input line 113.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `bold'
+(Font)                  OMS/cmsy/b/n --> FMS/futm/m/n on input line 113.
+LaTeX Font Info:    Redeclaring symbol font `largesymbols' on input line 114.
+LaTeX Font Info:    Encoding `OMX' has changed to `FMX' for symbol font
+(Font)              `largesymbols' in the math version `normal' on input line 1
+14.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `normal'
+(Font)                  OMX/cmex/m/n --> FMX/futm/m/n on input line 114.
+LaTeX Font Info:    Encoding `OMX' has changed to `FMX' for symbol font
+(Font)              `largesymbols' in the math version `bold' on input line 114
+.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `bold'
+(Font)                  OMX/cmex/m/n --> FMX/futm/m/n on input line 114.
+LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 115.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
+(Font)                  OT1/cmr/bx/n --> T1/futs/bx/n on input line 115.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
+(Font)                  OT1/cmr/bx/n --> T1/futs/bx/n on input line 115.
+LaTeX Font Info:    Redeclaring math alphabet \mathrm on input line 116.
+LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 117.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
+(Font)                  OT1/cmr/m/it --> T1/futs/m/it on input line 117.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
+(Font)                  OT1/cmr/bx/it --> T1/futs/m/it on input line 117.
+LaTeX Font Info:    Redeclaring math alphabet \mathcal on input line 118.
+LaTeX Font Info:    Redeclaring math symbol \parallel on input line 134.
+LaTeX Font Info:    Redeclaring math symbol \hbar on input line 148.
+LaTeX Font Info:    Redeclaring math symbol \varkappa on input line 186.
+LaTeX Font Info:    Redeclaring math symbol \varvarrho on input line 187.
+LaTeX Font Info:    Redeclaring math delimiter \Vert on input line 210.
+LaTeX Font Info:    Redeclaring math delimiter \vert on input line 215.
+LaTeX Font Info:    Redeclaring math delimiter \Downarrow on input line 225.
+LaTeX Font Info:    Redeclaring math delimiter \backslash on input line 227.
+LaTeX Font Info:    Redeclaring math delimiter \rangle on input line 229.
+LaTeX Font Info:    Redeclaring math delimiter \langle on input line 231.
+LaTeX Font Info:    Redeclaring math delimiter \rbrace on input line 233.
+LaTeX Font Info:    Redeclaring math delimiter \lbrace on input line 235.
+LaTeX Font Info:    Redeclaring math delimiter \rceil on input line 237.
+LaTeX Font Info:    Redeclaring math delimiter \lceil on input line 239.
+LaTeX Font Info:    Redeclaring math delimiter \rfloor on input line 241.
+LaTeX Font Info:    Redeclaring math delimiter \lfloor on input line 243.
+LaTeX Font Info:    Redeclaring math accent \acute on input line 247.
+LaTeX Font Info:    Redeclaring math accent \grave on input line 248.
+LaTeX Font Info:    Redeclaring math accent \ddot on input line 249.
+LaTeX Font Info:    Redeclaring math accent \tilde on input line 250.
+LaTeX Font Info:    Redeclaring math accent \bar on input line 251.
+LaTeX Font Info:    Redeclaring math accent \breve on input line 252.
+LaTeX Font Info:    Redeclaring math accent \check on input line 253.
+LaTeX Font Info:    Redeclaring math accent \hat on input line 254.
+LaTeX Font Info:    Redeclaring math accent \dot on input line 255.
+LaTeX Font Info:    Redeclaring math accent \mathring on input line 256.
+\symUfutm=\mathgroup5
+)
+(/usr/share/texmf-texlive/tex/latex/hyphenat/hyphenat.sty
+Package: hyphenat 2009/09/02 v2.3c hyphenation utilities
+\langwohyphens=\language5
+LaTeX Info: Redefining \_ on input line 43.
+)
+(/usr/share/texmf-texlive/tex/latex/ncctools/extdash.sty
+Package: extdash 2005/01/29 v1.2 Extended Dash Package (NCC)
+)
+(/usr/share/texmf-texlive/tex/latex/fncychap/fncychap.sty
+Package: fncychap 2007/07/30 v1.34 LaTeX package (Revised chapters)
+\RW=\skip54
+\mylen=\skip55
+\myhi=\skip56
+\px=\skip57
+\py=\skip58
+\pyy=\skip59
+\pxx=\skip60
+)
+(/usr/share/texmf-texlive/tex/latex/appendix/appendix.sty
+Package: appendix 2009/09/02 v1.2b extra appendix facilities
+\c@@pps=\count92
+\c@@ppsavesec=\count93
+\c@@ppsaveapp=\count94
+)
+(/usr/share/texmf/tex/latex/biblatex/biblatex.sty
+Package: biblatex 2011/11/13 v1.7 programmable bibliographies
+
+(/usr/share/texmf/tex/latex/etoolbox/etoolbox.sty
+Package: etoolbox 2011/01/03 v2.1 e-TeX tools for LaTeX
+
+(/usr/share/texmf-texlive/tex/latex/etex-pkg/etex.sty
+Package: etex 1998/03/26 v2.0 eTeX basic definition package (PEB)
+\et@xins=\count95
+)
+\etb@tempcnta=\count96
+)
+(/usr/share/texmf/tex/latex/logreq/logreq.sty
+Package: logreq 2010/08/04 v1.0 xml request logger
+\lrq@indent=\count97
+
+(/usr/share/texmf/tex/latex/logreq/logreq.def
+File: logreq.def 2010/08/04 v1.0 logreq spec v1.0
+))
+(/usr/share/texmf-texlive/tex/latex/base/ifthen.sty
+Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
+)
+(/usr/share/texmf-texlive/tex/latex/ltxmisc/url.sty
+\Urlmuskip=\muskip10
+Package: url 2006/04/12  ver 3.3  Verb mode for urls, etc.
+)
+\c@listtotal=\count98
+\c@listcount=\count99
+\c@liststart=\count100
+\c@liststop=\count101
+\c@citecount=\count102
+\c@citetotal=\count103
+\c@multicitecount=\count104
+\c@multicitetotal=\count105
+\c@instcount=\count106
+\c@maxnames=\count107
+\c@minnames=\count108
+\c@maxitems=\count109
+\c@minitems=\count110
+\c@citecounter=\count111
+\c@savedcitecounter=\count112
+\c@uniquelist=\count113
+\c@uniquename=\count114
+\c@refsection=\count115
+\c@refsegment=\count116
+\c@maxextrayear=\count117
+\c@maxextraalpha=\count118
+\c@abbrvpenalty=\count119
+\c@highnamepenalty=\count120
+\c@lownamepenalty=\count121
+\c@maxparens=\count122
+\c@parenlevel=\count123
+\blx@tempcnta=\count124
+\blx@tempcntb=\count125
+\blx@tempcntc=\count126
+\blx@maxsection=\count127
+\blx@maxsegment=\count128
+\blx@notetype=\count129
+\blx@parenlevel@text=\count130
+\blx@parenlevel@foot=\count131
+\labelnumberwidth=\skip61
+\labelalphawidth=\skip62
+\shorthandwidth=\skip63
+\biblabelsep=\skip64
+\bibitemsep=\skip65
+\bibnamesep=\skip66
+\bibinitsep=\skip67
+\bibparsep=\skip68
+\bibhang=\skip69
+\blx@auxin=\read1
+\blx@auxout=\write3
+\c@mincomprange=\count132
+\c@maxcomprange=\count133
+\c@mincompwidth=\count134
+\c@labelname=\count135
+\c@savedlabelname=\count136
+\c@author=\count137
+\c@savedauthor=\count138
+\c@shortauthor=\count139
+\c@savedshortauthor=\count140
+\c@editor=\count141
+\c@savededitor=\count142
+\c@editora=\count143
+\c@savededitora=\count144
+\c@editorb=\count145
+\c@savededitorb=\count146
+\c@editorc=\count147
+\c@savededitorc=\count148
+\c@shorteditor=\count149
+\c@savedshorteditor=\count150
+\c@bookauthor=\count151
+\c@savedbookauthor=\count152
+\c@translator=\count153
+\c@savedtranslator=\count154
+\c@annotator=\count155
+\c@savedannotator=\count156
+\c@commentator=\count157
+\c@savedcommentator=\count158
+\c@introduction=\count159
+\c@savedintroduction=\count160
+\c@foreword=\count161
+\c@savedforeword=\count162
+\c@afterword=\count163
+\c@savedafterword=\count164
+\c@holder=\count165
+\c@savedholder=\count166
+\c@namea=\count167
+\c@savednamea=\count168
+\c@nameb=\count169
+\c@savednameb=\count170
+\c@namec=\count171
+\c@savednamec=\count172
+\c@institution=\count173
+\c@savedinstitution=\count174
+\c@language=\count175
+\c@savedlanguage=\count176
+\c@location=\count177
+\c@savedlocation=\count178
+\c@organization=\count179
+\c@savedorganization=\count180
+\c@origlocation=\count181
+\c@savedoriglocation=\count182
+\c@origpublisher=\count183
+\c@savedorigpublisher=\count184
+\c@pageref=\count185
+\c@savedpageref=\count186
+\c@publisher=\count187
+\c@savedpublisher=\count188
+\c@lista=\count189
+\c@savedlista=\count190
+\c@listb=\count191
+\c@savedlistb=\count192
+\c@listc=\count193
+\c@savedlistc=\count194
+\c@listd=\count195
+\c@savedlistd=\count196
+\c@liste=\count197
+\c@savedliste=\count198
+\c@listf=\count199
+\c@savedlistf=\count200
+Package biblatex Info: Trying to load compatibility code...
+Package biblatex Info: ... file 'blx-compat.def' found.
+
+(/usr/share/texmf/tex/latex/biblatex/blx-compat.def
+File: blx-compat.def 2011/11/13 v1.7 biblatex generic compatibility
+)
+Package biblatex Info: Trying to load generic definitions...
+Package biblatex Info: ... file 'biblatex.def' found.
+
+(/usr/share/texmf/tex/latex/biblatex/biblatex.def
+File: biblatex.def 2011/11/13 v1.7 biblatex generic definitions
+\c@biburlnumpenalty=\count201
+\c@biburlucpenalty=\count202
+\c@biburllcpenalty=\count203
+\c@smartand=\count204
+)
+Package biblatex Info: Trying to load natbib compatibility...
+Package biblatex Info: ... file 'blx-natbib.def' found.
+
+(/usr/share/texmf/tex/latex/biblatex/blx-natbib.def
+File: blx-natbib.def 2011/11/13 v1.7 biblatex natbib compatibility
+)
+Package biblatex Info: Trying to load bibliography style 'chem-acs'...
+Package biblatex Info: ... file 'chem-acs.bbx' found.
+ (./chem-acs.bbx
+File: chem-acs.bbx 2014/11/14 v1.1m biblatex bibliography style
+Package biblatex Info: Trying to load bibliography style 'numeric-comp'...
+Package biblatex Info: ... file 'numeric-comp.bbx' found.
+
+(/usr/share/texmf/tex/latex/biblatex/bbx/numeric-comp.bbx
+File: numeric-comp.bbx 2011/11/13 v1.7 biblatex bibliography style
+Package biblatex Info: Trying to load bibliography style 'numeric'...
+Package biblatex Info: ... file 'numeric.bbx' found.
+
+(/usr/share/texmf/tex/latex/biblatex/bbx/numeric.bbx
+File: numeric.bbx 2011/11/13 v1.7 biblatex bibliography style
+Package biblatex Info: Trying to load bibliography style 'standard'...
+Package biblatex Info: ... file 'standard.bbx' found.
+
+(/usr/share/texmf/tex/latex/biblatex/bbx/standard.bbx
+File: standard.bbx 2011/11/13 v1.7 biblatex bibliography style
+)))
+
+Package biblatex Warning: Macro 'related' undefined.
+(biblatex)                Using \newbibmacro.
+
+)
+Package biblatex Info: Trying to load citation style 'chem-acs'...
+Package biblatex Info: ... file 'chem-acs.cbx' found.
+ (./chem-acs.cbx
+File: chem-acs.cbx 2014/11/14 v1.1m biblatex citation style
+Package biblatex Info: Trying to load citation style 'numeric-comp'...
+Package biblatex Info: ... file 'numeric-comp.cbx' found.
+ (/usr/share/texmf/tex/latex/biblatex/cbx/numeric-comp.cbx
+File: numeric-comp.cbx 2011/11/13 v1.7 biblatex citation style
+\c@cbx@tempcnta=\count205
+\c@cbx@tempcntb=\count206
+Package biblatex Info: Redefining '\cite'.
+Package biblatex Info: Redefining '\parencite'.
+Package biblatex Info: Redefining '\footcite'.
+Package biblatex Info: Redefining '\footcitetext'.
+Package biblatex Info: Redefining '\smartcite'.
+Package biblatex Info: Redefining '\textcite'.
+Package biblatex Info: Redefining '\supercite'.
+Package biblatex Info: Redefining '\cites'.
+Package biblatex Info: Redefining '\parencites'.
+Package biblatex Info: Redefining '\smartcites'.
+))
+Package biblatex Info: Trying to load configuration file...
+Package biblatex Info: ... file 'biblatex.cfg' found.
+
+(/usr/share/texmf/tex/latex/biblatex/biblatex.cfg
+File: biblatex.cfg 
+))
+(/usr/share/texmf/tex/plain/misc/noweb.sty
+\nwmarginglue=\dimen114
+LaTeX Font Info:    Try loading font information for T1+futs on input line 15.
+
+(/usr/share/texmf-texlive/tex/latex/fourier/t1futs.fd
+File: t1futs.fd 2004/03/02 Fontinst v1.926 font definitions for T1/futs.
+)
+LaTeX Font Info:    Try loading font information for T1+cmtt on input line 15.
+
+(/usr/share/texmf-texlive/tex/latex/base/t1cmtt.fd
+File: t1cmtt.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+\codehsize=\dimen115
+\codemargin=\dimen116
+\nwdefspace=\dimen117
+\equivbox=\box27
+LaTeX Font Info:    Try loading font information for FML+futmi on input line 79
+.
+
+(/usr/share/texmf-texlive/tex/latex/fourier/fmlfutmi.fd
+File: fmlfutmi.fd 2004/10/30 Fontinst v1.926 font definitions for FML/futmi.
+)
+LaTeX Font Info:    Try loading font information for FMS+futm on input line 79.
+
+
+(/usr/share/texmf-texlive/tex/latex/fourier/fmsfutm.fd
+File: fmsfutm.fd 2004/10/30 Fontinst v1.926 font definitions for FMS/futm.
+)
+LaTeX Font Info:    Try loading font information for FMX+futm on input line 79.
+
+
+(/usr/share/texmf-texlive/tex/latex/fourier/fmxfutm.fd
+File: fmxfutm.fd futm-extension
+)
+LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
+(Font)              scaled to size 11.03998pt on input line 79.
+LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
+(Font)              scaled to size 8.27998pt on input line 79.
+LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
+(Font)              scaled to size 6.43999pt on input line 79.
+LaTeX Font Info:    Try loading font information for FML+futm on input line 79.
+
+
+(/usr/share/texmf-texlive/tex/latex/fourier/fmlfutm.fd
+File: fmlfutm.fd 2004/10/30 Fontinst v1.926 font definitions for FML/futm.
+)
+LaTeX Font Info:    Font shape `U/futm/m/n' will be
+(Font)              scaled to size 11.03998pt on input line 79.
+LaTeX Font Info:    Font shape `U/futm/m/n' will be
+(Font)              scaled to size 8.27998pt on input line 79.
+LaTeX Font Info:    Font shape `U/futm/m/n' will be
+(Font)              scaled to size 6.43999pt on input line 79.
+\plusequivbox=\box28
+\nwcodetopsep=\skip70
+\nwcodepenalty=\count207
+\nwbreakcodespace=\dimen118
+\@original@textwidth=\dimen119
+\nwcodecommentsep=\skip71
+\@nwlopage=\count208
+\@nwhipage=\count209
+\@nwlosub=\count210
+\@nwhisub=\count211
+\@nwpagetemp=\count212
+\@nwpagecount=\count213
+\sub@page=\count214
+\@nwalph@n=\count215
+\nw@chunkcount=\count216
+\@commacount=\count217
+\nwix@counter=\count218
+)
+(/usr/share/texmf-texlive/tex/latex/graphics/graphicx.sty
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texmf-texlive/tex/latex/graphics/graphics.sty
+Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texmf-texlive/tex/latex/graphics/trig.sty
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+(/etc/texmf/tex/latex/config/graphics.cfg
+File: graphics.cfg 2009/08/28 v1.8 graphics configuration of TeX Live
+)
+Package graphics Info: Driver file: dvips.def on input line 91.
+
+(/usr/share/texmf-texlive/tex/latex/graphics/dvips.def
+File: dvips.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
+))
+\Gin@req@height=\dimen120
+\Gin@req@width=\dimen121
+)
+(/usr/share/texmf-texlive/tex/latex/wrapfig/wrapfig.sty
+\wrapoverhang=\dimen122
+\WF@size=\dimen123
+\c@WF@wrappedlines=\count219
+\WF@box=\box29
+\WF@everypar=\toks17
+Package: wrapfig 2003/01/31  v 3.6
+)
+(/usr/share/texmf-texlive/tex/latex/lipsum/lipsum.sty
+Package: lipsum 2005/01/26 v1.0 150 paragraphs of Lorem Ipsum dummy text
+File: lipsum.dtx 2005/01/26 v1.0 150 paragraphs of Lorem Ipsum dummy text
+\c@lips@count=\count220
+)
+(/usr/share/texmf-texlive/tex/latex/tools/afterpage.sty
+Package: afterpage 1995/10/27 v1.08 After-Page Package (DPC)
+\AP@output=\toks18
+\AP@partial=\box30
+\AP@footins=\box31
+)
+(/usr/share/texmf-texlive/tex/latex/tools/dcolumn.sty
+Package: dcolumn 2001/05/28 v1.06 decimal alignment package (DPC)
+
+(/usr/share/texmf-texlive/tex/latex/tools/array.sty
+Package: array 2008/09/09 v2.4c Tabular extension package (FMi)
+\col@sep=\dimen124
+\extrarowheight=\dimen125
+\NC@list=\toks19
+\extratabsurround=\skip72
+\backup@length=\skip73
+))
+(/usr/share/texmf-texlive/tex/latex/multirow/multirow.sty
+\bigstrutjot=\dimen126
+)
+(/usr/share/texmf-texlive/tex/latex/tools/hhline.sty
+Package: hhline 1994/05/23 v2.03 Table rule package (DPC)
+)
+(/usr/share/texmf-texlive/tex/latex/booktabs/booktabs.sty
+Package: booktabs 2005/04/14 v1.61803 publication quality tables
+\heavyrulewidth=\dimen127
+\lightrulewidth=\dimen128
+\cmidrulewidth=\dimen129
+\belowrulesep=\dimen130
+\belowbottomsep=\dimen131
+\aboverulesep=\dimen132
+\abovetopsep=\dimen133
+\cmidrulesep=\dimen134
+\cmidrulekern=\dimen135
+\defaultaddspace=\dimen136
+\@cmidla=\count221
+\@cmidlb=\count222
+\@aboverulesep=\dimen137
+\@belowrulesep=\dimen138
+\@thisruleclass=\count223
+\@lastruleclass=\count224
+\@thisrulewidth=\dimen139
+)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2000/07/18 v2.13 AMS math features
+\@mathmargin=\skip74
+
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+Package: amstext 2000/06/29 v2.01
+
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0
+\@emptytoks=\toks20
+\ex@=\dimen140
+))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d
+\pmbraise@=\dimen141
+)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty
+Package: amsopn 1999/12/14 v2.01 operator names
+)
+\inf@bad=\count225
+LaTeX Info: Redefining \frac on input line 211.
+\uproot@=\count226
+\leftroot@=\count227
+LaTeX Info: Redefining \overline on input line 307.
+\classnum@=\count228
+\DOTSCASE@=\count229
+LaTeX Info: Redefining \ldots on input line 379.
+LaTeX Info: Redefining \dots on input line 382.
+LaTeX Info: Redefining \cdots on input line 467.
+\Mathstrutbox@=\box32
+\strutbox@=\box33
+\big@size=\dimen142
+LaTeX Font Info:    Redeclaring font encoding OML on input line 567.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 568.
+\macc@depth=\count230
+\c@MaxMatrixCols=\count231
+\dotsspace@=\muskip11
+\c@parentequation=\count232
+\dspbrk@lvl=\count233
+\tag@help=\toks21
+Normal \count register pool exhausted, switching to extended pool.
+\row@=\count277
+\column@=\count278
+\maxfields@=\count279
+\andhelp@=\toks22
+\eqnshift@=\dimen143
+\alignsep@=\dimen144
+\tagshift@=\dimen145
+\tagwidth@=\dimen146
+\totwidth@=\dimen147
+\lineht@=\dimen148
+\@envbody=\toks23
+\multlinegap=\skip75
+\multlinetaggap=\skip76
+\mathdisplay@stack=\toks24
+LaTeX Info: Redefining \[ on input line 2666.
+LaTeX Info: Redefining \] on input line 2667.
+)
+(/usr/share/texmf-texlive/tex/latex/amsfonts/amsfonts.sty
+Package: amsfonts 2009/06/22 v3.00 Basic AMSFonts support
+\symAMSa=\mathgroup6
+\symAMSb=\mathgroup7
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 96.
+LaTeX Font Info:    Redeclaring math symbol \square on input line 128.
+)
+(/usr/share/texmf-texlive/tex/latex/amsfonts/amssymb.sty
+Package: amssymb 2009/06/22 v3.00
+LaTeX Font Info:    Redeclaring math symbol \blacksquare on input line 43.
+LaTeX Font Info:    Redeclaring math symbol \vDash on input line 55.
+LaTeX Font Info:    Redeclaring math symbol \leftleftarrows on input line 58.
+LaTeX Font Info:    Redeclaring math symbol \rightrightarrows on input line 59.
+
+LaTeX Font Info:    Redeclaring math symbol \leqslant on input line 96.
+LaTeX Font Info:    Redeclaring math symbol \geqslant on input line 103.
+LaTeX Font Info:    Redeclaring math symbol \blacktriangleright on input line 1
+15.
+LaTeX Font Info:    Redeclaring math symbol \blacktriangleleft on input line 11
+6.
+LaTeX Font Info:    Redeclaring math symbol \complement on input line 160.
+LaTeX Font Info:    Redeclaring math symbol \intercal on input line 161.
+LaTeX Font Info:    Redeclaring math symbol \nleqslant on input line 176.
+LaTeX Font Info:    Redeclaring math symbol \ngeqslant on input line 177.
+LaTeX Font Info:    Redeclaring math symbol \varsubsetneq on input line 198.
+LaTeX Font Info:    Redeclaring math symbol \subsetneqq on input line 202.
+LaTeX Font Info:    Redeclaring math symbol \nparallel on input line 210.
+LaTeX Font Info:    Redeclaring math symbol \nvDash on input line 216.
+LaTeX Font Info:    Redeclaring math symbol \nexists on input line 230.
+LaTeX Font Info:    Redeclaring math symbol \smallsetminus on input line 246.
+LaTeX Font Info:    Redeclaring math symbol \curvearrowleft on input line 252.
+LaTeX Font Info:    Redeclaring math symbol \curvearrowright on input line 253.
+
+LaTeX Font Info:    Redeclaring math symbol \varkappa on input line 255.
+LaTeX Font Info:    Redeclaring math symbol \hslash on input line 257.
+)
+(/usr/share/texmf-texlive/tex/latex/tools/bm.sty
+Package: bm 2004/02/26 v1.1c Bold Symbol Support (DPC/FMi)
+\symboldoperators=\mathgroup8
+\symboldletters=\mathgroup9
+\symboldotherletters=\mathgroup10
+LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 138.
+LaTeX Info: Redefining \bm on input line 204.
+)
+(/usr/share/texmf-texlive/tex/latex/jknapltx/mathrsfs.sty
+Package: mathrsfs 1996/01/01 Math RSFS package v1.0 (jk)
+\symrsfs=\mathgroup11
+)
+(/usr/share/texmf-texlive/tex/latex/was/upgreek.sty
+Package: upgreek 2003/02/12 v2.0 (WaS)
+Package upgreek Info: Using Euler Roman for upright Greek on input line 31.
+\symugrf@m=\mathgroup12
+LaTeX Font Info:    Overwriting symbol font `ugrf@m' in version `bold'
+(Font)                  U/eur/m/n --> U/eur/b/n on input line 38.
+)
+(/usr/share/texmf-texlive/tex/latex/was/gensymb.sty
+Package: gensymb 2003/07/02 v1.0 (WaS)
+)
+(/usr/share/texmf-texlive/tex/latex/footmisc/footmisc.sty
+Package: footmisc 2009/09/15 v5.5a a miscellany of footnote facilities
+\FN@temptoken=\toks25
+\footnotemargin=\dimen149
+\c@pp@next@reset=\count280
+Package footmisc Info: Declaring symbol style bringhurst on input line 855.
+Package footmisc Info: Declaring symbol style chicago on input line 863.
+Package footmisc Info: Declaring symbol style wiley on input line 872.
+Package footmisc Info: Declaring symbol style lamport-robust on input line 883.
+
+Package footmisc Info: Declaring symbol style lamport* on input line 903.
+Package footmisc Info: Declaring symbol style lamport*-robust on input line 924
+.
+)
+(/usr/share/texmf-texlive/tex/latex/caption/caption.sty
+Package: caption 2009/10/09 v3.1k Customizing captions (AR)
+
+(/usr/share/texmf-texlive/tex/latex/caption/caption3.sty
+Package: caption3 2009/10/09 v3.1k caption3 kernel (AR)
+\captionmargin=\dimen150
+\captionmargin@=\dimen151
+\captionwidth=\dimen152
+\caption@indent=\dimen153
+\caption@parindent=\dimen154
+\caption@hangindent=\dimen155
+)
+\c@ContinuedFloat=\count281
+Package caption Info: wrapfig package is loaded.
+)
+(/usr/share/texmf-texlive/tex/latex/hyperref/hyperref.sty
+Package: hyperref 2009/10/09 v6.79a Hypertext links for LaTeX
+
+(/usr/share/texmf-texlive/tex/generic/ifxetex/ifxetex.sty
+Package: ifxetex 2009/01/23 v0.5 Provides ifxetex conditional
+)
+(/usr/share/texmf-texlive/tex/latex/oberdiek/hycolor.sty
+Package: hycolor 2009/10/02 v1.5 Code for color options of hyperref/bookmark (H
+O)
+
+(/usr/share/texmf-texlive/tex/latex/oberdiek/xcolor-patch.sty
+Package: xcolor-patch 2009/10/02 xcolor patch
+))
+\@linkdim=\dimen156
+\Hy@linkcounter=\count282
+\Hy@pagecounter=\count283
+
+(/usr/share/texmf-texlive/tex/latex/hyperref/pd1enc.def
+File: pd1enc.def 2009/10/09 v6.79a Hyperref: PDFDocEncoding definition (HO)
+)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/etexcmds.sty
+Package: etexcmds 2007/12/12 v1.2 Prefix for e-TeX command names (HO)
+
+(/usr/share/texmf-texlive/tex/generic/oberdiek/infwarerr.sty
+Package: infwarerr 2007/09/09 v1.2 Providing info/warning/message (HO)
+)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+)
+(/usr/share/texmf-texlive/tex/latex/latexconfig/hyperref.cfg
+File: hyperref.cfg 2002/06/06 v1.2 hyperref configuration of TeXLive
+)
+(/usr/share/texmf-texlive/tex/latex/oberdiek/kvoptions.sty
+Package: kvoptions 2009/08/13 v3.4 Keyval support for LaTeX options (HO)
+
+(/usr/share/texmf-texlive/tex/generic/oberdiek/kvsetkeys.sty
+Package: kvsetkeys 2009/07/30 v1.5 Key value parser with default handler suppor
+t (HO)
+))
+Package hyperref Info: Hyper figures OFF on input line 2975.
+Package hyperref Info: Link nesting OFF on input line 2980.
+Package hyperref Info: Hyper index ON on input line 2983.
+Package hyperref Info: Plain pages OFF on input line 2990.
+Package hyperref Info: Backreferencing OFF on input line 2995.
+
+Implicit mode ON; LaTeX internals redefined
+Package hyperref Info: Bookmarks ON on input line 3191.
+LaTeX Info: Redefining \url on input line 3428.
+(/usr/share/texmf-texlive/tex/generic/oberdiek/bitset.sty
+Package: bitset 2007/09/28 v1.0 Data type bit set (HO)
+
+(/usr/share/texmf-texlive/tex/generic/oberdiek/intcalc.sty
+Package: intcalc 2007/09/27 v1.1 Expandable integer calculations (HO)
+)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/bigintcalc.sty
+Package: bigintcalc 2007/11/11 v1.1 Expandable big integer calculations (HO)
+
+(/usr/share/texmf-texlive/tex/generic/oberdiek/pdftexcmds.sty
+Package: pdftexcmds 2009/09/23 v0.6 LuaTeX support for pdfTeX utility functions
+ (HO)
+
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifluatex.sty
+Package: ifluatex 2009/04/17 v1.2 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
+)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ltxcmds.sty
+Package: ltxcmds 2009/08/05 v1.0 Some LaTeX kernel commands for general use (HO
+)
+)
+Package pdftexcmds Info: LuaTeX not detected.
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+)))
+\Fld@menulength=\count284
+\Field@Width=\dimen157
+\Fld@charsize=\dimen158
+\Field@toks=\toks26
+Package hyperref Info: Hyper figures OFF on input line 4377.
+Package hyperref Info: Link nesting OFF on input line 4382.
+Package hyperref Info: Hyper index ON on input line 4385.
+Package hyperref Info: backreferencing OFF on input line 4392.
+Package hyperref Info: Link coloring OFF on input line 4397.
+Package hyperref Info: Link coloring with OCG OFF on input line 4402.
+Package hyperref Info: PDF/A mode OFF on input line 4407.
+
+(/usr/share/texmf-texlive/tex/generic/oberdiek/atbegshi.sty
+Package: atbegshi 2008/07/31 v1.9 At begin shipout hook (HO)
+)
+\Hy@abspage=\count285
+\c@Item=\count286
+\c@Hfootnote=\count287
+)
+*hyperref using default driver hdvips*
+(/usr/share/texmf-texlive/tex/latex/hyperref/hdvips.def
+File: hdvips.def 2009/10/09 v6.79a Hyperref driver for dvips
+
+(/usr/share/texmf-texlive/tex/latex/hyperref/pdfmark.def
+File: pdfmark.def 2009/10/09 v6.79a Hyperref definitions for pdfmark specials
+\pdf@docset=\toks27
+\pdf@box=\box34
+\pdf@toks=\toks28
+\pdf@defaulttoks=\toks29
+\Fld@listcount=\count288
+))
+Package hyperref Info: Option `bookmarksnumbered' set `true' on input line 118.
+
+Package hyperref Info: Option `bookmarksopen' set `true' on input line 118.
+Package hyperref Info: Option `colorlinks' set `false' on input line 118.
+
+(/usr/share/texmf-texlive/tex/latex/oberdiek/hypcap.sty
+Package: hypcap 2008/09/08 v1.10 Adjusting anchors of captions (HO)
+) (./empheq.sty
+Package: empheq 2014/07/16 v2.14 Emphasizing equations
+
+(./mhsetup.sty
+Package: mhsetup 2010/01/21 v1.2a programming setup (MH)
+) (./mathtools.sty
+Package: mathtools 2015/11/12 v1.18 mathematical typesetting tools
+
+(/usr/share/texmf-texlive/tex/latex/tools/calc.sty
+Package: calc 2007/08/22 v4.3 Infix arithmetic (KKT,FJ)
+\calc@Acount=\count289
+\calc@Bcount=\count290
+\calc@Adimen=\dimen159
+\calc@Bdimen=\dimen160
+\calc@Askip=\skip77
+\calc@Bskip=\skip78
+LaTeX Info: Redefining \setlength on input line 76.
+LaTeX Info: Redefining \addtolength on input line 77.
+\calc@Ccount=\count291
+\calc@Cskip=\skip79
+)
+LaTeX Info: Thecontrolsequence`\['isalreadyrobust on input line 129.
+LaTeX Info: Thecontrolsequence`\]'isalreadyrobust on input line 129.
+\g_MT_multlinerow_int=\count292
+\l_MT_multwidth_dim=\dimen161
+\origjot=\skip80
+\l_MT_shortvdotswithinadjustabove_dim=\dimen162
+\l_MT_shortvdotswithinadjustbelow_dim=\dimen163
+\l_MT_above_intertext_sep=\dimen164
+\l_MT_below_intertext_sep=\dimen165
+\l_MT_above_shortintertext_sep=\dimen166
+\l_MT_below_shortintertext_sep=\dimen167
+)
+\l_EQ_equationtype_int=\count293
+\l_EQ_alignmentmode_int=\count294
+\l_EQ_totalwidth_dim=\dimen168
+\l_EQ_displaywidth_dim=\dimen169
+\l_EQ_temp_linewidth_dim=\dimen170
+\EmphEqdelimitershortfall=\dimen171
+\EmphEqdelimiterfactor=\count295
+\g_EQ_toptag_height_dim=\dimen172
+\g_EQ_bottomtag_depth_dim=\dimen173
+\g_EQ_toprow_height_dim=\dimen174
+\g_EQ_bottomrow_depth_dim=\dimen175
+\g_EQ_widesttag_dim=\dimen176
+\EQ_mathdisplay_box=\box35
+\EQ_tag_box=\box36
+\g_EQ_temprow_int=\count296
+) (./xpatch.sty
+(./expl3.sty
+Package: expl3 2016/01/19 v6377 L3 programming layer (loader) 
+ (./expl3-code.tex
+Package: expl3 2016/01/19 v6377 L3 programming layer (code)
+L3 Module: l3bootstrap 2016/01/01 v6339 L3 Bootstrap code
+L3 Module: l3names 2015/12/21 v6328 L3 Namespace for primitives
+L3 Module: l3basics 2015/11/22 v6315 L3 Basic definitions
+L3 Module: l3expan 2015/09/10 v5983 L3 Argument expansion
+L3 Module: l3tl 2015/09/29 v6121 L3 Token lists
+L3 Module: l3str 2016/01/03 v6357 L3 Strings
+L3 Module: l3seq 2015/08/05 v5777 L3 Sequences and stacks
+L3 Module: l3int 2016/01/05 v6366 L3 Integers
+\c_max_int=\count297
+\l_tmpa_int=\count298
+\l_tmpb_int=\count299
+\g_tmpa_int=\count300
+\g_tmpb_int=\count301
+L3 Module: l3quark 2015/08/17 v5855 L3 Quarks
+L3 Module: l3prg 2015/11/01 v6216 L3 Control structures
+\g__prg_map_int=\count302
+L3 Module: l3clist 2015/09/02 v5901 L3 Comma separated lists
+L3 Module: l3token 2015/11/11 v6249 L3 Experimental token manipulation
+L3 Module: l3prop 2016/01/05 v6366 L3 Property lists
+L3 Module: l3msg 2015/09/28 v6113 L3 Messages
+L3 Module: l3file 2015/12/03 v6317 L3 File and I/O operations
+\l_iow_line_count_int=\count303
+\l__iow_target_count_int=\count304
+\l__iow_current_line_int=\count305
+\l__iow_current_word_int=\count306
+\l__iow_current_indentation_int=\count307
+L3 Module: l3skip 2016/01/05 v6366 L3 Dimensions and skips
+\c_zero_dim=\dimen177
+\c_max_dim=\dimen178
+\l_tmpa_dim=\dimen179
+\l_tmpb_dim=\dimen180
+\g_tmpa_dim=\dimen181
+\g_tmpb_dim=\dimen182
+\c_zero_skip=\skip81
+\c_max_skip=\skip82
+\l_tmpa_skip=\skip83
+\l_tmpb_skip=\skip84
+\g_tmpa_skip=\skip85
+\g_tmpb_skip=\skip86
+\c_zero_muskip=\muskip12
+\c_max_muskip=\muskip13
+\l_tmpa_muskip=\muskip14
+\l_tmpb_muskip=\muskip15
+\g_tmpa_muskip=\muskip16
+\g_tmpb_muskip=\muskip17
+L3 Module: l3keys 2015/11/17 v6284 L3 Key-value interfaces
+\g__keyval_level_int=\count308
+\l_keys_choice_int=\count309
+L3 Module: l3fp 2015/08/25 v5890 L3 Floating points
+\c__fp_leading_shift_int=\count310
+\c__fp_middle_shift_int=\count311
+\c__fp_trailing_shift_int=\count312
+\c__fp_big_leading_shift_int=\count313
+\c__fp_big_middle_shift_int=\count314
+\c__fp_big_trailing_shift_int=\count315
+\c__fp_Bigg_leading_shift_int=\count316
+\c__fp_Bigg_middle_shift_int=\count317
+\c__fp_Bigg_trailing_shift_int=\count318
+L3 Module: l3box 2015/08/09 v5822 L3 Experimental boxes
+\c_empty_box=\box37
+\l_tmpa_box=\box38
+\l_tmpb_box=\box39
+\g_tmpa_box=\box40
+\g_tmpb_box=\box41
+L3 Module: l3coffins 2015/08/06 v5789 L3 Coffin code layer
+\l__coffin_internal_box=\box42
+\l__coffin_internal_dim=\dimen183
+\l__coffin_offset_x_dim=\dimen184
+\l__coffin_offset_y_dim=\dimen185
+\l__coffin_x_dim=\dimen186
+\l__coffin_y_dim=\dimen187
+\l__coffin_x_prime_dim=\dimen188
+\l__coffin_y_prime_dim=\dimen189
+\c_empty_coffin=\box43
+\l__coffin_aligned_coffin=\box44
+\l__coffin_aligned_internal_coffin=\box45
+\l_tmpa_coffin=\box46
+\l_tmpb_coffin=\box47
+\l__coffin_display_coffin=\box48
+\l__coffin_display_coord_coffin=\box49
+\l__coffin_display_pole_coffin=\box50
+\l__coffin_display_offset_dim=\dimen190
+\l__coffin_display_x_dim=\dimen191
+\l__coffin_display_y_dim=\dimen192
+L3 Module: l3color 2014/08/23 v5354 L3 Experimental color support
+L3 Module: l3sys 2015/09/25 v6087 L3 Experimental system/runtime functions
+L3 Module: l3candidates 2016/01/14 v6376 L3 Experimental additions to l3kernel
+\l__box_top_dim=\dimen193
+\l__box_bottom_dim=\dimen194
+\l__box_left_dim=\dimen195
+\l__box_right_dim=\dimen196
+\l__box_top_new_dim=\dimen197
+\l__box_bottom_new_dim=\dimen198
+\l__box_left_new_dim=\dimen199
+\l__box_right_new_dim=\dimen200
+\l__box_internal_box=\box51
+\l__coffin_bounding_shift_dim=\dimen201
+Normal \dimen register pool exhausted, switching to extended pool.
+\l__coffin_left_corner_dim=\dimen256
+\l__coffin_right_corner_dim=\dimen257
+\l__coffin_bottom_corner_dim=\dimen258
+\l__coffin_top_corner_dim=\dimen259
+\l__coffin_scaled_total_height_dim=\dimen260
+\l__coffin_scaled_width_dim=\dimen261
+L3 Module: l3luatex 2015/11/11 v6250 L3 Experimental LuaTeX-specific functions
+) (./l3dvips.def
+File: l3dvips.def 2015/11/11 v6250 L3 Experimental driver: dvips
+))
+Package: xpatch 2012/10/02 v0.3 Extending etoolbox patching commands
+ (./xparse.sty
+Package: xparse 2016/01/19 v6377 L3 Experimental document command parser
+\l__xparse_current_arg_int=\count319
+\l__xparse_m_args_int=\count320
+\l__xparse_mandatory_args_int=\count321
+\l__xparse_processor_int=\count322
+\l__xparse_v_nesting_int=\count323
+)
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xpatchcmd with sig. '' on line 125.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xpretocmd with sig. '' on line 126.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xapptocmd with sig. '' on line 127.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xshowcmd with sig. '' on line 128.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xpatchbibmacro with sig. 'm' on line 131.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xpretobibmacro with sig. 'm' on line 133.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xapptobibmacro with sig. 'm' on line 135.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xshowbibmacro with sig. 'm' on line 137.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xpatchfieldformat with sig. 'O{*}m' on line 139.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xpretofieldformat with sig. 'O{*}m' on line 141.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xapptofieldformat with sig. 'O{*}m' on line 143.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xshowfieldformat with sig. 'O{*}m' on line 145.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xpatchnameformat with sig. 'O{*}m' on line 147.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xpretonameformat with sig. 'O{*}m' on line 149.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xapptonameformat with sig. 'O{*}m' on line 151.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xshownameformat with sig. 'O{*}m' on line 153.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xpatchlistformat with sig. 'O{*}m' on line 155.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xpretolistformat with sig. 'O{*}m' on line 157.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xapptolistformat with sig. 'O{*}m' on line 159.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xshowlistformat with sig. 'O{*}m' on line 161.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xpatchindexfieldformat with sig. 'O{*}m' on line 163.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xpretoindexfieldformat with sig. 'O{*}m' on line 165.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xapptoindexfieldformat with sig. 'O{*}m' on line 167.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xshowindexfieldformat with sig. 'O{*}m' on line 169.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xpatchindexnameformat with sig. 'O{*}m' on line 171.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xpretoindexnameformat with sig. 'O{*}m' on line 173.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xapptoindexnameformat with sig. 'O{*}m' on line 175.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xshowindexnameformat with sig. 'O{*}m' on line 177.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xpatchindexlistformat with sig. 'O{*}m' on line 179.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xpretoindexlistformat with sig. 'O{*}m' on line 181.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xappindextolistformat with sig. 'O{*}m' on line 183.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xshowindexlistformat with sig. 'O{*}m' on line 185.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xpatchbibdriver with sig. 'm' on line 187.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xpretobibdriver with sig. 'm' on line 189.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xapptobibdriver with sig. 'm' on line 191.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \xshowbibdriver with sig. 'm' on line 193.
+.................................................
+)
+(/usr/share/texmf-texlive/tex/latex/titling/titling.sty
+Package: titling 2009/09/04 v2.1d maketitle typesetting
+\thanksmarkwidth=\skip87
+\thanksmargin=\skip88
+\droptitle=\skip89
+)
+Package biblatex Info: Trying to load language 'british'...
+Package biblatex Info: ... file 'british.lbx' found.
+
+(/usr/share/texmf/tex/latex/biblatex/lbx/british.lbx
+File: british.lbx 2011/11/13 v1.7 biblatex localization
+Package biblatex Info: Trying to load language 'english'...
+Package biblatex Info: ... file 'english.lbx' found.
+
+(/usr/share/texmf/tex/latex/biblatex/lbx/english.lbx
+File: english.lbx 2011/11/13 v1.7 biblatex localization
+))
+
+Package biblatex Warning: 'babel' detected but 'csquotes' missing.
+(biblatex)                Loading 'csquotes' recommended.
+
+\@quotelevel=\count324
+\@quotereset=\count325
+No file thesis.aux.
+\openout1 = `thesis.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 199.
+LaTeX Font Info:    ... okay on input line 199.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 199.
+LaTeX Font Info:    ... okay on input line 199.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 199.
+LaTeX Font Info:    ... okay on input line 199.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 199.
+LaTeX Font Info:    ... okay on input line 199.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 199.
+LaTeX Font Info:    ... okay on input line 199.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 199.
+LaTeX Font Info:    ... okay on input line 199.
+LaTeX Font Info:    Checking defaults for FML/futm/m/it on input line 199.
+LaTeX Font Info:    ... okay on input line 199.
+LaTeX Font Info:    Checking defaults for FMS/futm/m/n on input line 199.
+LaTeX Font Info:    ... okay on input line 199.
+LaTeX Font Info:    Checking defaults for FMX/futm/m/n on input line 199.
+LaTeX Font Info:    ... okay on input line 199.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 199.
+LaTeX Font Info:    Try loading font information for TS1+cmr on input line 199.
+
+(/usr/share/texmf-texlive/tex/latex/base/ts1cmr.fd
+File: ts1cmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    ... okay on input line 199.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 199.
+LaTeX Font Info:    ... okay on input line 199.
+
+*geometry auto-detecting driver*
+*geometry detected driver: dvips*
+-------------------- Geometry parameters
+paper: a4paper
+landscape: --
+twocolumn: --
+twoside: true
+asymmetric: --
+h-parts: 72.26999pt, 452.9679pt, 72.26999pt
+v-parts: 72.26999pt, 700.50687pt, 72.26999pt
+hmarginratio: --
+vmarginratio: --
+lines: --
+heightrounded: --
+bindingoffset: 0.0pt
+truedimen: --
+includehead: --
+includefoot: --
+includemp: --
+driver: dvips
+-------------------- Page layout dimensions and switches
+\paperwidth  597.50787pt
+\paperheight 845.04684pt
+\textwidth  452.9679pt
+\textheight 700.50687pt
+\oddsidemargin  0.0pt
+\evensidemargin 0.0pt
+\topmargin  -31.8738pt
+\headheight 28.7pt
+\headsep    19.8738pt
+\footskip   30.0pt
+\marginparwidth 88.0pt
+\marginparsep   7.0pt
+\columnsep  10.0pt
+\skip\footins  10.8pt plus 4.0pt minus 2.0pt
+\hoffset 0.0pt
+\voffset 0.0pt
+\mag 1000
+\@twosidetrue \@mparswitchtrue 
+(1in=72.27pt, 1cm=28.45pt)
+-----------------------
+Package biblatex Info: No input encoding detected.
+(biblatex)             Assuming 'ascii'.
+Package biblatex Info: Automatic encoding selection.
+(biblatex)             Assuming data encoding 'ascii'.
+\openout3 = `thesis-blx.bib'.
+
+Package biblatex Info: Trying to load bibliographic data...
+Package biblatex Info: ... file 'thesis.bbl' not found.
+No file thesis.bbl.
+Package biblatex Info: Reference section=0 on input line 199.
+Package biblatex Info: Reference segment=0 on input line 199.
+\symgns@font=\mathgroup13
+LaTeX Font Info:    Overwriting symbol font `gns@font' in version `bold'
+(Font)                  TS1/futs/m/n --> TS1/futs/bx/n on input line 199.
+Package gensymb Info: Math companion symbols declared on input line 199.
+LaTeX Info: Redefining \degree on input line 199.
+LaTeX Info: Redefining \celsius on input line 199.
+Package gensymb Info: Using text companion symbols for \degree, \celsius and \p
+erthousand on input line 199.
+LaTeX Info: Redefining \ohm on input line 199.
+Package gensymb Info: Using \textohm for \ohm on input line 199.
+Package gensymb Info: Using \textmu for \micro on input line 199.
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: hyperref package is loaded.
+Package caption Info: hypcap package is loaded.
+Package caption Info: End \AtBeginDocument code.
+Package hyperref Info: Link coloring OFF on input line 199.
+(/usr/share/texmf-texlive/tex/latex/hyperref/nameref.sty
+Package: nameref 2007/05/29 v2.31 Cross-referencing by name of section
+
+(/usr/share/texmf-texlive/tex/latex/oberdiek/refcount.sty
+Package: refcount 2008/08/11 v3.1 Data extraction from references (HO)
+)
+\c@section@level=\count326
+)
+LaTeX Info: Redefining \ref on input line 199.
+LaTeX Info: Redefining \pageref on input line 199.
+\@outlinefile=\write4
+\openout4 = `thesis.out'.
+
+\AtBeginShipoutBox=\box52
+
+
+Package hyperref Warning: Rerun to get /PageLabels entry.
+
+LaTeX Info: Redefining \[ on input line 199.
+LaTeX Info: Redefining \] on input line 199.
+LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
+(Font)              scaled to size 13.24796pt on input line 203.
+LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
+(Font)              scaled to size 9.19998pt on input line 203.
+LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
+(Font)              scaled to size 7.35999pt on input line 203.
+LaTeX Font Info:    Font shape `U/futm/m/n' will be
+(Font)              scaled to size 13.24796pt on input line 203.
+LaTeX Font Info:    Font shape `U/futm/m/n' will be
+(Font)              scaled to size 9.19998pt on input line 203.
+LaTeX Font Info:    Font shape `U/futm/m/n' will be
+(Font)              scaled to size 7.35999pt on input line 203.
+LaTeX Font Info:    Try loading font information for U+msa on input line 203.
+(/usr/share/texmf-texlive/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2009/06/22 v3.00 AMS symbols A
+)
+LaTeX Font Info:    Try loading font information for U+msb on input line 203.
+
+(/usr/share/texmf-texlive/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2009/06/22 v3.00 AMS symbols B
+)
+LaTeX Font Info:    Try loading font information for U+rsfs on input line 203.
+
+(/usr/share/texmf-texlive/tex/latex/jknapltx/ursfs.fd
+File: ursfs.fd 1998/03/24 rsfs font definition file (jk)
+)
+LaTeX Font Info:    Try loading font information for TS1+futs on input line 203
+.
+
+(/usr/share/texmf-texlive/tex/latex/fourier/ts1futs.fd
+File: ts1futs.fd 2004/03/26 Fontinst v1.926 font definitions for TS1/futs.
+) [1
+
+
+] [2
+
+]
+LaTeX Font Info:    Font shape `T1/futs/bx/n' in size <24.88> not available
+(Font)              Font shape `T1/futs/b/n' tried instead on input line 205.
+\tf@toc=\write5
+\openout5 = `thesis.toc'.
+
+ [3] [4
+
+]
+Package biblatex Info: Reference section=1 on input line 225.
+\openout3 = `thesis1-blx.aux'.
+
+Package biblatex Info: Setting label 'refsection:1' on input line 225.
+
+[5] [6
+
+]
+Chapter 1.
+LaTeX Font Info:    Font shape `T1/futs/bx/n' in size <70> not available
+(Font)              Font shape `T1/futs/b/n' tried instead on input line 226.
+LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
+(Font)              scaled to size 6.99199pt on input line 239.
+LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
+(Font)              scaled to size 5.51999pt on input line 239.
+LaTeX Font Info:    Font shape `U/futm/m/n' will be
+(Font)              scaled to size 6.99199pt on input line 239.
+LaTeX Font Info:    Font shape `U/futm/m/n' will be
+(Font)              scaled to size 5.51999pt on input line 239.
+
+LaTeX Warning: Citation 'Buckingham.ProcRSocLondonA.1958' on page 7 undefined o
+n input line 247.
+
+LaTeX Font Info:    Font shape `T1/futs/bx/n' in size <12> not available
+(Font)              Font shape `T1/futs/b/n' tried instead on input line 247.
+[7]
+
+LaTeX Warning: Citation 'Book-Cho.TwoDimensionalOpticalSpectroscopy.2009' on pa
+ge 8 undefined on input line 276.
+
+
+Overfull \hbox (236.20335pt too wide) in paragraph at lines 274--282
+\T1/futs/m/n/12 do-main vi-bra-tional spec-tro-scopy, that had emerged dur-ing 
+the re-cent two decades[[]],
+ []
+
+
+LaTeX Warning: Reference `c:background' on page 8 undefined on input line 311.
+
+
+LaTeX Warning: Reference `c:background' on page 8 undefined on input line 313.
+
+
+LaTeX Warning: Empty bibliography on input line 319.
+
+Package biblatex Info: Reference section=0 on input line 320.
+Package biblatex Info: Reference section=2 on input line 322.
+\openout3 = `thesis2-blx.aux'.
+
+Package biblatex Info: Setting label 'refsection:2' on input line 322.
+[8]
+Chapter 2.
+LaTeX Font Info:    Font shape `T1/futs/bx/n' in size <17.28> not available
+(Font)              Font shape `T1/futs/b/n' tried instead on input line 335.
+
+LaTeX Warning: Citation 'Bauer.Magat.JPhysRadium.1938' on page 9 undefined on i
+nput line 340.
+
+
+Overfull \hbox (131.16751pt too wide) in paragraph at lines 337--346
+\T1/futs/m/n/12 cies of solute tend to red-shift when in-creas-ing the dielec-t
+ric con-stant of the solvent.[[]]
+ []
+
+
+LaTeX Warning: Citation 'Kirkwood.JCP.1934' on page 9 undefined on input line 3
+60.
+
+
+LaTeX Warning: Citation 'Onsager.JACS.1936' on page 9 undefined on input line 3
+60.
+
+
+LaTeX Warning: Citation 'Stone.TheTheoryOfIntermolecularForces.1996' on page 9 
+undefined on input line 364.
+
+
+LaTeX Warning: Citation 'Gutmann.Resch.Linert.CoordChemRev.1982' on page 9 unde
+fined on input line 364.
+
+
+Overfull \hbox (127.7835pt too wide) in paragraph at lines 362--368
+\T1/futs/m/n/12 molecu-lar in-ter-ac-tions de-pend strongly on the choice of th
+e solvent.[[],
+ []
+
+[9
+
+]
+
+LaTeX Warning: Reference `f.MeCN.MeSCN.vs.solvents' on page 10 undefined on inp
+ut line 392.
+
+
+LaTeX Warning: Citation 'Blasiak.Ritchie.Webb.Cho.XXX.2016' on page 10 undefine
+d on input line 394.
+
+
+LaTeX Warning: Reference `a:exp-ftir' on page 10 undefined on input line 395.
+
+File: figures/Fig.1.eps Graphic file (type eps)
+<figures/Fig.1.eps>
+LaTeX Font Info:    Font shape `T1/futs/bx/n' in size <8> not available
+(Font)              Font shape `T1/futs/b/n' tried instead on input line 415.
+LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
+(Font)              scaled to size 6.25598pt on input line 415.
+LaTeX Font Info:    Font shape `U/futm/m/n' will be
+(Font)              scaled to size 6.25598pt on input line 415.
+
+Overfull \hbox (73.98756pt too wide) in paragraph at lines 392--418
+\T1/futs/m/n/12 when dis-solved in dif-fer-ent solvents of vary-ing po-lar-ity 
+and proticity.[[]]
+ []
+
+
+LaTeX Warning: Citation 'Wilderen.Luuk.Kern-Michler.Muller-Werkmeister.Bredenbe
+ck.PCCP.2014' on page 10 undefined on input line 425.
+
+
+Overfull \hbox (0.48763pt too wide) in paragraph at lines 419--432
+\T1/futs/m/n/12 instance.[[]] This
+ []
+
+
+LaTeX Warning: Citation 'Rowlen.Harris.AnalChem.1991' on page 10 undefined on i
+nput line 436.
+
+
+LaTeX Warning: Citation 'Mayne.Hudson.JPC.1991' on page 10 undefined on input l
+ine 436.
+
+
+LaTeX Warning: Citation 'Janroz.Stangret.Lindgren.JACS.1993' on page 10 undefin
+ed on input line 436.
+
+
+LaTeX Warning: Citation 'Akiyama.Ohtani.SpectchimActA.1994' on page 10 undefine
+d on input line 436.
+
+
+LaTeX Warning: Citation 'Reimers.Hall.JACS.1999' on page 10 undefined on input 
+line 436.
+
+
+LaTeX Warning: Citation 'Wilderen.Luuk.Kern-Michler.Muller-Werkmeister.Bredenbe
+ck.PCCP.2014' on page 10 undefined on input line 436.
+
+
+LaTeX Warning: Citation 'Jansen.JPCB.2014' on page 10 undefined on input line 4
+36.
+
+
+LaTeX Warning: Reference `f.MeCN.MeSCN.vs.solvents' on page 10 undefined on inp
+ut line 438.
+
+
+LaTeX Warning: Citation 'Kim.Cho.ChemRev.2013' on page 10 undefined on input li
+ne 440.
+
+
+Overfull \hbox (98.6714pt too wide) in paragraph at lines 433--442
+\T1/futs/m/n/12 per-spect-ive of the vi-bra-tional prop-er-ties of some par-tic
+-u-lar loc-al-ized vibration.[[],
+ []
+
+
+Overfull \hbox (66.77913pt too wide) in paragraph at lines 433--442
+[]\T1/futs/m/n/12 , [], [],
+ []
+
+
+Overfull \hbox (55.30536pt too wide) in paragraph at lines 433--442
+[]\T1/futs/m/n/12 , [],
+ []
+
+
+LaTeX Warning: Citation 'Kim.Cho.ChemRev.2013' on page 10 undefined on input li
+ne 448.
+
+
+LaTeX Warning: Citation 'Ma.Pazos.Zhang.Culik.Gai.AnnuRevPhysChem.2015' on page
+ 10 undefined on input line 448.
+
+
+LaTeX Warning: Citation 'Waegele.Culik.Gai.JPCL.2011' on page 10 undefined on i
+nput line 448.
+
+
+LaTeX Warning: Citation 'Fried.Bagchi.Boxer.Science.2014' on page 10 undefined 
+on input line 450.
+
+
+LaTeX Warning: Citation 'Thielges.Axup.Wong.Lee.Chung.Schultz.Fayer.JPCB.2011' 
+on page 10 undefined on input line 450.
+
+
+LaTeX Warning: Citation 'Zhang.Markiewicz.Doerksen.Smith.Gai.PCCP.2015' on page
+ 10 undefined on input line 453.
+
+
+LaTeX Warning: Citation 'Johnson.Londergan.Charkoudian.JACS.2014' on page 10 un
+defined on input line 453.
+
+
+LaTeX Warning: Citation 'Waegele.Culik.Gai.JPCL.2011' on page 10 undefined on i
+nput line 453.
+
+
+LaTeX Warning: Citation 'Stafford.Ensign.Webb.JPCB.2010' on page 10 undefined o
+n input line 453.
+
+
+LaTeX Warning: Citation 'Silverman.Pitzer.Ankomah.Boxer.Fenlon.JPCB.2007' on pa
+ge 10 undefined on input line 453.
+
+
+LaTeX Warning: Citation 'Suydam.Snow.Pande.Boxer.Science.2006' on page 10 undef
+ined on input line 453.
+
+
+LaTeX Warning: Citation 'Thielges.Axup.Wong.Lee.Chung.Schultz.Fayer.JPCB.2011' 
+on page 10 undefined on input line 456.
+
+
+LaTeX Warning: Citation 'Ye.Zaitseva.Caltabiano.Schertler.Sakmar.Deupi.Vogel.Na
+ture.2010' on page 10 undefined on input line 456.
+
+
+LaTeX Warning: Citation 'Waegele.Culik.Gai.JPCL.2011' on page 10 undefined on i
+nput line 456.
+
+
+LaTeX Warning: Citation 'Taskent-Sezgin.Chung.Banerjee.Nagarajan.Dyer.Carrico.R
+aleigh.AngewChemInt.2010' on page 10 undefined on input line 456.
+
+
+LaTeX Warning: Citation 'Oh.Lee.Joo.Han.Cho.JPCB.2008' on page 10 undefined on 
+input line 456.
+
+
+LaTeX Warning: Citation 'Levinson.Bolte.Miller.Corcelli.Boxer.JACS.2011' on pag
+e 10 undefined on input line 457.
+
+
+LaTeX Warning: Citation 'Smith.Linderman.Luskin.Brewer.JPCB.2011' on page 10 un
+defined on input line 458.
+
+
+LaTeX Warning: Citation 'Thielges.Axup.Wong.Lee.Chung.Schultz.Fayer.JPCB.2011' 
+on page 10 undefined on input line 460.
+
+
+Overfull \hbox (224.19318pt too wide) in paragraph at lines 445--467
+\T1/futs/m/n/12 solu-tions to pro-teins, nuc-leic acids and other polymers.[[],
+ [],
+ []
+
+
+Overfull \hbox (217.37657pt too wide) in paragraph at lines 445--467
+\T1/futs/m/n/12 to be use-ful IR probes are car-bonyl (CO)[[], []],
+ []
+
+
+Overfull \hbox (104.00127pt too wide) in paragraph at lines 445--467
+\T1/futs/m/n/12 ni-trile (CN)[[], [],
+ []
+
+
+Overfull \hbox (146.09903pt too wide) in paragraph at lines 445--467
+[]\T1/futs/m/n/12 , [], [],
+ []
+
+
+Overfull \hbox (175.33719pt too wide) in paragraph at lines 445--467
+[]\T1/futs/m/n/12 ], asym-met-ric azide (N$[]$)[[],
+ []
+
+
+Overfull \hbox (44.63745pt too wide) in paragraph at lines 445--467
+[]\T1/futs/m/n/12 , [],
+ []
+
+
+Overfull \hbox (161.02531pt too wide) in paragraph at lines 445--467
+[]\T1/futs/m/n/12 , []]
+ []
+
+
+Overfull \hbox (3.78754pt too wide) in paragraph at lines 445--467
+\T1/futs/m/n/12 stretches, phos-phate vibrations[[]] and vi-bra-
+ []
+
+
+Overfull \hbox (214.8548pt too wide) in paragraph at lines 445--467
+\T1/futs/m/n/12 amples of us-ing sim-ul-tan-eously two loc-al-ized IR probes we
+re also reported.[[]]
+ []
+
+[10]
+
+LaTeX Warning: Citation 'Hayashi.Mukamel.JPCB.2007' on page 11 undefined on inp
+ut line 473.
+
+[11]
+
+LaTeX Warning: Citation 'Jo.Culik.Korendovych.DeGrado.Gai.Biochem.2010' on page
+ 12 undefined on input line 485.
+
+
+LaTeX Warning: Citation 'Wang.Winblade.Johnson.Tirrell.Grabstein.ChemBioChem.20
+08' on page 12 undefined on input line 485.
+
+
+LaTeX Warning: Citation 'Fafarman.Webb.Chuang.Boxer.JACS.2006' on page 12 undef
+ined on input line 485.
+
+
+LaTeX Warning: Citation 'Kiick.Saxon.Tirrell.Bertozzi.PNAS.2002' on page 12 und
+efined on input line 485.
+
+
+LaTeX Warning: Citation 'Fried.Bagchi.Boxer.Science.2014' on page 12 undefined 
+on input line 490.
+
+
+LaTeX Warning: Citation 'Bagchi.Boxer.Fayer.JPCB.2012' on page 12 undefined on 
+input line 490.
+
+
+LaTeX Warning: Citation 'Ye.Zaitseva.Caltabiano.Schertler.Sakmar.Deupi.Vogel.Na
+ture.2010' on page 12 undefined on input line 490.
+
+
+LaTeX Warning: Citation 'Taskent-Sezgin.Chung.Banerjee.Nagarajan.Dyer.Carrico.R
+aleigh.AngewChemInt.2010' on page 12 undefined on input line 494.
+
+
+LaTeX Warning: Citation 'Stafford.Ensign.Webb.JPCB.2010' on page 12 undefined o
+n input line 494.
+
+
+LaTeX Warning: Citation 'Oh.Lee.Joo.Han.Cho.JPCB.2008' on page 12 undefined on 
+input line 494.
+
+
+Overfull \hbox (260.16273pt too wide) in paragraph at lines 479--495
+\T1/futs/m/n/12 CN and N$[]$ probes can be also site-selectively in-tro-duced i
+nto a mac-ro-molec-u-lar framework[[],
+ []
+
+
+Overfull \hbox (93.99327pt too wide) in paragraph at lines 479--495
+[]\T1/futs/m/n/12 , [],
+ []
+
+
+Overfull \hbox (107.16751pt too wide) in paragraph at lines 479--495
+\T1/futs/m/n/12 be-comes pos-sible to study how the en-zyme acts within pi-co-s
+econd time scales.[[],
+ []
+
+
+Overfull \hbox (51.6574pt too wide) in paragraph at lines 479--495
+[]\T1/futs/m/n/12 , []]
+ []
+
+
+Overfull \hbox (314.38272pt too wide) in paragraph at lines 479--495
+\T1/futs/m/n/12 protein con-tacts when IR probe is loc-al-ized at the pro-tein 
+surface[[],
+ []
+
+
+LaTeX Warning: Citation 'Kim.Cho.ChemRev.2013' on page 12 undefined on input li
+ne 502.
+
+
+LaTeX Warning: Citation 'Hush.Reimers.JPC.1995' on page 12 undefined on input l
+ine 505.
+
+
+LaTeX Warning: Citation 'Reimers.Zeng.Hush.JPC.1996' on page 12 undefined on in
+put line 505.
+
+
+LaTeX Warning: Citation 'Andrews.Boxer.JCPA.2002' on page 12 undefined on input
+ line 505.
+
+
+LaTeX Warning: Citation 'Cho.JCP.2009' on page 12 undefined on input line 505.
+
+
+LaTeX Warning: Citation 'Hush.Reimers.JPC.1995' on page 12 undefined on input l
+ine 506.
+
+
+LaTeX Warning: Citation 'Reimers.Zeng.Hush.JPC.1996' on page 12 undefined on in
+put line 506.
+
+
+LaTeX Warning: Citation 'Bublitz.Boxer.AnnuRevPhysChem.1997' on page 12 undefin
+ed on input line 507.
+
+
+LaTeX Warning: Citation 'Hush.Reimers.JPC.1995' on page 12 undefined on input l
+ine 511.
+
+
+LaTeX Warning: Citation 'Reimers.Zeng.Hush.JPC.1996' on page 12 undefined on in
+put line 511.
+
+
+Overfull \hbox (112.91542pt too wide) in paragraph at lines 498--515
+\T1/futs/m/n/12 were made to study the ef-fects of the ex-ternal elec-tric fiel
+ds on the vi-bra-tional properties.[[]]
+ []
+
+
+Overfull \hbox (103.0634pt too wide) in paragraph at lines 498--515
+\T1/futs/m/n/12 In par-tic-u-lar, the ef-fects of the uni-form ex-ternal elec-t
+ric field was thor-oughly examined.[[],
+ []
+
+
+Overfull \hbox (0.32307pt too wide) in paragraph at lines 498--515
+[]\T1/futs/m/n/12 , [], []] In the vi-bra-tional
+ []
+
+
+Overfull \hbox (13.60353pt too wide) in paragraph at lines 498--515
+\T1/futs/m/n/12 was pi-on-eered ex-per-i-ment-ally by Boxer's laboratory[[]],
+ []
+
+
+LaTeX Warning: Citation 'Suydam.Boxer.Biochem.2003' on page 12 undefined on inp
+ut line 538.
+
+
+LaTeX Warning: Citation 'Levinson.Fried.Boxer.JPCB.2012' on page 12 undefined o
+n input line 538.
+
+
+LaTeX Warning: Citation 'Dalosto.Vanderkooi.Sharp.JPCB.2004' on page 12 undefin
+ed on input line 540.
+
+
+LaTeX Warning: Citation 'Andrews.Boxer.JCPA.2002' on page 12 undefined on input
+ line 540.
+
+
+LaTeX Warning: Citation 'Andrews.Boxer.JCPA.2000' on page 12 undefined on input
+ line 540.
+
+
+LaTeX Warning: Reference `e:vse-shift-dipole' on page 12 undefined on input lin
+e 542.
+
+
+LaTeX Warning: Citation 'Levinson.Fried.Boxer.JPCB.2012' on page 12 undefined o
+n input line 545.
+
+
+LaTeX Warning: Citation 'Fafarman.Sigala.Herschlag.Boxer.JACS.2010' on page 12 
+undefined on input line 548.
+
+
+LaTeX Warning: Citation 'Bagchi.Fried.Boxer.JACS.2012' on page 12 undefined on 
+input line 548.
+
+
+Overfull \hbox (83.89102pt too wide) in paragraph at lines 536--549
+\T1/futs/m/n/12 calculations[[], [], []]
+ []
+
+
+Overfull \hbox (143.69534pt too wide) in paragraph at lines 536--549
+\T1/futs/m/n/12 used the sig-ni-fic-ant de-vi-ations from the lin-ear cor-rel-a
+-tions were observed.[[],
+ []
+
+[12]
+
+LaTeX Warning: Citation 'Cho.JCP.2009' on page 13 undefined on input line 552.
+
+
+LaTeX Warning: Citation 'Lee.Choi.Cho.JCP.2012' on page 13 undefined on input l
+ine 552.
+
+
+LaTeX Warning: Reference `e:vse-shift-dipole' on page 13 undefined on input lin
+e 553.
+
+
+Overfull \hbox (50.17952pt too wide) in paragraph at lines 550--563
+\T1/futs/m/n/12 likely to oc-cur in the con-densed phase. In fact, it was de-no
+m-strated the-or-et-ic-ally by Cho[[],
+ []
+
+
+LaTeX Warning: Reference `e:vse-shift-dipole' on page 13 undefined on input lin
+e 582.
+
+
+LaTeX Warning: Citation 'Wortmann.Bishop.JCP.1998' on page 13 undefined on inpu
+t line 588.
+
+
+LaTeX Warning: Citation 'Wortmann.Bishop.JCP.1998' on page 13 undefined on inpu
+t line 596.
+
+
+LaTeX Warning: Citation 'Wortmann.Bishop.JCP.1998' on page 13 undefined on inpu
+t line 605.
+
+
+LaTeX Warning: Citation 'Bublitz.Boxer.AnnuRevPhysChem.1997' on page 13 undefin
+ed on input line 605.
+
+
+Overfull \hbox (41.25148pt too wide) in paragraph at lines 600--607
+\T1/futs/m/n/12 refers to static limit. It was de-duced that $\FML/futmi/m/it/1
+2 f$ \T1/futs/m/n/12 can be in the range of 1.1-1.3[[],
+ []
+
+
+LaTeX Warning: Citation 'Fafarman.Sigala.Herschlag.Boxer.JACS.2010' on page 13 
+undefined on input line 610.
+
+
+LaTeX Warning: Citation 'Bagchi.Fried.Boxer.JACS.2012' on page 13 undefined on 
+input line 610.
+
+
+Overfull \hbox (222.00665pt too wide) in paragraph at lines 608--616
+\T1/futs/m/n/12 nuc-lear mag-netic res-on-ance (NMR) tech-nique, which was demo
+n-strated by Boxer's group.[[],
+ []
+
+
+LaTeX Warning: Citation 'Kamlet.Taft.JACS.1976' on page 13 undefined on input l
+ine 622.
+
+
+LaTeX Warning: Citation 'Taft.Kamlet.JACS.1976' on page 13 undefined on input l
+ine 622.
+
+
+LaTeX Warning: Citation 'Kamlet.Abboud.Taft.JACS.1977' on page 13 undefined on 
+input line 622.
+
+
+LaTeX Warning: Citation 'Reimers.Hall.JACS.1999' on page 13 undefined on input 
+line 624.
+
+
+LaTeX Warning: Citation 'Fawcett.Liu.Kessler.JPC.1993' on page 13 undefined on 
+input line 624.
+
+
+LaTeX Warning: Citation 'Fawcett.Kloss.JCP.1996' on page 13 undefined on input 
+line 624.
+
+
+LaTeX Warning: Citation 'Ben-Amotz.Lee.Cho.List.JCP.1992' on page 13 undefined 
+on input line 624.
+
+
+Overfull \hbox (0.33977pt too wide) in paragraph at lines 617--630
+[]\T1/futs/m/n/12 A few em-pir-ical mod-els of the vi-bra-tional sol-va-to-chro
+-mism has been de-veloped through-
+ []
+
+
+Overfull \hbox (75.43951pt too wide) in paragraph at lines 617--630
+\T1/futs/m/n/12 used. Among many meth-ods of this kind, one can men-tion Kam-le
+t-Taft parameters[[],
+ []
+
+
+Overfull \hbox (158.47093pt too wide) in paragraph at lines 617--630
+[]\T1/futs/m/n/12 , []], Faw-cett's mo-lecu-lar descriptor method[[],
+ []
+
+
+Overfull \hbox (113.9253pt too wide) in paragraph at lines 617--630
+[]\T1/futs/m/n/12 , []] or Ben-Amotz' theory.[[]]
+ []
+
+[13]
+
+LaTeX Warning: Citation 'Zhang.Markiewicz.Doerksen.Smith.Gai.PCCP.2015' on page
+ 14 undefined on input line 632.
+
+
+Overfull \hbox (230.03157pt too wide) in paragraph at lines 631--636
+[]\T1/futs/m/n/12 In KT para-meter method, fre-quency shifts can be re-lated to
+ the fol-low-ing relation[[]]: 
+ []
+
+
+LaTeX Warning: Citation 'Taft.Kamlet.JACS.1976' on page 14 undefined on input l
+ine 640.
+
+
+LaTeX Warning: Citation 'Kamlet.Taft.JACS.1976' on page 14 undefined on input l
+ine 641.
+
+
+LaTeX Warning: Citation 'Kamlet.Abboud.Taft.JACS.1977' on page 14 undefined on 
+input line 641.
+
+
+LaTeX Warning: Reference `e:kamlet-taft' on page 14 undefined on input line 645
+.
+
+
+Overfull \hbox (92.28465pt too wide) in paragraph at lines 636--646
+\T1/futs/m/n/12 KT para-met-ers $\FML/futmi/m/it/12 $\T1/futs/m/n/12 [[]], $\F
+ML/futmi/m/it/12 ^^L$\T1/futs/m/n/12 [[]] and $\FML/futmi/m/it/12 ^^Y[]$\T1/fut
+s/m/n/12 [[]]
+ []
+
+
+LaTeX Warning: Citation 'Reimers.Hall.JACS.1999' on page 14 undefined on input 
+line 648.
+
+
+LaTeX Warning: Citation 'Fawcett.Liu.Kessler.JPC.1993' on page 14 undefined on 
+input line 648.
+
+
+LaTeX Warning: Citation 'Fawcett.Kloss.JCP.1996' on page 14 undefined on input 
+line 648.
+
+
+Overfull \hbox (29.3747pt too wide) in paragraph at lines 660--660
+[] 
+ []
+
+
+Overfull \hbox (66.3763pt too wide) in paragraph at lines 647--660
+[]\T1/futs/m/n/12 Slightly more com-plic-ated para-met-er-iz-a-tion was de-velo
+ped by Faw-cett \T1/futs/m/it/12 et al.\T1/futs/m/n/12 [[],
+ []
+
+
+Overfull \hbox (7.62715pt too wide) in paragraph at lines 647--660
+[]\T1/futs/m/n/12 , []], in which the solute's fre-quency shift[]
+ []
+
+
+LaTeX Warning: Citation 'Gutmann.Resch.Linert.CoordChemRev.1982' on page 14 und
+efined on input line 664.
+
+
+LaTeX Warning: Reference `e:kamlet-taft' on page 14 undefined on input line 669
+.
+
+
+LaTeX Warning: Reference `e:fawcett' on page 14 undefined on input line 669.
+
+
+Overfull \hbox (145.91544pt too wide) in paragraph at lines 660--671
+\T1/futs/m/n/12 gas phase, $\FML/futmi/m/it/12 a$ \T1/futs/m/n/12 and $\FML/fut
+mi/m/it/12 d$ \T1/futs/m/n/12 are the Gut-mann solvent ac-ceptor and donor numb
+ers[[]],
+ []
+
+
+LaTeX Warning: Citation 'Ben-Amotz.Lee.Cho.List.JCP.1992' on page 14 undefined 
+on input line 672.
+
+
+LaTeX Warning: Citation 'Buckingham.ProcRSocLondonA.1958' on page 14 undefined 
+on input line 674.
+
+
+LaTeX Warning: Citation 'Buckingham.ProcRSocLondonA.1960' on page 14 undefined 
+on input line 674.
+
+
+LaTeX Warning: Citation 'Buckingham.TransFaradaySoc.1960' on page 14 undefined 
+on input line 674.
+
+
+Overfull \hbox (0.90445pt too wide) in paragraph at lines 672--680
+[]\T1/futs/m/n/12 In his sem-inal works, Ben-Amotz \T1/futs/m/it/12 et al.\T1/f
+uts/m/n/12 [[]] used the first-
+ []
+
+
+Overfull \hbox (107.28926pt too wide) in paragraph at lines 672--680
+\T1/futs/m/n/12 prin-ciples the-ory of Buckingham[[], [],
+ []
+
+
+Overfull \hbox (7.63956pt too wide) in paragraph at lines 672--680
+[]\T1/futs/m/n/12 ] to de-rive the con-tri-bu-tions to the vi-bra-tional fre-qu
+ency
+ []
+
+
+LaTeX Warning: Reference `e:ben-amotz-ro' on page 14 undefined on input line 69
+8.
+
+
+LaTeX Warning: Citation 'Reimers.Hall.JACS.1999' on page 14 undefined on input 
+line 700.
+
+
+LaTeX Warning: Citation 'Ben-Amotz.Lee.Cho.List.JCP.1992' on page 14 undefined 
+on input line 702.
+
+
+Overfull \hbox (8.63551pt too wide) in paragraph at lines 695--707
+\T1/futs/m/n/12 va-to-chro-mism that ex-pli-citly take into ac-count the elec-t
+ro-sta-tic at-tract-ive and non-Coulombic
+ []
+
+[14]
+
+LaTeX Warning: Citation 'Kwac.Cho.II.JCP.2003' on page 15 undefined on input li
+ne 723.
+
+
+LaTeX Warning: Citation 'Ham.Kim.Lee.Cho.JCP.2003' on page 15 undefined on inpu
+t line 723.
+
+
+LaTeX Warning: Citation 'Bour.Keiderling.JCP.2003' on page 15 undefined on inpu
+t line 723.
+
+
+LaTeX Warning: Citation 'Schmidt.Corcelli.Skinner.JCP.2004' on page 15 undefine
+d on input line 723.
+
+
+LaTeX Warning: Citation 'Corcelli.Lawrence.Skinner.JCP.2004' on page 15 undefin
+ed on input line 723.
+
+
+LaTeX Warning: Citation 'Hahn.Lee.Cho.JCP.2004' on page 15 undefined on input l
+ine 723.
+
+
+LaTeX Warning: Citation 'Kwac.Lee.Cho.JCP.2004' on page 15 undefined on input l
+ine 723.
+
+
+LaTeX Warning: Citation 'Choi.Hahn.Cho.IJQC.2005' on page 15 undefined on input
+ line 723.
+
+
+LaTeX Warning: Citation 'Kwac.Cho.JRS.2005' on page 15 undefined on input line 
+723.
+
+
+LaTeX Warning: Citation 'Watson.Hirst.MP.2005' on page 15 undefined on input li
+ne 723.
+
+
+LaTeX Warning: Citation 'DeCamp.DeFlores.McCracken.Tokmakoff.Kwac.Cho.JPCB.2005
+' on page 15 undefined on input line 723.
+
+
+LaTeX Warning: Citation 'Hayashi.Jansen.Zhuang.Mukamel.JPCA.2005' on page 15 un
+defined on input line 723.
+
+
+LaTeX Warning: Citation 'Hayashi.Zhuang.Mukamel.JPCA.2005' on page 15 undefined
+ on input line 723.
+
+
+LaTeX Warning: Citation 'Bour.Michalik.Kapitan.JCP.2005' on page 15 undefined o
+n input line 723.
+
+
+LaTeX Warning: Citation 'Jansen.Dijkstra.Watson.Hirst.Knoester.JCP.2006' on pag
+e 15 undefined on input line 723.
+
+
+LaTeX Warning: Citation 'Jansen.Knoester.JCP.2006' on page 15 undefined on inpu
+t line 723.
+
+
+LaTeX Warning: Citation 'Choi.Oh.Lee.Lee.Cho.JCP.2008' on page 15 undefined on 
+input line 723.
+
+
+LaTeX Warning: Citation 'Oh.Choi.Lee.Han.Lee.Cho.JCP.2008' on page 15 undefined
+ on input line 723.
+
+
+LaTeX Warning: Citation 'Choi.Oh.Cho.JCP.2008' on page 15 undefined on input li
+ne 723.
+
+
+LaTeX Warning: Citation 'Lin.Shorb.Mukherjee.Zanni.Skinner.JPCB.2009' on page 1
+5 undefined on input line 723.
+
+
+LaTeX Warning: Citation 'Lee.Choi.Cho.PCCP.2010' on page 15 undefined on input 
+line 723.
+
+
+LaTeX Warning: Citation 'Choi.Cho.JCP.2011' on page 15 undefined on input line 
+723.
+
+
+LaTeX Warning: Citation 'Roy.Lessing.Meisl.Ganim.Tokmakoff.Knoester.Jansen.JCP.
+2011' on page 15 undefined on input line 723.
+
+
+LaTeX Warning: Citation 'Choi.Raleigh.Cho.JPCL.2011' on page 15 undefined on in
+put line 723.
+
+
+LaTeX Warning: Citation 'Lee.Choi.Cho.JCP.2012' on page 15 undefined on input l
+ine 723.
+
+
+LaTeX Warning: Citation 'Torii.JPCL.2015' on page 15 undefined on input line 72
+3.
+
+
+LaTeX Warning: Citation 'Torii.Noge.PCCP.2016' on page 15 undefined on input li
+ne 723.
+
+
+Overfull \hbox (5.04437pt too wide) in paragraph at lines 708--729
+[]\T1/futs/m/n/12 Another im-port-ant class of em-pir-ical or semi-em-pir-ical 
+meth-ods which is broadly reffered
+ []
+
+
+Overfull \hbox (160.65672pt too wide) in paragraph at lines 708--729
+\T1/futs/m/n/12 probe.[[], [], [], [],
+ []
+
+
+Overfull \hbox (124.94484pt too wide) in paragraph at lines 708--729
+[]\T1/futs/m/n/12 , [], [], [],
+ []
+
+
+Overfull \hbox (98.4711pt too wide) in paragraph at lines 708--729
+[]\T1/futs/m/n/12 , [], [],
+ []
+
+
+Overfull \hbox (149.42317pt too wide) in paragraph at lines 708--729
+[]\T1/futs/m/n/12 , [], [],
+ []
+
+
+Overfull \hbox (94.2351pt too wide) in paragraph at lines 708--729
+[]\T1/futs/m/n/12 , [], [],
+ []
+
+
+Overfull \hbox (99.26309pt too wide) in paragraph at lines 708--729
+[]\T1/futs/m/n/12 , [], [],
+ []
+
+
+Overfull \hbox (105.3231pt too wide) in paragraph at lines 708--729
+[]\T1/futs/m/n/12 , [], [],
+ []
+
+
+Overfull \hbox (21.577pt too wide) in paragraph at lines 708--729
+[]\T1/futs/m/n/12 , [], [], []]
+ []
+
+
+LaTeX Warning: Citation 'Kwac.Cho.II.JCP.2003' on page 15 undefined on input li
+ne 742.
+
+
+LaTeX Warning: Citation 'Ham.Kim.Lee.Cho.JCP.2003' on page 15 undefined on inpu
+t line 742.
+
+
+LaTeX Warning: Citation 'Bour.Keiderling.JCP.2003' on page 15 undefined on inpu
+t line 742.
+
+
+LaTeX Warning: Citation 'Hahn.Lee.Cho.JCP.2004' on page 15 undefined on input l
+ine 742.
+
+
+LaTeX Warning: Citation 'Kwac.Lee.Cho.JCP.2004' on page 15 undefined on input l
+ine 742.
+
+
+LaTeX Warning: Citation 'Choi.Hahn.Cho.IJQC.2005' on page 15 undefined on input
+ line 742.
+
+
+LaTeX Warning: Citation 'Kwac.Cho.JRS.2005' on page 15 undefined on input line 
+742.
+
+
+LaTeX Warning: Citation 'Choi.Oh.Lee.Lee.Cho.JCP.2008' on page 15 undefined on 
+input line 742.
+
+
+LaTeX Warning: Citation 'Oh.Choi.Lee.Han.Lee.Cho.JCP.2008' on page 15 undefined
+ on input line 742.
+
+
+LaTeX Warning: Citation 'Choi.Oh.Cho.JCP.2008' on page 15 undefined on input li
+ne 742.
+
+
+LaTeX Warning: Citation 'Lee.Choi.Cho.PCCP.2010' on page 15 undefined on input 
+line 742.
+
+
+LaTeX Warning: Citation 'Choi.Cho.JCP.2011' on page 15 undefined on input line 
+742.
+
+
+LaTeX Warning: Citation 'Choi.Raleigh.Cho.JPCL.2011' on page 15 undefined on in
+put line 742.
+
+
+LaTeX Warning: Citation 'Lee.Choi.Cho.JCP.2012' on page 15 undefined on input l
+ine 742.
+
+
+LaTeX Warning: Citation 'Schmidt.Corcelli.Skinner.JCP.2004' on page 15 undefine
+d on input line 744.
+
+
+LaTeX Warning: Citation 'Corcelli.Lawrence.Skinner.JCP.2004' on page 15 undefin
+ed on input line 744.
+
+
+LaTeX Warning: Citation 'Torii.JPCL.2015' on page 15 undefined on input line 74
+5.
+
+
+LaTeX Warning: Citation 'Torii.Noge.PCCP.2016' on page 15 undefined on input li
+ne 745.
+
+
+LaTeX Warning: Citation 'Jansen.Knoester.JCP.2006' on page 15 undefined on inpu
+t line 746.
+
+
+LaTeX Warning: Citation 'Hayashi.Jansen.Zhuang.Mukamel.JPCA.2005' on page 15 un
+defined on input line 747.
+
+
+LaTeX Warning: Citation 'Hayashi.Zhuang.Mukamel.JPCA.2005' on page 15 undefined
+ on input line 747.
+
+
+Overfull \hbox (26.9835pt too wide) in paragraph at lines 729--748
+\T1/futs/m/n/12 Mostly, only one type of para-met-ers (e.g. scalar by Cho's and
+ Bou∞'s groups [[],
+ []
+
+
+Overfull \hbox (78.21686pt too wide) in paragraph at lines 729--748
+[]\T1/futs/m/n/12 , [], [], [],
+ []
+
+
+Overfull \hbox (138.39687pt too wide) in paragraph at lines 729--748
+[]\T1/futs/m/n/12 , [], [], [],
+ []
+
+
+Overfull \hbox (50.14894pt too wide) in paragraph at lines 729--748
+[]\T1/futs/m/n/12 , [], [], [],
+ []
+
+
+Overfull \hbox (62.28926pt too wide) in paragraph at lines 729--748
+\T1/futs/m/n/12 tiple types of para-met-ers as well (scalar + vec-tor by Torii'
+s group [[], []]
+ []
+
+
+Overfull \hbox (9.63156pt too wide) in paragraph at lines 729--748
+\T1/futs/m/n/12 or vec-tor + vec-tor gradi-ent by Jansen and Knoes-ter [[]] and
+ Mukamel's
+ []
+
+
+Overfull \hbox (22.00545pt too wide) in paragraph at lines 729--748
+\T1/futs/m/n/12 group [[], []]). 
+ []
+
+
+LaTeX Warning: Citation 'Bour.Keiderling.JCP.2003' on page 15 undefined on inpu
+t line 752.
+
+
+LaTeX Warning: Citation 'Lin.Shorb.Mukherjee.Zanni.Skinner.JPCB.2009' on page 1
+5 undefined on input line 752.
+
+
+LaTeX Warning: Citation 'Lee.Choi.Cho.JCP.2012' on page 15 undefined on input l
+ine 752.
+
+
+LaTeX Warning: Citation 'Jansen.Dijkstra.Watson.Hirst.Knoester.JCP.2006' on pag
+e 15 undefined on input line 757.
+
+
+LaTeX Warning: Citation 'Jansen.Knoester.JCP.2006' on page 15 undefined on inpu
+t line 757.
+
+
+LaTeX Warning: Citation 'Roy.Lessing.Meisl.Ganim.Tokmakoff.Knoester.Jansen.JCP.
+2011' on page 15 undefined on input line 757.
+
+
+LaTeX Warning: Citation 'Hayashi.Jansen.Zhuang.Mukamel.JPCA.2005' on page 15 un
+defined on input line 757.
+
+
+LaTeX Warning: Citation 'Hayashi.Zhuang.Mukamel.JPCA.2005' on page 15 undefined
+ on input line 757.
+
+
+LaTeX Warning: Citation 'Bour.Michalik.Kapitan.JCP.2005' on page 15 undefined o
+n input line 757.
+
+
+LaTeX Warning: Citation 'Jansen.Knoester.JCP.2006' on page 15 undefined on inpu
+t line 760.
+
+
+Overfull \hbox (60.78746pt too wide) in paragraph at lines 749--765
+\T1/futs/m/n/12 num-ber of po-lar solvent mo-lecules that cre-ate vary-ing elec
+-tro-sta-tic potential.[[],
+ []
+
+
+Overfull \hbox (59.02357pt too wide) in paragraph at lines 749--765
+\T1/futs/m/n/12 fields can also be ap-plied dir-ectly in many directions.[[],
+ []
+
+
+Overfull \hbox (7.84541pt too wide) in paragraph at lines 749--765
+[]\T1/futs/m/n/12 , [],
+ []
+
+
+Overfull \hbox (150.14317pt too wide) in paragraph at lines 749--765
+[]\T1/futs/m/n/12 , [], []]
+ []
+
+
+Overfull \hbox (9.15158pt too wide) in paragraph at lines 749--765
+\T1/futs/m/n/12 It is also pos-sible to ac-count for mo-lecu-lar an-har-mon-ici
+ty when the model gas-phase Hamilto-
+ []
+
+[15]
+LaTeX Font Info:    Font shape `T1/futs/bx/n' in size <10> not available
+(Font)              Font shape `T1/futs/b/n' tried instead on input line 782.
+
+
+LaTeX Warning: Reference `e:vse-shift-dipole-corr' on page 16 undefined on inpu
+t line 782.
+
+
+LaTeX Warning: Reference `e:vse-shift-multipoles' on page 16 undefined on input
+ line 782.
+
+
+LaTeX Warning: Citation 'Kwac.Lee.Cho.JCP.2004' on page 16 undefined on input l
+ine 787.
+
+
+LaTeX Warning: Citation 'DeCamp.DeFlores.McCracken.Tokmakoff.Kwac.Cho.JPCB.2005
+' on page 16 undefined on input line 787.
+
+
+LaTeX Warning: Citation 'Jansen.Knoester.JCP.2006' on page 16 undefined on inpu
+t line 787.
+
+
+LaTeX Warning: Citation 'Choi.Raleigh.Cho.JPCL.2011' on page 16 undefined on in
+put line 787.
+
+
+LaTeX Warning: Reference `f.MeCN.MeSCN.vs.solvents' on page 16 undefined on inp
+ut line 793.
+
+
+LaTeX Warning: Reference `e:esf' on page 16 undefined on input line 797.
+
+
+Overfull \hbox (154.7372pt too wide) in paragraph at lines 784--799
+\T1/futs/m/n/12 and even solute transferability.[[], [],
+ []
+
+
+LaTeX Warning: Citation 'Li.Schmidt.Corcelli.Lawrence.Skinner.JCP.2006' on page
+ 16 undefined on input line 802.
+
+
+LaTeX Warning: Citation 'Lindquist.Corcelli.JPCB.2008' on page 16 undefined on 
+input line 805.
+
+
+LaTeX Warning: Citation 'Lindquist.Haws.Corcelli.JPCB.2008' on page 16 undefine
+d on input line 805.
+
+
+LaTeX Warning: Citation 'Lindquist.Furse.Corcelli.PCCP.2009' on page 16 undefin
+ed on input line 805.
+
+
+LaTeX Warning: Citation 'Stewart.JCC.1988' on page 16 undefined on input line 8
+05.
+
+
+LaTeX Warning: Citation 'Lindquist.Haws.Corcelli.JPCB.2008' on page 16 undefine
+d on input line 807.
+
+
+Overfull \hbox (36.19952pt too wide) in paragraph at lines 800--812
+\T1/futs/m/n/12 of in-terest, that was pro-posed by Skin-ner's group [[]]
+ []
+
+
+Overfull \hbox (82.76137pt too wide) in paragraph at lines 800--812
+\T1/futs/m/n/12 and then de-veloped by Cor-celli's group [[], [],
+ []
+
+
+Overfull \hbox (85.70305pt too wide) in paragraph at lines 800--812
+[]\T1/futs/m/n/12 ]. Their method which is based on PM3 Hamiltonian,[[]]
+ []
+
+
+Overfull \hbox (87.95497pt too wide) in paragraph at lines 800--812
+\T1/futs/m/n/12 also be in-ter-faced with the mo-lecu-lar mech-an-ics ap-proach
+ (OQM/MM) [[]]
+ []
+
+
+LaTeX Warning: Citation 'Karjalainen.Ersmark.Barth.JPCB.2012' on page 16 undefi
+ned on input line 814.
+
+[16]
+
+LaTeX Warning: Citation 'Ben-Amotz.Lee.Cho.List.JCP.1992' on page 17 undefined 
+on input line 827.
+
+
+LaTeX Warning: Citation 'Buckingham.ProcRSocLondonA.1958' on page 17 undefined 
+on input line 831.
+
+
+LaTeX Warning: Citation 'Buckingham.TransFaradaySoc.1960' on page 17 undefined 
+on input line 831.
+
+
+LaTeX Warning: Citation 'Buckingham.ProcRSocLondonA.1960' on page 17 undefined 
+on input line 831.
+
+
+Overfull \hbox (61.14436pt too wide) in paragraph at lines 827--837
+[]\T1/futs/m/n/12 Perhaps one of the first was the study of Ben-Amotz \T1/futs/
+m/it/12 et al. \T1/futs/m/n/12 in 1992.[[]]
+ []
+
+
+Overfull \hbox (172.86732pt too wide) in paragraph at lines 827--837
+\T1/futs/m/n/12 pres-sure. The first-prin-ciples model built on the Buck-ing-ha
+m's the-or-et-ical found-a-tions [[],
+ []
+
+
+LaTeX Warning: Citation 'Reimers.Hall.JACS.1999' on page 17 undefined on input 
+line 838.
+
+
+Overfull \hbox (2.77635pt too wide) in paragraph at lines 838--854
+[]\T1/futs/m/n/12 In 1998, Re-imers and Hall [[]] in-vest-ig-ated in great de-t
+ail the solva-
+ []
+
+
+LaTeX Warning: Citation 'Rey.Hynes.JCP.1998' on page 17 undefined on input line
+ 858.
+
+
+LaTeX Warning: Citation 'Morales.Thompson.JPCB.2011' on page 17 undefined on in
+put line 861.
+
+
+Overfull \hbox (30.19962pt too wide) in paragraph at lines 855--862
+\T1/futs/m/n/12 Thompson who in-vest-ig-ated MeCN/water sys-tem by us-ing CMD.[
+[]] 
+ []
+
+
+LaTeX Warning: Citation 'Li.Liu.Schlegel.JACS.2002' on page 17 undefined on inp
+ut line 867.
+
+
+LaTeX Warning: Citation 'Delanoye.Herrebout.vanderVeken.JACS.2002' on page 17 u
+ndefined on input line 867.
+
+
+LaTeX Warning: Citation 'Zierkiewicz.Jurecka.Hobza.ChemPhysChem.2005' on page 1
+7 undefined on input line 867.
+
+
+LaTeX Warning: Citation 'Rodziewicz.Rutkowski.Melikova.Koll.ChemPhysChem.2005' 
+on page 17 undefined on input line 867.
+
+
+LaTeX Warning: Citation 'Zhou.Qiu.JPCA.2009' on page 17 undefined on input line
+ 867.
+
+
+LaTeX Warning: Citation 'Mo.Wang.Guan.Braida.Hiberty.Wu.ChemEurJ.2014' on page 
+17 undefined on input line 867.
+
+
+LaTeX Warning: Citation 'Jeziorski.Moszynski.Szalewicz.ChemRev.1994' on page 17
+ undefined on input line 870.
+
+
+LaTeX Warning: Citation 'Zierkiewicz.Jurecka.Hobza.ChemPhysChem.2005' on page 1
+7 undefined on input line 872.
+
+
+Overfull \hbox (145.62428pt too wide) in paragraph at lines 863--878
+[]\T1/futs/m/n/12 The signs of non-neg-li-gible ex-change-re-pul-sion-in-duced 
+fre-quency shifts were also found.[[],
+ []
+
+
+Overfull \hbox (40.68942pt too wide) in paragraph at lines 863--878
+[]\T1/futs/m/n/12 , [],
+ []
+
+
+Overfull \hbox (234.7671pt too wide) in paragraph at lines 863--878
+[]\T1/futs/m/n/12 , [], []]
+ []
+
+
+Overfull \hbox (4.1716pt too wide) in paragraph at lines 863--878
+\T1/futs/m/n/12 metry-ad-ap-ted per-turb-a-tion theory[[]] (SAPT)]
+ []
+
+
+Overfull \hbox (88.54352pt too wide) in paragraph at lines 863--878
+\T1/futs/m/it/12 al. \T1/futs/m/n/12 stud-ied the series of blue- and red-shift
+-ing complexes.[[]]
+ []
+
+
+LaTeX Warning: Citation 'Rodziewicz.Rutkowski.Melikova.Koll.ChemPhysChem.2005' 
+on page 17 undefined on input line 881.
+
+[17]
+
+LaTeX Warning: Citation 'Lee.Choi.Cho.PCCP.2010' on page 18 undefined on input 
+line 887.
+
+
+LaTeX Warning: Citation 'Brinzer.Berquist.Zhe.Dutta.Johnson.Krisher.Lambrecht.G
+arrett-Roe.JCP.2015' on page 18 undefined on input line 894.
+
+
+LaTeX Warning: Citation 'Wright.Howard.Howard.Tschumper.Hammer.JPCA.2013' on pa
+ge 18 undefined on input line 900.
+
+
+Overfull \hbox (79.01892pt too wide) in paragraph at lines 886--901
+\T1/futs/m/n/12 quency of the model ionic IR probes such as CN$[]$ or N$[]$ an-
+ions dis-solved in water.[[]]
+ []
+
+
+Overfull \hbox (108.24748pt too wide) in paragraph at lines 886--901
+\T1/futs/m/n/12 the re-cent work of Brin-zer \T1/futs/m/it/12 et al.\T1/futs/m/
+n/12 ,[[]]
+ []
+
+
+Overfull \hbox (7.45955pt too wide) in paragraph at lines 886--901
+\T1/futs/m/n/12 wa-ter, meth-anol and hexylamine.[[]] 
+ []
+
+
+Overfull \hbox (4.03947pt too wide) in paragraph at lines 904--913
+\T1/futs/m/n/12 From the brief lit-er-at-ure re-view on the vi-bra-tional sol-v
+a-to-chro-mism that was presen-ted above
+ []
+
+
+LaTeX Warning: Empty bibliography on input line 925.
+
+Package biblatex Info: Reference section=0 on input line 926.
+Package biblatex Info: Reference section=3 on input line 930.
+\openout3 = `thesis3-blx.aux'.
+
+Package biblatex Info: Setting label 'refsection:3' on input line 930.
+[18]
+Chapter 3.
+
+Overfull \hbox (1.55548pt too wide) in paragraph at lines 933--939
+\T1/futs/m/n/12 As poin-ted out in pre-vi-ous Chapter, un-der-stand-ing the vi-
+bra-tional sol-va-to-chro-mism re-quires
+ []
+
+
+LaTeX Warning: Citation 'Buckingham.ProcRSocLondonA.1958' on page 19 undefined 
+on input line 944.
+
+
+LaTeX Warning: Citation 'Buckingham.TransFaradaySoc.1960' on page 19 undefined 
+on input line 944.
+
+
+LaTeX Warning: Citation 'Buckingham.ProcRSocLondonA.1960' on page 19 undefined 
+on input line 944.
+
+
+LaTeX Warning: Citation 'McDowell.Buckingham.MolPhys.2005' on page 19 undefined
+ on input line 953.
+
+
+LaTeX Warning: Citation 'McDowell.Buckingham.JACS.2005' on page 19 undefined on
+ input line 953.
+
+
+LaTeX Warning: Citation 'McDowell.Buckingham.SpectrChimActaA.2005' on page 19 u
+ndefined on input line 953.
+
+
+LaTeX Warning: Citation 'Buckingham.CPL.2008' on page 19 undefined on input lin
+e 953.
+
+
+LaTeX Warning: Citation 'McDowell.Buckingham.SpectrChimActaA.2005' on page 19 u
+ndefined on input line 956.
+
+
+LaTeX Warning: Citation 'Buckingham.CPL.2008' on page 19 undefined on input lin
+e 956.
+
+
+LaTeX Warning: Citation 'Herrebout.Delanoye.vanderVeken.JPCA.2004' on page 19 u
+ndefined on input line 956.
+
+
+Overfull \hbox (97.85728pt too wide) in paragraph at lines 942--957
+\T1/futs/m/n/12 for the first time by Buckingham.[[], [],
+ []
+
+
+Overfull \hbox (0.21146pt too wide) in paragraph at lines 942--957
+\T1/futs/m/n/12 ordin-ates, solute's an-har-mon-icity and the vi-bra-tional fre
+-quency shifts. His for-mula, al-though
+ []
+
+
+Overfull \hbox (92.92354pt too wide) in paragraph at lines 942--957
+\T1/futs/m/n/12 quency shift, but also struc-tural de-form-a-tion in simple di-
+at-omic cases [[],
+ []
+
+
+Overfull \hbox (96.35922pt too wide) in paragraph at lines 942--957
+[]\T1/futs/m/n/12 , [], []]
+ []
+
+
+Overfull \hbox (209.33537pt too wide) in paragraph at lines 942--957
+\T1/futs/m/n/12 and also tri- and poly-atomic mo-lecules un-der vi-bra-tion-all
+y di-at-omic approximation.[[],
+ []
+
+
+LaTeX Warning: Citation 'Hush.Reimers.JPC.1995' on page 19 undefined on input l
+ine 958.
+
+
+LaTeX Warning: Citation 'Reimers.Zeng.Hush.JPC.1996' on page 19 undefined on in
+put line 958.
+
+
+LaTeX Warning: Citation 'Andrews.Boxer.JCPA.2002' on page 19 undefined on input
+ line 959.
+
+
+LaTeX Warning: Citation 'Andrews.Boxer.JCPA.2000' on page 19 undefined on input
+ line 959.
+
+
+Overfull \hbox (76.2661pt too wide) in paragraph at lines 958--966
+[]\T1/futs/m/n/12 At the turn of XXth cen-tury, Hush and Reimers[[], []]
+ []
+
+
+LaTeX Warning: Citation 'Cho.JCP.2003' on page 19 undefined on input line 968.
+
+
+LaTeX Warning: Citation 'Cho.JCP.2009' on page 19 undefined on input line 968.
+
+[19
+
+]
+
+LaTeX Warning: Reference `a:vibrational-analysis' on page 20 undefined on input
+ line 997.
+
+
+LaTeX Warning: Reference `a:harmonic-oscillator' on page 20 undefined on input 
+line 997.
+
+[20]
+
+LaTeX Warning: Reference `e:h_harm' on page 21 undefined on input line 1059.
+
+
+LaTeX Warning: Reference `e:h_anh' on page 21 undefined on input line 1060.
+
+
+LaTeX Warning: Reference `eq:general_state_vibr' on page 21 undefined on input 
+line 1126.
+
+[21]
+
+LaTeX Warning: Reference `a:matrix-elements' on page 22 undefined on input line
+ 1139.
+
+
+Overfull \hbox (9.13753pt too wide) in paragraph at lines 1136--1146
+\T1/futs/m/n/12 because all the di-ag-onal mat-rix ele-ments of $\FML/futmi/m/i
+t/12 Q[]$ \T1/futs/m/n/12 and $\FML/futmi/m/it/12 Q[]$ \T1/futs/m/n/12 op-er-at
+-ors are zero (see the Ap-pendix []).
+ []
+
+LaTeX Font Info:    Font shape `T1/futs/bx/n' in size <14.4> not available
+(Font)              Font shape `T1/futs/b/n' tried instead on input line 1163.
+
+LaTeX Warning: Reference `e:gwlevels' on page 22 undefined on input line 1165.
+
+
+LaTeX Warning: Reference `e:ge' on page 22 undefined on input line 1165.
+
+
+LaTeX Warning: Reference `e:dw-first-order-pt' on page 22 undefined on input li
+ne 1200.
+
+[22]
+
+LaTeX Warning: Reference `e:gwlevels' on page 23 undefined on input line 1242.
+
+
+LaTeX Warning: Reference `e:ge' on page 23 undefined on input line 1242.
+
+
+LaTeX Warning: Reference `eq:domega2' on page 23 undefined on input line 1263.
+
+
+Overfull \hbox (29.3747pt too wide) in paragraph at lines 1307--1307
+[] 
+ []
+
+
+LaTeX Warning: Reference `eq:1x3' on page 23 undefined on input line 1312.
+
+
+Overfull \hbox (29.3747pt too wide) in paragraph at lines 1335--1335
+[] 
+ []
+
+[23]
+Overfull \hbox (29.3747pt too wide) in paragraph at lines 1345--1345
+[] 
+ []
+
+
+LaTeX Warning: Reference `e:dw-second-order-pt' on page 24 undefined on input l
+ine 1348.
+
+
+LaTeX Warning: Reference `eq:1x3' on page 24 undefined on input line 1352.
+
+
+LaTeX Warning: Reference `e:x552' on page 24 undefined on input line 1364.
+
+
+LaTeX Warning: Reference `e:x553' on page 24 undefined on input line 1364.
+
+
+LaTeX Warning: Reference `e:dw-second-order-pt' on page 24 undefined on input l
+ine 1364.
+
+
+LaTeX Warning: Reference `e:anharm-1st-order' on page 24 undefined on input lin
+e 1392.
+
+
+LaTeX Warning: Reference `e:anharm-2nd-order' on page 24 undefined on input lin
+e 1394.
+
+[24]
+
+LaTeX Warning: Reference `e:buckingham-2st-order-total-fund' on page 25 undefin
+ed on input line 1430.
+
+
+Overfull \hbox (8.4674pt too wide) in paragraph at lines 1435--1438
+\T1/futs/m/n/12 Within Buck-ing-ham's model of the vi-bra-tional sol-va-to-chro
+-mism, it is stright-for-ward to roughly
+ []
+
+[25]
+Overfull \hbox (29.3747pt too wide) in paragraph at lines 1491--1491
+[] 
+ []
+
+
+LaTeX Warning: Reference `e:struct-dist-cho' on page 26 undefined on input line
+ 1530.
+
+
+LaTeX Warning: Reference `e:vib-pot-energy-function' on page 26 undefined on in
+put line 1537.
+
+
+Overfull \hbox (29.3747pt too wide) in paragraph at lines 1549--1549
+[] 
+ []
+
+
+Overfull \hbox (29.3747pt too wide) in paragraph at lines 1563--1563
+[] 
+ []
+
+[26]
+
+LaTeX Warning: Reference `a:mw-coord' on page 27 undefined on input line 1600.
+
+
+Overfull \hbox (4.5472pt too wide) in paragraph at lines 1613--1621
+\T1/futs/m/n/12 leads to the solva-tion-in-duced vi-bra-tional fre-quen-cies $[
+] \FMS/futm/m/n/12 Å []$ \T1/futs/m/n/12 and the new nor-mal modes
+ []
+
+[27]
+
+LaTeX Warning: Reference `e:W2-w2' on page 28 undefined on input line 1693.
+
+
+LaTeX Warning: Reference `e:buckingham-2st-order-total-fund' on page 28 undefin
+ed on input line 1694.
+
+
+LaTeX Warning: Reference `e:buckingham-2st-order-total-fund' on page 28 undefin
+ed on input line 1701.
+
+
+LaTeX Warning: Reference `e:buckingham-2st-order-total-fund' on page 28 undefin
+ed on input line 1711.
+
+
+LaTeX Warning: Reference `e:dw-fea' on page 28 undefined on input line 1730.
+
+
+LaTeX Warning: Reference `e:dw-fma' on page 28 undefined on input line 1734.
+
+
+LaTeX Warning: Citation 'Stone.TheTheoryOfIntermolecularForces.1996' on page 28
+ undefined on input line 1746.
+
+[28]
+
+LaTeX Warning: Reference `e:buckingham-2st-order-total-fund' on page 29 undefin
+ed on input line 1755.
+
+
+LaTeX Warning: Citation 'Cho.JCP.2009' on page 29 undefined on input line 1757.
+
+
+
+Overfull \hbox (2.6052pt too wide) in paragraph at lines 1764--1764
+[] 
+ []
+
+
+LaTeX Warning: Citation 'Buckingham.QRevChemSoc.1959' on page 29 undefined on i
+nput line 1777.
+
+
+LaTeX Warning: Reference `e:dmtp' on page 29 undefined on input line 1793.
+
+
+LaTeX Warning: Reference `e:dmtp-sol' on page 29 undefined on input line 1793.
+
+
+LaTeX Warning: Citation 'Cho.JCP.2009' on page 29 undefined on input line 1794.
+
+
+
+LaTeX Warning: Citation 'Jackson.ClassicalElectrodynamics.1998' on page 29 unde
+fined on input line 1795.
+
+
+Overfull \hbox (57.95541pt too wide) in paragraph at lines 1789--1799
+\T1/futs/m/n/12 mul-ti-pole ex-pan-sions from Eqs. [] and [] are dif-fer-ent th
+an in the ori-ginal work of Cho[[]]
+ []
+
+
+LaTeX Warning: Reference `e:dmtp-sol' on page 29 undefined on input line 1817.
+
+
+LaTeX Warning: Reference `e:esf' on page 29 undefined on input line 1824.
+
+
+LaTeX Warning: Reference `c:my-model' on page 29 undefined on input line 1825.
+
+
+Overfull \hbox (1.38757pt too wide) in paragraph at lines 1817--1827
+\T1/futs/m/n/12 mo-lecu-lar ag-greg-ate can be modeled by the prop-er-ties of t
+he isol-ated mo-lecules in gas phase.
+ []
+
+
+LaTeX Warning: Reference `e:buckingham-2st-order-total-fund' on page 29 undefin
+ed on input line 1832.
+
+[29]
+
+LaTeX Warning: Reference `e:force-const-cho' on page 30 undefined on input line
+ 1835.
+
+
+LaTeX Warning: Reference `e:vib-pot-energy-function-new.condition' on page 30 u
+ndefined on input line 1896.
+
+
+LaTeX Warning: Reference `Q-space-transform' on page 30 undefined on input line
+ 1918.
+
+
+LaTeX Warning: Reference `dQ-new-c' on page 30 undefined on input line 1921.
+
+[30]
+
+LaTeX Warning: Reference `Q-space-transform' on page 31 undefined on input line
+ 1949.
+
+
+LaTeX Warning: Reference `dQ-new' on page 31 undefined on input line 1959.
+
+
+LaTeX Warning: Reference `dQ-new-s' on page 31 undefined on input line 1960.
+
+
+LaTeX Warning: Reference `dQ-T1' on page 31 undefined on input line 1965.
+
+
+LaTeX Warning: Reference `B-approx-expl' on page 31 undefined on input line 198
+3.
+
+
+LaTeX Warning: Reference `A' on page 31 undefined on input line 1983.
+
+
+Overfull \hbox (29.3747pt too wide) in paragraph at lines 2003--2003
+[] 
+ []
+
+
+LaTeX Warning: Reference `dQ-approx-T1-expl-lead' on page 31 undefined on input
+ line 2034.
+
+
+LaTeX Warning: Reference `e:struct-dist-cho' on page 31 undefined on input line
+ 2034.
+
+
+LaTeX Warning: Reference `e:buckingham-2st-order-total-fund' on page 31 undefin
+ed on input line 2043.
+
+[31]
+
+LaTeX Warning: Reference `e:struct-dist-cho' on page 32 undefined on input line
+ 2047.
+
+
+LaTeX Warning: Reference `dQ-approx-T1-expl-lead' on page 32 undefined on input
+ line 2048.
+
+
+LaTeX Warning: Reference `f.NMA.dq' on page 32 undefined on input line 2064.
+
+File: figures/Fig-nma-dq.eps Graphic file (type eps)
+<figures/Fig-nma-dq.eps>
+
+LaTeX Warning: Reference `f.NMA.dq' on page 32 undefined on input line 2086.
+
+
+LaTeX Warning: Reference `f.NMA.dq' on page 32 undefined on input line 2090.
+
+
+LaTeX Warning: Reference `f.NMA.dq' on page 32 undefined on input line 2091.
+
+
+LaTeX Warning: Reference `f.NMA.dq' on page 32 undefined on input line 2101.
+
+File: figures/Fig-men3-dq.eps Graphic file (type eps)
+<figures/Fig-men3-dq.eps>
+
+LaTeX Warning: Citation 'Blasiak.Lee.Cho.JCP.2013' on page 32 undefined on inpu
+t line 2125.
+
+
+LaTeX Warning: Citation 'Blasiak.Cho.JCP.2014' on page 32 undefined on input li
+ne 2125.
+
+
+LaTeX Warning: Citation 'Blasiak.Cho.JCP.2015' on page 32 undefined on input li
+ne 2125.
+
+
+LaTeX Warning: Citation 'Blasiak.Ritchie.Webb.Cho.XXX.2016' on page 32 undefine
+d on input line 2127.
+
+
+LaTeX Warning: Citation 'Blasiak.Maj.Cho.XXX.2016' on page 32 undefined on inpu
+t line 2127.
+
+
+Overfull \hbox (19.09125pt too wide) in paragraph at lines 2123--2130
+\T1/futs/m/n/12 lombic models[[], [], []] which
+ []
+
+
+Overfull \hbox (162.24231pt too wide) in paragraph at lines 2123--2130
+\T1/futs/m/n/12 is in stark con-trast to triple-bon-ded IR probes solvato-chrom
+isms such as CN, NC or N$[]$.[[],
+ []
+
+[32] [33]
+
+LaTeX Warning: Reference `e:struct-dist-cho' on page 34 undefined on input line
+ 2170.
+
+
+LaTeX Warning: Reference `e:struct-dist-cho-transl' on page 34 undefined on inp
+ut line 2171.
+
+
+LaTeX Warning: Reference `e:dmtp' on page 34 undefined on input line 2190.
+
+
+LaTeX Warning: Reference `e:dipole-der-diff-solution' on page 34 undefined on i
+nput line 2193.
+
+
+LaTeX Warning: Reference `e:dipole-solution' on page 34 undefined on input line
+ 2217.
+
+
+LaTeX Warning: Reference `e:dipole-solution' on page 34 undefined on input line
+ 2223.
+
+
+LaTeX Warning: Reference `e:dipole-der-diff-solution' on page 34 undefined on i
+nput line 2228.
+
+
+LaTeX Warning: Citation 'Cho.JCP.2009' on page 34 undefined on input line 2229.
+
+
+[34]
+Overfull \hbox (29.3747pt too wide) in paragraph at lines 2276--2276
+[] 
+ []
+
+
+LaTeX Warning: Reference `e:buckingham-2st-order-total-fund' on page 35 undefin
+ed on input line 2294.
+
+
+LaTeX Warning: Reference `e:force-const-cho' on page 35 undefined on input line
+ 2307.
+
+
+LaTeX Warning: Reference `e:struct-dist-cho' on page 35 undefined on input line
+ 2310.
+
+
+LaTeX Warning: Reference `s:str-dist-general-discussion' on page 35 undefined o
+n input line 2311.
+
+[35]
+
+LaTeX Warning: Empty bibliography on input line 2313.
+
+Package biblatex Info: Reference section=0 on input line 2314.
+Package biblatex Info: Reference section=4 on input line 2317.
+\openout3 = `thesis4-blx.aux'.
+
+Package biblatex Info: Setting label 'refsection:4' on input line 2317.
+[36]
+Chapter 4.
+[37
+
+]
+
+LaTeX Warning: Reference `e:dw-fea-fma' on page 38 undefined on input line 2396
+.
+
+
+Overfull \hbox (2.83633pt too wide) in paragraph at lines 2398--2409
+[]\T1/futs/m/n/12 To cal-cu-late the sol-va-to-chro-mic vi-bra-tional fre-quenc
+y shift us-ing solute's gas-phase prop-
+ []
+
+[38]
+
+LaTeX Warning: Reference `e:struct-dist-cho' on page 39 undefined on input line
+ 2488.
+
+
+LaTeX Warning: Reference `e:esol-onsager' on page 39 undefined on input line 24
+99.
+
+
+LaTeX Warning: Reference `e:dw-ons-gen' on page 39 undefined on input line 2500
+.
+
+
+LaTeX Warning: Reference `e:mu-qf' on page 39 undefined on input line 2500.
+
+
+LaTeX Warning: Reference `e:dw-ons-working-form' on page 39 undefined on input 
+line 2504.
+
+
+Overfull \hbox (29.3747pt too wide) in paragraph at lines 2532--2532
+[] 
+ []
+
+
+LaTeX Warning: Reference `e:mu-qf' on page 39 undefined on input line 2534.
+
+
+LaTeX Warning: Reference `e:fons' on page 39 undefined on input line 2535.
+
+[39]
+
+LaTeX Warning: Reference `e:ons-e-sol-init' on page 40 undefined on input line 
+2583.
+
+
+LaTeX Warning: Reference `e:ons-dq-init' on page 40 undefined on input line 258
+5.
+
+
+LaTeX Warning: Reference `e:ons-si-init' on page 40 undefined on input line 258
+6.
+
+
+LaTeX Warning: Reference `e:ons-field' on page 40 undefined on input line 2590.
+
+
+
+LaTeX Warning: Reference `e:a-matrix' on page 40 undefined on input line 2590.
+
+
+LaTeX Warning: Reference `e:ons-field-deriv' on page 40 undefined on input line
+ 2591.
+
+
+LaTeX Warning: Reference `e:mu-qf' on page 40 undefined on input line 2592.
+
+
+LaTeX Warning: Reference `e:mu-qf-derivative' on page 40 undefined on input lin
+e 2593.
+
+
+LaTeX Warning: Reference `e:ons-dq-init' on page 40 undefined on input line 259
+4.
+
+
+LaTeX Warning: Reference `e:ons-si-iter' on page 40 undefined on input line 259
+5.
+
+
+LaTeX Warning: Reference `e:esol-onsager' on page 40 undefined on input line 25
+96.
+
+
+LaTeX Warning: Reference `e:dw-ons-working-form' on page 40 undefined on input 
+line 2611.
+
+
+LaTeX Warning: Reference `e:ons-si-iter' on page 40 undefined on input line 261
+2.
+
+
+LaTeX Warning: Reference `e:ons-ki-iter' on page 40 undefined on input line 261
+2.
+
+
+Overfull \hbox (0.9316pt too wide) in paragraph at lines 2631--2636
+\T1/futs/m/n/12 con-di-tions spe-cified by a point di-pole in a cav-ity sur-rou
+n-ded by con-tinuum dielec-tric. There-
+ []
+
+[40]
+
+LaTeX Warning: Reference `e:f9f9f' on page 41 undefined on input line 2688.
+
+[41]
+
+LaTeX Warning: Citation 'Jeziorski.Moszynski.Szalewicz.ChemRev.1994' on page 42
+ undefined on input line 2743.
+
+
+LaTeX Warning: Citation 'Stone.TheTheoryOfIntermolecularForces.1996' on page 42
+ undefined on input line 2743.
+
+
+Overfull \hbox (210.06921pt too wide) in paragraph at lines 2734--2749
+\T1/futs/m/n/12 lecules (i.e., as if they were isolated).[[], []]
+ []
+
+
+LaTeX Warning: Citation 'Stone.TheTheoryOfIntermolecularForces.1996' on page 42
+ undefined on input line 2769.
+
+
+LaTeX Warning: Reference `e:dmtp' on page 42 undefined on input line 2770.
+
+LaTeX Font Info:    Font shape `TS1/futs/bx/n' in size <12> not available
+(Font)              Font shape `TS1/futs/b/n' tried instead on input line 2781.
+
+LaTeX Font Info:    Font shape `TS1/futs/bx/n' in size <9> not available
+(Font)              Font shape `TS1/futs/b/n' tried instead on input line 2781.
+
+LaTeX Font Info:    Font shape `TS1/futs/bx/n' in size <7> not available
+(Font)              Font shape `TS1/futs/b/n' tried instead on input line 2781.
+
+
+Overfull \hbox (149.49138pt too wide) in paragraph at lines 2764--2781
+\T1/futs/m/n/12 dis-trib-uted mul-ti-pole ex-pan-sion of elec-tron charge dens-
+ity distributions[[]]
+ []
+
+
+LaTeX Warning: Reference `e:dmtp-sol' on page 42 undefined on input line 2805.
+
+
+LaTeX Warning: Citation 'Blasiak.Cho.JCP.2014' on page 42 undefined on input li
+ne 2810.
+
+
+Overfull \hbox (29.3747pt too wide) in paragraph at lines 2832--2832
+[] 
+ []
+
+
+Overfull \hbox (121.93947pt too wide) in paragraph at lines 2805--2832
+\T1/futs/m/n/12 first and second de-riv-at-ives of the Cou-lombic elec-tro-sta-
+tic en-ergy can be ex-pressed as follows[[]]: 
+ []
+
+[42]
+Overfull \hbox (29.3747pt too wide) in paragraph at lines 2856--2856
+[] 
+ []
+
+
+LaTeX Warning: Reference `x:726439' on page 43 undefined on input line 2863.
+
+
+LaTeX Warning: Reference `x:726440' on page 43 undefined on input line 2863.
+
+
+LaTeX Warning: Reference `asec:vibranal' on page 43 undefined on input line 288
+5.
+
+
+LaTeX Warning: Reference `e:deriv-operators-1' on page 43 undefined on input li
+ne 2893.
+
+
+LaTeX Warning: Reference `e:deriv-operators-2' on page 43 undefined on input li
+ne 2893.
+
+
+LaTeX Warning: Reference `x:726439' on page 43 undefined on input line 2894.
+
+
+LaTeX Warning: Reference `x:726440' on page 43 undefined on input line 2894.
+
+[43]
+
+LaTeX Warning: Reference `e:f-terms' on page 44 undefined on input line 2944.
+
+
+LaTeX Warning: Reference `e:k-terms' on page 44 undefined on input line 2944.
+
+
+LaTeX Warning: Reference `e:potential-gradients' on page 44 undefined on input 
+line 2947.
+
+
+LaTeX Warning: Reference `e:dmtp-sol' on page 44 undefined on input line 2957.
+
+
+LaTeX Warning: Reference `e:dw-solefp-coul-correction' on page 44 undefined on 
+input line 2967.
+
+
+LaTeX Warning: Reference `a:fk-terms' on page 44 undefined on input line 2972.
+
+
+LaTeX Warning: Reference `e:dw-solefp-coul-correction' on page 44 undefined on 
+input line 2977.
+
+[44]
+
+LaTeX Warning: Reference `a:convergence-of-the-correction-terms' on page 45 und
+efined on input line 3014.
+
+
+LaTeX Warning: Reference `s:dw-coul' on page 45 undefined on input line 3019.
+
+
+LaTeX Warning: Citation 'Stone.TheTheoryOfIntermolecularForces.1996' on page 45
+ undefined on input line 3051.
+
+
+LaTeX Warning: Citation 'Jeziorski.Moszynski.Szalewicz.ChemRev.1994' on page 45
+ undefined on input line 3051.
+
+
+Overfull \hbox (113.83945pt too wide) in paragraph at lines 3047--3059
+\T1/futs/m/n/12 arise in the second-or-der with re-spect to the in-ter-ac-tion 
+operator.[[],
+ []
+
+
+Overfull \hbox (7.29167pt too wide) in paragraph at lines 3047--3059
+[]\T1/futs/m/n/12 ] Thus, the second or-der cor-rec-tion to the total
+ []
+
+
+LaTeX Warning: Reference `e:eint-2' on page 45 undefined on input line 3064.
+
+[45]
+
+LaTeX Warning: Reference `e:eint-2-ind-mult' on page 46 undefined on input line
+ 3104.
+
+
+LaTeX Warning: Citation 'Li.Netzloff.Gordon.JCP.2006' on page 46 undefined on i
+nput line 3107.
+
+
+LaTeX Warning: Reference `e:eint-2-ind-mult' on page 46 undefined on input line
+ 3136.
+
+
+LaTeX Warning: Reference `e:eint-2-ind-dip-distr' on page 46 undefined on input
+ line 3137.
+
+
+LaTeX Warning: Reference `e:eint-2-ind-dip-distr' on page 46 undefined on input
+ line 3152.
+
+[46]
+
+LaTeX Warning: Reference `e:dw-ind-base' on page 47 undefined on input line 319
+0.
+
+
+LaTeX Warning: Reference `e:eint-2-ind-dip-distr' on page 47 undefined on input
+ line 3223.
+
+[47]
+
+LaTeX Warning: Citation 'Blasiak.Cho.JCP.2014' on page 48 undefined on input li
+ne 3318.
+
+
+LaTeX Warning: Reference `asec:vibranal' on page 48 undefined on input line 332
+5.
+
+
+LaTeX Warning: Reference `e:dmtp-sol' on page 48 undefined on input line 3331.
+
+
+LaTeX Warning: Reference `e:solvatochromic-multipoles' on page 48 undefined on 
+input line 3343.
+
+[48]
+
+LaTeX Warning: Reference `e:dw-ind-avec' on page 49 undefined on input line 337
+7.
+
+
+LaTeX Warning: Reference `e:eint-2' on page 49 undefined on input line 3385.
+
+
+LaTeX Warning: Reference `e:sfaf' on page 49 undefined on input line 3415.
+
+
+LaTeX Warning: Citation 'Smith.Ruedenberg.Gordon.Slipchenko.JCP.2012' on page 4
+9 undefined on input line 3415.
+
+
+Overfull \hbox (108.85939pt too wide) in paragraph at lines 3411--3423
+\T1/futs/m/n/12 con-trib-ut-ing to the dis-per-sion in-ter-ac-tion en-ergy in E
+q. [] are[[]] 
+ []
+
+
+LaTeX Warning: Reference `e:interaction-tensors-2' on page 49 undefined on inpu
+t line 3428.
+
+
+LaTeX Warning: Reference `e:interaction-tensors-3' on page 49 undefined on inpu
+t line 3429.
+
+
+LaTeX Warning: Reference `e:x487395' on page 49 undefined on input line 3430.
+
+
+LaTeX Warning: Reference `e:sfaf' on page 49 undefined on input line 3430.
+
+[49]
+
+LaTeX Warning: Reference `e:udisp-6-7-8' on page 50 undefined on input line 348
+3.
+
+
+LaTeX Warning: Reference `e:udisp-cn-series' on page 50 undefined on input line
+ 3494.
+
+
+LaTeX Warning: Reference `e:udisp-cn-series' on page 50 undefined on input line
+ 3506.
+
+
+LaTeX Warning: Citation 'Stone.TheTheoryOfIntermolecularForces.1996' on page 50
+ undefined on input line 3507.
+
+
+LaTeX Warning: Reference `e:udisp-cn-series' on page 50 undefined on input line
+ 3509.
+
+
+LaTeX Warning: Reference `e:dw-fea-fma' on page 50 undefined on input line 3510
+.
+
+
+Overfull \hbox (29.3747pt too wide) in paragraph at lines 3521--3521
+[] 
+ []
+
+[50]
+
+LaTeX Warning: Reference `e:dw-disp-6' on page 51 undefined on input line 3554.
+
+
+
+LaTeX Warning: Reference `e:dw-fea' on page 51 undefined on input line 3556.
+
+
+Overfull \hbox (29.3747pt too wide) in paragraph at lines 3592--3592
+[] 
+ []
+
+
+LaTeX Warning: Reference `e:dw-disp-6' on page 51 undefined on input line 3605.
+
+
+
+LaTeX Warning: Reference `e:dw-disp-6-iso' on page 51 undefined on input line 3
+624.
+
+
+LaTeX Warning: Reference `e:happylabel' on page 51 undefined on input line 3629
+.
+
+
+LaTeX Warning: Reference `e:dw-disp-6-iso' on page 51 undefined on input line 3
+631.
+
+
+LaTeX Warning: Reference `e:udisp-cn-series' on page 51 undefined on input line
+ 3654.
+
+[51]
+Overfull \hbox (40.47743pt too wide) in paragraph at lines 3697--3697
+[] 
+ []
+
+
+LaTeX Warning: Reference `e:dw-disp-8' on page 52 undefined on input line 3702.
+
+
+
+LaTeX Warning: Reference `s:disp' on page 52 undefined on input line 3708.
+
+
+LaTeX Warning: Reference `e:dw-disp-6' on page 52 undefined on input line 3712.
+
+
+
+LaTeX Warning: Citation 'Adamovic.Gordon.MolPhys.2005' on page 52 undefined on 
+input line 3714.
+
+
+Overfull \hbox (29.3747pt too wide) in paragraph at lines 3733--3733
+[] 
+ []
+
+
+LaTeX Warning: Reference `e:378463267' on page 52 undefined on input line 3739.
+
+
+
+LaTeX Warning: Reference `e:happylabel' on page 52 undefined on input line 3739
+.
+
+
+LaTeX Warning: Reference `e:pi' on page 52 undefined on input line 3739.
+
+
+LaTeX Warning: Reference `e:gi' on page 52 undefined on input line 3739.
+
+[52]
+
+LaTeX Warning: Reference `e:cj6' on page 53 undefined on input line 3784.
+
+
+LaTeX Warning: Reference `e:udisp-cn-series' on page 53 undefined on input line
+ 3786.
+
+
+LaTeX Warning: Citation 'Adamovic.Gordon.MolPhys.2005' on page 53 undefined on 
+input line 3792.
+
+
+LaTeX Warning: Citation 'Jeziorski.Moszynski.Szalewicz.ChemRev.1994' on page 53
+ undefined on input line 3802.
+
+
+LaTeX Warning: Citation 'Adamovic.Gordon.MolPhys.2005' on page 53 undefined on 
+input line 3802.
+
+
+LaTeX Warning: Citation 'Xu.Zahariev.Gordon.JCTC.2014' on page 53 undefined on 
+input line 3814.
+
+
+Overfull \hbox (95.77948pt too wide) in paragraph at lines 3786--3819
+\T1/futs/m/n/12 site rep-res-ent-a-tion, its mag-nitude can be $\FMS/futm/m/n/1
+2 ^^X$\T1/futs/m/n/12 1/3 of the total dis-per-sion energy.[[]]
+ []
+
+
+Overfull \hbox (11.22952pt too wide) in paragraph at lines 3786--3819
+\T1/futs/m/n/12 SAPT.[[], []] Un-
+ []
+
+
+Overfull \hbox (49.03886pt too wide) in paragraph at lines 3786--3819
+\T1/futs/m/n/12 com-pute LMO-LMO dis-trib-uted di-pole-quad-ru-pole polarizabil
+ities.[[]]
+ []
+
+
+LaTeX Warning: Reference `e:eint-1' on page 53 undefined on input line 3833.
+
+
+LaTeX Warning: Reference `e:eint-1' on page 53 undefined on input line 3846.
+
+
+LaTeX Warning: Reference `e:eint-1-expol' on page 53 undefined on input line 38
+61.
+
+
+LaTeX Warning: Reference `e:eint-1' on page 53 undefined on input line 3861.
+
+[53]
+
+LaTeX Warning: Reference `e:antisymmetrizer-series' on page 54 undefined on inp
+ut line 3867.
+
+
+LaTeX Warning: Citation 'Jensen.Gordon.JCP.1998' on page 54 undefined on input 
+line 3870.
+
+
+LaTeX Warning: Citation 'Jensen.Gordon.MolPhys.1996' on page 54 undefined on in
+put line 3870.
+
+
+LaTeX Warning: Citation 'Jensen.JCP.1996' on page 54 undefined on input line 38
+72.
+
+
+Overfull \hbox (37.08852pt too wide) in paragraph at lines 3889--3889
+[] 
+ []
+
+
+Overfull \hbox (0.21336pt too wide) in paragraph at lines 3866--3889
+\T1/futs/m/n/12 overlap[[]], the Hartree-Fock ex-change-re-pul-sion in-ter-ac-t
+ion en-ergy between
+ []
+
+
+LaTeX Warning: Citation 'Jensen.Gordon.JCP.1998' on page 54 undefined on input 
+line 3899.
+
+
+LaTeX Warning: Citation 'Jensen.Gordon.MolPhys.1996' on page 54 undefined on in
+put line 3899.
+
+
+LaTeX Warning: Citation 'Kemp.Rintelman.Gordon.Jensen.TheoretChemAcc.2009' on p
+age 54 undefined on input line 3899.
+
+
+LaTeX Warning: Reference `e:u-exrep-efp' on page 54 undefined on input line 390
+0.
+
+
+LaTeX Warning: Citation 'Kitaura.Morokuma.IJQC.1976' on page 54 undefined on in
+put line 3904.
+
+
+LaTeX Warning: Citation 'Chen.Li.JPCA.2010' on page 54 undefined on input line 
+3909.
+
+
+LaTeX Warning: Citation 'Chen.Gordon.JCP.1996' on page 54 undefined on input li
+ne 3909.
+
+
+LaTeX Warning: Citation 'Jens.Bruske.Grimme.PCCP.2009' on page 54 undefined on 
+input line 3909.
+
+
+LaTeX Warning: Citation 'Gora.Sokalski.Leszczynski.Pett.JPCB.2005' on page 54 u
+ndefined on input line 3909.
+
+
+LaTeX Warning: Citation 'Chaudret.Gresh.Parisel.Piquemel.JCC.2011' on page 54 u
+ndefined on input line 3909.
+
+
+LaTeX Warning: Reference `e:u-exrep-efp' on page 54 undefined on input line 391
+1.
+
+
+Overfull \hbox (73.52133pt too wide) in paragraph at lines 3889--3914
+\T1/futs/m/n/12 and $\FML/futmi/m/it/12 d$\T1/futs/m/n/12 th LMO's to solvent m
+o-lecule. It was shown[[], [],
+ []
+
+
+Overfull \hbox (10.51953pt too wide) in paragraph at lines 3889--3914
+[]\T1/futs/m/n/12 ] that the ex-pres-sion in Eq. [] gives
+ []
+
+
+Overfull \hbox (9.45157pt too wide) in paragraph at lines 3889--3914
+\T1/futs/m/n/12 en-ergy de-com-pos-i-tion method[[]] as well as with ex-act qua
+ntum
+ []
+
+
+Overfull \hbox (10.55908pt too wide) in paragraph at lines 3889--3914
+\T1/futs/m/n/12 wise additive,[[], [], [],
+ []
+
+
+Overfull \hbox (16.52148pt too wide) in paragraph at lines 3889--3914
+[]\T1/futs/m/n/12 , []] one
+ []
+
+
+Overfull \hbox (37.2466pt too wide) in paragraph at lines 3973--3973
+[] 
+ []
+
+[54]
+
+LaTeX Warning: Reference `e:force-exrep' on page 55 undefined on input line 397
+5.
+
+
+LaTeX Warning: Reference `e:force-exrep' on page 55 undefined on input line 399
+2.
+
+
+Overfull \hbox (29.3747pt too wide) in paragraph at lines 4059--4059
+[] 
+ []
+
+[55]
+
+LaTeX Warning: Reference `e:derTij' on page 56 undefined on input line 4070.
+
+
+LaTeX Warning: Reference `e:derXij' on page 56 undefined on input line 4125.
+
+
+LaTeX Warning: Reference `sdd' on page 56 undefined on input line 4129.
+
+
+LaTeX Warning: Reference `e:derXij' on page 56 undefined on input line 4130.
+
+
+LaTeX Warning: Reference `e:eint-2-ind' on page 56 undefined on input line 4147
+.
+
+[56]
+
+LaTeX Warning: Citation 'Stone.Misquitta.CPL.2009' on page 57 undefined on inpu
+t line 4163.
+
+
+LaTeX Warning: Citation 'Jeziorski.Moszynski.Szalewicz.ChemRev.1994' on page 57
+ undefined on input line 4164.
+
+
+Overfull \hbox (43.30241pt too wide) in paragraph at lines 4154--4168
+\T1/futs/m/n/12 DCBS and MCBS in-duc-tion en-er-gies as pro-posed by Stone and 
+Misquitta[[]]
+ []
+
+
+LaTeX Warning: Citation 'Stone.Misquitta.CPL.2009' on page 57 undefined on inpu
+t line 4172.
+
+
+LaTeX Warning: Reference `e:ct-int' on page 57 undefined on input line 4174.
+
+
+LaTeX Warning: Citation 'Li.Gordon.Jensen.JCP.2006' on page 57 undefined on inp
+ut line 4179.
+
+
+Overfull \hbox (110.3188pt too wide) in paragraph at lines 4168--4180
+\T1/futs/m/n/12 de-veloped an ap-prox-im-ate and much faster way to com-pute $\
+FML/futmi/m/it/12 U[]$ \T1/futs/m/n/12 at HF level of theory.[[]] 
+ []
+
+[57]
+
+LaTeX Warning: Citation 'Valisko.Boda.JPCB.2005' on page 58 undefined on input 
+line 4265.
+
+
+LaTeX Warning: Citation 'Reis.Iglesias.PCCP.2011' on page 58 undefined on input
+ line 4280.
+
+[58]
+
+LaTeX Warning: Citation 'London.TransFaradSoc.1937' on page 59 undefined on inp
+ut line 4327.
+
+
+LaTeX Warning: Reference `e:73626' on page 59 undefined on input line 4354.
+
+
+LaTeX Warning: Reference `e:x123' on page 59 undefined on input line 4402.
+
+
+LaTeX Warning: Reference `e:OKF' on page 59 undefined on input line 4402.
+
+[59]
+
+LaTeX Warning: Citation 'London.TransFaradSoc.1937' on page 60 undefined on inp
+ut line 4486.
+
+
+Overfull \hbox (38.45546pt too wide) in paragraph at lines 4484--4490
+\T1/futs/m/n/12 Lon-don iso-tropic dis-per-sion en-ergy ap-prox-im-a-tion which
+ states that[[]] 
+ []
+
+
+LaTeX Warning: Reference `e:ryap' on page 60 undefined on input line 4493.
+
+
+LaTeX Warning: Reference `e:edisp6' on page 60 undefined on input line 4494.
+
+[60]
+
+LaTeX Warning: Reference `c:dma' on page 61 undefined on input line 4549.
+
+
+LaTeX Warning: Citation 'Stone.JCTC.2005' on page 61 undefined on input line 45
+53.
+
+
+LaTeX Warning: Citation 'Sokalski.Poirier.CPL.1983' on page 61 undefined on inp
+ut line 4554.
+
+
+LaTeX Warning: Citation 'Etchebest.Lavery.Pullman.TheorChimActa.1982' on page 6
+1 undefined on input line 4556.
+
+
+LaTeX Warning: Reference `e:solvatochromic-multipoles' on page 61 undefined on 
+input line 4558.
+
+
+Overfull \hbox (12.71925pt too wide) in paragraph at lines 4548--4563
+\T1/futs/m/n/12 [[]]. Ap-ply-ing those meth-ods leads to SolDMA,
+ []
+
+
+LaTeX Warning: Citation 'Breneman.Wiberg.JCC.1990' on page 61 undefined on inpu
+t line 4569.
+
+
+Overfull \hbox (7.4317pt too wide) in paragraph at lines 4564--4572
+[]\T1/futs/m/n/12 The SolL-MTP model has the unique fea-ture that all the sol-v
+a-to-chro-mic dis-trib-uted charges
+ []
+
+
+Overfull \hbox (119.61137pt too wide) in paragraph at lines 4564--4572
+\T1/futs/m/n/12 struc-ted based on the charges from elec-tro-sta-tic po-ten-tia
+ls us-ing a grid-based method[[]]
+ []
+
+
+LaTeX Warning: Reference `f:contr' on page 61 undefined on input line 4584.
+
+
+LaTeX Warning: Reference `f:solxn' on page 61 undefined on input line 4585.
+
+File: figures/contr.eps Graphic file (type eps)
+<figures/contr.eps>
+File: figures/SolXn.eps Graphic file (type eps)
+ <figures/SolXn.eps> [61]
+
+LaTeX Warning: Citation 'Day.Jensen.Gordon.Webb.Stevens.Krauss.Garmer.Basch.Coh
+en.JCP.1996' on page 62 undefined on input line 4643.
+
+
+LaTeX Warning: Citation 'Flick.Kosenkov.Hohenstein.Sherrill.Slipchenko.JCTC.201
+2' on page 62 undefined on input line 4643.
+
+
+Overfull \hbox (99.93018pt too wide) in paragraph at lines 4641--4644
+[]\T1/futs/m/n/12 Effective Frag-ment Potentials[[],
+ []
+
+
+LaTeX Warning: Citation 'Sokalski.Roszak.Pecul.CPL.1988' on page 62 undefined o
+n input line 4647.
+
+
+LaTeX Warning: Citation 'Chalasinski.Szczesniak.MolPhys.1988' on page 62 undefi
+ned on input line 4647.
+
+
+LaTeX Warning: Citation 'Cybulski.Chalasinski.Moszynski.JCP.1990' on page 62 un
+defined on input line 4647.
+
+
+LaTeX Warning: Citation 'Gora.Bartkowiak.Roszak.Leszczynski.JCP.2004' on page 6
+2 undefined on input line 4647.
+
+
+Overfull \hbox (96.4022pt too wide) in paragraph at lines 4644--4648
+[]\T1/futs/m/n/12 Variational-per-turb-a-tional In-ter-ac-tion En-ergy De-com-p
+os-i-tion Scheme[[],
+ []
+
+
+Overfull \hbox (236.57793pt too wide) in paragraph at lines 4644--4648
+[]\T1/futs/m/n/12 , [], []]
+ []
+
+
+LaTeX Warning: Citation 'Jeziorski.Moszynski.Szalewicz.ChemRev.1994' on page 62
+ undefined on input line 4648.
+
+
+Overfull \hbox (16.00235pt too wide) in paragraph at lines 4648--4649
+[]\T1/futs/m/n/12 Symmetry Ad-ap-ted Per-turb-a-tion Theory[[]]
+ []
+
+[62]
+
+LaTeX Warning: Reference `e:dw-solefp-coul-working' on page 63 undefined on inp
+ut line 4664.
+
+
+LaTeX Warning: Reference `e:dw-ind-avec' on page 63 undefined on input line 466
+5.
+
+
+LaTeX Warning: Reference `e:dw-disp-6-distr-working' on page 63 undefined on in
+put line 4666.
+
+
+LaTeX Warning: Reference `e:dw-exrep-base' on page 63 undefined on input line 4
+667.
+
+
+LaTeX Warning: Reference `e:dw-ct' on page 63 undefined on input line 4668.
+
+
+Overfull \hbox (48.37558pt too wide) in paragraph at lines 4698--4698
+[] 
+ []
+
+
+LaTeX Warning: Reference `e:f-terms' on page 63 undefined on input line 4702.
+
+
+LaTeX Warning: Reference `e:vibr-force-ind' on page 63 undefined on input line 
+4703.
+
+
+LaTeX Warning: Reference `e:vibr-force-disp-6' on page 63 undefined on input li
+ne 4703.
+
+
+LaTeX Warning: Reference `e:force-exrep' on page 63 undefined on input line 470
+4.
+
+
+LaTeX Warning: Reference `e:force-ct' on page 63 undefined on input line 4704.
+
+
+LaTeX Warning: Reference `e:dmu-solefp' on page 63 undefined on input line 4707
+.
+
+
+LaTeX Warning: Citation 'Gordon.Fedorov.Pruitt.Slipchenko.ChemRev.2012' on page
+ 63 undefined on input line 4712.
+
+
+LaTeX Warning: Citation 'Blasiak.Ritchie.Webb.Cho.XXX.2016' on page 63 undefine
+d on input line 4715.
+
+
+LaTeX Warning: Reference `e:buckingham-2st-order-total-fund' on page 63 undefin
+ed on input line 4731.
+
+
+Overfull \hbox (52.2403pt too wide) in paragraph at lines 4712--4736
+[]\T1/futs/m/n/12 Due to its in-trinsic frag-ment-a-tion framework[[]],
+ []
+
+
+LaTeX Warning: Citation 'Slipchenko.Gordon.JCC.2007' on page 63 undefined on in
+put line 4740.
+
+
+LaTeX Warning: Citation 'Blasiak.Cho.JCP.2014' on page 63 undefined on input li
+ne 4745.
+
+
+LaTeX Warning: Citation 'Blasiak.Cho.JCP.2015' on page 63 undefined on input li
+ne 4745.
+
+
+LaTeX Warning: Citation 'Blasiak.Ritchie.Webb.Cho.XXX.2016' on page 63 undefine
+d on input line 4745.
+
+
+LaTeX Warning: Citation 'Blasiak.Maj.Cho.XXX.2016' on page 63 undefined on inpu
+t line 4745.
+
+
+Overfull \hbox (15.41425pt too wide) in paragraph at lines 4738--4747
+\T1/futs/m/n/12 for vi-bra-tional fre-quency shifts when com-pared with ex-act 
+results.[[],
+ []
+
+
+Overfull \hbox (20.0381pt too wide) in paragraph at lines 4738--4747
+[]\T1/futs/m/n/12 , [], []] 
+ []
+
+
+LaTeX Warning: Citation 'Blasiak.Cho.JCP.2014' on page 63 undefined on input li
+ne 4753.
+
+
+LaTeX Warning: Citation 'Blasiak.Cho.JCP.2015' on page 63 undefined on input li
+ne 4753.
+
+
+LaTeX Warning: Citation 'Blasiak.Ritchie.Webb.Cho.XXX.2016' on page 63 undefine
+d on input line 4753.
+
+
+LaTeX Warning: Citation 'Blasiak.Cho.JCP.2015' on page 63 undefined on input li
+ne 4756.
+
+
+Overfull \hbox (87.80136pt too wide) in paragraph at lines 4747--4758
+\T1/futs/m/n/12 CN stretch modes.[[], [], []]
+ []
+
+
+Overfull \hbox (122.04622pt too wide) in paragraph at lines 4747--4758
+\T1/futs/m/n/12 mode elec-tronic an-har-mon-icity of ex-change-re-pul-sion con-
+tri-bu-tion can-not be ignored.[[]] 
+ []
+
+
+LaTeX Warning: Citation 'Korona.Williams.Bukowski.Jeziorski.Szalewicz.JCP.1997'
+ on page 63 undefined on input line 4761.
+
+
+Overfull \hbox (112.87828pt too wide) in paragraph at lines 4758--4768
+\T1/futs/m/n/12 trib-ute neg-li-gibly to the Heitler-Lon-don energies.[[]]
+ []
+
+[63]
+
+LaTeX Warning: Citation 'Langlet.Caillet.Caffarel.JCP.1995' on page 64 undefine
+d on input line 4779.
+
+
+LaTeX Warning: Citation 'Zierkiewicz.Jurecka.Hobza.ChemPhysChem.2005' on page 6
+4 undefined on input line 4779.
+
+
+LaTeX Warning: Citation 'Cybulski.Sadlej.JCTC.2008' on page 64 undefined on inp
+ut line 4779.
+
+
+LaTeX Warning: Citation 'Blasiak.Cho.JCP.2014' on page 64 undefined on input li
+ne 4784.
+
+
+LaTeX Warning: Citation 'Blasiak.Cho.JCP.2015' on page 64 undefined on input li
+ne 4784.
+
+
+LaTeX Warning: Citation 'Blasiak.Ritchie.Webb.Cho.XXX.2016' on page 64 undefine
+d on input line 4784.
+
+
+LaTeX Warning: Citation 'Blasiak.Maj.Cho.XXX.2016' on page 64 undefined on inpu
+t line 4784.
+
+
+Overfull \hbox (64.73431pt too wide) in paragraph at lines 4774--4786
+\T1/futs/m/n/12 tion en-ergy was found to be very small for H-bonded complexes.
+[[],
+ []
+
+
+Overfull \hbox (1.26822pt too wide) in paragraph at lines 4774--4786
+[]\T1/futs/m/n/12 , []] Also,
+ []
+
+
+Overfull \hbox (141.46156pt too wide) in paragraph at lines 4774--4786
+\T1/futs/m/n/12 tion are very well re-pro-duced within SolEFP model as com-pare
+d to bench-mark calculations.[[],
+ []
+
+
+Overfull \hbox (20.0381pt too wide) in paragraph at lines 4774--4786
+[]\T1/futs/m/n/12 , [], []] 
+ []
+
+
+LaTeX Warning: Citation 'Lee.Choi.Cho.PCCP.2010' on page 64 undefined on input 
+line 4790.
+
+
+LaTeX Warning: Citation 'Blasiak.Cho.JCP.2014' on page 64 undefined on input li
+ne 4790.
+
+
+Overfull \hbox (89.88553pt too wide) in paragraph at lines 4786--4792
+\T1/futs/m/n/12 the vi-bra-tional sol-va-to-chro-mic fre-quency shifts of many 
+im-port-ant IR probes.[[],
+ []
+
+
+LaTeX Warning: Citation 'Flick.Kosenkov.Hohenstein.Sherrill.Slipchenko.JCTC.201
+2' on page 64 undefined on input line 4811.
+
+[64]
+
+LaTeX Warning: Citation 'Sokalski.Roszak.Pecul.CPL.1988' on page 65 undefined o
+n input line 4829.
+
+
+LaTeX Warning: Citation 'Chalasinski.Szczesniak.MolPhys.1988' on page 65 undefi
+ned on input line 4829.
+
+
+LaTeX Warning: Citation 'Cybulski.Chalasinski.Moszynski.JCP.1990' on page 65 un
+defined on input line 4829.
+
+
+LaTeX Warning: Citation 'Gora.Bartkowiak.Roszak.Leszczynski.JCP.2004' on page 6
+5 undefined on input line 4829.
+
+
+LaTeX Warning: Reference `e:e-int-supramol' on page 65 undefined on input line 
+4831.
+
+
+Overfull \hbox (210.13123pt too wide) in paragraph at lines 4823--4838
+[]\T1/futs/m/n/12 , [], []],
+ []
+
+
+LaTeX Warning: Citation 'Slipchenko.Gordon.JCC.2007' on page 65 undefined on in
+put line 4874.
+
+
+LaTeX Warning: Citation 'Wang.Truhlar.JCTC.2010' on page 65 undefined on input 
+line 4874.
+
+
+LaTeX Warning: Citation 'Stone.JPCA.2011' on page 65 undefined on input line 48
+76.
+
+
+Overfull \hbox (112.61542pt too wide) in paragraph at lines 4864--4880
+\T1/futs/m/n/12 cently de-rived fully \T1/futs/m/it/12 ab ini-tio \T1/futs/m/n/
+12 for-mu-lae for the damp-ing factors based on the Gaus-sian multipoles.[[]]
+ []
+
+
+LaTeX Warning: Citation 'Roothaan.RevModPhys.1951' on page 65 undefined on inpu
+t line 4881.
+
+
+LaTeX Warning: Citation 'Moller.Plesset.PhysRev.1934' on page 65 undefined on i
+nput line 4888.
+
+[65]
+
+LaTeX Warning: Reference `e:dw-soleds-hf' on page 66 undefined on input line 49
+43.
+
+
+LaTeX Warning: Reference `e:dw-soleds-mp2' on page 66 undefined on input line 4
+944.
+
+
+Overfull \hbox (29.3747pt too wide) in paragraph at lines 4988--4988
+[] 
+ []
+
+
+LaTeX Warning: Reference `t:sapt-eds-efp2' on page 66 undefined on input line 4
+994.
+
+[66]
+Overfull \hbox (29.3747pt too wide) in paragraph at lines 5038--5038
+[] 
+ []
+
+
+LaTeX Warning: Reference `t:sapt-eds-efp2' on page 67 undefined on input line 5
+042.
+
+
+LaTeX Warning: Reference `e:buckingham-2st-order-total-fund' on page 67 undefin
+ed on input line 5046.
+
+
+LaTeX Warning: Citation 'Cho.JCP.2009' on page 67 undefined on input line 5076.
+
+
+[67]
+
+LaTeX Warning: Reference `e:jeden' on page 68 undefined on input line 5089.
+
+
+LaTeX Warning: Reference `s:str-dist-general-discussion' on page 68 undefined o
+n input line 5118.
+
+
+Overfull \hbox (13.12299pt too wide) in paragraph at lines 5103--5131
+\T1/futs/m/n/12 and $Int$ de-not-ing Cou-lombic, in-duc-tion, dis-per-sion, ex-
+change-re-pul-sion and CT ef-fects. Ideally,
+ []
+
+
+LaTeX Warning: Reference `e:11aa11aa' on page 68 undefined on input line 5163.
+
+
+Overfull \hbox (29.3747pt too wide) in paragraph at lines 5174--5174
+[] 
+ []
+
+[68]
+
+LaTeX Warning: Reference `e:11aa11aa' on page 69 undefined on input line 5194.
+
+
+Overfull \hbox (29.3747pt too wide) in paragraph at lines 5205--5205
+[] 
+ []
+
+
+LaTeX Warning: Reference `e:11aa11aa' on page 69 undefined on input line 5277.
+
+
+LaTeX Warning: Reference `e:ohoho' on page 69 undefined on input line 5278.
+
+[69]
+
+LaTeX Warning: Empty bibliography on input line 5355.
+
+Package biblatex Info: Reference section=0 on input line 5356.
+Package biblatex Info: Reference section=5 on input line 5360.
+\openout3 = `thesis5-blx.aux'.
+
+Package biblatex Info: Setting label 'refsection:5' on input line 5360.
+[70]
+Chapter 5.
+
+LaTeX Warning: Citation 'Hayashi.Zhuang.Mukamel.JPCA.2005' on page 71 undefined
+ on input line 5392.
+
+
+LaTeX Warning: Citation 'Jansen.Knoester.JCP.2006' on page 71 undefined on inpu
+t line 5392.
+
+
+LaTeX Warning: Citation 'Lee.Choi.Cho.JCP.2012' on page 71 undefined on input l
+ine 5392.
+
+
+LaTeX Warning: Citation 'Torii.JPCL.2015' on page 71 undefined on input line 53
+92.
+
+
+LaTeX Warning: Citation 'Hayashi.Zhuang.Mukamel.JPCA.2005' on page 71 undefined
+ on input line 5397.
+
+
+LaTeX Warning: Citation 'Jansen.Knoester.JCP.2006' on page 71 undefined on inpu
+t line 5397.
+
+
+LaTeX Warning: Citation 'Jansen.Knoester.JCP.2006' on page 71 undefined on inpu
+t line 5399.
+
+
+LaTeX Warning: Citation 'Jansen.JPCB.2014' on page 71 undefined on input line 5
+400.
+
+
+Overfull \hbox (11.527pt too wide) in paragraph at lines 5387--5407
+\T1/futs/m/n/12 va-to-chro-mic ESF maps have been re-por-ted up to date.[[],
+ []
+
+
+Overfull \hbox (44.8636pt too wide) in paragraph at lines 5387--5407
+\T1/futs/m/n/12 lyses, and have shown to be ac-cur-ate for po-lar environments.
+[[],
+ []
+
+
+Overfull \hbox (70.27556pt too wide) in paragraph at lines 5387--5407
+\T1/futs/m/n/12 shift was no-ticed for non-po-lar solvents such as CHCl$[]$ by 
+Jansen and Knoes-ter [[]]
+ []
+
+[71
+
+]
+
+LaTeX Warning: Citation 'Blasiak.Lee.Cho.JCP.2013' on page 72 undefined on inpu
+t line 5413.
+
+
+LaTeX Warning: Citation 'Blasiak.Cho.JCP.2014' on page 72 undefined on input li
+ne 5413.
+
+
+LaTeX Warning: Citation 'Blasiak.Cho.JCP.2015' on page 72 undefined on input li
+ne 5413.
+
+
+LaTeX Warning: Citation 'Blasiak.Cho.JCP.2015' on page 72 undefined on input li
+ne 5415.
+
+
+LaTeX Warning: Reference `a:computational-details' on page 72 undefined on inpu
+t line 5416.
+
+
+LaTeX Warning: Reference `f:onsager' on page 72 undefined on input line 5433.
+
+File: figures/NMA-Onsager-Freq.eps Graphic file (type eps)
+<figures/NMA-Onsager-Freq.eps> [72]
+
+LaTeX Warning: Citation 'Lee.Choi.Cho.JCP.2012' on page 73 undefined on input l
+ine 5472.
+
+
+Overfull \hbox (91.97543pt too wide) in paragraph at lines 5470--5480
+\T1/futs/m/n/12 them to vari-ous NMA/water clusters with up to 35 wa-ter mo-lec
+ules. Pre-vi-ous attempts[[]]
+ []
+
+
+Overfull \hbox (5.0715pt too wide) in paragraph at lines 5470--5480
+\T1/futs/m/n/12 to de-term-ine the vi-bra-tional sol-va-to-chro-mic para-met-er
+s us-ing the Cho's coarse-grained mod-
+ []
+
+[73]
+
+LaTeX Warning: Citation 'Lee.Choi.Cho.JCP.2012' on page 74 undefined on input l
+ine 5617.
+
+[74]
+
+LaTeX Warning: Reference `t:solmmm-comparison' on page 75 undefined on input li
+ne 5632.
+
+
+LaTeX Warning: Citation 'Lee.Choi.Cho.JCP.2012' on page 75 undefined on input l
+ine 5651.
+
+
+LaTeX Warning: Citation 'Lee.Choi.Cho.JCP.2012' on page 75 undefined on input l
+ine 5651.
+
+
+LaTeX Warning: Citation 'Lee.Choi.Cho.JCP.2012' on page 75 undefined on input l
+ine 5651.
+
+
+LaTeX Warning: Citation 'Lee.Choi.Cho.JCP.2012' on page 75 undefined on input l
+ine 5651.
+
+
+LaTeX Warning: Citation 'Lee.Choi.Cho.JCP.2012' on page 75 undefined on input l
+ine 5656.
+
+
+LaTeX Warning: Citation 'Lee.Choi.Cho.JCP.2012' on page 75 undefined on input l
+ine 5660.
+
+
+LaTeX Warning: Reference `f:solmmm' on page 75 undefined on input line 5688.
+
+
+Overfull \hbox (4.89987pt too wide) in paragraph at lines 5673--5689
+[]\T1/futs/m/n/12 We find that the Sol-MMM tensor ele-ments ob-tained by us-ing
+ the two dif-fer-ent ap-proaches
+ []
+
+
+LaTeX Warning: Reference `f:solmmm' on page 75 undefined on input line 5700.
+
+File: figures/NMA-SolMMM-COE.eps Graphic file (type eps)
+<figures/NMA-SolMMM-COE.eps>
+
+LaTeX Warning: Citation 'Lee.Choi.Cho.JCP.2012' on page 75 undefined on input l
+ine 5720.
+
+
+LaTeX Warning: Citation 'Lee.Choi.Cho.JCP.2012' on page 75 undefined on input l
+ine 5720.
+
+[75]
+
+LaTeX Warning: Citation 'Lee.Choi.Cho.JCP.2012' on page 76 undefined on input l
+ine 5751.
+
+
+Overfull \hbox (73.135pt too wide) in paragraph at lines 5744--5755
+\T1/futs/m/n/12 gence. In ad-di-tion, Sol-MMM mo-ments strongly de-pend on the 
+choice of the origin[[]]
+ []
+
+
+Overfull \hbox (0.65431pt too wide) in paragraph at lines 5758--5763
+\T1/futs/m/n/12 trib-uted on atoms. How-ever, Sol-ChelpG scheme is ap-prox-im-a
+te be-casue each ChelpG charge
+ []
+
+
+LaTeX Warning: Reference `f:solchelpg' on page 76 undefined on input line 5764.
+
+
+File: figures/NMA-SolCHELPG.eps Graphic file (type eps)
+<figures/NMA-SolCHELPG.eps> [76] [77]
+
+LaTeX Warning: Reference `f:solchelpg' on page 78 undefined on input line 5813.
+
+
+
+LaTeX Warning: Reference `f:solchelpg' on page 78 undefined on input line 5813.
+
+
+
+LaTeX Warning: Reference `e:approx-1' on page 78 undefined on input line 5813.
+
+
+LaTeX Warning: Reference `f:solchelpg' on page 78 undefined on input line 5821.
+
+
+
+LaTeX Warning: Reference `f:solchelpg' on page 78 undefined on input line 5821.
+
+
+
+LaTeX Warning: Reference `f:solcamm' on page 78 undefined on input line 5841.
+
+File: figures/NMA-SolCAMM-6.eps Graphic file (type eps)
+<figures/NMA-SolCAMM-6.eps>
+
+LaTeX Warning: Reference `e:approx-1' on page 78 undefined on input line 5875.
+
+
+LaTeX Warning: Reference `f:solcamm' on page 78 undefined on input line 5886.
+
+
+LaTeX Warning: Reference `f:solcamm' on page 78 undefined on input line 5887.
+
+
+LaTeX Warning: Reference `f:solchelpg' on page 78 undefined on input line 5891.
+
+
+[78] [79]
+
+LaTeX Warning: Reference `f:nma-abcde' on page 80 undefined on input line 5923.
+
+
+File: figures/NMA-ABCDE.eps Graphic file (type eps)
+<figures/NMA-ABCDE.eps>
+
+LaTeX Warning: Reference `a:constrained-models' on page 80 undefined on input l
+ine 5945.
+
+
+LaTeX Warning: Reference `t:amide-I-soleds-solefp' on page 80 undefined on inpu
+t line 5947.
+
+
+LaTeX Warning: Reference `f:nma-abcde' on page 80 undefined on input line 5961.
+
+
+
+LaTeX Warning: Reference `f:nma-abcde' on page 80 undefined on input line 5961.
+
+
+
+LaTeX Warning: Reference `t:amide-I-soleds-solefp' on page 80 undefined on inpu
+t line 6009.
+
+
+LaTeX Warning: Reference `e:dw-solefp-coul-correction' on page 80 undefined on 
+input line 6016.
+
+
+Overfull \hbox (4.1032pt too wide) in paragraph at lines 5943--6024
+[]\T1/futs/m/n/12 The fre-quency shifts eval-u-ated by us-ing (i) con-strained-
+cluster[] Sol-EDS and SolEFP meth-
+ []
+
+[80] [81]
+
+LaTeX Warning: Reference `f:nma-water-rhf' on page 82 undefined on input line 6
+043.
+
+File: figures/NMA-water-RHF.eps Graphic file (type eps)
+<figures/NMA-water-RHF.eps>
+
+LaTeX Warning: Reference `e:dw-disp-6-distr-working' on page 82 undefined on in
+put line 6080.
+
+
+LaTeX Warning: Reference `e:dw-disp-6-iso-distributed' on page 82 undefined on 
+input line 6080.
+
+
+LaTeX Warning: Reference `e:dw-disp-6-iso-approx-distributed' on page 82 undefi
+ned on input line 6080.
+
+
+LaTeX Warning: Reference `e:dw-disp-6-distr-working' on page 82 undefined on in
+put line 6080.
+
+
+LaTeX Warning: Reference `e:dw-disp-6-iso-distributed' on page 82 undefined on 
+input line 6080.
+
+
+LaTeX Warning: Reference `e:dw-disp-6-iso-approx-distributed' on page 82 undefi
+ned on input line 6080.
+
+
+LaTeX Warning: Reference `f:nma-abcde' on page 82 undefined on input line 6095.
+
+
+[82]
+
+LaTeX Warning: Reference `t:ind-nonadd' on page 83 undefined on input line 6137
+.
+
+
+LaTeX Warning: Reference `f:nma-abcde' on page 83 undefined on input line 6145.
+
+
+
+LaTeX Warning: Reference `f:nma-abcde' on page 83 undefined on input line 6145.
+
+
+
+LaTeX Warning: Reference `t:mp2-soleds-amide-I' on page 83 undefined on input l
+ine 6181.
+
+
+LaTeX Warning: Reference `f:nma-abcde' on page 83 undefined on input line 6195.
+
+
+
+LaTeX Warning: Reference `s:soleds' on page 83 undefined on input line 6195.
+
+
+LaTeX Warning: Reference `e:dw-soleds-mp2' on page 83 undefined on input line 6
+195.
+
+
+LaTeX Warning: Reference `f:nma-abcde' on page 83 undefined on input line 6195.
+
+
+
+LaTeX Warning: Reference `s:soleds' on page 83 undefined on input line 6195.
+
+
+LaTeX Warning: Reference `e:dw-soleds-mp2' on page 83 undefined on input line 6
+195.
+
+
+Overfull \hbox (3.72774pt too wide) in alignment at lines 6196--6236
+[] [] [] [] [] [] [] [] [] [] [] [] 
+ []
+
+[83] [84]
+
+LaTeX Warning: Reference `e:cj6' on page 85 undefined on input line 6291.
+
+
+LaTeX Warning: Reference `t:cj6' on page 85 undefined on input line 6295.
+
+
+LaTeX Warning: Reference `e:cj6' on page 85 undefined on input line 6306.
+
+
+LaTeX Warning: Reference `e:c6' on page 85 undefined on input line 6306.
+
+
+LaTeX Warning: Reference `e:cj6' on page 85 undefined on input line 6306.
+
+
+LaTeX Warning: Reference `e:c6' on page 85 undefined on input line 6306.
+
+
+Overfull \hbox (3.54933pt too wide) in paragraph at lines 6290--6347
+[]\T1/futs/m/n/12 We have com-puted the sol-va-to-chro-mic dis-per-sion coef-fi
+-cients $\FML/futmi/m/it/12 C[]$ \T1/futs/m/n/12 (see Eq. []) for amide
+ []
+
+
+LaTeX Warning: Reference `s:disp' on page 85 undefined on input line 6351.
+
+
+LaTeX Warning: Reference `e:dw-disp-6-distr-working' on page 85 undefined on in
+put line 6352.
+
+
+LaTeX Warning: Reference `e:dw-disp-6-iso-approx-distributed' on page 85 undefi
+ned on input line 6356.
+
+
+LaTeX Warning: Reference `e:dw-disp-6-iso-distributed' on page 85 undefined on 
+input line 6357.
+
+[85]
+
+LaTeX Warning: Reference `f:nma-water-rhf' on page 86 undefined on input line 6
+365.
+
+
+LaTeX Warning: Reference `f:nma-orient-a' on page 86 undefined on input line 64
+04.
+
+
+LaTeX Warning: Reference `f:nma-orient-b' on page 86 undefined on input line 64
+04.
+
+
+LaTeX Warning: Reference `f:nma-orient-d' on page 86 undefined on input line 64
+05.
+
+
+LaTeX Warning: Reference `f:nma-water-dist' on page 86 undefined on input line 
+6429.
+
+
+LaTeX Warning: Reference `f:nma-cdcl3-dist' on page 86 undefined on input line 
+6429.
+
+
+LaTeX Warning: Reference `t:amide-I-soleds-solefp' on page 86 undefined on inpu
+t line 6437.
+
+[86]
+
+LaTeX Warning: Reference `t:amide-I-bulk' on page 87 undefined on input line 65
+82.
+
+
+LaTeX Warning: Reference `f:nma-solefp-md' on page 87 undefined on input line 6
+648.
+
+File: figures/NMA-water-cdcl3-SolEFP.eps Graphic file (type eps)
+<figures/NMA-water-cdcl3-SolEFP.eps>
+
+LaTeX Warning: Reference `s:nma-sol-disp' on page 87 undefined on input line 66
+66.
+
+
+LaTeX Warning: Reference `f:nma-solefp-md-distr' on page 87 undefined on input 
+line 6677.
+
+
+LaTeX Warning: Reference `f:nma-solefp-md-distr' on page 87 undefined on input 
+line 6678.
+
+File: figures/NMA-SolEFP.MD-distr.eps Graphic file (type eps)
+<figures/NMA-SolEFP.MD-distr.eps>
+
+LaTeX Warning: Reference `f:nma-solefp-md-distr' on page 87 undefined on input 
+line 6725.
+
+
+LaTeX Warning: Reference `f:nma-solefp-md-distr' on page 87 undefined on input 
+line 6726.
+
+
+LaTeX Warning: Citation 'Jansen.JPCB.2014' on page 87 undefined on input line 6
+733.
+
+[87]
+File: figures/NMA-orient-A.eps Graphic file (type eps)
+ <figures/NMA-orient-A.eps> [88] [89] [90]
+File: figures/NMA-orient-B.eps Graphic file (type eps)
+ <figures/NMA-orient-B.eps>
+[91]
+File: figures/NMA-orient-D.eps Graphic file (type eps)
+ <figures/NMA-orient-D.eps> [92]
+File: figures/cut-tip4p.eps Graphic file (type eps)
+ <figures/cut-tip4p.eps> [93]
+File: figures/cut-cdcl3.eps Graphic file (type eps)
+
+<figures/cut-cdcl3.eps> [94]
+
+LaTeX Warning: Reference `f:nma-orient-a' on page 95 undefined on input line 67
+44.
+
+
+LaTeX Warning: Reference `f:nma-orient-b' on page 95 undefined on input line 67
+45.
+
+
+LaTeX Warning: Reference `f:nma-orient-d' on page 95 undefined on input line 67
+45.
+
+
+LaTeX Warning: Citation 'Jansen.Knoester.JCP.2006' on page 95 undefined on inpu
+t line 6759.
+
+
+LaTeX Warning: Citation 'Malolepsza.Straub.JPCB.2014' on page 95 undefined on i
+nput line 6773.
+
+
+LaTeX Warning: Citation 'Jansen.Knoester.JCP.2006' on page 95 undefined on inpu
+t line 6782.
+
+
+LaTeX Warning: Citation 'Jansen.JPCB.2014' on page 95 undefined on input line 6
+782.
+
+
+LaTeX Warning: Citation 'Jansen.Knoester.JCP.2006' on page 95 undefined on inpu
+t line 6785.
+
+
+Overfull \hbox (43.83087pt too wide) in paragraph at lines 6741--6791
+\T1/futs/m/n/12 wa-ter (62 cm$[]$) is al-most the same as their pre-dic-tion in
+ D$[]$O ($\FMS/futm/m/n/12 ^^X$\T1/futs/m/n/12 60 cm$[]$).[[]]
+ []
+
+
+Overfull \hbox (4.0435pt too wide) in paragraph at lines 6741--6791
+\T1/futs/m/n/12 though our $\FML/futm/m/it/12 ^^@[]$ \T1/futs/m/n/12 value in C
+DCl$[]$ is about 2 times lar-ger than that of the cal-cu-la-tion of Jansen \T1/
+futs/m/it/12 et
+ []
+
+[95
+
+
+
+
+
+]
+
+LaTeX Warning: Citation 'Farag.Ruiz-Lopez.Bastida.Monard.Ingrosso.JPCB.2015' on
+ page 96 undefined on input line 6792.
+
+
+LaTeX Warning: Citation 'Blasiak.Lee.Cho.JCP.2013' on page 96 undefined on inpu
+t line 6796.
+
+
+LaTeX Warning: Citation 'Blasiak.Cho.JCP.2014' on page 96 undefined on input li
+ne 6796.
+
+
+Overfull \hbox (125.62227pt too wide) in paragraph at lines 6792--6809
+\T1/futs/m/n/12 the NMA amide I mode in wa-ter is neg-li-gible, in stark dis-ag
+ree-ment with pre-vi-ous findings.[[],
+ []
+
+
+LaTeX Warning: Citation 'vanderVaart.Merz.JPCA.1999' on page 96 undefined on in
+put line 6813.
+
+
+LaTeX Warning: Reference `e:farag' on page 96 undefined on input line 6817.
+
+
+LaTeX Warning: Citation 'vanderVaart.Merz.JPCA.1999' on page 96 undefined on in
+put line 6818.
+
+
+LaTeX Warning: Citation 'Buckingham.ProcRSocLondonA.1958' on page 96 undefined 
+on input line 6836.
+
+
+LaTeX Warning: Citation 'Buckingham.ProcRSocLondonA.1960' on page 96 undefined 
+on input line 6836.
+
+
+LaTeX Warning: Citation 'Buckingham.TransFaradaySoc.1960' on page 96 undefined 
+on input line 6836.
+
+
+LaTeX Warning: Citation 'Cho.JCP.2003' on page 96 undefined on input line 6836.
+
+
+
+LaTeX Warning: Citation 'Cho.JCP.2009' on page 96 undefined on input line 6836.
+
+
+
+Overfull \hbox (75.47545pt too wide) in paragraph at lines 6809--6848
+\T1/futs/m/n/12 the ex-change-over-lap con-tri-bu-tion as well, sim-il-arly to 
+the re-main-ing terms.[[]]
+ []
+
+
+Overfull \hbox (81.89728pt too wide) in paragraph at lines 6809--6848
+\T1/futs/m/n/12 bra-tional sol-va-to-chro-mism [[], [],
+ []
+
+[96]
+
+LaTeX Warning: Reference `e:cooo' on page 97 undefined on input line 6871.
+
+
+LaTeX Warning: Reference `e:cooo' on page 97 undefined on input line 6872.
+
+
+LaTeX Warning: Reference `t:farag' on page 97 undefined on input line 6882.
+
+
+LaTeX Warning: Citation 'Farag.Ruiz-Lopez.Bastida.Monard.Ingrosso.JPCB.2015' on
+ page 97 undefined on input line 6893.
+
+
+LaTeX Warning: Reference `f:nma-abcde' on page 97 undefined on input line 6893.
+
+
+
+LaTeX Warning: Citation 'Farag.Ruiz-Lopez.Bastida.Monard.Ingrosso.JPCB.2015' on
+ page 97 undefined on input line 6893.
+
+
+LaTeX Warning: Reference `f:nma-abcde' on page 97 undefined on input line 6893.
+
+
+[97]
+
+LaTeX Warning: Citation 'Farag.Ruiz-Lopez.Bastida.Monard.Ingrosso.JPCB.2015' on
+ page 98 undefined on input line 6965.
+
+
+LaTeX Warning: Citation 'vanderVaart.Merz.JPCA.1999' on page 98 undefined on in
+put line 6972.
+
+
+LaTeX Warning: Reference `e:pstro' on page 98 undefined on input line 6980.
+
+
+LaTeX Warning: Reference `f:nma-abcde' on page 98 undefined on input line 6987.
+
+
+
+LaTeX Warning: Reference `t:amide-I-soleds-solefp' on page 98 undefined on inpu
+t line 6987.
+
+
+LaTeX Warning: Citation 'Stewart.JCC.1988' on page 98 undefined on input line 6
+992.
+
+
+Overfull \hbox (84.76343pt too wide) in paragraph at lines 6959--6998
+\T1/futs/m/n/12 tion (by a mul-tiply-ing factor of 2; see Eq.(7) in Ref. [[]]).
+
+ []
+
+
+LaTeX Warning: Citation 'Brinzer.Berquist.Zhe.Dutta.Johnson.Krisher.Lambrecht.G
+arrett-Roe.JCP.2015' on page 98 undefined on input line 7000.
+
+
+LaTeX Warning: Citation 'Blasiak.Cho.JCP.2014' on page 98 undefined on input li
+ne 7018.
+
+
+LaTeX Warning: Citation 'Lee.Choi.Cho.PCCP.2010' on page 98 undefined on input 
+line 7019.
+
+
+Overfull \hbox (108.53232pt too wide) in paragraph at lines 6999--7026
+[]\T1/futs/m/n/12 Quite re-cently, Brin-zer \T1/futs/m/it/12 et al. \T1/futs/m/
+n/12 [[]]
+ []
+
+[98]
+
+LaTeX Warning: Citation 'Fafarman.Sigala.Herschlag.Boxer.JACS.2010' on page 99 
+undefined on input line 7042.
+
+
+LaTeX Warning: Citation 'Levinson.Fried.Boxer.JPCB.2012' on page 99 undefined o
+n input line 7043.
+
+
+LaTeX Warning: Citation 'Levinson.Fried.Boxer.JPCB.2012' on page 99 undefined o
+n input line 7050.
+
+
+LaTeX Warning: Citation 'Fafarman.Sigala.Herschlag.Boxer.JACS.2010' on page 99 
+undefined on input line 7052.
+
+
+Overfull \hbox (177.13869pt too wide) in paragraph at lines 7033--7067
+\T1/futs/m/n/12 found that the fre-quency shifts of CN stretch modes of ethyl t
+hiocy-anate (EtSCN) [[]]
+ []
+
+
+Overfull \hbox (123.65536pt too wide) in paragraph at lines 7033--7067
+\T1/futs/m/n/12 ter-est-ingly, when the solvent is protic, e.g., wa-ter and tri
+fluoroethanol.[[]]
+ []
+
+
+LaTeX Warning: Empty bibliography on input line 7084.
+
+Package biblatex Info: Reference section=0 on input line 7085.
+Package biblatex Info: Reference section=6 on input line 7092.
+\openout3 = `thesis6-blx.aux'.
+
+Package biblatex Info: Setting label 'refsection:6' on input line 7092.
+[99] [100
+
+]
+Chapter 6.
+
+LaTeX Warning: Citation 'Muller.PyQuante.2009' on page 101 undefined on input l
+ine 7129.
+
+
+Overfull \hbox (80.28471pt too wide) in paragraph at lines 7129--7130
+[]\T1/futs/m/sc/12 PyQuante \T1/futs/m/n/12 -- Py-thon im-ple-ment-a-tion of LC
+AO-MO method by Richard Muller [[]] 
+ []
+
+
+LaTeX Warning: Citation 'Valeev.LibInt.2013' on page 101 undefined on input lin
+e 7130.
+
+[101]
+
+LaTeX Warning: Citation 'Frisch.Gaussian.2009' on page 102 undefined on input l
+ine 7131.
+
+
+Overfull \hbox (51.38889pt too wide) in paragraph at lines 7131--7132
+[]\T1/futs/m/sc/12 Gaussian 09 \T1/futs/m/n/12 -- High-per-form-ance quantum ch
+em-istry suite of pro-grams [[]] 
+ []
+
+
+LaTeX Warning: Citation 'Blasiak.Maj.Cho.Gora.JCTC.2015' on page 102 undefined 
+on input line 7166.
+
+
+Overfull \hbox (4.84344pt too wide) in paragraph at lines 7165--7167
+\T1/futs/m/n/12 and ex-citonic en-ergy trans-fer (EET) coup-lings [[]] 
+ []
+
+
+Overfull \hbox (3.70341pt too wide) in paragraph at lines 7172--7175
+[]\T1/futs/m/n/12 Computing SolEFP fre-quency shifts and trans-ition di-pole mo
+-ment change: i) Cou-
+ []
+
+
+Overfull \hbox (1.56804pt too wide) in paragraph at lines 7178--7179
+[]\T1/futs/m/n/12 Management of clas-si-cial mo-lecu-lar dy-nam-ics tra-ject-or
+y files from Gromacs, Am-
+ []
+
+
+LaTeX Warning: Empty bibliography on input line 7194.
+
+Package biblatex Info: Reference section=0 on input line 7195.
+[102] [103] [104
+
+] [105
+
+] [106]
+Appendix A.
+
+LaTeX Warning: Reference `s:theory' on page 107 undefined on input line 7205.
+
+
+LaTeX Warning: Reference `s:buckingham-theory' on page 107 undefined on input l
+ine 7215.
+
+
+LaTeX Warning: Reference `ea:mxn' on page 107 undefined on input line 7236.
+
+
+Overfull \hbox (29.3747pt too wide) in paragraph at lines 7253--7253
+[] 
+ []
+
+
+Overfull \hbox (29.3747pt too wide) in paragraph at lines 7269--7269
+[] 
+ []
+
+[107
+
+] [108]
+
+LaTeX Warning: Reference `eq:pot_harm' on page 109 undefined on input line 7333
+.
+
+
+LaTeX Warning: Reference `asec:vibranal' on page 109 undefined on input line 73
+49.
+
+[109] [110]
+Appendix B.
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 7384.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\Delta' on input line 7384.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\omega' on input line 7384.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `superscript' on input line 7384.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 7384.
+
+LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
+(Font)              scaled to size 22.88956pt on input line 7384.
+LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
+(Font)              scaled to size 15.89755pt on input line 7384.
+LaTeX Font Info:    Font shape `U/futm/m/n' will be
+(Font)              scaled to size 22.88956pt on input line 7384.
+LaTeX Font Info:    Font shape `U/futm/m/n' will be
+(Font)              scaled to size 15.89755pt on input line 7384.
+
+LaTeX Warning: Reference `e:dw-solefp-coul-correction' on page 111 undefined on
+ input line 7390.
+
+
+LaTeX Warning: Reference `e:potential-gradients' on page 111 undefined on input
+ line 7395.
+
+
+LaTeX Warning: Reference `e:interaction-tensors' on page 111 undefined on input
+ line 7396.
+
+
+LaTeX Warning: Reference `e:f-terms' on page 111 undefined on input line 7396.
+
+
+LaTeX Warning: Reference `e:k-terms' on page 111 undefined on input line 7396.
+
+
+LaTeX Warning: Reference `t:cterms' on page 111 undefined on input line 7413.
+
+
+LaTeX Warning: Reference `e:dw-solefp-coul-correction' on page 111 undefined on
+ input line 7477.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\hbox' on input line 7477.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\mathsurround' on input line 7477.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\z@' on input line 7477.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\unskip' on input line 7477.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\@@italiccorr' on input line 7477.
+
+
+LaTeX Warning: Reference `f:nma-abcde' on page 111 undefined on input line 7480
+.
+
+
+LaTeX Warning: Reference `t:ctest' on page 111 undefined on input line 7481.
+
+[111
+
+]
+Package biblatex Info: Reference section=7 on input line 7549.
+\openout3 = `thesis7-blx.aux'.
+
+Package biblatex Info: Setting label 'refsection:7' on input line 7549.
+ [112] [113] [114
+
+]
+Appendix C.
+
+LaTeX Warning: Citation 'Stone.TheTheoryOfIntermolecularForces.1996' on page 11
+5 undefined on input line 7558.
+
+
+Overfull \hbox (13.05162pt too wide) in paragraph at lines 7552--7564
+\T1/futs/m/n/12 en-ergy can be ex-pressed as a fol-low-ing series[[]] 
+ []
+
+
+LaTeX Warning: Citation 'Stone.JCTC.2005' on page 115 undefined on input line 7
+573.
+
+
+LaTeX Warning: Citation 'Sokalski.Poirier.CPL.1983' on page 115 undefined on in
+put line 7586.
+
+
+Overfull \hbox (78.2469pt too wide) in paragraph at lines 7584--7619
+\T1/futs/m/n/12 atomic mul-ti-pole mo-ments method (CAMM) de-veloped by Sokal-s
+ki and Poirier.[[]]
+ []
+
+[115]
+
+LaTeX Warning: Citation 'Etchebest.Lavery.Pullman.TheorChimActa.1982' on page 1
+16 undefined on input line 7641.
+
+[116]
+
+LaTeX Warning: Reference `MSCp' on page 117 undefined on input line 7678.
+
+
+LaTeX Warning: Empty bibliography on input line 7701.
+
+Package biblatex Info: Reference section=0 on input line 7702.
+Package biblatex Info: Reference section=8 on input line 7705.
+\openout3 = `thesis8-blx.aux'.
+
+Package biblatex Info: Setting label 'refsection:8' on input line 7705.
+[117] [118
+
+]
+Appendix D.
+
+Overfull \hbox (4.48293pt too wide) in paragraph at lines 7712--7740
+$\FML/futmi/m/it/12 N$\T1/futs/m/n/12 -methylacetamide (NMA) and its deu-ter-at
+ed mo-lecule (NMA-$\FML/futmi/m/it/12 d$ \T1/futs/m/n/12 with deu-terium at its
+ amide
+ []
+
+[119]
+Overfull \hbox (22.92746pt too wide) in paragraph at lines 7823--7831
+\T1/futs/m/n/12 brid vari-ational-per-turb-a-tional method (EDS)with the method
+ im-ple-men-ted by GÛrain GAMESS.
+ []
+
+[120]
+
+LaTeX Warning: Reference `e:dw-soleds' on page 121 undefined on input line 7852
+.
+
+
+LaTeX Warning: Reference `e:dw-soleds-hf' on page 121 undefined on input line 7
+852.
+
+
+LaTeX Warning: Reference `e:dw-soleds-mp2' on page 121 undefined on input line 
+7852.
+
+
+Overfull \hbox (2.43027pt too wide) in paragraph at lines 7865--7872
+[]\T1/futs/m/n/12 Construct the \T1/futs/m/it/12 con-strained \T1/futs/m/n/12 s
+ys-tem in the fol-low-ing way: Take the (fylly op-tim-ized) solute
+ []
+
+[121]
+Overfull \hbox (12.8826pt too wide) in paragraph at lines 7954--8021
+\T1/futs/m/n/12 atomic chargeswere ob-tained by util-iz-ing \T1/futs/m/sc/12 An
+te-cham-ber \T1/futs/m/n/12 pack-age-with em-ploy-ing HF/6-31G(d)
+ []
+
+[122]
+
+LaTeX Warning: Empty bibliography on input line 8023.
+
+Package biblatex Info: Reference section=0 on input line 8024.
+[123] [124
+
+]
+Appendix E.
+
+LaTeX Warning: Reference `f.MeCN.MeSCN.vs.solvents' on page 125 undefined on in
+put line 8047.
+
+File: figures/Fig.S1.eps Graphic file (type eps)
+<figures/Fig.S1.eps>
+Overfull \hbox (13.00183pt too wide) in paragraph at lines 8046--8069
+\T1/futs/m/n/12 Absorption fre-quen-cies of CN stretch modes in MeCN and MeSCN 
+dis-solved in vari-ous solvents
+ []
+
+[125] [126] (./thesis.aux)
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package biblatex Warning: Please (re)run BibTeX on the file(s):
+(biblatex)                thesis1-blx
+(biblatex)                thesis2-blx
+(biblatex)                thesis3-blx
+(biblatex)                thesis4-blx
+(biblatex)                thesis5-blx
+(biblatex)                thesis6-blx
+(biblatex)                thesis7-blx
+(biblatex)                and rerun LaTeX afterwards.
+
+Package logreq Info: Writing requests to 'thesis.run.xml'.
+\openout1 = `thesis.run.xml'.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 21799 strings out of 495040
+ 368695 string characters out of 1182046
+ 631957 words of memory out of 3000000
+ 24635 multiletter control sequences out of 15000+50000
+ 205703 words of font info for 183 fonts, out of 3000000 for 9000
+ 45 hyphenation exceptions out of 8191
+ 38i,25n,44p,10395b,1571s stack positions out of 5000i,500n,10000p,200000b,50000s
+
+Output written on thesis.dvi (126 pages, 678040 bytes).
