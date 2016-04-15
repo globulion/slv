@@ -172,6 +172,12 @@ e:derXij
 e:orbder
 e:muorb
 e:sdd
+# ecplicit models: CT
+e:ct-int   # "exact", with DCBS
+e:force-ct-ab
+e:dw-ct
+e:dw-ct-ab
+e:ct-v-qy   # v integral with q approximation (eq ChelpG)
 # far environment
 e:OKF
 # SolX models
@@ -257,6 +263,7 @@ s:amide-I-orient
 s:amide-I-bulk
 s:amide-I-discuss-origins
 s:rigid-molecule-algorithm
+s:dw-cn-bulk
 s:scn-protein-interfac
 s:scn-protein-interfac-model-environ
 s:ral-solefp
