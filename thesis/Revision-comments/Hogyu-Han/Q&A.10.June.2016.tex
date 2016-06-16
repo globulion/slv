@@ -1,0 +1,781 @@
+\documentclass{exam}
+\printanswers
+\usepackage{color}
+\shadedsolutions
+\renewcommand{\solutiontitle}{\noindent\textbf{Answer:}\enspace}
+\definecolor{SolutionColor}{rgb}{0.8,0.9,1}
+%\framedsolutions
+
+% graphics
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{lipsum}
+\usepackage{afterpage}
+
+% tables
+\usepackage{dcolumn}
+\usepackage{multirow}
+\usepackage{hhline}
+\usepackage{booktabs}
+%\setlength{\tabcolsep}{0.5em} % for the horizontal padding
+%{\renewcommand{\arraystretch}{2.2}% for the vertical padding
+
+% mathematics
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsbsy}
+\usepackage{bm}
+\usepackage{mathrsfs}
+\usepackage{upgreek}
+\allowdisplaybreaks
+
+% symbols
+\usepackage{gensymb}
+\usepackage{textcomp}
+
+% footnotes
+\usepackage[symbol]{footmisc}
+
+% caption fonts
+\usepackage[font=scriptsize,labelfont=bf]{caption}
+
+% boxed multiline equations
+\usepackage[overload]{empheq}
+
+\newcommand*{\widebox}[2][0.5em]{\fbox{\hspace{#1}$\displaystyle #2$\hspace{#1}}}
+\usepackage{xpatch}%
+\makeatletter
+\xpatchcmd{\@Aboxed}{%
+\boxed {#1#2}}
+{%
+\color{HotPink3}\boxed {\color{textcolor}#1#2}}
+{}{}
+\makeatother
+
+%---------------------------------------------------
+% SHORTCUTS
+\newcolumntype{,}{D{.}{,}{2}}
+\newcommand{\citee}[1]{\ensuremath{\scriptsize^{\citenum{#1}}}}
+\newcommand{\HRule}{\rule{\linewidth}{0.2mm}}
+% Quantum notation
+\newcommand{\bra}[1]{\ensuremath{\bigl\langle {#1} \bigl\lvert}}
+\newcommand{\ket}[1]{\ensuremath{\bigr\rvert {#1} \bigr\rangle}}
+\newcommand{\braket}[2]{\ensuremath{\bigl\langle {#1} \bigl\lvert {#2} \bigr\rangle}}
+\newcommand{\tbraket}[3]{\ensuremath{\bigl\langle {#1} \bigl\lvert {#2} \bigl\lvert {#3} \bigr\rangle}}
+% Math
+\newcommand{\pd}{\ensuremath{\partial}}
+\newcommand{\DR}{\ensuremath{{\rm d} {\bf r}}}
+\newcommand{\BM}[1]{\bm{#1}}
+% Chemistry (formulas)
+\newcommand{\ch}[2]{\ensuremath{\mathrm{#1}_{#2}}}
+% Math 
+\newcommand{\VEC}[1]{\ensuremath{\mathrm{\mathbf{#1}}}}
+% vector nabla
+\newcommand{\Nabla}{\ensuremath{ {\nabla}}}
+% derivative
+\newcommand{\FDer}[3]{\ensuremath{
+\bigg(
+\frac{\partial #1}{\partial #2}
+\bigg)_{#3}}}
+% diagonal second derivative
+\newcommand{\SDer}[3]{\ensuremath{
+\biggl(
+\frac{\partial^2 #1}{\partial #2^2}
+\biggr)_{#3}}}
+% off-diagonal second derivative
+\newcommand{\SSDer}[4]{\ensuremath{
+\biggl(
+\frac{\partial^2 #1}{\partial #2 \partial #3}
+\biggr)_{#4}}}
+% derivatives without bound
+% derivative
+\newcommand{\fderiv}[2]{\ensuremath{
+\frac{\partial #1}{\partial #2}}}
+% diagonal second derivative
+\newcommand{\sderiv}[2]{\ensuremath{
+\frac{\partial^2 #1}{\partial #2^2}
+}}
+% off-diagonal second derivative
+\newcommand{\sderivd}[3]{\ensuremath{
+\frac{\partial^2 #1}{\partial #2 \partial #3}
+}}
+% derivatives for tables
+\newcommand{\fderivm}[2]{\ensuremath{
+{\partial #1}/{\partial #2}}}
+% diagonal second derivative
+\newcommand{\sderivm}[2]{\ensuremath{
+{\partial^2 #1}/{\partial #2^2}
+}}
+% off-diagonal second derivative
+\newcommand{\sderivdm}[3]{\ensuremath{
+{\partial^2 #1}/{\partial #2 \partial #3}
+}}
+
+%############################################################################
+\begin{document}
+
+\section{1. p32--36}
+\begin{questions}
+
+%
+\question My understanding of your thesis p32-33 is as follows:
+Big psi and gamma in eq 3.10a and 3.10b are general states with some restriction, where coupling due to anharmonicity (for gas pase; is there any coupling other than anharmonic coupling for gas phase?) or anharmonicity + solvent-solute interaction (for solution) is allowed but only the fundamental and overtone transitions of a single nomal mode are considered. The further restriction by eq 3.11 allows no coupling, whereby only harmonic system is considered. Is my understanding like this right?
+
+\begin{solution}
+Yes, it is OK. I have rewritten slightly this part of the text according to your previous comments to make it more
+clear. In gas phase, there is only anharmonicity acting as coupling between normal modes.
+\end{solution}
+\end{questions}
+
+
+\section{Gas phase}
+\begin{questions}
+
+%
+\question Do we need the additional new notation (my suggestion is small gamma; you use jn in eqs 3.18, 3.19, 3.29, nj in eq 3.27, n,m in A1-A5 instead of small gamma) for a set of reference states (no anharmonic coupling) when RSPT is used for gas phase (yes anharmonic coupling)? Then, small gamma can be a  notation specfying the reference state, whereas big gamma used in eq 3.10b can be a general notation for gas phase with some restriction (only the fundamental and overtone transitions of a single nomal mode are considered.)
+
+\begin{solution}
+Thank you for this suggestion - I think it is a great idea. I have introduced $\vert \gamma_{J_n}\rangle$
+as a RSPT reference state whereas $\vert \Psi_{J_n}\rangle$ and $\vert \Gamma_{J_n}\rangle$ denote the states of real systems.
+\end{solution}
+
+%
+\question If so, do we need to use small gamma instead of big psi in eqs 3.13 and 3.14, whereby we can more clearly and distinctively describe the reference states used for RSPT on gas phase?
+
+\begin{solution}
+Thank you. I used small gamma instead of big psi.
+\end{solution}
+
+%
+\question Can we use primed small gamma for wfn obtained after RSPT on gas phase?
+
+\begin{solution}
+I think it is unnecessary. I have not elaborated here on RSPT-corrected wavefunction
+in gas phase. The states I define here (after corrections suggested) are:
+%
+\begin{itemize}
+ \item $\vert \Psi \rangle$        - absolutely general real state in solution which is the \emph{exact} solution of Schr{\"o}dinger eqn
+ \item $\vert \Gamma \rangle$      - absolutely general real state in gas phase which is the \emph{exact} solution of Schr{\"o}dinger eqn
+ \item $\vert \Psi_{J_n}\rangle$   - real state of interest in solution with only one mode excited
+ \item $\vert \Gamma_{J_n}\rangle$ - real state of interest in gas phase with only one mode excited
+ \item $\vert \gamma_{J_n}\rangle$ - the RSPT reference state 
+ \item $\vert S\rangle$            - state vectors used for expansion in RSPT (in principle, they could be also used if one wanted to 
+                                     diagonalize the full Hamiltonian instead of using approximated RSPT).
+\end{itemize}
+%
+I hope the above convention is sufficient.
+\end{solution}
+
+\end{questions}
+
+
+
+\section{Solution}
+\begin{questions}
+
+%
+\question Do we need the additional new notation (maybe small psi) for a set of reference states (anharmonic coupling is allowed, but not solvent-solute interaction) when RSPT is used for solution (now solvent-solute interaction is allowed)? Then, small psi can be a notation specifying the reference state, whereas big psi used in eq 3.10a can be a general notation for solution with some restriction (only the fundamental and overtone transitions of a single nomal mode are considered.).
+
+\begin{solution}
+I have followed your suggestion and now I think the text is much more consistent. Thank you!
+\end{solution}
+
+%
+\question If so, do we need to use small psi instead of big psi in eqs 3.17, 3.24-3.26, whereby we can more clearly and distinctively describe the reference states used for RSPT on solution? 
+
+Can we use primed small psi for wfn obtained after RSPT on solution? As far as I understood, you set primed small gamma (wfn obtained after RSPT on gas phase, where there is no anharmonic coupling in the reference state) to be approxmately equal to small psi (the reference state for RSPT on solution, upon which primed small psi for wfn was obtained after RSPT on solution, where the solvent-solute interaction is now taken into account). Anyway, you can devise your own concise, distinguishable, and consistent notations, which can allow the text of your theses, particularly on p32-36, to be described in a more clear and understandable manner.
+
+\begin{solution}
+Actually - note that both gas-phase and solution states share \emph{the same} reference state, $\vert \gamma_{J_n}\rangle$,
+because in both cases the zeroth-order Hamiltonian is the same. So, I think there is no need of introducing
+new notation here. I have emphasized that fact in the revised Thesis.
+\end{solution}
+\end{questions}
+
+\section{p190 Table B.1}
+\begin{questions}
+
+%
+\question Is dqx/dQi changed to d2qx/dQj2 for $r^{-2}$ and $U_{jj}$?
+
+\begin{solution}
+Yes - in the column refering to $U_{jj}$ I should use $j$ instead of $i$. Thank you!
+\end{solution}
+\end{questions}
+
+\section{p58 eq 4.32 \& p59 eq 4.33}
+\begin{questions}
+
+%
+\question Is there any reason why $U_i$ and $U_{jj}$ instead of $U_i$ and $U_{ii}$ (or $U_j$ and $U_{jj}$) are used in p58 eq 4.32 and p59 eq 4.33, repectively, which continues in p190 Table B.1?
+
+\begin{solution}
+To simplify insertion into formula for frequency shift.
+\end{solution}
+\end{questions}
+
+\section{p189}
+\begin{questions}
+
+%
+\question How can we determine the rank of interaction tensor?
+
+\begin{solution}
+The rank can be determined by counting the different Cartesian labels. Consider the tensors
+\begin{subequations}
+\label{e:interaction-tensors}
+\begin{align}
+  T^{(1)}_\alpha &=-\frac{{\bf r}_{xy;\alpha}}{\rvert {\bf r}_{xy} \lvert^3}  \label{e:interaction-tensors-2} \\
+  T^{(2)}_{\alpha\beta} &=3\frac{{\bf r}_{xy;\alpha} {\bf r}_{xy;\beta} }{\rvert {\bf r}_{xy} \lvert^5}  
+      - \frac{\delta_{\alpha\beta}}{\rvert {\bf r}_{xy} \lvert^3}             \label{e:interaction-tensors-3} 
+\end{align}
+\end{subequations}
+%
+For instance, take a look at $T^{(1)}_\alpha$. There is only one index here - $\alpha$ so it is of 1-rank.
+$T^{(2)}_{\alpha\beta}$ is of 2-rank because it contains two indices, $\alpha$ and $\beta$.
+\end{solution}
+
+
+%
+\question Could you explain why there are two $r^{-2}$ terms, five $r^{-3}$ terms, and eight (Is eight changed to thirteen (= 5 $U_i$ + 8 $U_{jj}$ terms, which seems to be so for $r^{-4}$ terms in Table B.1?)?)  $r^{-4}$ terms, so fifteen terms (20 if 13 $r^{-4}$ terms?) in total, which is described in line 2 from the bottom? 
+
+\begin{solution}
+In order to see, why there is two $r^{-2}$ terms, five $r^{-3}$ terms, and eight
+$r^{-4}$ terms,
+you need to count the number of nabla's in the equations and group appropriate terms.
+%
+\begin{tiny}
+\begin{multline} \label{x:726439}
+ \fderiv{U^{\rm Coul}}{Q_i} =
+%
+\sum_x 
+\Bigg[ 
+  \fderiv{q_x}{Q_i} \phi({\bf r}_x) + 
+  \fderiv{\pmb{\upmu}_x}{Q_i} \cdot { \nabla} \phi({\bf r}_x) + \frac{1}{3}  
+  \fderiv{\pmb{\Theta}_x}{Q_i} : { \nabla}\otimes{ \nabla} \phi({\bf r}_x)  + \frac{1}{15}   
+  \fderiv{\pmb{ \Omega}_x}{Q_i} \vdots { \nabla}\otimes{ \nabla}\otimes{ \nabla} \phi({\bf r}_x) + \ldots 
+\Bigg] 
+% 
+\\+
+%
+\sum_x 
+\Bigg[ 
+  q_x \fderiv{\phi({\bf r}_x)}{Q_i} + 
+  \pmb{\upmu}_x \cdot \fderiv{{\nabla} \phi({\bf r}_x)}{Q_i} + \frac{1}{3} 
+  \pmb{\Theta}_x : \fderiv{{\nabla}\otimes{\nabla} \phi({\bf r}_x)}{Q_i} + \frac{1}{15}
+  \pmb{\Omega}_x \vdots \fderiv{{\nabla}\otimes{\nabla}\otimes{\nabla} \phi({\bf r}_x)}{Q_i} + \ldots 
+\Bigg]
+\end{multline}
+%
+and
+%
+\begin{multline} \label{x:726440}
+ \sderiv{U^{\rm Coul}}{Q_i} =
+%
+\sum_x 
+\Bigg[ 
+  \sderiv{q_x}{Q_i} \phi({\bf r}_x) + 
+  \sderiv{\pmb{\upmu}_x}{Q_i} \cdot {\nabla} \phi({\bf r}_x) + \frac{1}{3}  
+  \sderiv{\pmb{\Theta}_x}{Q_i} : {\nabla}\otimes{\nabla} \phi({\bf r}_x) + \frac{1}{15}   
+  \sderiv{\pmb{\Omega}_x}{Q_i} \vdots {\nabla}\otimes{\nabla}\otimes{\nabla} \phi({\bf r}_x) + \ldots 
+\Bigg] 
+%
+\\+
+%
+\sum_x 
+\Bigg[ 
+  q_x \sderiv{\phi({\bf r}_x)}{Q_i} + 
+  {\upmu}_x \cdot \sderiv{{\nabla} \phi({\bf r}_x)}{Q_i}  + \frac{1}{3} 
+  {\Theta}_x : \sderiv{{\nabla}\otimes{\nabla} \phi({\bf r}_x)}{Q_i} + \frac{1}{15}
+  {\Omega}_x \vdots \sderiv{{\nabla}\otimes{\nabla}\otimes{\nabla} \phi({\bf r}_x)}{Q_i} + \ldots
+\\
+%
++2\fderiv{q_x}{Q_i} \fderiv{\phi({\bf r}_x)}{Q_i} 
++2\fderiv{\pmb{ \upmu}_x}{Q_i} \cdot \fderiv{{ \nabla} \phi({\bf r}_x)}{Q_i}
++ \frac{2}{3}  
+  \fderiv{\pmb{ \Theta}_x}{Q_i} : \fderiv{{ \nabla}\otimes{ \nabla} \phi({\bf r}_x)}{Q_i} 
++ \frac{2}{15}   
+  \fderiv{\pmb{ \Omega}_x}{Q_i} \vdots \fderiv{{ \nabla}\otimes{ \nabla}\otimes{ \nabla} \phi({\bf r}_x)}{Q_i}
++ \ldots
+\Bigg]
+\end{multline}
+\end{tiny}
+%
+\noindent
+Electrostatic field correction terms refer to second summation terms in both equations, whereas
+the $\Delta\omega^{\rm SolDMA}$ expansion (see Thesis, Eqs. 4.34 and 3.59) is based only on the first summations.
+Note also that each differentiation of $\phi$ with respect to $Q_i$ adds additional nabla (see Eqs. 4.31)
+so that differentiating $\phi$ twice wrt $Q_i$ adds two $\nabla$. Now, 
+\begin{itemize}
+ \item Terms with no $\nabla$ acting on $\phi$ 
+ contribute to terms of type $r^{-1}$, $r^{-2}$, $r^{-3}$ and $r^{-4}$ (only one term per each type)
+ \item Terms of one $\nabla$ acting on $\phi$ 
+ contribute to terms of type $r^{-2}$, $r^{-3}$ and $r^{-4}$ (only one term per each type)
+ \item Terms with $\nabla\otimes\nabla\otimes\nabla$ acting on $\phi$ 
+ contribute to terms of $r^{-3}$ and $r^{-4}$ (only one term per each type)
+\end{itemize}
+and so on. The above observation is the result of the expansion of electrostatic potential ($\phi$) in multipoles
+according to Eq.4.27:
+%
+\begin{equation} \label{e:potential-gradients}
+\underbrace{\nabla \otimes \cdots \otimes \nabla}_{r} \phi({\bf r}_x) = 
+\sum_y \left[ 
+{\bf T}^{(r)} q_y - {\bf T}^{(r+1)} \cdot \pmb{\upmu}_y + 
+ \frac{1}{3} {\bf T}^{(r+2)} : \pmb{\Theta}_y - 
+\frac{1}{15} {\bf T}^{(r+3)} : \pmb{\Omega}_y + \ldots
+\right]
+\end{equation}
+%
+Remember that terms containing interaction tensor of rank $r$ will have $r^{-(r+1)}$
+asymptotic dependence. To see this, let us consider 2-rank interaction tensor 
+from Eq.~4.28c in the Thesis. 
+%
+\begin{equation}
+ {\bf T}^{(2)} = 3 r^{-5} {\bf r} \otimes {\bf r} - r^{-3}{\bf 1}
+\end{equation}
+%
+In the limit $r\rightarrow\infty$ the shapes of molecular multipoles
+are not very important so we can take an average over all orientations
+of $x$ and $y$ molecule.
+Thus, instead of whole tensor, we are interested in its average value, 
+$\langle T\rangle=\frac{1}{3}{\rm Tr}\;{\bf T}^{(2)} = \frac{1}{3} \sum_\alpha T_{\alpha\alpha}$.
+In such situation
+the term $\langle {\bf r} \otimes {\bf r} \rangle \rightarrow \frac{1}{3} r^2$
+such that ${\bf T}^{(2)}\propto r^{-3}$ for large $r$.
+
+From the above equations~\eqref{x:726439}, \eqref{x:726440} and notes 
+it is now clear that, among electrostatic potential correction terms 
+there is no $r^{-1}$ terms, there are two $r^{-2}$, five $r^{-3}$ and eight $r^{-4}$ terms (count nablas
+in a way I shown above for the second summation temrs in Eqs.~\eqref{x:726439} and \eqref{x:726440}). 
+
+\end{solution} 
+
+%
+\question Could you explain why one has two $r^{-1}$, four $r^{-2}$, six $r^{-3}$, and eight $r^{-4}$ (20 in total), which is described in line 1 from the bottom?
+
+\begin{solution}
+Considering the above example, we need to count all nablas similarly, but for the first
+summation terms in equations~\eqref{x:726439} and \eqref{x:726440}. Then it is clear that we have
+two $r^{-1}$, four $r^{-2}$, six $r^{-3}$, and eight $r^{-4}$ (20 in total).
+\end{solution} 
+
+%
+\question Does the amount of the new terms, which is described in p190 line 1, mean which one of the following? (i) 15 terms as described in above 3-2 (or 20 as described with red letter in 3-2);
+(ii) 20 terms as described in 3-3; (iii) 35 = 15 + 20 (or 40 = 20 + 20?) (by combining the (i) and (ii) terms)?
+
+\begin{solution}
+(i).
+\end{solution} 
+
+%
+\question Could you explain why there are no $r^{-1}$ terms present, which is described in page 190 line 2?
+
+\begin{solution}
+I explained this already in answer to question 2.
+\end{solution} 
+\end{questions}
+
+
+\section{p190 Table B.1}
+\begin{questions}
+
+%
+\question I tried to derive the $U_i$ and $U_{jj}$ terms for $r^{-3}$, but I still have difficulty deriving them.
+May I ask you to derive them for me? I feel very sorry for this!
+
+\begin{solution}
+Let us then derive each of the five $r^{-3}$ terms one by one. To do it, let us analyze
+Eqs.~4.32 and 4.33 in the old version of Thesis draft. According to one of my answers given above
+(relating to counting $r^{-n}$ terms based on the number of nablas and expansion of electrostatic
+potential) we have to analyze Eqs. 4.32a, 4.32b, 4.33a and 4.33b. Now, we will derive all $r^{-3}$ terms
+step by step by using dot-cross notation. We will need the expansion of electrostatic potential gradients
+that are produced by $y$th distributed center on solvent molecule. Mainly,
+%
+\begin{subequations}
+\begin{align}
+ \nabla\phi({\bf r}_x)              &= {\bf T}^{(1)} q_y - \pmb{\upmu}_y \cdot {\bf T}^{(2)} + \ldots \\
+ \nabla\otimes\nabla\phi({\bf r}_x) &= {\bf T}^{(2)} q_y + \ldots \\
+\end{align}
+\end{subequations}
+%
+and, since we consider terms of type $r^{-3}$, we need only terms that contain second-rank
+interaction tensors, i.e., ${\bf T}^{(2)}$. This tensor can be written neatly in
+dot-cross notation as
+%
+\begin{equation}
+{\bf T}^{(2)} = 3 r^{-5} {\bf r}\otimes {\bf r}  - r^{-3} {\bf 1} 
+\end{equation}
+%
+For the sake of notational simplicity here, we understand 
+that ${\bf r}\equiv {\bf r}_x - {\bf r}_y$ and drop subscripts $x$ and $y$ when
+refering to position vectors.
+
+\subsection{Terms derived from $U_i^{(q)}$}
+
+We need to consider only one contribution
+%
+\begin{equation}
+ q_x {\bf L}_x^{(i)} \cdot \nabla\phi({\bf r}_x) \overset{r^{-3}}{\longrightarrow}
+ - q_x {\bf L}_x^{(i)} \otimes \pmb{\upmu}_y : {\bf T}^{(2)}
+\end{equation}
+%
+which gives the first $r^{-3}$ correction term. Expanding interaction tensor
+we see that
+%
+\begin{multline}
+ - q_x {\bf L}_x^{(i)} \otimes \pmb{\upmu}_y : {\bf T}^{(2)} = 
+ - q_x {\bf L}_x^{(i)} \otimes \pmb{\upmu}_y : \left[
+ 3 r^{-5} {\bf r}\otimes {\bf r}  - r^{-3} {\bf 1}
+\right]
+  \\  =   %\left[ \right] 
+ -3 q_x r^{-5} \left[ {\bf L}_x^{(i)} \cdot {\bf r} \right] 
+               \left[ \pmb{\upmu}_y \cdot {\bf r} \right] 
+ + 
+ q_x r^{-3} \left[ {\bf L}_x^{(i)} \cdot  \pmb{\upmu}_y \right] 
+\end{multline}
+%
+The last equality can be directly compared with Table B1. The results are the same.
+
+To derive the last equality, we have used the following identities
+%
+\begin{subequations}
+\begin{align}
+ {\bf a} \otimes {\bf b} : {\bf 1} &= {\bf a} \cdot {\bf b}\\
+ {\bf a} \otimes {\bf b} : {\bf c} \otimes {\bf c} &= 
+\left[ {\bf a} \cdot {\bf c} \right] \left[ {\bf b} \cdot {\bf c} \right]
+\end{align}
+\end{subequations}
+%
+which can be prooven by applying explicit tensor index notation.
+
+\subsection{Terms derived from $U_i^{(\pmb{\upmu})}$}
+
+We need to consider only one contribution
+%
+\begin{equation}
+ \pmb{\upmu}_x \otimes {\bf L}_x^{(i)} : \nabla\otimes\nabla\phi({\bf r}_x) \overset{r^{-3}}{\longrightarrow}
+ \pmb{\upmu}_x \otimes {\bf L}_x^{(i)} : {\bf T}^{(2)} q_y
+\end{equation}
+%
+which gives the next $r^{-3}$ correction term. Expanding interaction tensor
+we see that
+%
+\begin{multline}
+ \pmb{\upmu}_x \otimes {\bf L}_x^{(i)} : {\bf T}^{(2)} q_y = 
+q_y \pmb{\upmu}_x \otimes {\bf L}_x^{(i)} : \left[
+ 3 r^{-5} {\bf r}\otimes {\bf r}  - r^{-3} {\bf 1}
+\right]
+  \\  =   %\left[ \right] 
+ +3 q_y r^{-5} \left[ {\bf L}_x^{(i)} \cdot {\bf r} \right] 
+               \left[ \pmb{\upmu}_x \cdot {\bf r} \right] 
+ - 
+ q_y r^{-3} \left[ {\bf L}_x^{(i)} \cdot  \pmb{\upmu}_x \right] 
+\end{multline}
+%
+The last equality can be directly compared with Table B1. The results are the same.
+
+\subsection{Terms derived from $U_{jj}^{(q)}$}
+
+We need to consider only two contributions
+%
+\begin{multline}
+ 2\fderiv{q_x}{Q_j} {\bf L}_x^{(j)} \otimes \nabla\phi({\bf r}_x) 
++ q_x \nabla\otimes\nabla\phi({\bf r}_x) : {\bf L}_x^{(j)} \otimes {\bf L}_x^{(j)}
+\\  \overset{r^{-3}}{\longrightarrow}
+ -2\fderiv{q_x}{Q_j} {\bf L}_x^{(j)} \otimes \pmb{\upmu}_y : {\bf T}^{(2)}
+ + q_x q_y {\bf T}^{(2)} : {\bf L}_x^{(j)} \otimes {\bf L}_x^{(j)}
+\end{multline}
+%
+which gives the next two $r^{-3}$ correction terms. Expanding interaction tensor
+in the first term above gives
+%
+\begin{equation}
+ -2\fderiv{q_x}{Q_j} {\bf L}_x^{(j)} \otimes \pmb{\upmu}_y : {\bf T}^{(2)} = 
+ -6\fderiv{q_x}{Q_j} r^{-5} \left[ {\bf L}_x^{(j)} \cdot {\bf r} \right] 
+                            \left[ \pmb{\upmu}_y \cdot {\bf r} \right] 
+ +2\fderiv{q_x}{Q_j} r^{-3} \left[ {\bf L}_x^{(j)} \cdot  \pmb{\upmu}_y \right] 
+\end{equation}
+%
+whereas the second term gives
+%
+\begin{equation}
+ q_x q_y {\bf T}^{(2)} : {\bf L}_x^{(j)} \otimes {\bf L}_x^{(j)} = 
+3q_x q_y r^{-5} \left[ {\bf L}_x^{(j)} \cdot {\bf r} \right]^2
+-q_x q_y r^{-3} \lvert {\bf L}_x^{(j)} \rvert^2
+\end{equation}
+%
+The last equality can be directly compared with Table B1. The results are the same.
+
+\subsection{Terms derived from $U_{jj}^{(\pmb{\upmu})}$}
+
+We need to consider only one contribution
+%
+\begin{equation}
+ 2\fderiv{\pmb{\upmu}_x}{Q_j} \otimes {\bf L}_x^{(j)} : \nabla\otimes\nabla\phi({\bf r}_x) 
+ \overset{r^{-3}}{\longrightarrow}
+ 2\fderiv{\pmb{\upmu}_x}{Q_j} \otimes {\bf L}_x^{(j)} : {\bf T}^{(2)} q_y
+\end{equation}
+%
+which gives the fifth $r^{-3}$ correction term. Expanding interaction tensor
+we see that
+%
+\begin{equation}
+ 2\fderiv{\pmb{\upmu}_x}{Q_j} \otimes {\bf L}_x^{(j)} : 
+               \left[ 3 r^{-5} {\bf r}\otimes {\bf r}  - r^{-3} {\bf 1}  \right]  q_y 
+ = 6q_y r^{-5} \left[ \fderiv{\pmb{\upmu}_x}{Q_j} \cdot {\bf r} \right]
+                \left[ {\bf L}_x^{(j)} \cdot {\bf r} \right] 
+   -2q_y r^{-5} \left[ \fderiv{\pmb{\upmu}_x}{Q_j} \cdot {\bf L}_x^{(j)} \right]
+%
+\end{equation}
+%
+The last equality can be directly compared with Table B1. The results are the same.
+
+\end{solution}
+\end{questions}
+
+\section{Your e-mail answer 1.4 on May 17}
+\begin{questions}
+
+%
+\question I would like to know the meaning of single excitations (that is, which one of following (i) or (ii)), which is described in your answer. (i) Does "we deal with only single excitations" mean "we deal with only excitations such as fundamental, 1st overtone, 2nd overtone, ... , but not combination, Fermi resonance, progression (1 to 5, 3 to 7, etc) for a single mode"? (ii) Or, does other than single excitations mean double (like two photon absorption), triple, multiple excitation?
+
+\begin{solution}
+By ``single excitations'' I meant that we do not study here the set of many IR chromophores but just one, isolated
+IR probe. We do not study also multiple excitations in single IR probe (i.e., no many-photon absorptions).
+\end{solution}
+\end{questions}
+
+
+\section{Your e-mail answer 2.2 on May 17}
+\begin{questions}
+
+%
+\question Could you explain the meaning of "unique" described in your answer "spherical tensor notation which is unique"?
+
+\begin{solution}
+By ``unique'' I mean that there is no ambiguity in spherical tensor notation with a multiplicative constant. I guess the word
+``unique'' is not suitable here.
+\end{solution}
+
+\end{questions}
+
+\section{Your e-mail answer 4.1 on May 17}
+\begin{questions}
+
+%
+\question Is coarse-graining between implicit and explicit models in calculation difficulty?
+
+\begin{solution}
+Implicit models are much cheaper computationally than coarse-grained approaches. It is difficult
+to obtain system properties in terms of coarse-grained models in some cases.
+\end{solution}
+
+\end{questions}
+
+\section{Your e-mail answer 7.1 on May 17}
+\begin{questions}
+
+%
+\question Is gradient of gradient of phi different from Laplacian of phi?
+
+\begin{solution}
+No. Gradient of gradient is a second-rank tensor operator, $\nabla \otimes \nabla$
+because $\nabla$ is a vector (1-rank tensor) operator. You can have gradient in $x$ direction
+of gradient in $y$ direction etc. Laplacian is a scalar (0-rank tensor) operator.
+We can write:
+\begin{align}
+ \left(\nabla \otimes \nabla \right)_{\alpha\beta} &= \frac{\partial}{\partial x_\alpha} \frac{\partial}{\partial x_\beta} \\
+ \nabla^2 &= \sum_\alpha \frac{\partial^2}{\partial x_\alpha^2} \equiv {\rm Tr}\;\left[\nabla \otimes \nabla\right] 
+ \equiv \nabla \cdot \nabla
+\end{align}
+
+\end{solution}
+\end{questions}
+
+\section{Terminlogy}
+\begin{questions}
+
+%
+\question Are terminologies "full Hamiltonian" (is there partial Hamiltonian? when?) and "matrix diagonalization associated with only variational method, but not at all with PT?
+
+\begin{solution}
+Yes. Full Hamiltonian is without approximations (neglections of terms). Partial Hamiltonian
+can be sometimes considered (like in excitonic model for example - when we diagonalize
+only part of full Hamiltonian believing that neglecting other parts will not affect the physics 
+of our solutions). In PT we do not diagonalize (generally very large) Hamiltonians but ise some trics
+(PT equations) to get the energetics of chosen energetic states. 
+\end{solution}
+\end{questions}
+
+
+\section{CC notation in your e-mail answer 3.1 on May 22}
+\begin{questions}
+
+%
+\question Could you explicitly write 8 terms, which are associated with Cab/rs*Ccd/tu?
+
+\begin{solution}
+Sure. 
+\begin{align}
+ C_{abcd}^{rstu} \cong C_{ab}^{rs} * C_{cd}^{tu} 
+  &= C_{ab}^{rs}  C_{cd}^{tu} - C_{ac}^{rs}  C_{bd}^{tu} + C_{ad}^{rs}  C_{bc}^{tu} 
+   - C_{ab}^{rt}  C_{cd}^{su} + C_{ac}^{rt}  C_{bd}^{su} - C_{ad}^{rt}  C_{bc}^{su} \\
+  &+ C_{ab}^{ru}  C_{cd}^{st} - C_{ac}^{ru}  C_{bd}^{st} + C_{ad}^{ru}  C_{bc}^{st} 
+   + C_{ab}^{tu}  C_{cd}^{rs} - C_{ac}^{tu}  C_{bd}^{rs} + C_{ad}^{tu}  C_{bc}^{rs} \\
+  &- C_{ab}^{su}  C_{cd}^{rt} + C_{ac}^{su}  C_{bd}^{rt} - C_{ad}^{su}  C_{bc}^{rt} 
+   + C_{ab}^{st}  C_{cd}^{ru} - C_{ac}^{st}  C_{bd}^{ru} + C_{ad}^{st}  C_{bc}^{ru}
+\end{align}
+It is even more than eight terms. 
+I hope I didn't make mistake. The signs are due to the antisymmetry of many-electronic wavefunctions.
+Any odd permutation of indices has minus sign and even permutation has plus sign.
+\end{solution}
+\end{questions}
+
+\section{Your e-mail answer 1.1 on May 17}
+\begin{questions}
+
+%
+\question Could you explain the meaning and example of pure state?
+
+\begin{solution}
+In my understanding, pure state is such that it can be completely specified in terms of fragments
+of the system. Mixed state cannot be specified in terms of separate fragments because of
+quantum entanglement. Examples: 
+\begin{itemize}
+ \item 2-electron system
+in which the wavefunction can be written as $\vert \Psi \rangle = \vert 01 \rangle 
+\equiv \vert 0 \rangle_A \otimes \vert 1 \rangle_B$ (electron $A$ has spin down, 
+electron $B$ has spin up) is a pure state. The density matrix 
+$\rho_{AB} = \vert \Psi \rangle  \langle \Psi \vert 
+= \vert 01 \rangle \langle 01 \vert
+= \rho_{\rm A} \oplus \rho_{\rm B}$
+where $\rho_{\rm A} = \vert 0 \rangle_A \otimes {}_A\langle 0 \vert$
+and $\rho_{\rm B} = \vert 1 \rangle_B \otimes {}_B\langle 1 \vert$. The symbol "$\oplus$" denotes
+the `tensor addition' or `composition' (hence the term ``composite systems'' 
+or ``composite space'').
+ \item 2-electron system
+in which the wavefunction can be written as linear combination of pure states, 
+like $\vert \Psi \rangle = \vert 01 \rangle + \vert 10 \rangle$ is a mixed state.
+Note that the density matrix is now
+%
+$\rho_{AB} = \vert 01 \rangle \langle 01 \vert +
+             \vert 01 \rangle \langle 10 \vert + 
+             \vert 10 \rangle \langle 01 \vert +
+             \vert 10 \rangle \langle 10 \vert
+\ne \rho_{\rm A} \oplus \rho_{\rm B}$, or, in other words, cannot be represented as 
+a tensor composition of separate density matrices of $A$ and $B$ electron. Thus, 
+state vector $\vert S \rangle$ from Eq.3.11 is a pure state.
+\end{itemize}
+\end{solution}
+
+%
+\question Is "pure" state identical to "uncoupled" state? Or does uncoupled state belong to pure states?
+
+\begin{solution}
+There is no strict terminology
+here for `uncoupled'.
+In quantum physics, even uncoupled states can be still ``coupled'' through
+quantum entanglement, but it is different and depends on the system preparation (i.e.,
+our manipulation on the system, when we are creating quantum coherent superposition of chosen pure states),
+not on the Hamiltonian (i.e., the energy-momentum properties of the system itself). 
+But in the context of my thesis `pure states' 
+can be thought of as uncoupled states in a sense that there is no coupling between them
+in gas-phase harmonic Hamiltonian. Anyway, I do not use the term `pure states' in my thesis
+because it is too formalized and unnecessary (as unnecessary is using term `Fock space' which I already
+removed from my thesis).
+\end{solution}
+
+%
+\question Is "full" Hamiltonian identical to "explicit" Hamiltonian? Or does explicit Hamiltonian belong to full Hamiltonian?
+
+\begin{solution}
+`Explicit' means we form it to diagonalize (full or partial Hamiltonian). 
+`Full' means Hamiltonian has full dimension without reducing
+it by neglecting some degrees of freedom.
+\end{solution}
+
+%
+\question Is Hamiltonian matrix for only variational method, but not at all for PT or RSPT?
+
+\begin{solution}
+Yes. We do not use matrices in PT.
+\end{solution}
+\end{questions}
+
+\section{Your e-mail answer 1.2 on May 17}
+\begin{questions}
+
+%
+\question Does the coupling that exists even in gas phase, which you describe, mean anharmonic coupling? Are there other couplings in gas phase?
+
+\begin{solution}
+Yes - it is anharmonic coupling. There is no other significant coupling in gas phase to my knowledge.
+One could also consider coupling due to Coriolis forces, but this is generally very small and can be
+neglected for our analysis.
+\end{solution}
+\end{questions}
+
+\section{Your e-mail answer 1.4 on May 17}
+\begin{questions}
+
+%
+\question Could you explain what indistinguishable particles (or excitations) mean?
+
+\begin{solution}
+That we cannot distinguish them. For example, set of two identical IR probes
+(eg, in symmetrical complex of two chromophores where we cannot distinguish
+subunits due to symmetry). Then the excitation in either IR probe
+cannot be distinguished from one another.
+\end{solution}
+\end{questions}
+
+\section{Your e-mail answer 2.1 on May 17}
+\begin{questions}
+
+%
+\question Could you explain your description "Trace is independent on the representation (basis set) for QM operators"?
+
+\begin{solution}
+It means that the trace of operator $O$, $\sum_i O_{ii}$, is the same regardless of the complete 
+basis set used to 
+represent the operator $O$. Here, $O_{ij} \equiv \langle i \vert O \vert j \rangle$ with 
+labels $i$ and $j$ refering to basis functions.
+\end{solution}
+\end{questions}
+
+\section{Your e-mail answer 3.1 on May 17}
+\begin{questions}
+
+%
+\question Could you specify or narrow down the pages in Jackson Ch4 for me?
+
+\begin{solution}
+Pages 145 and 146 (beginning of Section 4.1).
+\end{solution}
+\end{questions}
+
+\section{Your e-mail answer 6.1 on May 17}
+\begin{questions}
+
+%
+\question Could you explain what "code" means? Is code a math formula that can be read by computer?
+
+\begin{solution}
+`Code' means my code I have written to implement my equations I have derived.
+It is Solvshift, the topic of Chapter 8 in Thesis.
+\end{solution}
+\end{questions}
+%==============================================================================================================================
+\end{document}
+
+\section{   }
+\begin{questions}
+
+%
+\question 
+
+\begin{solution}
+
+\end{solution}
+\end{questions}

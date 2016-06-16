@@ -1,0 +1,558 @@
+\documentclass{exam}
+\printanswers
+\usepackage{color}
+\shadedsolutions
+\renewcommand{\solutiontitle}{\noindent\textbf{Answer:}\enspace}
+\definecolor{SolutionColor}{rgb}{0.8,0.9,1}
+%\framedsolutions
+
+% graphics
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{lipsum}
+\usepackage{afterpage}
+
+% tables
+\usepackage{dcolumn}
+\usepackage{multirow}
+\usepackage{hhline}
+\usepackage{booktabs}
+%\setlength{\tabcolsep}{0.5em} % for the horizontal padding
+%{\renewcommand{\arraystretch}{2.2}% for the vertical padding
+
+% mathematics
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsbsy}
+\usepackage{bm}
+\usepackage{mathrsfs}
+\usepackage{upgreek}
+\allowdisplaybreaks
+
+% symbols
+\usepackage{gensymb}
+\usepackage{textcomp}
+
+% footnotes
+\usepackage[symbol]{footmisc}
+
+% caption fonts
+\usepackage[font=scriptsize,labelfont=bf]{caption}
+
+% boxed multiline equations
+\usepackage[overload]{empheq}
+
+\newcommand*{\widebox}[2][0.5em]{\fbox{\hspace{#1}$\displaystyle #2$\hspace{#1}}}
+\usepackage{xpatch}%
+\makeatletter
+\xpatchcmd{\@Aboxed}{%
+\boxed {#1#2}}
+{%
+\color{HotPink3}\boxed {\color{textcolor}#1#2}}
+{}{}
+\makeatother
+
+%---------------------------------------------------
+% SHORTCUTS
+\newcolumntype{,}{D{.}{,}{2}}
+\newcommand{\citee}[1]{\ensuremath{\scriptsize^{\citenum{#1}}}}
+\newcommand{\HRule}{\rule{\linewidth}{0.2mm}}
+% Quantum notation
+\newcommand{\bra}[1]{\ensuremath{\bigl\langle {#1} \bigl\lvert}}
+\newcommand{\ket}[1]{\ensuremath{\bigr\rvert {#1} \bigr\rangle}}
+\newcommand{\braket}[2]{\ensuremath{\bigl\langle {#1} \bigl\lvert {#2} \bigr\rangle}}
+\newcommand{\tbraket}[3]{\ensuremath{\bigl\langle {#1} \bigl\lvert {#2} \bigl\lvert {#3} \bigr\rangle}}
+% Math
+\newcommand{\pd}{\ensuremath{\partial}}
+\newcommand{\DR}{\ensuremath{{\rm d} {\bf r}}}
+%\newcommand{\BM}[1]{\ensuremath{\mbox{\boldmath${#1}$}}}
+\newcommand{\BM}[1]{\bm{#1}}
+% Chemistry (formulas)
+\newcommand{\ch}[2]{\ensuremath{\mathrm{#1}_{#2}}}
+% Math 
+\newcommand{\VEC}[1]{\ensuremath{\mathrm{\mathbf{#1}}}}
+% vector nabla
+\newcommand{\Nabla}{\ensuremath{ \BM{\nabla}}}
+% derivative
+\newcommand{\FDer}[3]{\ensuremath{
+\bigg(
+\frac{\partial #1}{\partial #2}
+\bigg)_{#3}}}
+% diagonal second derivative
+\newcommand{\SDer}[3]{\ensuremath{
+\biggl(
+\frac{\partial^2 #1}{\partial #2^2}
+\biggr)_{#3}}}
+% off-diagonal second derivative
+\newcommand{\SSDer}[4]{\ensuremath{
+\biggl(
+\frac{\partial^2 #1}{\partial #2 \partial #3}
+\biggr)_{#4}}}
+% derivatives without bound
+% derivative
+\newcommand{\fderiv}[2]{\ensuremath{
+\frac{\partial #1}{\partial #2}}}
+% diagonal second derivative
+\newcommand{\sderiv}[2]{\ensuremath{
+\frac{\partial^2 #1}{\partial #2^2}
+}}
+% off-diagonal second derivative
+\newcommand{\sderivd}[3]{\ensuremath{
+\frac{\partial^2 #1}{\partial #2 \partial #3}
+}}
+% derivatives for tables
+\newcommand{\fderivm}[2]{\ensuremath{
+{\partial #1}/{\partial #2}}}
+% diagonal second derivative
+\newcommand{\sderivm}[2]{\ensuremath{
+{\partial^2 #1}/{\partial #2^2}
+}}
+% off-diagonal second derivative
+\newcommand{\sderivdm}[3]{\ensuremath{
+{\partial^2 #1}/{\partial #2 \partial #3}
+}}
+
+%############################################################################
+\begin{document}
+
+\section{p32 eq 3.10a \& eq 3.11}
+\begin{questions}
+
+%
+\question Did you use eq 3.10a for RSPT to obtain a small set of full Hamiltonian, whereas eq 3.11 was used to obtain 
+the full Hamiltionian and thereby Hessian matrix? Otherwise, could you explain the difference between 3.10a \& eq 3.11 
+in the purpose and usuage of these two eqs? That is, why do you refer these two equations instead of either one of them?
+
+\begin{solution}
+Eqs. 3.10 (both) denote the general basis vectors whereas Eq. 3.11 describes the basis vectors formed from
+uncoupled (or 'pure') states, i.e., where we assume all 1-D oscillators are completely independent from each other.
+I use Eq. 3.11 further for derivations (to obtain energetic levels for both wavefunctions in 3.10a and 3.10b). 
+I do not need to obtain explicit (full) Hamiltonians here. That is why I use RSPT. Otherwise, 
+the solution would be provibitively troublesome.
+\end{solution}
+
+%
+\question Can ket $\vert 1_0 2_0 \ldots j_n \ldots \rangle_{\Psi}$ in eq 3.10a be expressed as (or equal to) 
+$\vert 1_0 \rangle \otimes \vert 2_0 \rangle \otimes \ldots \otimes \vert j_n \rangle \otimes \ldots$
+The reason for this question is that i wonder whether eq 3.10a can be expressed using the cross product 
+analogously to the cross product expression in eq 3.11.
+
+\begin{solution}
+No, it cannot. The reason is the coupling between 1-D oscillators (normal modes). The coupling exists even in gas phase.
+Adding solvent molecules (solvating the solute) introduces even more couplings through $U$ -- the solute-solvent interaction potential.
+The state $\vert 1_0 \rangle \otimes \vert 2_0 \rangle \otimes \ldots \otimes \vert j_n \rangle \otimes \ldots$ 
+is only an idealized state made of completely uncoupled normal modes (fully harmonic approximation). We use them as the \emph{reference}
+states in RSPT because we know exact solutions to the Schr{\"o}dinger equation under harmonic approximation 
+(i.e., uncoupled harmonic oscillators).
+\end{solution}
+
+%
+\question For eq 3.11, there is eq 3.12. Likewise, can there be an analogous eq or expression for 3.10?
+
+\begin{solution}
+Then it will be just an operator acting on state vector, i.e., $\hat{Q}_i \vert 1_0 2_0 \ldots j_n \ldots \rangle_{\Psi}$.
+It cannot be simplified any further because we did not specify formally how the state $\vert 1_0 2_0 \ldots j_n \ldots \rangle_{\Psi}$
+is constructed. It can be any state in a Hilbert space spanned by eigenstates of a given Hamiltonian.
+\end{solution}
+
+%
+\question Coud you explain why Fock is referred in the terminology "composite Fock"? 
+That is, are there other composite spaces? If so, could you give me one example and explaination 
+for the difference between Fock and other composite spaces?
+
+\begin{solution}
+I used the term \emph{Fock space} to maintain generality. Fock space is a construct that is designed to describe the Hilbert spaces
+of a collection of indistinguishable particles (or excitations). 
+In the Thesis, we deal with only single excitations and perhaps I could just
+omit "Fock" and specify it as just "composite" space.
+The term \emph{composite} means that the Hilbert space is obtained by 
+an outer product of the sub-spaces. Here, sub-spaces refer to each normal mode space. So the output is the composite space
+of (pure) eigenstates of (uncoupled) normal mode harmonic Hamiltonian: 
+$\mathscr{H} = \sum_i \left\{ \frac{\hat{P}_i^2}{2M_i} + \frac{1}{2}M_i\omega_i^2 \hat{Q}_i^2 \right\}$.
+\end{solution}
+
+%
+\question For three normal modes and four energy levels in the five 1D oscillators, 
+how many vectors are cantained in the composite Fock space expressed by eq 3.12? 
+This might be an awkward question. That is, if five 1D oscillators automatically 
+mean five normal modes, whereby it conflicts with my question for three normal modes, 
+could you answer my question for three normal modes and four energy levels in the separate 1D oscillator instead?
+
+\begin{solution}
+Did you mean Eq.3.11? Eq.3.12 specifies the composite operator, not state vector. 
+Also, three normal modes mean three 1D harmonic oscillators. So I will consider 
+the case of three normal modes and 4 energy levels per each normal mode (ground + 3 excited states). 
+It means there is $4^3=64$ distinct
+$\vert S \rangle$ states. It is a lot of basis vectors, producing Hamiltonian of the size $64\times 64$.
+\end{solution}
+
+%
+\question What is the Hamiltonian matrix size (? by ?) if it is constructed 
+from the composite space $\vert S \rangle$ in eq 3.11 given the above question 1-5?
+
+\begin{solution}
+The answer is given above. The question does not make sense for Eq.3.12 because it describes the operator.
+\end{solution}
+
+%
+\question In your calculation for thesis, how many number of normal modes, energy levels, 
+and 1D oscillators did you use? Could you set these number for calculation? Or, does computer set these number automatically?
+
+\begin{solution}
+It depends on the molecule. The number of modes for non-linear molecules is equal to 
+$3N-6$ where $N$ is the number of atoms.
+The number of harmonic (1D) oscillators is equal to the number of modes. 
+We are interested only in the fundamental transitions, so 1$\leftarrow$0 transitions. 
+In the calculations, I do not need to consider constructions of Hamiltonian in basis of $\vert S \rangle$ vectors
+because we use RSPT.
+\end{solution}
+
+
+\end{questions}
+
+%%%%%%%%%%%%%%
+\section{p40 line between eqs 3.59 and 3.60.}
+
+\begin{questions}
+\question Could you explain the meaning of "traceless"?
+
+\begin{solution}
+"Traceless" means that the trace of a given tensor (or operator) vanishes: ${\rm Tr}\; {\bf q} \equiv \sum_i q_{ii} = 0$.
+Trace is independent on the representation (basis set) for QM operators.
+\end{solution}
+
+\question What is the word "distributed" meant for in front of "traceless"? 
+Ares there nondistributed moments? If so, what is it? 
+
+\begin{solution}
+Using the term "distributed moment" denotes the we divide the total multipole moment of the molecule
+into parts describing some fragments of charge density distributions. For example, the distribution
+can be done in such a way the resulting \emph{distributed} multipoles
+are centered on atoms. The summation over $x$ is signalling about the use of distributed moments.
+If we wanted to use total multipoles the summation would be omitted. The term "nondistributed" 
+is not proper since any multipole is always
+centered at some point.
+\end{solution}
+
+
+\end{questions}
+
+%%%%%%%%%%
+\section{p40 eqs 3.60 \& 3.61}
+
+\begin{questions}
+\question Are there any ways to define quadrupole and octupole moments other than eqs 3.60 \& 3.61? 
+Is the traceless cartesian moments always defined as eqs 3.60 \& 3.61?
+
+\begin{solution}
+Yes - one can define cartesian traceless multipole moments basically in many different ways. Here, we use Cartesian
+multipoles but it is more convenient to use spherical tensor notation which is unique. Starting from spherical tensor
+notation it is then easier to notice the way of how we can define cartesian traceless multipole moment.
+However, the freedom is perhaps only in the multiplying factor. For example, Jackson defines traceless
+quadrupole and octupole as in Eq.3.60 and 3.61 but without the factors of $\frac{1}{2}$. This results in different
+numerical coefficients in the series expansion of the electrostatic potential. See Jackson, J. D.,
+\emph{Classical Electrodynamics}, third ed., Chapter 4 for more detailed discussion.
+\end{solution}
+
+\end{questions}
+
+%%%%%%%%%%
+\section{p56 sec 4.2 Title}
+
+\begin{questions}
+\question Could you explain the meaning of "coarse-graining"? What is other than coarse-graining?
+
+\begin{solution}
+Coarse-graining means the proces of \emph{reduction} in the true (complicated) system.
+It results in a set of simpler fragments that can interact with each other and in this way
+approximately describe the original system. Here, we use it to transform from the intricate atomic granularity
+to the set of molecule-like objects that interact with each other. This is as opposed to implicit models
+in which we treat the system as continuum. If we didn't want to use coarse-graining and describe the real system
+we need to solve Schr{\"o}dinger equation for the whole set of atoms constructing the solute-solvent environment.
+This is prohibitively difficult.
+\end{solution}
+
+\end{questions}
+
+%%%%%%%%%%
+\section{p32 eq 3.13}
+
+\begin{questions}
+\question Is notation "summation over k, l, ...n" omitted in front of 2nd equation 
+(that is, expressed in cross products) in eq 3.13?
+
+\begin{solution}
+No - this summation is just a sum over all possibilities of normal mode permutations.
+\end{solution}
+
+\question Is notation "summation over j" also omitted in front of 2nd equation (that is, expressed in cross products) in eq 3.13?
+
+\begin{solution}
+No. But there is an incorrect choice of indice labels here. I should use other indices so that $j$ do not clash with each other.
+I will use $J$ for $G_{n,J}$.
+\end{solution}
+
+\question Is notation "summation over k, l, ...n" (and "summation over j"?) 
+used only when index notation rather than cross product notation (eq 3.11 uses the cross product notation) is used?
+
+\begin{solution}
+In this example yes. I don't know what about other equations since there is no rule here. But generally
+I explicitly sum over all modes because it is difficult (or even impossible) to denote that by using
+dot notation.
+\end{solution}
+
+\question Why is $\vert 1_k \rangle \otimes \vert 2_l \rangle \ldots \vert j_n \ldots \rangle $
+rather than $\vert 1_0 \rangle \otimes \vert 2_0 \rangle \ldots \vert j_n \ldots \rangle $ ? 
+The reason for this question is that I wonder why the restriction for eq 3.10 is not for eq 3.11?
+
+\begin{solution}
+Because $\vert S \rangle$ from Eq.3.11 is a set of reference vectors for RSPT calculations and they are not real.
+It is safe to sum over all possibilities when evaluating properties by RSPT.
+States from Eq.3.10 refer to real situations. We want to consider only some subset of real states, thus we
+restrict them in a way provided in the text.
+\end{solution}
+
+\end{questions}
+
+%%%%%%%%%%
+\section{1. p63 eq 4.52, p71 eq 4.90}
+
+\begin{questions}
+\question You gave me the answer for derivation of these equations already.
+But the notations written directly on the e-mail is hard to read, even though I can understand your answer in the case of eq 4.90.
+May I ask your answer again for derivation of these two equations, 
+but they are written separately in LaTeX and sent as pdf file in this time?
+In particular, could I ask for the detailed derivation of eq 4.52? 
+This is because I still have a difficulty in deriving eq 4.52 on the basis of your answer. 
+I feel sorry for asking you the tedious work like this.
+
+\begin{solution}
+It is no problem at all. 
+
+We have
+%
+\begin{equation}
+r_{ab} = \sqrt{ [x_a-x_b]^2 + [y_a-y_b]^2 + [z_a-z_b]^2 }
+\end{equation}
+%
+To compute derivative of $r_{ab}$ wrt $Q$ we can
+explicitely differentiate the above equation. We can notice that
+%
+\begin{equation}
+\frac{\partial}{\partial Q} \left( \sqrt {f(x,y,z)} \right) = \left( \frac{1}{2 \sqrt{f(x,y,z)}} \right)  \fderiv{f(x,y,z)}{Q}
+\end{equation}
+%
+Above I abbreviated the set $(x_a, x_b, y_a, y_b, z_a, z_b)$ by $(x,y,z)$.
+The function $f(x,y,z) = [x_a-x_b]^2 + [y_a-y_b]^2 + [z_a-z_b]^2$.
+
+Now, we see that $\sqrt{f(x,y,z)} = r_{ab}$. By computing the derivatives $\fderiv{f(x,y,z)}{Q}$ we get
+%
+\begin{equation}
+\fderiv{f(x,y,z)}{Q} = 2[x_a-x_b]  \left(\fderiv{x_a}{Q} - \fderiv{x_b}{Q}\right)
+                     + 2[y_a-y_b]  \left(\fderiv{y_a}{Q} - \fderiv{y_b}{Q}\right) 
+                     + 2[z_a-z_b]  \left(\fderiv{z_a}{Q} - \fderiv{z_b}{Q}\right)
+\end{equation}
+%
+Note that the above result can be written in a dot product form of two vectors:
+%
+\begin{equation}
+\fderiv{f(x,y,z)}{Q} = 2 [ {\bf r}_a - {\bf r}_b ] \cdot \left(\fderiv{{\bf r}_a}{Q} - \fderiv{{\bf r}_b}{Q}\right)
+\end{equation}
+%
+Thus, finally we get the result:
+%
+\begin{equation}
+\fderiv{f(x,y,z)}{Q} = \frac{1}{2r_{ab}} 
+   \times 2 [ {\bf r}_a - {\bf r}_b ] \cdot \left(\fderiv{{\bf r}_a}{Q} - \fderiv{{\bf r}_b}{Q}\right)
+ = r_{ab}^{-1} [ {\bf r}_a - {\bf r}_b ] \cdot \left(\fderiv{{\bf r}_a}{Q} - \fderiv{{\bf r}_b}{Q}\right)
+\end{equation}
+%d\dQ (sqrt (f(x,y,z)) = (0.5 / r_{ab} ) * 2 [ r_a - r_b ] · (dr_a/dQ - dr_b/dQ) = r_{ab}^{-1} *  [ r_a - r_b ] · (dr_a/dQ - dr_b/dQ)
+which is Eq. 4.90.
+
+Now, let us derive Eq.4.52. Here I switch indices $x\rightarrow a$ and $y\rightarrow b$ 
+to be consistent with the above example. 
+
+It is much easier if first we will figure out the following
+derivative: $\fderiv{r^{-n}}{Q}$ for $n=1,2,\ldots$. We have
+%
+\begin{equation}
+\fderiv{r_{ab}^{-n}}{Q} = -n r_{ab}^{-(n+1)} \times \fderiv{r_{ab}}{Q}
+\end{equation}
+%
+Note that we already got the result for $\fderiv{r_{ab}}{Q}$ earlier. Therefore we can write
+%
+\begin{equation}
+\fderiv{r_{ab}^{-n}}{Q} = -n r_{ab}^{-(n+2)} [ {\bf r}_a - {\bf r}_b ] \cdot \left(\fderiv{{\bf r}_a}{Q} - \fderiv{{\bf r}_b}{Q}\right)
+\end{equation}
+%
+Now, the dipole-dipole interaction tensor can be written as
+%
+\begin{equation}
+ T_{\alpha\beta} = 3\frac{r_\alpha r_\beta}{r^5} - \frac{\delta_{\alpha\beta}}{r^3}
+\end{equation}
+%
+where, for brevity, I used the short-cut notation $r_\alpha \equiv {\bf r}_{ab;\alpha}$ (i.e., the $\alpha$th Cartesian component
+of the ${\bf r}_{ab}$ vector. Also, $r^n \equiv \vert {\bf r}_{ab} \vert^n $.
+
+Taking the derivative wrt $Q$ we have
+%
+\begin{equation}
+ \fderiv{T_{\alpha\beta}}{Q} = 
+ 3r_\alpha r_\beta \fderiv{r^{-5}}{Q} + 
+ 3r^{-5} \left[ \fderiv{r_\alpha}{Q} r_\beta  + r_\alpha \fderiv{r_\beta}{Q} \right]
+    - \delta_{\alpha\beta} \fderiv{r^{-3}}{Q}
+\end{equation}
+%
+%In the above result, I already assumed that $\fderiv{{\bf r}_b}{Q}=0$ because $b$ label
+%refer to the solvent center. 
+Now, using our above result we can write that
+%
+\begin{equation}
+ \fderiv{r^{-5}}{Q} = -5r^{-7} [ {\bf r}_a - {\bf r}_b ] \cdot \left(\fderiv{{\bf r}_a}{Q} - \fderiv{{\bf r}_b}{Q}\right)
+\end{equation}
+%
+Note that $\fderiv{{\bf r}_b}{Q}\cong 0$ because $b$ label
+refer to the solvent center while $Q$ is solute's normal mode. 
+Therefore the above result can be simplified:
+%
+\begin{equation}
+ \fderiv{r^{-5}}{Q} = -5r^{-7} [ {\bf r}_a - {\bf r}_b ] \cdot \fderiv{{\bf r}_a}{Q} 
+\end{equation}
+%
+Analogously,
+%
+\begin{equation}
+ \fderiv{r^{-3}}{Q} = -3r^{-5} [ {\bf r}_a - {\bf r}_b ] \cdot \fderiv{{\bf r}_a}{Q} 
+\end{equation}
+%
+We now try to put all these results together. The outcome is
+%
+\begin{equation}
+ \fderiv{T_{\alpha\beta}}{Q} = 3 r^{-5} [ {\bf r}_a - {\bf r}_b ] \cdot \fderiv{{\bf r}_a}{Q} 
+ \left\{ 
+   \delta_{\alpha\beta} - 5 r_\alpha r_\beta r^{-2}
+ \right\}
+ + 
+ 3r^{-5} \left[ \fderiv{r_\alpha}{Q} r_\beta  + r_\alpha \fderiv{r_\beta}{Q} \right]
+\end{equation}
+%
+Now, the last step is to switch to the "bold" notation and use "$\otimes$"
+operator. By doing that we notice that
+%
+\begin{subequations}
+\begin{align}
+ r_\alpha r_\beta                &\rightarrow {\bf r}_{ab} \otimes {\bf r}_{ab} \\
+ r_\alpha \fderiv{r_\beta}{Q}    &\rightarrow {\bf r}_{ab} \otimes \fderiv{{\bf r}_{ab}}{Q} \\
+ \fderiv{r_\alpha}{Q} r_\beta    &\rightarrow \fderiv{{\bf r}_{ab}}{Q} \otimes {\bf r}_{ab} \\
+ \delta_{\alpha\beta}            &\rightarrow {\bf 1}
+\end{align}
+\end{subequations}
+%
+when switching in between the two "index" and "dot-cross" or "bold" notations.
+Therefore, the derivative of $T_{\alpha\beta}$ written in "bold" notation
+reads
+%
+\begin{equation}
+ \fderiv{{\bf T}}{Q} = 3 r^{-5} [ {\bf r}_a - {\bf r}_b ] \cdot \fderiv{{\bf r}_a}{Q} 
+ \left\{ 
+   {\bf 1} - 5 r^{-2} {\bf r}_{ab} \otimes {\bf r}_{ab}
+ \right\}
+ + 
+ 3r^{-5} \left[ \fderiv{{\bf r}_{ab}}{Q} \otimes {\bf r}_{ab}  + {\bf r}_{ab} \otimes \fderiv{{\bf r}_{ab}}{Q} \right]
+\end{equation}
+%
+which is identical to Eq.4.52 except for the power over $r$. 
+In the Thesis draft there appears to be 3 - it should be corrected to 5 and
+it is a typo. To make sure, I checked the code and there is a correct $r^{-5}$
+power.
+
+\end{solution}
+
+\end{questions}
+
+%%%%%%%%%%
+\section{p190 table B.1}
+
+\begin{questions}
+\question You already gave me the answer for how to derive Ui and Ujj terms for $r^{-2}$.
+Likewise as above, the notations written directly on the e-mail is hard to read.
+Thus, may I ask again your answer written in LaTeX?
+Then, I will try to derive Ui and Ujj terms for $r^{-3}$.
+
+\begin{solution}
+Sure.
+
+From Eq.4.32a we have that
+%
+\begin{equation}
+U_i = q_x   {\bf L}_x^{(i)} \cdot \nabla \phi_x 
+\end{equation}
+%
+From Eq.4.33a we have that
+%
+\begin{equation}
+U_{jj} = 2\sderiv{q_x}{Q_j}  {\bf L}_x^{(i)} \cdot \nabla \phi_x  + \text{ term containing gradient of gradient of $\phi$ at $x$}
+\end{equation}
+%
+We need to work out the forms of electrostatic potential gradients. 
+They are specified in Eq. 4.27. We can notice that
+%
+\begin{equation}
+\nabla \phi_x = - \sum_y    q_y  \frac{r_{xy}}{ r_{xy}^3} \text{ (this is $r^{-2}$ term) + $r^{-3}$ and higher-order terms}
+\end{equation}
+%
+Analogously we notice that $\nabla \phi_x$ (gradient of gradient of $\phi$ at $x$) contains only $r^{-3}$ 
+and higher-order terms contributions. Thus, we do not need to consider it for $r^{-2}$ terms.
+
+Let us now evaluate $U_i$ for $r^{-2}$ by using the above result for $\nabla \phi_x$.
+%
+\begin{equation}
+U_i = -q_x q_y {\bf L}_x^{(i)} \cdot  {\bf r}_{xy}   r_{xy}^{-3}  
+\end{equation}
+%
+(I have dropped summation over $y$ since we count here contribution for a $x,y$ pair).
+This expression is the result given in Table B.1. Analogously, we get the $U_{jj}$ term for $r_{xy}^{-3}$.
+
+In general, the equations from Table B.1 for $r_{xy}^{-3}$ and $r_{xy}^{-4}$ are extremely tedious in derivation. 
+Moreover, the derivative wrt $Q$ of multipole series expansion does not need to converge well 
+even if the source multipole series does. That is why I terminate the electrostatic 
+potential correction term series on $r_{xy}^{-2}$ contributions to estimate roughly these effects 
+that are not inlcuded in SolCAMM method.
+\end{solution}
+
+\end{questions}
+
+
+\end{document}
+#############################################################################
+
+
+\section{Differential Equations}
+\begin{questions}
+\question ... Short question here ... \answerline[Short answer]
+\question ... Question here ... 
+
+\begin{solution}[.2in]
+... Answer here ... 
+\end{solution}
+
+\question Long descriptive question about everything
+
+\begin{solutionorlines}[2in]
+Long descriptive answer is a long descriptive answer that is a long descriptive answer that is along descriptive answer that is along descriptive answer that is along descriptive answer that is a lie.
+\end{solutionorlines}
+
+\question Draw an arrow showing north direction.
+
+\begin{solutionorbox}[2in]
+$\uparrow$
+\end{solutionorbox}
+
+\end{questions}
+
+\ifprintanswers
+Stuff to appear only when answers \textbf{are} being printed.
+\else
+Stuff to appear only when answers \textbf{are not} being printed.
+\fi
