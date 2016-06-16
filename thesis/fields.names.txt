@@ -275,6 +275,7 @@ a:vibrational-analysis
 a:harmonic-oscillator
 a:matrix-elements       # of harmonic oscillator
 a:mw-coord              # mass-weigheted coordinates
+a:tensor-notation
 
 
 # FIGURES
@@ -320,6 +321,7 @@ f:slv-solefp
 f:slv-structure
 f:slv-inp-file-syntax
 f:tyr-res-lists
+f.MeCN.MeSCN.vs.solvents.spectra
 
 # TABLES
 t:NMA.MeNNN.dq.freq
