@@ -367,8 +367,8 @@ that implements the theoretical formalism of the first\hyp{}principles vibration
 Therefore, I provide a mini\hyp{}Tutorial with examples how to use {\sc Solvshift}\footnote{name relates to 
 ``solvatochromic shift''} 
 since the Reader might want to extend the functionality of the program in the future.
-The current version of the program is limited to the estimation of the vibrational frequency 
-shifts in transition dipole moment changes in the cases when we can 
+The current version of the program is limited to estimation of the vibrational frequency 
+shifts and the transition dipole moment changes in the cases when one can 
 neglect the solvation\hyp{}induced intramolecular mode mixing.
 %---------------------------------------------------
 \tableofcontents
@@ -477,7 +477,7 @@ solvatochromism that is the foundation of this Work. The rigorous first\hyp{}pri
 model of the vibrational solvatochromism is then presented in Chapter~\ref{c:my-model}.
 Further, the developed models are applied to amide I and II modes (Chapter~\ref{c:nma-amide-I})
 as well as
-C$\equiv$N and N$\equiv$C modes (Chapter~\ref{c:cn-modes}). In Chapter~\ref{c:mode-mixing-guanines}
+C$\equiv$N and N$\equiv$C modes (Chapter~\ref{c:cn-modes}). In Chapter~\ref{c:mode-mixing-guanines},
 I analyse the vibrational solvatochromism of guanine modes. Finally,
 I briefly present the scope of {\sc Solvshift}, the working code I was developing throughout
 my PhD project. This is the last Chapter~\ref{c:slv} of this Dissertation.
@@ -491,8 +491,8 @@ So, let's start!
 \begin{refsection}
 \chapter{Vibrational Solvatochromism\label{c:vibr-solv}}
 
-Molecules have various energetic properties that 
-depend on their interactions with environment. In particular,
+Energy spectrum of molecular eigenstates
+depends strongly on their interactions with environment. In particular,
 the transitions between vibrational quantum states
 that involve absorption in the IR region of 
 electromagnetic field also change. 
@@ -1198,7 +1198,7 @@ to read the Appendix~\ref{a:vibrational-analysis}
 (especially Section~\ref{a:harmonic-oscillator})
 in which the brief introduction to this fundamental aspect is presented.
 
-\section{Buckingham's model  \label{s:buckingham-theory}}
+\section{Buckingham's Model  \label{s:buckingham-theory}}
 
 The starting point in Buckingham's consideration was to analyse 
 the harmonic oscillator Hamiltonian which is perturbed by anharmonicity
@@ -1403,7 +1403,7 @@ and quadratic terms with respect to the interaction energy derivatives and there
 the corrections $\delta W_{n,J}^{(1)}$ and $\delta W_{n,J}^{(2)}$ 
 are non\hyp{}negligible anymore.
 
-\subsection{First-order frequency shift}
+\subsection{First-Order Frequency Shift}
 
 From Eqs.~\eqref{e:gwlevels} and~\eqref{e:ge} it implies that 
 the first\hyp{}order frequency shift corresponding to the transition
@@ -1478,7 +1478,7 @@ up to the first\hyp{}order perturbation. That is,
 \end{equation}
 %
 
-\subsection{Second-order frequency shift}
+\subsection{Second-Order Frequency Shift}
 
 From Eqs.~\eqref{e:gwlevels} and~\eqref{e:ge}, the second\hyp{}order 
 frequency shift corresponding to the $n\leftarrow m$ transition 
@@ -1715,7 +1715,7 @@ along $i$th normal coordinate that is caused by solvation process.
 To derive this expression, we neglected all second and higher derivatives
 of (interaction) energy.
 
-\section{Cho's model\label{s:cho-model}}
+\section{Cho's Model\label{s:cho-model}}
 
 Different way to study the vibrational solvatochromism is to start from
 solute's structural distortion. 
@@ -1839,7 +1839,7 @@ compute the second derivatives of $U$
 with respect to all the normal coordinates and thus, the mode\hyp{}mixing
 problem is very difficult to handle. 
 
-\subsection{Weak coupling approximation\label{s:wca}}
+\subsection{Weak Coupling Approximation\label{s:wca}}
 
 To study the consequences of the above result in the weak interaction
 limit, let us first rewrite it
@@ -1953,7 +1953,7 @@ as to the \emph{weak coupling approximation}, or briefly WCA.
 %one neglects the mode mixing and assumes that only the diagonal Hessian
 %matrix elements change. This leads to the frequency shift 
 
-\subsection{Electric and mechanical anharmonicity\label{s:ea-mea}}
+\subsection{Electric and Mechanical Anharmonicity\label{s:ea-mea}}
 
 Let us recast the vibrational frequency shift in Eq.~\eqref{e:buckingham-2st-order-total-fund}
 in the following form
@@ -2075,7 +2075,7 @@ In Chapter~\ref{c:my-model} we will present the more detailed discussion of the 
 approximation outlined here.
 
 
-\section{Relationships between Cho's and Buckingham's models}
+\section{Relationships between Cho's and Buckingham's Models}
 
 It is instructive to analyse the meaning of the frequency shift
 formula from Eq.~\eqref{e:buckingham-2st-order-total-fund}
@@ -2647,7 +2647,7 @@ Chapters 2 and 3 of an excellent book by Szabo and Ostlund \citep{Szabo.Ostlund.
 It is also recommended to become familiar with the basic schemes of implementation of molecular
 integrals which can be found in Ref. \citep{Cook.HandbookOfComputationalQuantumChemistry.2005}
 
-\section{Implicit model: Coulombic and induction effects\label{s:implicit-model}}
+\section{Implicit Model: Coulombic and Induction Effects\label{s:implicit-model}}
 
 At the heart of the foundations of our knowledge about the 
 physical chemistry of liquids and solutions are the \emph{continuum}
@@ -2725,7 +2725,7 @@ or its approximate form. However, this is still relatively costly. Beneath
 we present the approximate method of taking into account
 this relaxation process basing solely on the solute's gas\hyp{}phase properties.
 
-\subsection{Rigid molecule approximation}
+\subsection{Rigid Molecule Approximation}
 
 Let us first consider the case when we neglect structural
 relaxation due to the reaction field and focus only
@@ -2791,7 +2791,7 @@ where the coefficients are given as
 %
 Note that ${\BM \Phi}$ is symmetric.  
 
-\subsection{Structural distortion effect: Iterative method}
+\subsection{Structural Distortion Effect: Iterative Method}
 
 Now, using Eq.~\eqref{e:struct-dist-cho}
 we can estimate the structural distortion due to relaxation 
@@ -2934,7 +2934,7 @@ volume
 %charge distribution), and the structural distortion effects can be 
 %neglected without significant loss of accuracy.
 
-\subsection{The nature of interactions in Onsager model}
+\subsection{The Nature of Interactions in Onsager Model}
 
 Onsager solvation energy is derived based on solving Poisson
 equation for the boundary conditions specified by a point
@@ -3032,7 +3032,7 @@ calculations, especially when specific interactions such as
 hydrogen bonds exist between solute and its molecular environment.
 
 
-\section{Explicit model: Coarse-graining\label{s:vibr-solv-explicit-models}}
+\section{Explicit Model: Coarse-Graining\label{s:vibr-solv-explicit-models}}
 
 We focus now on the treatment of each molecule
 explicitly which enables one to take into account
@@ -3343,7 +3343,7 @@ systems the Reader is referred to
 the Appendix~\ref{a:convergence-of-the-correction-terms}
 
 
-\subsection{Polarization and dispersion effects\label{s:dw-poldisp}}
+\subsection{Polarization and Dispersion Effects\label{s:dw-poldisp}}
 
 In Section~\ref{s:dw-coul} we have focused on a long\hyp{}range
 approximation of the electrostatic contribution to the frequency
@@ -3389,7 +3389,7 @@ U^{(2)} = - \sum_{mn\ne 00} \frac{
 %
 where $\omega_{m0_A} \equiv \omega_{m} - \omega_{0_A}$.
 
-\subsubsection{Induction effects\label{s:dw-poldisp-pol}}
+\subsubsection{Induction Effects\label{s:dw-poldisp-pol}}
 
 If we restrict the summation in Eq.~\eqref{e:eint-2} to run over such states
 that involve ground state of either monomer
@@ -3726,7 +3726,7 @@ information on whether Stark theory based on the molecular
 solvatochromic multipoles is accurate or not. We will discuss 
 this aspect in more detail in Chapter~\ref{c:cn-modes}.
 
-\subsubsection{Dispersion effects\label{s:disp}}
+\subsubsection{Dispersion Effects\label{s:disp}}
 
 The remaining part of the second\hyp{}order interaction
 energy from Eq.~\eqref{e:eint-2} which has to be considered
@@ -4165,7 +4165,7 @@ vibrational frequency shift, $\Delta\omega_{j,8}^{\rm Disp}$,
 in the future.
 
 
-\subsection{Exchange-repulsion effects\label{s:dw-exrep}}
+\subsection{Exchange-Repulsion Effects\label{s:dw-exrep}}
 
 The electrostatic contribution to the frequency shift is the dominant term 
 when the intermolecular distance is sufficiently large enough to ignore 
@@ -4482,7 +4482,7 @@ by numerical  differentiation (note, that they need to be evaluated only once).
 They can also be calculated analytically by using standard methods implemented
 in current QM packages like {\sc Gaussian} or {\sc Gamess}.
 
-\subsection{Charge-transfer effects\label{s:dw-ct}}
+\subsection{Charge-Transfer Effects\label{s:dw-ct}}
 
 When two molecules are sufficiently close enough
 their interactions can lead to transfer of the 
@@ -4644,7 +4644,7 @@ Fortunately, CT energies are usually quite small
 and can be neglected when extremely high accuracy is not
 a concern (see Chapter~\ref{c:nma-amide-I}).
 
-\section{Modelling the solute's far environment\label{s:far-environ}}
+\section{Modelling the Solute's Far Environment\label{s:far-environ}}
 
 In the preceding Sections we have focused on the
 theory that is applicable to the explicit solute\hyp{}solvent
@@ -4741,7 +4741,7 @@ changed.
 %In fact, for typical protic solvents, $g_K$ is in the range
 %1.5--5 whereas in Onsager theory $g_K=1$.
 
-\subsection{Long\hyp{}range Coulombic correction}
+\subsection{Long\hyp{}Range Coulombic Correction}
 
 Let us consider the dipole\hyp{}dipole interaction
 potential between solute's dipole moment ${\BM \mu}_0$ 
@@ -4876,7 +4876,7 @@ caused by polar molecules inside the sphere.
 %$r_{\rm max}$. Therefore we assume that the associated induction
 %effects (i.e., dipole-induced dipole
 
-\subsection{Long\hyp{}range induction correction}
+\subsection{Long\hyp{}Range Induction Correction}
 
 Let us analyse the induction energy. Under dipole\hyp{}dipole
 approximation it is given as
@@ -4922,7 +4922,7 @@ Therefore we finally have
 %
 Note that this contribution is temperature independent.
 
-\subsection{Long\hyp{}range dispersion correction}
+\subsection{Long\hyp{}Range Dispersion Correction}
 
 %It is clear that the Onsager model neglects the dispersion
 %interaction since it is a semi\hyp{}classical model.
@@ -4972,7 +4972,7 @@ have been derived and the resulting formulae are trivial to implement.
 However, our analysis is valid only for isotropic solutions and cannot be 
 applied when the molecular environment around the solute is strongly heterogeneous.
 
-\section{Working models of vibrational solvatochromism\label{s:solx-models-working}}
+\section{Working Models of Vibrational Solvatochromism\label{s:solx-models-working}}
 
 As the fundamental theory of the physical origins of the vibrational
 solvatochromism has been thoroughly presented, 
@@ -4988,7 +4988,7 @@ by method `X'. We introduce this naming convention to quickly refer to a
 particular vibrational frequency shift approximation. 
 
 
-\subsection{Distributed multipole models: SolDMA, SolCAMM and SolLMTP\label{s:solx-electrost}}
+\subsection{Distributed Multipole Models: SolDMA, SolCAMM and SolLMTP\label{s:solx-electrost}}
 
 The easiest approach to approximate the Coulombic frequency shifts
 is to use multipoles. In the Appendix~\ref{c:dma}
@@ -5078,7 +5078,7 @@ does not include the rotational averaging which might be of
 interest when methyl groups are freely rotatable. These aspects 
 will be discussed in more detail in the next Chapter. 
 
-\subsection{SolEFP, SolEDS and SolSAPT models\label{s:solefp-soleds-solsapt}}
+\subsection{SolEFP, SolEDS and SolSAPT Models\label{s:solefp-soleds-solsapt}}
 
 To include also non\hyp{}Coulombic effects to describe 
 the intermolecular interaction potential one can use, for example,
@@ -5097,7 +5097,7 @@ Gora.Bartkowiak.Roszak.Leszczynski.JCP.2004} (EDS)
 %
 These will lead to the SolEFP, SolEDS and SolSAPT methods, accordingly. 
 
-\subsubsection{SolEFP model\label{s:solefp-working-model}}
+\subsubsection{SolEFP Model\label{s:solefp-working-model}}
 
 In fact, the SolEFP method was already described in Section~\ref{s:vibr-solv-explicit-models}
 and the frequency shift is given as
@@ -5283,7 +5283,7 @@ with SAPT. \citep{Flick.Kosenkov.Hohenstein.Sherrill.Slipchenko.JCTC.2012}
 Nevertheless, before SolEFP method is used, first it has to be validated
 against more accurate approach -- SolEDS or SolSAPT. 
 
-\subsubsection{SolEDS model\label{s:soleds}}
+\subsubsection{SolEDS Model\label{s:soleds}}
 
 One of easy ways of computing the total interaction energy
 between two molecules is to adopt the supramolecular approach
@@ -5416,7 +5416,7 @@ $\Delta\omega_j^{\rm SolEDS/HF}$ obtained at the HF level of theory,
 though the same notation is used in both Eqs.~\eqref{e:dw-soleds-hf} 
 and \eqref{e:dw-soleds-mp2}.
 
-\subsubsection{SolSAPT model\label{s:solsapt}}
+\subsubsection{SolSAPT Model\label{s:solsapt}}
 
 If one wants to go beyond HF and MP2 levels and
 analyse the origins of the vibrational frequency 
@@ -5514,7 +5514,7 @@ In the above equation, the appropriate contributions can be
 more or less identified with SolEDS and SolEFP frequency shifts
 according to Table~\ref{t:sapt-eds-efp2}.
 
-\section{Going beyond weak coupling approximation\label{s:beyond-wca}}
+\section{Going Beyond Weak Coupling Approximation\label{s:beyond-wca}}
 
 Weak coupling approximation, i.e., Eq.~\eqref{e:buckingham-2st-order-total-fund},
 was shown to be an excellent approximation
@@ -5544,7 +5544,7 @@ where we analyse ring deformation modes
 of guanine. They are delocalized over at least 4 atoms
 and exhibit substantial mixing between themselves.
 
-\subsection{Towards quantitative modelling}
+\subsection{Towards Quantitative Modelling}
 
 The foundations of the necessary theory were developed
 by Cho. \citep{Cho.JCP.2009} Although he focused on the coarse\hyp{}grained
@@ -5603,7 +5603,7 @@ In particular, the three\hyp{}mode coupling model
 could be considered to study the mode mixing of
 guanine ring modes that appear around 1550~cm$^{-1}$.
 
-\subsection{Coupling between two modes\label{s:coupling-between-2-modes}}
+\subsection{Coupling Between Two Modes\label{s:coupling-between-2-modes}}
 
 When our mode of interest $j$ is strongly coupled
 with $k$th mode we need to diagonalise 2x2 Hessian matrix.
@@ -5753,7 +5753,7 @@ and \eqref{e:ohoho}.
 
 
 
-\subsection{Coupling between three modes\label{s:coupling-between-3-modes}}
+\subsection{Coupling Between Three Modes\label{s:coupling-between-3-modes}}
 
 Now let us assume that the mode $j$ is mixed with $k$th and $l$th modes
 due to solvation process. The frequencies in solution will satisfy the following
@@ -5893,9 +5893,9 @@ For the detailed computational procedures see the Appendix~\ref{a:computational-
 
 
 
-\section{Small model solute\hyp{}solvent clusters}
+\section{Small Model Solute\hyp{}Solvent Clusters}
 
-\subsection{Frequency shifts from Onsager model\label{s:amide-I-onsager}}
+\subsection{Frequency Shifts from Onsager Model\label{s:amide-I-onsager}}
 
 We start with the testing of the vibrational solvatochromic 
 operator $\hat{F}_j$ (Eq.~\eqref{e:dw-fea-fma}) 
@@ -5940,7 +5940,7 @@ structural distortions of NMA molecule. The maximal structural
 distortion effect on amide I frequency shift is as small
 as $\sim$6 cm$^{-1}$.
 
-\subsection{Frequency shifts from solvatochromic multipoles\label{s:amide-I-solvatochr-multipoles}}
+\subsection{Frequency Shifts From Solvatochromic Multipoles\label{s:amide-I-solvatochr-multipoles}}
 
 In order to test our solvatochromic SolCAMM, SolMMM and SolChelpG models,
 we apply them to various NMA/water clusters
@@ -5968,7 +5968,7 @@ higher\hyp{}multipole terms. We apply the following models:
 %
 In the above, X denotes MMM, CAMM and ChelpG methods. 
 
-\subsubsection{Rigid molecule algorithm\label{s:rigid-molecule-algorithm}}
+\subsubsection{Rigid Molecule Algorithm\label{s:rigid-molecule-algorithm}}
 
 Once these distributed vibrational solvatochromic
 charges and multipoles are calculated, one should properly
@@ -6075,7 +6075,7 @@ molecules. Therefore, we believe that, for the purpose of
 the present study, this approximate algorithm is sufficiently
 accurate and acceptable.
 
-\subsubsection{Frequency shifts from molecular multipole moments}
+\subsubsection{Frequency Shifts from Molecular Multipole Moments}
 
 As the crudest approximation studied here, we consider 
 the vibrational solvatochromism model based on calculated
@@ -6382,7 +6382,7 @@ and the contracted models can be safely applied (at least for NMA amide I mode).
 Thus, from computational point of view SolCAMM-6 is the best of the methods
 presented here (we prefer to include amide proton just in case).
 
-\subsection{Beyond Coulombic approximation}
+\subsection{Beyond Coulombic Approximation}
 
 Thus far we have elaborated on the accuracy and computational
 feasibility of using Coulombic models of the vibrational solvatochromism.
@@ -6400,7 +6400,7 @@ effects on the vibrational solvatochromism of amide I mode.
 Finally, we challenge with modelling the bulk solutions
 and confront our SolEFP model with experiment.
 
-\subsubsection{Hartree-Fock approximation}
+\subsubsection{Hartree-Fock Approximation}
 
 To gain deeper insight into the origin of the frequency
 shift of NMA amide I mode, we first analysed the three simple
@@ -6655,7 +6655,7 @@ This clearly demonstrates that induction effect on the vibrational
 frequency shift is strongly non\hyp{}additive and at least three\hyp{}body
 interactions need to be properly considered in the calculations.
 
-\subsubsection{Electron correlation effects}
+\subsubsection{Electron Correlation Effects}
 
 HF approximation does not take into account the correlation
 of electronic motion other than Fermi correlation
@@ -6870,7 +6870,7 @@ interaction between NMA and surrounding water molecules
 induces an amide I frequency shift of about --30 cm$^{-1}$, which is
 comparable to $\Delta \omega^{\rm Ind}$.
 
-\subsubsection{Orientation and distance\hyp{}dependence of frequency shift components\label{s:amide-I-orient}}
+\subsubsection{Orientation and Distance\hyp{}Dependence of Frequency Shift Components\label{s:amide-I-orient}}
 
 It is well known that Coulombic interactions are relatively long range forces
 and can be either attractive or repulsive, depending on the orientation
@@ -7055,7 +7055,7 @@ over the 12 sample configurations are also shown here
 
 
 
-\section{Modelling vibrational solvatochromism in bulk\label{s:amide-I-bulk}}
+\section{Modelling Vibrational Solvatochromism in Bulk\label{s:amide-I-bulk}}
 
 In order to model real systems it is desirable to consider
 models of bulk solutions rather than small solute\hyp{}solvent
@@ -7204,7 +7204,7 @@ also via induction interaction.
 
 \section{Discussion}
 
-\subsection{Origins of vibrational solvatochromism\label{s:amide-I-discuss-origins}}
+\subsection{Origins of Vibrational Solvatochromism\label{s:amide-I-discuss-origins}}
 
 Unlike the previous attempts to describe vibrational
 frequency shifts of amide I mode in polar solvents with the
@@ -7516,7 +7516,7 @@ effects on the general vibrational solvatochromism of various
 IR probes interacting with ionic species in solutions in the
 future.
 
-\subsection{On the applicability of Onsager model}
+\subsection{On the Applicability of Onsager Model}
 
 Before we close this Chapter, let us come back for a while to
 continuum models since there is still some group of researchers
@@ -7676,7 +7676,7 @@ interchange of N and C atoms, mainly the increase of the sensitivity
 of the vibrational NC frequency
 towards H-bonding and absorption intensity increase of NC stretch mode.
 
-\section{Electrostatic vibrational properties of CN stretch modes}
+\section{Electrostatic Vibrational Properties of CN Stretch Modes}
 
 The vibrational
 solvatochromic multipole moments up to octupoles for the model
@@ -7824,7 +7824,7 @@ atomic charges of surrounding solvent molecules, the simple
 dipolar description of the complicated vibrational
 solvatochromism is not acceptable.
 
-\section{H-bonding effect on nitrile frequency shift}
+\section{H-bonding Effect on Nitrile Frequency Shift}
 
 Although the H-bonding interaction\hyp{}induced frequency shifts
 of various nitrile stretches in protic solvents have been
@@ -7951,7 +7951,7 @@ interaction\hyp{}induced effects may not be quantitatively reliable.
 
 
 
-\section{CN stretch in bulk solution\label{s:dw-cn-bulk}}
+\section{CN Stretch in Bulk Solution\label{s:dw-cn-bulk}}
 
 As shown in Figure~\ref{f.MeCN.MeSCN.vs.solvents}, 
 the nitrile frequency shifts are strongly
@@ -8170,7 +8170,7 @@ electric field.
 
 
 
-\section{SCN label at the interface of two proteins\label{s:scn-protein-interfac}}
+\section{SCN Label at the Interface of Two Proteins\label{s:scn-protein-interfac}}
 
 In the above Sections, we showed that the vibrational
 solvatochromism of CN probes originates not only from the
@@ -8191,7 +8191,7 @@ and exchange\hyp{}repulsion interaction\hyp{}induced terms
 systematically. Here, we make the first attempt to develop
 such \emph{ab initio} model.
 
-\subsection{Constructing the model for a protein environment\label{s:scn-protein-interfac-model-environ}}
+\subsection{Constructing the Model for a Protein Environment\label{s:scn-protein-interfac-model-environ}}
 
 This task is
 extremely challenging because, unlike the simple cases of
@@ -8496,7 +8496,7 @@ nitrile IR probes in protein environments.
 
 %\subsection{Short\hyp{}range frequency shifts of CN stretch in Ras\hyp{}binding
 %domain of RalGDS\label{s:ral-solefp}}
-\subsection{Vibrational frequency shifts inside proteins\label{s:ral-solefp}}
+\subsection{Vibrational Frequency Shifts Inside Proteins\label{s:ral-solefp}}
 
 To get the detailed insight into the origin of
 the short\hyp{}range interaction\hyp{}induced vibrational frequency
@@ -8678,7 +8678,7 @@ validity of the SolEFP approach developed here.
 
 
 
-\section{Effects of atom order reversal within CN group\label{s:cn-nc}}
+\section{Effects of Atom Order Reversal Within CN Group\label{s:cn-nc}}
 
 In a recent study of Maj~\emph{et al.}, \citep{Maj.Ahn.Blasiak.Kwak.Han.Cho.XXX.2016} 
 it was demonstrated that the
@@ -8947,7 +8947,7 @@ solvatochromism and intensity enhancements of many different molecular probes.
 
 \section{Discussion}
 
-\subsection{Origins of the vibrational frequency shifts of CN stretch mode}
+\subsection{Origins of the Vibrational Frequency Shifts of CN Stretch Mode}
 
 Our analysis is consistent with the previous empirical
 calculation of the CN stretch mode of acetonitrile \citep{Reimers.Hall.JACS.1999}, 
@@ -8970,7 +8970,7 @@ and Morales and Thompson \citep{Morales.Thompson.JPCB.2011}
 from a perspective of a repulsive part of the van der Waals
 intermolecular potential.
 
-\subsection{Does Stark-dipole theory describe induction effects accurately?\label{s:stark-dipole-cn}}
+\subsection{Does Stark-Dipole Theory Describe Induction Effects Accurately?\label{s:stark-dipole-cn}}
 
 It is necessary to point out the limitation of the
 vibrational Stark theory. 
@@ -9175,7 +9175,7 @@ and dispersion effects, but also because it does not take into
 account even the induction effect correctly. Indeed, the assumption
 from Eq.~\eqref{e:dmtp-solmmm-dipole-assumption} appears to be \emph{incorrect}.
 
-\subsection{CN probes inside proteins}
+\subsection{CN Probes Inside Proteins}
 
 One of the related works was reported by Zou~\emph{et al.} By carrying
 out CMD simulations, they obtained van der Waals and
@@ -9304,7 +9304,7 @@ on construction of larger nucleobase aggregates such as
 the tensor transfer method of Bou\v{r}'s group \citep{Bour.Sopkova.Bednarova.Malon.Keiderling.JCC.1997,
 Andrushchenko.Tsankov.Krasteva.Wieser.Bour.JACS.2011}.
 
-\section{$N$-methylguanine in D$_2$O: Normal mode analysis}
+\section{$N$-Methylguanine in D$_2$O: Normal Mode Analysis}
 
 We have considered a derivative of guanine, $N$-methylguanine, which is 
 shown in Figure~\ref{f:guanine-vacuum-modes} along with the selected
@@ -9956,7 +9956,7 @@ User can also communicate via command line using main {\tt slv} script.
 SolEFP//CMD calculations are run by script {\tt slv{\textunderscore}md} which reads the
 special input file.
 
-\subsection{Steps of setting up EFP environment for SLV calculations}
+\subsection{Steps of Setting Up EFP Environment for SLV Calculations}
 
 The completely general way for defining the fragments within the target system
 is through the input file. 
@@ -10039,7 +10039,7 @@ molecules is presented in Section~\ref{s:superimposition-practical}.
 %backbone (just to properly place this fragment in space such that it is 
 %superimposed with sulphonate group in target system). 
 
-\subsection{Superimposition problem\label{s:superimposition-practical}}
+\subsection{Superimposition Problem\label{s:superimposition-practical}}
 
 In order to provide the topology for SolEFP/EFP calculations it is necessary to specify where particular
 SolEFP and EFP objects need to be superimposed within the structure from CMD trajectory. This brings
@@ -10065,7 +10065,7 @@ superimposition lists refer to (Sol)EFP atomic indices.
 Here we discuss superimposition lists and atom rearrangement
 in more detail. We shall do it on a few examples.
 
-\subsubsection{Working with Tip4P water model}
+\subsubsection{Working with Tip4P Water Model}
 
 Let us assume that in our CMD simulation file stores water molecules in the following order: 
 O, H1, H2, X (for Tip4P model) where X is the additional non\hyp{}atomic
@@ -10081,7 +10081,7 @@ so the corresponding superimposition list for water is [0,1,2] (we superimpose I
 fragment). In the input file we can specify this superimposition
 list as {\tt supl 0-2} or {\tt supl 0 1 2}.
 
-\subsubsection{Working with EFP fragment being a part of molecule}
+\subsubsection{Working with EFP Fragment Being a Part of Molecule}
 
 It is more complicated and requires some caution. 
 Let us first examine the tyrosine residue which is one of
@@ -10180,7 +10180,7 @@ them as well. The correct list is
 %
 
 
-\section{Summary and outline of future development}
+\section{Summary and Outline of Future Development}
 
 In this Chapter, we described briefly the {\sc Solvshift} package
 which is believed to serve well for every member of Scientific Community
@@ -10274,7 +10274,7 @@ We do not put the `$\cdot$' sign between ${\bf A}$ and ${\bf B}$ matrices
 in this case which means that the summation
 goes over columns of ${\bf A}$ and rows of ${\bf B}$.
 
-\subsection{Non-symmetric matrices}
+\subsection{Non-Symmetric Matrices}
 
 Let us denote ${\bf A}$ to be a non-symmetric square matrix, i.e., 
 $A_{\alpha\beta}\ne A_{\beta\alpha}$. To denote the matrix contractions
@@ -10302,7 +10302,7 @@ Thus,
 Note that ${\bf d} \ne {\bf c}$ and that 
 ${\bf b}^T \cdot {\bf A} \cdot {\bf c} \ne {\bf c}^T \cdot {\bf A} \cdot {\bf b}$.
 
-\subsection{Symmetric matrices}
+\subsection{Symmetric Matrices}
 
 In this Work, almost all of the matrices are symmetric, i.e., 
 $A_{\alpha\beta}= A_{\beta\alpha}$. The only exceptions
@@ -10339,7 +10339,7 @@ We also often make use of the matrix\hyp{}vector\hyp{}vector\hyp{}to\hyp{}scalar
 \end{equation}
 %
 
-\section{Tensors of rank 3 and higher}
+\section{Tensors of Rank 3 and Higher}
 
 In this Thesis, only symmetric \nth{3} and \nth{4}\hyp{}rank Cartesian tensors,
 i.e., each permutation of indices produces identical tensor, 
@@ -10442,7 +10442,7 @@ the anharmonicity effects on the vibrational properties of molecules.
 %which can be found elsewhere. %\citep{Barone.JCP.2005}
 
 %\section{Matrix elements of $x^n$ operator in harmonic oscillator basis\label{a:matrix-elements}}
-\section{The harmonic oscillator\label{a:harmonic-oscillator}}
+\section{The Harmonic Oscillator\label{a:harmonic-oscillator}}
 
 The Hamiltonian of harmonic oscillator is given by
 %
@@ -10460,10 +10460,11 @@ Schr{\"o}dinger equation we find that
 E_n \vert n \rangle 
 \end{equation}
 %
-where the energies $E_n=$ and eigenstates $\vert n \rangle$ can be found
+where the energies $E_n=\hbar \omega \left( n+\frac{1}{2} \right)$ 
+and eigenstates $\vert n \rangle$ can be found
 in textbooks for quantum mechanics.
 
-\subsection{Some important matrix elements\label{a:matrix-elements}}
+\subsection{Some Important Matrix Elements\label{a:matrix-elements}}
 
 The following material is necessary for derivations of the Buckingham theory
 of the vibrational frequency shifts that is presented in Sec.~\ref{s:buckingham-theory}. 
@@ -10534,7 +10535,7 @@ used, the only surviving contribution is
 %
 and, of course, $\langle n \vert n \rangle=1$ term.
 
-\section{Vibrational analysis of polyatomic molecule\label{asec:vibranal}}
+\section{Vibrational Analysis of Polyatomic Molecule\label{asec:vibranal}}
 
 The Hamiltonian of the vibrating molecule in equilibrium geometry under Born\hyp{}Oppenheimer approximation
 can be expressed as the sum of Hamiltonians of independent harmonic oscillators:
@@ -10581,7 +10582,7 @@ or
 Therefore, diagonalising ${\bf H}^{\rm Cart}$ one can find the orthogonal 
 set ${\bf Q}$. We note that the dimensions of ${\bf x}$ and ${\bf Q}$ are the unit distances.
 
-\section{Mass-weighted coordinates\label{a:mw-coord}}
+\section{Mass-Weighted Coordinates\label{a:mw-coord}}
 
 It is much better to express the normal coordinates in terms of the mass\hyp{}weighted coordinates.
 To see this, let us assume that we want to get the frequencies from Eq.\eqref{eq:pot_harm} by diagonalising
@@ -10658,7 +10659,7 @@ where $x$ and $y$ denote the distributed sites on the solute and solvent
 molecules, respectively. There exists a number of ways of obtaining
 the distributed multipoles. 
 
-\section{Traceless and primitive multipoles}
+\section{Traceless and Primitive Multipoles}
 
 To compute interaction energy from Eq.~\eqref{e:a1100} one needs 
 to use the ``traceless'' quadrupole and octupole moments. However, 
@@ -10738,7 +10739,7 @@ where $\hat{\Omega}_{\alpha\alpha c}$ denotes the trace of $\hat{\BM\Omega}$
 tensor with respect to the first two axes written in Einstein
 summation notation for simplicity. 
 
-\section{DMA method}
+\section{DMA Method}
 
 In the distributed multipole analysis 
 (DMA) of Stone \citep{Stone.JCTC.2005}, the particular multipoles
@@ -10764,7 +10765,7 @@ procedures available in many quantum chemistry programs
 need to be reimplemented to adapt for numerical differentiation with respect
 to normal modes.
 
-\section{CAMM method}
+\section{CAMM Method}
 
 More convenient in use in the vibrational solvatochromic calculations
 is the cumulative atomic multipole
@@ -10821,7 +10822,7 @@ is divided evenly over all atomic orbitals, even those which are located far
 from the distribution centre. Nevertheless, CAMM still provides reasonable 
 estimates of $U^{\rm Coul}$ and we have used them throughout this Thesis.
 
-\section{LMTP method}
+\section{LMTP Method}
 
 Instead of using atoms as expansion centers, one can use also localised molecular orbitals
 for that purpose. This is the localised orbital multipole (LMTP) expansion 
@@ -10898,7 +10899,7 @@ as well as $\pi$\hyp{}orbital distributed moments, respectively. The centers can
 of expansion centers. The part of $\bf M$ which comes from atomic
 nuclei can be just added to electronic atomic moments.
 
-\section{Changing the origins of multipole moments\label{s:multipole-recentering}}
+\section{Changing the Origins of Multipole Moments\label{s:multipole-recentering}}
 
 Here we describe the recentering of DMA/CAMM/LMTP origins which can be used
 to compute total multipole moments from distributed moments (evaluation SolMMM from SolCAMM parameters)
@@ -10952,7 +10953,7 @@ convergence properties are tested for model NMA-H$_2$O dimers.
 Refer to Eq.~\eqref{e:dw-solefp-coul-correction}
 for the context.
 
-\section{Asymptotic analysis of the correction terms}
+\section{Asymptotic Analysis of the Correction Terms}
 
 After inserting the series expansions from Eq.~\eqref{e:potential-gradients} 
 and Eq.~\eqref{e:interaction-tensors} into Eqs.~\eqref{e:f-terms} and \eqref{e:k-terms}
@@ -11036,7 +11037,7 @@ $r^{-2}$        && $-q_xq_y r_{xy}^{-3} G^{(i)}_{xy}$
 \end{table}
 
 
-\section{Analysis of the convergence properties of Eq.~\eqref{e:dw-solefp-coul-correction}\label{a:convergence-of-the-correction-terms}}
+\section{Analysis of the Convergence Properties of Eq.~\eqref{e:dw-solefp-coul-correction}\label{a:convergence-of-the-correction-terms}}
 
 We have analysed the various contributions to $\Delta\omega^{\rm Coul}(\partial\phi)$
 for the three model systems A, B and C depicted in Fig.~\ref{f:nma-abcde}. It is found 
@@ -11159,7 +11160,7 @@ applied. \citep{Lebedev.Skorokhodov.RussAcadSciDoklMAth.1992}
 Geometry optimisations and vibrational analyses were carried out
 by using {\sc Gaussian 09} program. \citep{Frisch.Gaussian.2009}
 
-\subsection{Onsager model}
+\subsection{Onsager Model}
 
 Self\hyp{}Consistent Reaction Field (SCRF) calculations
 using Onsager model \citep{Kirkwood.JCP.1934,Onsager.JACS.1936,
@@ -11206,7 +11207,7 @@ multipole moments are three atomic sites and two mid\hyp{}bond
 centers. The DMA calculations were performed by utilising
 GAMESS package. \citep{GAMESS.JCC.1993}
 
-\subsection{SolEFP calculations}
+\subsection{SolEFP Calculations}
 
 The Fock matrices and distributed polarizabilities were
 evaluated with GAMESS program by utilising MAKEFP routine. \citep{GAMESS.JCC.1993}
@@ -11246,7 +11247,7 @@ and efficient since
 these polarizabilities are well\hyp{}behaved and
 smoothly vanish to zero for large $\Omega$.
 
-\subsection{SolEDS calculations}
+\subsection{SolEDS Calculations}
 
 To estimate the relative contributions from electrostatic,
 exchange\hyp{}repulsion, and the remaining charge\hyp{}delocalization
@@ -11275,7 +11276,7 @@ obtained the contribution from the charge\hyp{}transfer effect,
 which was not implemented in the analytical SolEFP calculation
 procedure. 
 
-\subsubsection{Constrained cluster method\label{a:constrained-models}}
+\subsubsection{Constrained Cluster Method\label{a:constrained-models}}
 
 To apply SolEDS scheme properly one needs to be cautious 
 since its application to the molecular multimers is not at all
@@ -11333,7 +11334,7 @@ with 6-311++G** basis
 set. \citep{Krishnan.Binkley.Seeger.Pople.JCP.1980,
 McLean.Chandler.JCP.1980}
 
-\subsection{Numerical differentiation of molecular properties}
+\subsection{Numerical Differentiation of Molecular Properties}
 
 The first derivatives of all the molecular properties
 (multipole moments including ChelpG charges, Fock matrices, LCAO\hyp{}MO
@@ -11428,7 +11429,7 @@ vibrational derivatives of LMO centroids, distributed polarizabilities, and $c_{
 matrices in the LMO basis.
 
 
-\subsection{Classical molecular dynamics simulations}
+\subsection{Classical Molecular Dynamics Simulations}
 
 Molecular dynamics simulations of NMA in H$_2$O and
 CDCl$_3$ at 300~K and under 1 atm were performed by using
@@ -11499,7 +11500,7 @@ water solution was just about one day, when a 4\hyp{}thread run (one
 frame in one thread) at 3.4~GHz Intel\textregistered Core\texttrademark I5\hyp{}3570 computer
 was performed.
 
-\subsection{Fitting of atomic charges located at the peptide group of NMA\label{a:nma-esp-fit}}
+\subsection{Fitting of Atomic Charges Located at the Peptide Group of NMA\label{a:nma-esp-fit}}
 
 NMA molecule was optimised by using HF/6-311++G** method (Cartesian basis set
 as implemented in {\sc Gaussian09} package. Subsequently, the four
