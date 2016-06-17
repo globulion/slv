@@ -1,9 +1,13 @@
-\documentclass[a4paper,titlepage,twoside,fleqn,12pt]{book}
+\documentclass[b5paper,oneside,fleqn,11pt]{book}
 
 % format of the thesis
   %\usepackage{classicthesis} % --- check for compatibility with noweb
 \usepackage{titlesec}
-\usepackage[a4paper,margin=1in]{geometry}
+\usepackage[b5paper,
+            lmargin=0.60in, 
+            rmargin=0.60in,
+            bmargin=1.0in,
+            tmargin=0.7in ]{geometry}
 \usepackage[T1]{fontenc}
 \usepackage[british]{babel}
 %\usepackage{CJKutf8}  % not working now!
@@ -28,7 +32,12 @@
 
 % font of the text: charter, times, fourier*, palatino
 \newcommand*{\fonttimes}{\fontfamily{ptm}\selectfont}
-\usepackage{fourier}
+\usepackage{palatino}
+
+% landscape mode
+\usepackage{lscape}
+\usepackage{rotating}
+\usepackage{longtable}
 
 % hyphenation
 \usepackage{hyphenat}
@@ -36,8 +45,8 @@
      \hyphenation{e-lec-tro-sta-tic sol-va-to-chro-mic sol-va-to-chro-mism}
      \hyphenation{Sol-MMM Sol-ChelpG Sol-CAMM Sol-SAPT Sol-EDS Sol-EFP }
      \hyphenation{Ral-GDS cau-ses cau-sed char-ge char-ges i-de-al-ly sol-vents Me-SCN}
-     \hyphenation{rou-ghly a-to-mic pre-sen-ted straight-for-ward vi-bra-tio-nal}
-    %\hyphenation{Sol-CAMM-5 Sol-CAMM-6 Sol-CAMM-12}
+     \hyphenation{rou-ghly a-to-mic pre-sen-ted straight-for-ward vi-bra-tio-nal cy-a-no-in-do-le}
+     \hyphenation{fre-quen-cy}
      \usepackage[shortcuts]{extdash}
      \frenchspacing
 
@@ -108,7 +117,7 @@
 \usepackage{bm}
 \usepackage{mathrsfs}
 \usepackage{upgreek}
-\allowdisplaybreaks
+\allowdisplaybreaks[4]
 
 % symbols
 \usepackage{gensymb}
@@ -272,7 +281,6 @@ Written by \\[\baselineskip]
 
 \vfill % Whitespace between editor names and publisher logo
 
-\plogo \\[0.3\baselineskip] % Publisher logo
 {\scshape June, 2016} \\[0.3\baselineskip] % Year published
 {\large Korea University}\par % Publisher
 
@@ -291,7 +299,58 @@ Written by \\[\baselineskip]
 \graphicspath{{figures/}}
 %---------------------------------------------------
 \begin{localspacing}{1}
-\titleGP
+     %TITLE PAGES
+
+     % Syngyb
+     \thispagestyle{empty}
+     \begin{center}
+     \vspace*{0.0cm} % White space at the top of the page
+     {\LARGE \bf{Thesis for the Degree of}}\\[0.2cm]
+     {\LARGE \bf{Doctor of Philosophy} }\\
+     \vfill
+     {\LARGE \bf{First-Principles\\[0.2cm]
+                 Vibrational Solvatochromism Theory\\[0.2cm]
+                 Beyond Coulombic Approximation}} \\
+     \vfill
+     {\LARGE \bf{by}}\\[0.2cm]
+     {\LARGE \bf{Bartosz B{\l}asiak}}\\
+     \vfill
+     {\LARGE \bf{Department of Chemistry}}\\[0.2cm]
+     {\LARGE \bf{College of Science}}\\[0.2cm]
+     {\LARGE \bf{Graduate School}}\\[0.2cm]
+     {\LARGE \bf{Korea University}}\\
+     \vfill
+     {\Large \bf{July 2016}}\\
+     \end{center}
+     \clearpage
+
+     % Boksyb
+     \thispagestyle{empty}
+     \begin{center}
+     \vspace*{0.0cm} % White space at the top of the page
+     {\LARGE \bf{Under the Supervision of}}\\[0.2cm]
+     {\LARGE \bf{Professor Minhaeng Cho} }\\
+     \vfill
+     {\LARGE \bf{First-Principles\\[0.2cm]
+                 Vibrational Solvatochromism Theory\\[0.2cm]
+                 Beyond Coulombic Approximation}} \\
+     \vfill
+     {\LARGE \bf{by}}\\[0.2cm]
+     {\LARGE \bf{Bartosz B{\l}asiak}}\\
+     \vfill
+     {\LARGE \bf{Department of Chemistry}}\\[0.2cm]
+     {\LARGE \bf{College of Science}}\\[0.2cm]
+     {\LARGE \bf{Graduate School}}\\[0.2cm]
+     {\LARGE \bf{Korea University}}\\
+     \vfill
+     {\Large \bf{Thesis}}\\[0.2cm]
+     {\Large \bf{Submitted for the Degree of Doctor of Philosophy}}\\[0.2cm]
+     {\Large \bf{to Korea University}}\\[0.2cm]
+     \vfill
+     {\Large \bf{July 2016}}\\
+     \end{center}
+     \clearpage
+
 \end{localspacing}
 %---------------------------------------------------
 \begin{dedication}
@@ -342,7 +401,7 @@ I am grateful to Prof. Hogyu Han for putting a lot of effort in checking
 the equations. He spotted many typographical errors and helped
 in clarifying notation.
 
-Finally, I would like to acknowledge my former research adviser, Dr. Robert W{\l}adys{\l}aw G{\'o}ra.
+Finally, I would like to acknowledge my former research adviser, Dr. Robert W{\l}a\-dys\-{\l}aw G{\'o}ra.
 It is his appreciation of detail in scientific work what triggered me and stimulated
 my efforts to understand quantum mechanics and write my own codes.
 
@@ -416,7 +475,7 @@ gasses, solutions, pure liquids and solids to the properties of independent mole
 \end{quote}
 %
 Therefore, we can use spectroscopy to study the intermolecular interactions
-if we know the fundamental principles that govern the interaction-induced molecular property
+if we know the fundamental principles that govern the interaction\hyp{}induced molecular property
 change. In fact, there is a lot of such properties that could be traced when changing
 the molecular partners around the spectator molecule: from its
 structure, charge distribution and transition frequencies to electric\slash{}magnetic 
@@ -785,7 +844,7 @@ Bublitz.Boxer.AnnuRevPhysChem.1997}, although
 it is unclear whether this is always the case.
 
 It is possible to combine the vibrational spectroscopy of IR probes (mostly VSE) with nuclear magnetic 
-resonance (NMR) technique, which was demonstrated by Boxer's 
+resonance (NMR) technique, which was demonstrated by Bo\-xer's 
 group. \citep{Fafarman.Sigala.Herschlag.Boxer.JACS.2010,Bagchi.Fried.Boxer.JACS.2012} 
 It enables one
 to separate out the contributions from the H\hyp{}bonding and other effects. However, 
@@ -1059,7 +1118,7 @@ Similar conclusion was drawn by Morales and Thompson who investigated MeCN/water
 using CMD. \citep{Morales.Thompson.JPCB.2011}
 
 The signs of non\hyp{}negligible exchange\hyp{}repulsion\hyp{}induced vibrational 
-frequency shifts \newline were also  
+frequency \newline shifts were also  
 found. \citep{Li.Liu.Schlegel.JACS.2002,Delanoye.Herrebout.vanderVeken.JACS.2002,Zierkiewicz.Jurecka.Hobza.ChemPhysChem.2005,
 Rodziewicz.Rutkowski.Melikova.Koll.ChemPhysChem.2005,
 Zhou.Qiu.JPCA.2009,Mo.Wang.Guan.Braida.Hiberty.Wu.ChemEurJ.2014}
@@ -1725,7 +1784,7 @@ by using newly obtained normal coordinates, and subsequently find new eigenvecto
 of the vibrating species by analysing the Hessian matrix explicitly.
 
 The vibrational potential energy function including anharmonicity 
-and solute-solvent interaction potential
+and solute\hyp{}sol\-vent interaction potential
 can be expressed in gas phase state normal coordinate space as
 %
 \begin{multline} \label{e:vib-pot-energy-function}
@@ -1801,7 +1860,7 @@ series
 %
 \begin{multline}\label{exp2}
 V_{\rm new}(\overline{\bf Q}) \approx {\rm const}\; 
-+ \frac{1}{2!} \sum_j M_j \omega_j^2 \overline{Q_j}^2 
++ \frac{1}{2!} \sum_j M_j \omega_j^2 \overline{Q_j}^2 \\
 + \frac{1}{2!} \sum_{ij} U_{0,ij} \overline{Q_i} \overline{Q_j} \;\;
  - \frac{1}{2!} \cdot 2 \sum_{ij} U_{0,ij} \frac{U_{0,i}}{M_i\omega_i^2} \overline{Q_j} \\
 + \frac{1}{3!} \sum_{ijk} g_{ijk} \overline{Q_i}\overline{Q_j}\overline{Q_k}  
@@ -1992,22 +2051,22 @@ Expanding the solute-solvent electrostatic interaction energy by using the
 following distributed multipole series 
 expansion \citep{Stone.TheTheoryOfIntermolecularForces.1996}
 %
-\begin{equation} \label{e:dmtp}
- U^{\rm Coul} \approx  \sum_x \left[ q_x \phi({\bf r}_x) + 
+\begin{multline} \label{e:dmtp}
+ U^{\rm Coul} \approx  \sum_x \Big[ q_x \phi({\bf r}_x) + 
                   {\BM \mu}_x \cdot {\BM \nabla} \phi({\bf r}_x)   + 
-      \frac{1}{3} {\BM \Theta}_x : {\BM \nabla} \otimes {\BM \nabla} \phi({\bf r}_x)   + 
-     \frac{1}{15} {\BM \Omega}_x \vdots {\BM \nabla} \otimes {\BM \nabla} \otimes {\BM \nabla} \phi({\bf r}_x) \right] + \ldots
-\end{equation}
+      \frac{1}{3} {\BM \Theta}_x : {\BM \nabla} \otimes {\BM \nabla} \phi({\bf r}_x)   \\ + 
+     \frac{1}{15} {\BM \Omega}_x \vdots {\BM \nabla} \otimes {\BM \nabla} \otimes {\BM \nabla} \phi({\bf r}_x) \Big] + \ldots
+\end{multline}
 %
 and inserting this into Eq.~\eqref{e:buckingham-2st-order-total-fund} 
 one finds that the frequency shift can also be expanded
 in a similar way \citep{Cho.JCP.2009}:
 %
 \begin{multline} \label{e:dmtp-sol}
- \Delta\omega_j^{\rm Coul} \approx  \sum_x \Bigg[ l_{x;j} \phi({\bf r}_x) + 
+ \Delta\omega_j^{\rm Coul} \approx  \sum_x \Big[ l_{x;j} \phi({\bf r}_x) + 
                         {\bf L}_{x;j} \cdot {\BM \nabla} \phi({\bf r}_x)   + 
       \frac{1}{3} {\BM \lambda}_{x;j} : {\BM \nabla} \otimes {\BM \nabla} \phi({\bf r}_x)   \\ + 
-     \frac{1}{15} {\BM \Lambda}_{x;j} \vdots {\BM \nabla} \otimes {\BM \nabla} \otimes {\BM \nabla} \phi({\bf r}_x) \Bigg] + \ldots
+     \frac{1}{15} {\BM \Lambda}_{x;j} \vdots {\BM \nabla} \otimes {\BM \nabla} \otimes {\BM \nabla} \phi({\bf r}_x) \Big] + \ldots
 \end{multline}
 %
 In the above equations, $\phi({\bf r}_x)$ is the electrostatic
@@ -2159,7 +2218,7 @@ or in more convenient form for analysis
 \right\}^{-1} {\bf B}^{-1} \cdot {\bf U}^{(1)}
 \end{equation}
 %
-(Here new quantities were introduced for convenience: ${\bf G} = \frac{1}{2} {\bf g}$
+(here new quantities were introduced for convenience: ${\bf G} = \frac{1}{2} {\bf g}$
 and ${\bf B} = {\bf M} + {\bf U}^{(2)}$). 
 In the above expression, the Q-space transformation is hidden in an implicit tensor
 function.
@@ -2169,14 +2228,14 @@ obtain the expansion coefficients from Eq.\eqref{e:Q-space-transform}.
 If~${\bf B}^{-1} \left[ {\bf G} \cdot \delta {\bf Q} \right] \ll {\bf 1} $ 
 we can simplify Eq.\eqref{e:dQ-new-c} to
 %
-\begin{equation}\label{e:dQ-new-s}
+\begin{multline}\label{e:dQ-new-s}
 \delta {\bf Q} \approx
 -\left\{ 
        {\bf 1} - {\bf B}^{-1} \left[ {\bf G} \cdot \delta {\bf Q} \right]
-\right\} {\bf B}^{-1} \cdot {\bf U}^{(1)} = 
+\right\} {\bf B}^{-1} \cdot {\bf U}^{(1)} \\ = 
 %
 - {\bf B}^{-1} \cdot {\bf U}^{(1)} + {\bf B}^{-1} \left[ {\bf G} \cdot \delta {\bf Q} \right] {\bf B}^{-1} \cdot {\bf U}^{(1)}
-\end{equation}
+\end{multline}
 %
 It can be shown that 
 ${\bf B}^{-1} \left[ {\bf G} \cdot \delta {\bf Q} \right] {\bf B}^{-1} \cdot {\bf U}^{(1)} = {\bf A} \cdot \delta {\bf Q}$
@@ -2247,8 +2306,9 @@ A_{ij} = \frac{1}{2M_i\omega_i^2}
 Using these results we can draw new space as
 \begin{multline}\label{e:Q-new-T2-approx}
 {\bf \overline{Q}} \approx {\bf Q} + \left( {\bf 1} + {\bf A} \right) \left( {\bf 1} - {\bf M}^{-1}{\bf U}^{(2)} \right){\bf M}^{-1} \cdot {\bf f}
-= \\
+ \\
 ={\bf Q} + {\bf M}^{-1} \cdot {\bf U}^{(1)} - {\bf M}^{-1}{\bf U}^{(2)}{\bf M}^{-1}\cdot{\bf U}^{(1)}
+\\
 + {\bf A}{\bf M}^{-1}\cdot{\bf U}^{(1)} - {\bf A}{\bf M}^{-1}{\bf U}^{(2)}{\bf M}^{-1}\cdot{\bf U}^{(1)}
 \end{multline}
 %
@@ -2306,6 +2366,45 @@ from Eq.~\eqref{e:solvatochromic-multipoles}.
 Also, due to difficulties in calculating ${\bf U}^{(2)}$ matrix (this matrix need to
 be evaluated numerically which is too expensive) we neglect this contribution. 
 
+%
+\begin{longtable}{p{.47\textwidth} | p{.47\textwidth}}
+%\begin{table}[b!]
+\caption{
+Vibrational frequencies of $N$-methylacetamide (NMA) and methyl azide (MeN$_3$)
+that were computed for the exemplary clusters by explicit diagonalisation
+of full solute's Hessian matrices according to Eq.~\eqref{e:force-const-cho} 
+and electrostatic
+approximation. ${\bf U}^{(2)}$ matrices were neglected. Underlined
+frequencies are either the amide I mode or azide asymmetric stretch.
+Calculations were performed by using B3LYP/6-311++G** method.
+\label{t:NMA.MeNNN.dq.freq}}
+%\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } p{7.8cm}|p{7cm}}
+\\\hline\hline
+\multicolumn{1}{c}{$\delta {\bf Q} {\text{ computed by Approximation `1'}}$} & 
+\multicolumn{1}{c}{$\delta {\bf Q} {\text{ computed by Approximation `2'}}$} \\
+\hline
+\multicolumn{2}{c}{Amide I mode in NMA} \\
+%\hline
+6812, 6521, 6399, 5127, 4937, 4807, 3907, \underline{1874}, 1740, 1730, 1488, 1478,
+1468, 1377, 1327, 1169, 982, 756, 565, -230, -465, \newline -1059, -1130, -1571, -3477,
+-3602, -4083, \newline -5442, -5544, -6098 & 
+3740, 3154, 3132, 3109, 3069, 3034, 3004, \underline{1662}, 1552, 1505, 1495,
+1483, 1465, 1444, 1385, 1258, 1167, 1149, 1106, 1052, 998,  862
+631, 617, 438, 296, 277, 141, 104, 21 \\
+\hline
+\multicolumn{2}{c}{Azide asymmetric stretch mode in MeN$_3$} \\
+%\hline
+3937, 3780, 3705, \underline{2286}, 1472, 1413, 1285, 1168, 906, 649,
+448, 164, -1725, -1747, \newline -2308 &
+3333, 2975, 2768, \underline{2276}, 1526, 1483, 1462, 1382, 1138, 1083,
+900, 642, 531, 248, -35 \\
+\hline\hline
+%\end{tabular*}
+%\begin{footnotesize}
+%$^{a)}$
+%\end{footnotesize}
+\end{longtable}
+%
 The procedure for the test calculations presented here is as follows: i) 
 we computed the structural distortions for the model system, ii) we used them to estimate
 the Hessian matrix, iii) we diagonalised the Hessian matrix and extracted the frequencies.
@@ -2348,44 +2447,7 @@ frequencies (Fig.~\ref{f.NMA.dq}c).
 When approximation `2' is used, the extent of errors is significantly 
 reduced (Fig.~\ref{f.NMA.dq}d). We list all the frequencies
 for a selected clusters in Table~\ref{t:NMA.MeNNN.dq.freq}.
-%
-\begin{table}[b!]
-\caption{
-Vibrational frequencies of $N$-methylacetamide (NMA) and methyl azide (MeN$_3$)
-that were computed for the exemplary clusters by explicit diagonalisation
-of full solute's Hessian matrices according to Eq.~\eqref{e:force-const-cho} 
-and electrostatic
-approximation. ${\bf U}^{(2)}$ matrices were neglected. Underlined
-frequencies are either the amide I mode or azide asymmetric stretch.
-Calculations were performed by using B3LYP/6-311++G** method.
-\label{t:NMA.MeNNN.dq.freq}}
-\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } p{7.8cm}|p{7cm}}
-\hline\hline
-\multicolumn{1}{c}{$\delta {\bf Q} {\text{ computed by Approximation `1'}}$} & 
-\multicolumn{1}{c}{$\delta {\bf Q} {\text{ computed by Approximation `2'}}$} \\
-\hline
-\multicolumn{2}{c}{Amide I mode in NMA} \\
-%\hline
-6812, 6521, 6399, 5127, 4937, 4807, 3907, \underline{1874}, 1740, 1730, 1488, 1478,
-1468, 1377, 1327, 1169, 982, 756, 565, -230, -465, -1059, \newline -1130, -1571, -3477,
--3602, -4083, -5442, \newline -5544, -6098 & 
-3740, 3154, 3132, 3109, 3069, 3034, 3004, \underline{1662}, 1552, 1505, 1495,
-1483, 1465, 1444, 1385, 1258, 1167, 1149, 1106, 1052, 998,  862
-631, 617, 438, 296, 277, 141, 104, 21 \\
-\hline
-\multicolumn{2}{c}{Azide asymmetric stretch mode in MeN$_3$} \\
-%\hline
-3937, 3780, 3705, \underline{2286}, 1472, 1413, 1285, 1168, 906, 649,
-448, 164, -1725, -1747, -2308 &
-3333, 2975, 2768, \underline{2276}, 1526, 1483, 1462, 1382, 1138, 1083,
-900, 642, 531, 248, -35 \\
-\hline\hline
-\end{tabular*}
-%\begin{footnotesize}
-%$^{a)}$
-%\end{footnotesize}
-\end{table}
-%
+% OLD PLACE OF TABLE 3.1
 The full DFT amide I mode
 frequency is 1680 cm$^{-1}$ and this result is reasonably reproduced by the SolCAMM-6 method\footnote{Multipoles
 are distributed on heavy atoms and amide proton hence the number of centres is 6. See Chapter~\ref{c:my-model}, 
@@ -2394,7 +2456,7 @@ which gives 1964 cm$^{-1}$. However, Hessian diagonalisation gives correct frequ
 only if approximation `2' 
 is employed.
 
-Similar analysis of MeN$_3$ molecule brings however different results when the SolCAMM-4 model is
+Similar analysis of MeN$_3$ molecule brings however different results when the Sol\-CAMM-4 model is
 used\footnote{with solvatochromic multipoles distributed over all heavy atoms} 
 (see Fig.~\ref{f.NMA.dq}(a)-(d)). It can be seen that
 the structural distortion is not properly described since the Hessian contains apparently
@@ -2470,19 +2532,19 @@ Thus, by using the results obtained in Eqs.~\eqref{e:struct-dist-cho}
 and \eqref{e:struct-dist-cho-transl},
 the difference transition dipole is given by
 %
-\begin{equation} \label{e:dipole-der-diff-solution}
+\begin{multline} \label{e:dipole-der-diff-solution}
 \frac{\partial{\BM \mu}({\bf F})}{\partial\overline {\bf Q}_j} \Bigg|_{\overline{\bf Q}_{0_A}} -  
  \frac{\partial{\BM \mu}({\bf F}={\bf 0})}{\partial {\bf Q}_j} \Bigg|_{{\bf Q}_{0_A}} \approx
 %
 \frac{\partial{\BM \alpha}_0}{\partial Q_j} \Bigg|_{{\bf Q}_{0_A}} \cdot {\bf F}
-+
+\\+
 \sum_i \frac{U_{0,i}}{M_i\omega_i^2} 
 \left\{
 \frac{\partial^2{\BM \alpha}_0}{\partial Q_j \partial Q_i} \Bigg|_{{\bf Q}_{0_A}} \cdot {\bf F}
 +
 \frac{\partial^2{\BM \mu}_0}{\partial Q_j \partial Q_i} \Bigg|_{{\bf Q}_{0_A}}
 \right\}
-\end{equation}
+\end{multline}
 %
 In a limiting case when
 the interaction potential is approximated by the multipole expansion from
@@ -2492,20 +2554,20 @@ Eq.~\eqref{e:dmtp},
 Eq.~\eqref{e:dipole-der-diff-solution} can be recast 
 in a simple form
 %
-\begin{equation} \label{e:dipole-der-diff-solution-field}
+\begin{multline} \label{e:dipole-der-diff-solution-field}
  \frac{\partial{\BM \mu}({\bf F})}{\partial\overline {\bf Q}_j} \Bigg|_{\overline{\bf Q}_{0_A}} -  
  \frac{\partial{\BM \mu}({\bf F}={\bf 0})}{\partial {\bf Q}_j} \Bigg|_{{\bf Q}_{0_A}} \cong
 %
-\left[
+\Bigg[
 \frac{\partial {\BM \alpha}_0}{\partial Q_j} \Bigg|_{{\bf Q}_{0_A}} 
-+ 
+\\+ 
 \sum_i \frac{1}{M_i\omega_i^2} 
 \frac{\partial^2 {\BM \mu}_0}{\partial Q_j \partial Q_i} \Bigg|_{{\bf Q}_{0_A}}
 \otimes
 \frac{\partial {\BM \mu}_0}{\partial Q_i} \Bigg|_{{\bf Q}_{0_A}}
-\right] 
+\Bigg] 
 \cdot {\bf F}
-\end{equation}
+\end{multline}
 %
 in which we neglected the contributions of the polarizability second derivatives.
 
@@ -2558,7 +2620,7 @@ is simply expressed as
 %
 \begin{multline}[box=\widebox] \label{e:dipole-der-diff-solution-distributed}
 \frac{\partial{\BM \mu}({\bf F})}{\partial\overline {\bf Q}_j} \Bigg|_{\overline{\bf Q}_{0_A}} -  
- \frac{\partial{\BM \mu}({\bf F}={\bf 0})}{\partial {\bf Q}_j} \Bigg|_{{\bf Q}_{0_A}} \approx
+ \frac{\partial{\BM \mu}({\bf F}={\bf 0})}{\partial {\bf Q}_j} \Bigg|_{{\bf Q}_{0_A}} \\\approx
 %
 \sum_a \left\{
 \frac{\partial{\BM \alpha}_{a,0}}{\partial Q_j} \Bigg|_{{\bf Q}_{0_A}} 
@@ -2571,7 +2633,7 @@ is simply expressed as
 \sum_i \frac{U_{0,i}}{M_i\omega_i^2}
 \frac{\partial^2{\BM \mu}_0}{\partial Q_j \partial Q_i} \Bigg|_{{\bf Q}_{0_A}}
 %
-\qquad\qquad\qquad\qquad\qquad\qquad
+\qquad\qquad\qquad\qquad
 \end{multline}
 %
 In the above expression, electric field is determined at
@@ -2951,13 +3013,13 @@ within the Onsager model.
 When the structural relaxation effect on solute's dipole moment
 is neglected we can rewrite the frequency shift to be
 %
-\begin{equation} \label{e:f9f9f}
+\begin{multline} \label{e:f9f9f}
  \Delta\omega_j(\varepsilon, a) \approx 
 - \left[ {\BM \mu}_j + \frac{1}{2} {\BM \mu}_j^{\rm Ind} \right] \cdot {\bf F}^{\rm Ons} 
 - \frac{1}{2} {\BM \alpha}_j : {\bf F}^{\rm Ons} \otimes {\bf F}^{\rm Ons} 
 + \Delta\omega_j({\bf F})
- = \Delta\omega_j^{\rm Coul} + \Delta\omega_j^{\rm Ind}
-\end{equation}
+\\ = \Delta\omega_j^{\rm Coul} + \Delta\omega_j^{\rm Ind}
+\end{multline}
 %
 where the Coulombic and induction frequency shifts 
 are defined as
@@ -3084,14 +3146,15 @@ which is given in Eq.~\eqref{e:dmtp}. Analogously,
 the electrostatic potential and its gradients
 can be also multipole\hyp{}expanded as follows
 %
-\begin{equation} \label{e:potential-gradients}
+\begin{multline} \label{e:potential-gradients}
 \underbrace{\nabla \otimes \cdots \otimes \nabla}_{r} \phi({\bf r}_x) = 
-\sum_y \left[ 
+\sum_y \Bigg[ 
 {\bf T}^{(r)} q_y - {\bf T}^{(r+1)} \cdot {\BM \upmu}_y + 
- \frac{1}{3} {\bf T}^{(r+2)} : {\BM \Theta}_y - 
+ \frac{1}{3} {\bf T}^{(r+2)} : {\BM \Theta}_y 
+\\ - 
 \frac{1}{15} {\bf T}^{(r+3)} : {\BM \Omega}_y + \ldots
-\right]
-\end{equation}
+\Bigg]
+\end{multline}
 %
 where 
 ${\BM \nabla} \equiv \sum_{\zeta}^{x,y,z} \hat{\bf i}_\zeta \frac{\partial}{\partial \zeta_x}$, 
@@ -3194,10 +3257,11 @@ derivative operators in the following way
 \begin{align}
 \fderiv{}{Q_i} &= \sum_m \fderiv{r_m}{Q_i}\fderiv{}{r_m} 
      \approx \sum_{m\in x} \fderiv{r_m}{Q_i}\fderiv{}{r_m} 
-     = {\bf L}_x^{(i)} \cdot {\BM \nabla}_x      \label{e:deriv-operators-1} \\
+     = {\bf L}_x^{(i)} \cdot {\BM \nabla}_x      \label{e:deriv-operators-1} \\ \nonumber
 \sderiv{}{Q_i} &= \sum_{mn} \fderiv{r_m}{Q_i}\fderiv{r_n}{Q_i}\sderivd{}{r_m}{r_n} 
-     \approx \sum_{m\in x}\sum_{n\in x} \fderiv{r_m}{Q_i}\fderiv{r_n}{Q_i}\sderivd{}{r_m}{r_n} 
-     = {\bf L}_x^{(i)} \otimes {\bf L}_x^{(i)} : {\BM \nabla}_x\otimes{\BM \nabla}_x  \label{e:deriv-operators-2}
+     \approx \sum_{m\in x}\sum_{n\in x} \fderiv{r_m}{Q_i}\fderiv{r_n}{Q_i}\sderivd{}{r_m}{r_n} \\
+     &\qquad\qquad\qquad\qquad\qquad\qquad\qquad
+      = {\bf L}_x^{(i)} \otimes {\bf L}_x^{(i)} : {\BM \nabla}_x\otimes{\BM \nabla}_x  \label{e:deriv-operators-2}
 \end{align}
 \end{subequations}
 %
@@ -3243,15 +3307,15 @@ and
 \begin{subequations}  \label{e:k-terms}
 \begin{align}
  U_{jj}^{(q)}          &= \sum_x   
-    \left[ \sderiv{q_x}{Q_j} \phi({\bf r}_x) 
-    + 2 \fderiv{q_x}{Q_j} {\bf L}_x^{(j)} \cdot {\BM \nabla} \phi({\bf r}_x) 
-    + q_x {\BM \nabla}\otimes{\BM \nabla} \phi({\bf r}_x) : {\bf L}_x^{(j)} \otimes {\bf L}_x^{(j)} \right]     \label{e:k-terms-1} \\
+    \Bigg[ \sderiv{q_x}{Q_j} \phi({\bf r}_x) 
+    + 2 \fderiv{q_x}{Q_j} {\bf L}_x^{(j)} \cdot {\BM \nabla} \phi({\bf r}_x) \nonumber \\ 
+    &\qquad\qquad\qquad\qquad\qquad\qquad\qquad+ q_x {\BM \nabla}\otimes{\BM \nabla} \phi({\bf r}_x) : {\bf L}_x^{(j)} \otimes {\bf L}_x^{(j)} \Bigg]     \label{e:k-terms-1} \\
 %
  U_{jj}^{(\BM\upmu)}     &= \sum_x  
-    \left[ \sderiv{{\BM \upmu}_x}{Q_j} \phi({\bf r}_x) 
-    + 2 \fderiv{{\BM \upmu}_x}{Q_j} \otimes {\bf L}_x^{(j)} : {\BM \nabla}\otimes{\BM \nabla} \phi({\bf r}_x) 
-    + {\BM \upmu}_x 
-    \cdot {\BM \nabla}\otimes{\BM \nabla}\otimes{\BM \nabla} \phi({\bf r}_x) \vdots {\bf L}_x^{(j)} \otimes {\bf L}_x^{(j)} \right]      
+    \Bigg[ \sderiv{{\BM \upmu}_x}{Q_j} \phi({\bf r}_x) 
+    + 2 \fderiv{{\BM \upmu}_x}{Q_j} \otimes {\bf L}_x^{(j)} : {\BM \nabla}\otimes{\BM \nabla} \phi({\bf r}_x) \nonumber \\
+    &\qquad\qquad\qquad\qquad\qquad\qquad\qquad+ {\BM \upmu}_x 
+    \cdot {\BM \nabla}\otimes{\BM \nabla}\otimes{\BM \nabla} \phi({\bf r}_x) \vdots {\bf L}_x^{(j)} \otimes {\bf L}_x^{(j)} \Bigg]      
     \label{e:k-terms-2} \\
 %
  U_{jj}^{(\BM\Theta)}  &= \frac{1}{3} \sum_x  
@@ -3571,7 +3635,7 @@ which defines the effective solvatochromic induced dipoles as
 \end{equation}
 % 
 by including also vibrational polarizabilities. We shall use this definition
-later in Chapter~\ref{c:cn-modes}.
+later in Chap\-ter~\ref{c:cn-modes}.
 
 Now, we need the explicit expressions for the vibrational
 derivatives of $\bf D$ and $\bf F$. The derivatives of the first are straightforward
@@ -3678,12 +3742,12 @@ In the single\hyp{}centre limit, the solvatochromic
 frequency shift from Eq.~\eqref{e:dmtp-sol}
 becomes
 %
-\begin{equation} \label{e:dmtp-solmmm}
+\begin{multline} \label{e:dmtp-solmmm}
  \Delta\omega_j^{\rm Coul} \approx  
                         {\bf L}_j({\bf r}_0) \cdot {\BM \nabla} \phi({\bf r}_0)   + 
-      \frac{1}{3} {\BM \lambda}_j({\bf r}_0) : {\BM \nabla} \otimes {\BM \nabla} \phi({\bf r}_0)   + 
+      \frac{1}{3} {\BM \lambda}_j({\bf r}_0) : {\BM \nabla} \otimes {\BM \nabla} \phi({\bf r}_0)   \\ + 
      \frac{1}{15} {\BM \Lambda}_j({\bf r}_0) \vdots {\BM \nabla} \otimes {\BM \nabla} \otimes {\BM \nabla} \phi({\bf r}_0) + \ldots
-\end{equation}
+\end{multline}
 %
 since the total solvatochromic charge must be zero. Here, the multipoles
 are evaluated with respect to origin at $({\bf r}_0)$.
@@ -3711,13 +3775,13 @@ ${\bf a}_j$ by
 and the electric field\hyp{}induced frequency shift 
 is approximately given as
 %
-\begin{equation} \label{e:dmtp-solmmm-ind}
+\begin{multline} \label{e:dmtp-solmmm-ind}
  \Delta\omega_j^{\rm Elect} \equiv  \Delta\omega_j^{\rm Coul} +  \Delta\omega_j^{\rm Ind} \approx  
                        \left\{ {\bf L}_j + \frac{1}{2} {\bf L}_j^{\rm ind} \right\} 
-                       \cdot {\BM \nabla} \phi({\bf r}_0)   + 
+                       \cdot {\BM \nabla} \phi({\bf r}_0)   \\ + 
       \frac{1}{3} \left\{ {\BM \lambda}_j + {\BM \lambda}_j^{\rm ind}({\bf r}_0) \right\} 
                            : {\BM \nabla} \otimes {\BM \nabla} \phi({\bf r}_0)   +   \ldots
-\end{equation}
+\end{multline}
 %
 Thus, the induced molecular solvatochromic multipoles and the frequency shift
 are easily computable and, when compared with the much more accurate
@@ -3869,11 +3933,11 @@ with the vibrational solvatochromic operator from Eq.~\eqref{e:dw-fea-fma}, we h
 %
 Direct differentiation with respect to normal coordinates leads to 
 %
-\begin{equation} \label{e:dw-disp-6}
+\begin{multline} \label{e:dw-disp-6}
  \Delta\omega_{j,6}^{\rm Disp} \cong 
 \frac{1}{4\pi M_j\omega_j}\sum_i \frac{g_{ijj}}{M_i\omega_i^2} 
 %\sum_{a\in  A}\sum_{b\in B}
-\sum_{\alpha\beta\gamma\delta}^{x,y,z}   \times \int_{0}^{\infty} {\rm d}\Omega
+\sum_{\alpha\beta\gamma\delta}^{x,y,z} \\  \times \int_{0}^{\infty} {\rm d}\Omega
 %
  \left\{
 T^{AB}_{\alpha\beta}T^{AB}_{\gamma\delta}
@@ -3883,7 +3947,7 @@ T^{AB}_{\alpha\beta}T^{AB}_{\gamma\delta}
 \alpha_{\alpha\gamma}^{A}
 \right\}
 \alpha_{\beta\delta}^{B}
-\end{equation}
+\end{multline}
 %
 in which we used the vibrational force 
 %
@@ -3915,7 +3979,7 @@ where we used $R=\left|{\bf R}_{AB}\right|$.
 Its derivative with respect to $Q_i$ is
 %
 \begin{multline} \label{e:happylabel}
- \fderiv{\left( T^{AB}_{\alpha\beta} T^{AB}_{\gamma\delta} \right)}{Q_i} = 
+ \fderiv{\left( T^{AB}_{\alpha\beta} T^{AB}_{\gamma\delta} \right)}{Q_i} = \\ 
   \frac{9}{R^{10}} 
    \left( 
      P^{(i)}_\alpha R_\beta R_\gamma R_\delta + 
@@ -4032,14 +4096,14 @@ the following equation for $\Delta \omega_{j,8}^{\rm Disp}$:
  \Delta\omega_{j,8}^{\rm Disp} \approx 
 \frac{1}{36\pi M_j\omega_j}\sum_i \frac{g_{ijj}}{M_i\omega_i^2} 
 \sum_{\alpha\beta\gamma\delta\eta\chi}^{x,y,z}   
-T^{AB}_{\alpha\beta\gamma}T^{AB}_{\delta\eta\chi}
+T^{AB}_{\alpha\beta\gamma}T^{AB}_{\delta\eta\chi} \\ \times
 %
 \int_{0}^{\infty} {\rm d}\Omega
  \left\{
 \frac{\partial \alpha_{\alpha\gamma}^{A}}{\partial Q_i} c^{B}_{\beta\gamma,\eta\chi}
 +
 \fderiv{c^{A}_{\alpha\beta,\delta\eta}}{Q_i} \alpha^B_{\gamma\chi}
-\right\}  \\
+\right\}  
 + O\left( R^{-9}_{AB}\right)
 \end{multline}
 %
@@ -4088,18 +4152,18 @@ in order to obtain terms corresponding to the interaction tensor products.
 Analogously, formulae approximating $\Delta\omega_{j,6}^{\rm Disp}$ 
 can be written as
 %
-\begin{equation} \label{e:dw-disp-6-iso-distributed}
+\begin{multline} \label{e:dw-disp-6-iso-distributed}
 \Delta \omega_{j,6}^{\rm Disp-Iso} = \frac{3}{2\pi M_j\omega_j}
 \sum_i \frac{g_{ijj}}{M_i\omega_i^2} 
 \sum_{a\in  A}\sum_{b\in B}
-\frac{1}{R^6_{ab}} \times
+\frac{1}{R^6_{ab}} \\ \times
 \int_{0}^{\infty} {\rm d}\Omega \left\{ 
 \frac{\partial \alpha_0^{(a)}}{\partial Q_i}- 
 \frac{6G^{(i)}}{R^2_{ab}} 
 \alpha_0^{(a)}
 \right\}
 \alpha_0^{(b)} 
-\end{equation}
+\end{multline}
 %
 and 
 %
@@ -4223,9 +4287,9 @@ between molecules A (solute), and B (solvent) is given approximately as
 \begin{multline}\label{e:u-exrep-efp}
 U^{\rm Ex-Rep} \approx \sum_{a \in A}\sum_{b \in B} \Bigg[
 -4\sqrt{\frac{-2{\rm ln}|S_{ab}|}{\pi}} \frac{S_{ab}^2}{r_{ab}} 
--
+\\-
 2S_{ab} \Big( \sum_{c \in A} G^A_{ac} S_{cb} + 
-\sum_{d \in B} G^B_{bd} S_{da} - 2 T_{ab} \Big) \\
+\sum_{d \in B} G^B_{bd} S_{da} - 2 T_{ab} \Big)  \\
 -2S^2_{ab} \Big( \frac{1}{r_{ab}} 
 - 2\sum_{c \in A} \frac{1}{r_{cb}} 
 - 2\sum_{d \in B} \frac{1}{r_{ad}}
@@ -4260,24 +4324,24 @@ and easy not only because it requires only the one\hyp{}electron integrals
 but also because the Fock matrices for each monomer need to be computed just once.
 
 The frequency shift originating from repulsive interaction between 
-solute and solvent molecules can be cast in the following form 
+solute and sol\-vent molecules can be cast in the following form 
 with mechanical anharmonicity taken into account: 
 %
-\begin{equation}\label{e:dw-exrep-base}
+\begin{multline}\label{e:dw-exrep-base}
 \Delta \omega_j^{\rm Ex-Rep} =
 \frac{1}{2M_j\omega_j} \left[ 
 \sderiv{U^{\rm Ex-Rep}}{Q_j} -
 \sum_i \frac{g_{ijj}}{M_i\omega_i^2}\fderiv{U^{\rm Ex-Rep}}{Q_i}
 \right]
-\approx 
+\\\approx 
 -\frac{1}{2M_j\omega_j}\sum_i \frac{g_{ijj}}{M_i\omega_i^2}\fderiv{U^{\rm Ex-Rep}}{Q_i}
-\end{equation}
+\end{multline}
 %
 where the vibrational force associated with the exchange\hyp{}repulsion 
 potential of the $i$th normal coordinate is given as
 %
-\begin{multline}\label{e:force-exrep}
-\fderiv{U^{\rm Ex-Rep}}{Q_i} = 
+\begin{align}\label{e:force-exrep}
+\fderiv{U^{\rm Ex-Rep}}{Q_i} &= 
 \sum_{a \in A}\sum_{b \in B} 
 \Bigg[ 4
    \frac{S_{ab}}{r_{ab}}
@@ -4285,8 +4349,8 @@ potential of the $i$th normal coordinate is given as
    \times
    \Bigg\{
        \sqrt{\frac{-1}{2\pi{\rm ln}\left|S_{ab}\right|}} - 2\sqrt{\frac{-2{\rm ln}\left|S_{ab}\right|}{\pi}}
-   \Bigg\} \\
-   -\frac{S_{ab}^2}{r_{ab}^2}
+   \Bigg\} \nonumber \\
+   &-\frac{S_{ab}^2}{r_{ab}^2}
    \fderiv{r_{ab}}{Q_i}
    \sqrt{\frac{-2{\rm ln}|S_{ab}|}{\pi}}
    - 2\fderiv{S_{ab}}{Q_i} 
@@ -4294,30 +4358,30 @@ potential of the $i$th normal coordinate is given as
    \Big( 
        \sum_{c \in A} G^A_{ac} S_{cb} + 
        \sum_{d \in B} G^B_{bd} S_{da} - 2 T_{ab} 
-   \Big) \\
-   -4S_{ab} \fderiv{S_{ab}}{Q_i}
+   \Big) \nonumber \\
+   &-4S_{ab} \fderiv{S_{ab}}{Q_i}
    \times
    \Big( \sum_{y \in B} \frac{Z_y}{r_{ay}} 
        + \sum_{x \in A} \frac{Z_x}{r_{bx}} - 2\sum_{d \in B} \frac{1}{r_{ad}}
        - 2\sum_{c \in A} \frac{1}{r_{cb}} + \frac{1}{r_{ab}}
-   \Big) \\%%%%
-   - 2S_{ab}
+   \Big) \nonumber \\%%%%
+   &- 2S_{ab}
    \Bigg\{ 
        \sum_{c \in A} 
        \Big[
           \fderiv{G^A_{ac}}{Q_i} S_{cb}  +  G^A_{ac} \fderiv{S_{cb}}{Q_i}
        \Big] +
        \sum_{d \in B} G^B_{bd} \fderiv{S_{da}}{Q_i} - 2 \fderiv{T_{ab}}{Q_i}
-   \Bigg\} \\
-   + 2S^2_{ab} 
+   \Bigg\} \nonumber \\
+   &+ 2S^2_{ab} 
    \Bigg\{ 
       \sum_{y \in B} \frac{Z_y}{r_{ay}^2} \fderiv{r_{ay}}{Q_i} +
       \sum_{x \in A} \frac{Z_x}{r_{bx}^2} \fderiv{r_{xb}}{Q_i} -
-      2\sum_{d \in B} \frac{1}{r_{ad}^2} \fderiv{r_{ad}}{Q_i} %\\
-    - 2\sum_{c \in A} \frac{1}{r_{cb}^2} \fderiv{r_{cb}}{Q_i} + \frac{1}{r_{ab}^2} \fderiv{r_{ab}}{Q_i}
+      2\sum_{d \in B} \frac{1}{r_{ad}^2} \fderiv{r_{ad}}{Q_i} \nonumber \\
+    &\qquad- 2\sum_{c \in A} \frac{1}{r_{cb}^2} \fderiv{r_{cb}}{Q_i} + \frac{1}{r_{ab}^2} \fderiv{r_{ab}}{Q_i}
    \Bigg\}
 \Bigg]
-\end{multline}
+\end{align}
 %
 As can be seen in Eq.~\eqref{e:force-exrep}, there are quite a large number of derivatives 
 to be calculated. They are the derivatives of relative distances, 
@@ -4402,7 +4466,7 @@ c_{a\mu}^* c_{b\sigma}  \fderiv{\braket{\mu}{\sigma}}{Q_i}
 \fderiv{c_{a\mu}^*}{Q_i} c_{b\sigma} \braket{\mu}{\sigma} +
 c_{a\mu}^* c_{b\sigma}   \braket{\fderiv{\mu}{Q_i}}{\sigma}
 \Big\}
-\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad
+%\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad
 \end{multline}
 %
 \begin{equation}\label{e:derTij}
@@ -4602,11 +4666,12 @@ The required derivatives are
        - \left\{
           \sum_k^{\rm all A} \fderiv{S_{kn}}{Q_i}  V_{ak}^B - S_{kn} \fderiv{V_{ak}^B}{Q_i}
          \right\}  \\
-    \fderiv{B_{an}}{Q_i}  &= \sum_b^{\rm occ. B} S_{ab} \left[ 
+    \fderiv{B_{an}}{Q_i}  &= \sum_b^{\rm occ. B} S_{ab} \Bigg[ 
          \fderiv{T_{ab}}{Q_i} - \left\{
           \sum_k^{\rm all A} \fderiv{S_{kn}}{Q_i}  T_{bk} - T_{bk} \fderiv{S_{kn}}{Q_i}
-         \right\} + \fderiv{S_{ab}}{Q_i}  \left\{ T_{ab} - \sum_a^{\rm occ. A} S_{an}T_{nb} \right\}
-       \right] \\
+         \right\} \nonumber \\
+      &\qquad\qquad\qquad\qquad\qquad\qquad\qquad+ \fderiv{S_{ab}}{Q_i}  \left\{ T_{ab} - \sum_a^{\rm occ. A} S_{an}T_{nb} \right\}
+       \Bigg] \\
     \fderiv{U_{an}}{Q_i}  &= \left[ 1 - \sum_k^{\rm all A} S^2_{kn}\right]
                              \left[ \fderiv{F_{aa}^A}{Q_i} - \fderiv{T_{nn}}{Q_i}\right] 
                      -2  \left( F_{aa}^A - T_{nn} \right) \sum_k^{\rm all A} S_{kn} \fderiv{S_{bk}}{Q_i}
@@ -4624,15 +4689,15 @@ from
 %
 where
 %
-\begin{equation} \label{e:dw-ct-ab}
+\begin{multline} \label{e:dw-ct-ab}
 \Delta \omega_{j;A(B)}^{\rm CT} =
 \frac{1}{2M_j\omega_j} \left[ 
 \sderiv{U^{\rm CT}_{A(B)}}{Q_j} -
 \sum_i \frac{g_{ijj}}{M_i\omega_i^2}\fderiv{U^{\rm CT}_{A(B)}}{Q_i}
 \right]
-\approx 
+\\\approx 
 -\frac{1}{2M_j\omega_j}\sum_i \frac{g_{ijj}}{M_i\omega_i^2}\fderiv{U^{\rm CT}_{A(B)}}{Q_i}
-\end{equation}
+\end{multline}
 %
 Derivatives of potential integrals can be approximated by
 computing the derivatives of atomic charges numerically
@@ -5154,7 +5219,7 @@ with SolEFP vibrational forces according to the following prescription
  U^{\rm Disp}_{6;i}   +
  U^{\rm Ex-Rep}_i +
  U^{\rm CT}_i
-\right]
+\right] \\\times
 %
 \left\{ 
  \sderivd{{\BM \upmu}_0}{Q_j}{Q_i} 
@@ -5165,12 +5230,12 @@ with SolEFP vibrational forces according to the following prescription
 %
 where the vibrational forces along the $i$th normal coordinate
 $U_i$ due to Coulombic, induction, dispersion, exchange\hyp{}repulsion
-and charge transfer effects are given in Eqs.~\eqref{e:f-terms},
+and charge transfer effects are given in Eqs. \eqref{e:f-terms},
 \eqref{e:vibr-force-ind}, \eqref{e:vibr-force-disp-6}, 
 \eqref{e:force-exrep} and \eqref{e:force-ct-ab}, respectively.
 Note that these terms correspond to the interaction\hyp{}induced
 molecular structure relaxation effect
-whereas the first term in Eq.~\eqref{e:dmu-solefp}
+whereas the first term in Eq. \eqref{e:dmu-solefp}
 refers to the induction effect originating purely from
 electronic relaxation (i.e., without structural distortion).
 
@@ -5655,15 +5720,15 @@ in frequency, the above approximation is acceptable
 when WCA absolute shifts are not grater than 30 cm$^{-1}$.
 Now, the next term
 %
-\begin{equation}
+\begin{multline}
  \tilde{k}_{jk}^2 = \left[ \frac{1}{\sqrt{M_jM_k}}
   \left( 
    %\sum_{\rm Int} 
    \sderivd{U}{Q_j}{Q_k} - \sum_i \frac{g_{ijk}}{M_i\omega_i^2} \fderiv{U}{Q_i}
   \right)\right]^2 
- \approx -\frac{2}{M_jM_k} \sderivd{U}{Q_j}{Q_k}
+\\ \approx -\frac{2}{M_jM_k} \sderivd{U}{Q_j}{Q_k}
  \sum_i \frac{g_{ijk}}{M_i\omega_i^2}  \fderiv{U}{Q_i}
-\end{equation}
+\end{multline}
 %
 Expanding the square root of Eq.~\eqref{e:11aa11aa}
 as a Taylor series of $\sqrt{x+\delta x}$ around $\delta x=0$ and
@@ -6022,7 +6087,7 @@ translation of (distributed) primitive multipole moment
 origin from ${\bf r}_i = {\bf 0}$ to a new origin at ${\bf r}_i$ is made by using
 the following formula:
   %
- \begin{equation}
+ \begin{multline}
  M_{klm}({\bf r}_i) = M_{klm}({\bf 0}) - \sum_{k'\ge 0}^{k\ne k'} 
                                          \sum_{l'\ge 0}^{l\ne l'} 
                                          \sum_{m'\ge 0}^{m\ne m'}
@@ -6035,8 +6100,9 @@ l\\l'
 \begin{pmatrix}
 m\\m' 
 \end{pmatrix}
+\\ \times
  x_i^{k-k'} y_i^{l-l'} z_i^{m-m'} M_{k'l'm'}({\bf r}_i)
- \end{equation}
+ \end{multline}
  %
 Note that this step is performed when we want to
 change the origin of multipoles in local molecular coordinate
@@ -6593,13 +6659,13 @@ complex, which is defined as
 %
 The excess frequency shift can be partitioned into two\hyp{} and three\hyp{}water components as follows 
 %
-\begin{equation}
+\begin{multline}
 \Delta\Delta\omega^{\rm Ind}(\text{ABC}) = 
 \Delta^2\Delta\omega^{\rm Ind}(\text{AB}) +
 \Delta^2\Delta\omega^{\rm Ind}(\text{AC}) +
-\Delta^2\Delta\omega^{\rm Ind}(\text{BC}) +
+\Delta^2\Delta\omega^{\rm Ind}(\text{BC}) \\+
 \Delta^3\Delta\omega^{\rm Ind}(\text{ABC})
-\end{equation}
+\end{multline}
 %
 with
 %
@@ -6666,7 +6732,8 @@ at MP2/6-311++G** level. The associated SolEDS frequency shifts
 of the amide I mode are gathered in Table~\ref{t:mp2-soleds-amide-I}.
 For the sake of comparison, we also analyse the amide II mode.
 %
-\begin{table}[t!]
+\begin{sidewaystable}%[t!]
+%\begin{table}[t!]
 \caption{
 SolEDS (constrained cluster) frequency shifts of amide I mode computed for three NMA--H$_2$O dimers 
 and NMA--CHCl$_3$ dimer by using second
@@ -6719,7 +6786,8 @@ for the description of the frequency shift terms analysed here.
  Full QM                                &        &  14.7   &&        &  25.3   &&        &  12.4  &&       &  11.8 \\
 \hline\hline
 \end{tabular*}
-\end{table}
+%\end{table}
+\end{sidewaystable}
 %
 From the above analysis results we can see that the dispersion
 interaction\hyp{}induced frequency shift is smaller than that from
@@ -7371,7 +7439,8 @@ We present the more detailed numerical
 comparisons of our theory and the model of Farag~\emph{et al.} in
 Table~\ref{t:farag}.
 %
-\begin{table}[t!]
+\begin{sidewaystable}
+%\begin{table}[t!]
 \caption{
 The comparison of SolEDS and Farag~\emph{et al.}'s 
 model \citep{Farag.Ruiz-Lopez.Bastida.Monard.Ingrosso.JPCB.2015} 
@@ -7429,7 +7498,8 @@ Figure~\ref{f:nma-abcde}. All values are in cm$^{-1}$.
 %
 \hline\hline
 \end{tabular*}
-\end{table}
+\end{sidewaystable}
+%\end{table}
 %
 Here, we compare the frequency shifts of the amide~I modes for two different 
 NMA--water dimers that were specifically investigated by us and by Farag~\emph{et al.} 
@@ -7827,7 +7897,7 @@ solvatochromism is not acceptable.
 \section{H-bonding Effect on Nitrile Frequency Shift}
 
 Although the H-bonding interaction\hyp{}induced frequency shifts
-of various nitrile stretches in protic solvents have been
+of various nitrile stre\-tches in protic solvents have been
 observed, an all\hyp{}encompassing theory for such phenomena has
 not been developed yet. To theoretically study such H-bonding
 effects on the nitrile frequency shift, we considered sixty seven
@@ -8018,7 +8088,8 @@ calculations for Me(S)CN--X dimers with X being H$_2$O, MeOH or
 CF$_3$CH$_2$OH, which are presented in Table~\ref{t:mescn-soleds}. 
 The corresponding molecular structures are depicted in Figure~\ref{f:mescn-soleds}. 
 %
-\begin{table}[t!]
+\begin{sidewaystable}
+%\begin{table}[t!]
 \caption{
 The nature of the frequency shifts of CN stretch mode in various 
 H-bonding complexes involving MeCN or MeSCN and H$_2$O, MeOH 
@@ -8053,7 +8124,8 @@ Full QM                          & \bf{+12.83} & \bf{+12.58} &  \bf{+8}$^{a)}$ &
 \begin{footnotesize}
 $^{a)}$ Partially optimised due to energy optimisation problem.
 \end{footnotesize}
-\end{table}
+\end{sidewaystable}
+%\end{table}
 %
 %
 \begin{figure}[t!]
@@ -8304,7 +8376,10 @@ can be modelled by the methylated group (for example MeOH
 is the model for the serine side chain); and v) the peptide bond is
 modelled by NMA. 
 %
-\begin{table}[t!]
+%\begin{table}[t!]
+\begin{landscape}
+%\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } ||l|l|l||}
+\begin{longtable}{| p{.30\textwidth} | p{.40\textwidth} | p{.60\textwidth} |} 
 \caption{
 The minimalistic model of amino acid side chains that is used in Eq.~\ref{e:dw-solefp-prot}.
 In this model, the protein is mimicked by a set of small EFP2 fragments that
@@ -8312,8 +8387,7 @@ capture the fundamental physical components of the interaction between the IR
 probe and molecular environment. Peptide units are treated by NMA molecules
 except those two being attached next to SCN probes (see the main text).
 \label{t:solefp-prot-residues}}
-\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } ||l|l|l||}
-\hline\hline
+\\\hline\hline
 Aminoacid side-chain     & EFP2 fragments                    & Modelled fragment \\
 \hline
 \multirow{1}{*}{Asp}     & \textbullet CH$_3$COO$^-$         & \textbullet Carboxyl group (deprotonated) \\ \hline
@@ -8348,12 +8422,14 @@ Aminoacid side-chain     & EFP2 fragments                    & Modelled fragment
 \multirow{1}{*}{Ile}     & \textbullet 3 $\times$ CH$_4$     & \textbullet 2-methyl-$n$-propyl chain \\ \hline
 \multirow{1}{*}{Val}     & \textbullet 3 $\times$ CH$_4$     & \textbullet \emph{iso}-propyl chain \\
 \hline\hline
-\end{tabular*}
+\end{longtable}
+%\end{tabular*}
 %
 %\begin{footnotesize}
 %$^{a)}$
 %\end{footnotesize}
-\end{table}
+%\end{table}
+\end{landscape}
 %
 In Table~\ref{t:solefp-prot-residues}, 
 the model chemical groups
@@ -8549,7 +8625,7 @@ complexes are presented in Figure~\ref{f:radial-plots}
 \setlength\fboxsep{0.4pt}
 \setlength\fboxrule{0.5pt}
 \fbox{
-\includegraphics[width=0.9\linewidth]{radial-diag.eps}
+\includegraphics[width=0.8\linewidth]{radial-diag.eps}
 }
 \caption{
 The SolEFP short\hyp{}range frequency shift components of CN stretch mode of SCN probe incorporated at six
@@ -8751,7 +8827,8 @@ Coulombic contribution to the vibrational frequency shifts of isonitrile stretch
 computed the \emph{ab initio} solvatochromic vibrational multipole moments (SolMMM) 
 of CN/NC stretches which are shown in Table~\ref{t:cnnc-solcamm}.
 %
-\begin{table}[t!]
+%\begin{table}[t!]
+\begin{sidewaystable}
 \caption{Solvatochromic dipole and quadrupole moments of CN/NC stretches of
 acetonitrile (MeCN) and methyl isocyanide (MeNC) in cm$^{-1}$/(MV/cm) and 10$^{-8}\times$\
 cm$^{-1}$/(MV/cm$^2$), respectively. Principal symmetry axes of all the molecules are collinear with 
@@ -8793,18 +8870,18 @@ $^{a)}$ Ref.~\citep{Lee.Choi.Cho.JCP.2012},
 $^{b)}$ Ref.~\citep{Andrews.Boxer.JPCA.2000}, 
 $^{c)}$ assuming that the local field correction factor is between 1.1--1.3.
 \end{footnotesize}
-\end{table}
+\end{sidewaystable}
 %
 
 Generally, the B3LYP and HF values of ${\BM \upmu}_{\rm CN}$ are in good agreement with experiment.
 For
-instance, the B3LYP/6-311++G** \emph{ab initio} calculation and B3LYP/6-311++G(3df,2pd) 
-empirical estimation give the absolute magnitudes of 0.29 and 0.32 cm$^{-1}$/(MV/cm), 
+instance, the B3LYP/6-311++G** \emph{ab initio} calculation and B3LYP/6-311++G\-(3df,2pd) 
+empirical estimation give the absolute magnitudes of 0.29 and 0.32 cm$^{-1}$\\/(MV/cm), 
 respectively, with the experimental range of 0.32--0.39 cm$^{-1}$/(MV/cm). Interestingly, MP2 
 significantly underestimates the absolute magnitude of the CN solvatochromic dipole which 
 is predicted to be less than 0.06 cm$^{-1}$/(MV/cm) in its absolute magnitude. The fact that 
 HF level provides correct order of magnitude (0.38 cm$^{-1}$/(MV/cm)) is surprising and 
-apparently more refined electron\hyp{}correlation method than MP2 is necessary in the case of 
+apparently more refined electron\hyp{}correlation me\-thod than MP2 is necessary in the case of 
 correlated \emph{ab initio} calculations. Using CCSD method gives the result with correct order of magnitude and
 our best \emph{ab initio} estimations of MeCN CN and MeNC NC Stark tuning rates are 0.19 and
 0.24 cm$^{-1}$/(MV/cm) at CCSD/aug-cc-pVTZ level, respectively.
@@ -8821,7 +8898,7 @@ dipole moments.
 
 To understand the reasons behind the significantly enhanced intensities of NC probes over
 CN probes, we have analysed the dipole derivatives with respect to XY (XY = NC or CN) stretch
-modes, $\fderiv{{\BM \upmu}}{Q_{\rm XY}} \Bigg|_{{\bf Q}_{0}}$,
+modes, $\fderiv{{\BM \upmu}}{Q_{\rm XY}} \big|_{{\bf Q}_{0}}$,
 since the IR intensities are proportional to its modulus squared.
 Assuming that
 %
@@ -8900,7 +8977,7 @@ Full QM                                   &  --0.1955 &  +1.3603 &    -     &  -
 From our analyses it is clear that the structural contribution is 
 very similar in all the studied model systems but the charge\hyp{}flow contribution is substantially 
 increased in the case of NC probes. To get a deeper insight into the origins of this increase we 
-have plotted the 3D map of the electron density flow, $\fderiv{\rho}{Q_{\rm XY}} \Bigg|_{{\bf Q}_{0}}$, 
+have plotted the 3D map of the electron density flow, $\fderiv{\rho}{Q_{\rm XY}} \big|_{{\bf Q}_{0}}$, 
 in Figure~\ref{f:cnnc-maps}.
 %
 \begin{figure}[t!]
@@ -8911,7 +8988,7 @@ in Figure~\ref{f:cnnc-maps}.
 \includegraphics[width=0.9\linewidth]{cnnc.map.mp2.iso-0.20.eps}
 }
 \caption{
-First derivatives of the electron density distribution $\left( \fderiv{\rho}{Q_{\rm XY}} \Bigg|_{{\bf Q}_{0}} \right)$
+First derivatives of the electron density distribution $\left( \fderiv{\rho}{Q_{\rm XY}} \big|_{{\bf Q}_{0}} \right)$
 with respect to CN/NC stretch mode calculated at the MP2/6-311++G** level. 
 Positive (negative) sign of $Q_{\rm XY}$
 corresponds to elongation (stretching) of the CN or NC bonds. The iso-contours were 
@@ -9033,7 +9110,8 @@ all the vibrational solvatochromic induced multipole moments,
 we could test the validity of the extended but still approximate
 expression for the Stark\hyp{}dipole model in Eq.~\eqref{e:extended-stark-model}. 
 
-\begin{table}[t!]
+\begin{sidewaystable}
+%\begin{table}[t!]
 \caption{
 Frequency shifts originating from the Coulomb interaction and induction 
 (polarization) contributions of CN stretch mode of MeSCN in four different solvents. 
@@ -9067,7 +9145,7 @@ H$_2$O     &    -18.5  & -10.1  & -3.2 & -4.3  &&  0.639 &  1.04 \\
 %\begin{footnotesize}
 %$^{a)}$
 %\end{footnotesize}
-\end{table}
+\end{sidewaystable}
 %
 In Table~\ref{t:stark-dipole-ind}, we compare the exact induction frequency
 shifts that can be calculated with Eq.~\eqref{e:dw-ind-avec} with (i) those
@@ -9205,7 +9283,7 @@ contributions that result in the frequency shifts of different
 nature.
 
 Recently, Zhang~\emph{et al.} have proposed a new IR probe based on
-5-cyanoindole that was found to be a good candidate for
+5\hyp{}cyanoindole that was found to be a good candidate for
 monitoring the local dynamics in proteins, especially because
 of its sensitivity to the molecular environment and notably
 long vibrational lifetime (12.3~ps for the ground state bleach
@@ -9712,7 +9790,9 @@ IBM is equivalent to the conventional EFP2 parameters.\footnote{with
 CAMM's instead of distributed multipole analysis moments
 (DMA's) of Stone \citep{Stone.JCTC.2005} in the current implementation}
 %
-\begin{table}[t!]
+\begin{landscape}
+%\begin{table}[t!]
+\begin{longtable}{ p{.14\textwidth} p{.50\textwidth} p{.15\textwidth} p{.28\textwidth} p{.20\textwidth} }
 \caption{
  Parameters of independent benchmark molecule (IBM's) used in SLV code grouped
  into four main categories: Molecule specification (I.), Electrostatic population
@@ -9724,8 +9804,8 @@ CAMM's instead of distributed multipole analysis moments
  number of basis functions $\beta$, $a$ and $b$ - labels for LMO's, $x$ - label for atomic centre, 
  $X$ - label for molecule.
 \label{t:slv-rma-parameters}}
-\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } lllll}
-\hline\hline
+%\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } lllll}
+\\\hline\hline
 %\multicolumn{5}{c}{Amide I mode} \\
  Category   & Parameter & Label & Symbol$^{a)}$ & Dimension \\
 \hline
@@ -9758,6 +9838,9 @@ CAMM's instead of distributed multipole analysis moments
 &\textbullet 1$^{\rm st}$ derivatives   &\tt{dpoli1  } &   $\fderivm{{\BM\alpha}_a(i\Omega)}{Q_i}$   &      $M\times P\times 12\times 9$        \\
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 \hline                                                                                            
+\newpage
+\multicolumn{5}{c}{Table 8.1 - continuation}
+\\\hline
 \multirow{4}{*}{III.}                                                                             
 &Harmonic frequencies                   &\tt{freq    } &   $\omega_i$                                &      $M$                                 \\ 
 &Reduced masses                         &\tt{redmass } &   $M_i$                                     &      $M$                                 \\
@@ -9777,12 +9860,16 @@ CAMM's instead of distributed multipole analysis moments
 &LCAO-CMO matrix                        &\tt{vecc    } &   $C_{a\alpha}$                             &      $c\times \beta$                     \\
 &\textbullet 1$^{\rm st}$ derivatives   &\tt{vecc1   } &   $\fderivm{C_{a\alpha}}{Q_i}$              &      $M\times c\times \beta$             \\                                                
 \hline\hline
-\end{tabular*}
+\\
+%\end{tabular*}
 %
+\multicolumn{5}{l}{
 \begin{footnotesize}
 $^{a)}$ Mathematical symbols which are used throughout the Thesis.
 \end{footnotesize}
-\end{table}
+}
+\end{longtable}
+\end{landscape}
 %
 In the case of IR active molecules additionally first and second
 derivatives with respect to normal coordinates as well as
@@ -9806,14 +9893,16 @@ SLV has already decent set of built-in parameters computed
 by using 6-311++G** basis set. The currently implemented IBM's
 are shown in Table~\ref{t:slv-ibm-buitin}
 %
-\begin{table}[t!]
+\begin{landscape}
+%\begin{table}[t!]
+\begin{longtable}{ p{.26\textwidth} p{.50\textwidth} p{.15\textwidth} p{.15\textwidth} p{.20\textwidth} }
 \caption{
 Built-in independent benchmark molecule parameters that are implemented
 in the current version of {\sc Solvshift}. Abbreviations: ``EINT'' - interaction
 energy, ``FREQ'' - vibrational properties.
 \label{t:slv-ibm-buitin}}
-\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } lllll}
-\hline\hline
+%\begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } lllll}
+\\\hline\hline
  SLV Label             & Molecule                        & EINT &   FREQ   &     Comment                              \\
 \multicolumn{5}{c}{SolEFP parameters} \\                                                           
 \hline                                                                      
@@ -9859,12 +9948,15 @@ energy, ``FREQ'' - vibrational properties.
  \tt{thf             } & Tetrahydrofurane                & YES  &   NO     &                                          \\
  \tt{cho-ch-nh2-ch3  } & 2-Aminopropanal                 & YES  &   NO     &                                          \\
 \hline\hline
-\end{tabular*}
+%\end{tabular*}
 %
+\multicolumn{5}{l}{
 \begin{footnotesize}
 $^{a)}$ all H deuterated.
 \end{footnotesize}
-\end{table}
+}
+\end{longtable}
+\end{landscape}
 %
 
 
@@ -9974,7 +10066,7 @@ $Frag
   [name]     [(Sol)EFP parameter file]
   reorder    [reorder list]
   supl       [superimposition list]
-  atoms      [atomic locations]             [number of EFP fragments]
+  atoms      [atomic locations]            [number of EFP's]
   ...
 $endFrag
 \end{verbatim}
@@ -10115,8 +10207,8 @@ The following formula is used to determine the reordering list:
 \left\{\begin{matrix}
 {\rm IDX}_{\rm CMD}^{(i)}
  - {\rm IDX}_{\rm First} + 1
-                      & \text{If (Sol)EFP atom is in CMD topology}\\ 
-0                     & \text{If (Sol)EFP atom is \emph{not} in CMD topology}
+                      & \text{If EFP atom is in topology}\\ 
+0                     & \text{If EFP atom is \emph{not} in topology}
 \end{matrix}\right.
 \end{equation}
 %
@@ -10497,14 +10589,14 @@ by using the resolution of identity operator $\hat{1}$ and applying Eq.~\eqref{e
 %
 The final result is given by
 %
-\begin{equation} \label{ea:mxxn}
+\begin{multline} \label{ea:mxxn}
 \langle n \vert \hat{x}^2 \vert m \rangle = 
 \frac{\hbar}{2M\omega}
 \Big\{ 
-   (2m+1) \delta_{n,m} + \sqrt{(m+1)(m+2)} \delta_{n,m+2} + %\\
+   (2m+1) \delta_{n,m} + \sqrt{(m+1)(m+2)} \delta_{n,m+2}  \\ +
                          \sqrt{m(m-1)} \delta_{n,m-2}
 \Big\}
-\end{equation}
+\end{multline}
 %
 Following the same strategy one can easily find the expression for 
 the matrix element of the $\hat{x}^3$ operator:
@@ -10649,11 +10741,12 @@ in more detail.
 Under the distributed multipole approximation, the Coulombic
 interaction energy operator can be expressed as a following series \citep{Stone.TheTheoryOfIntermolecularForces.1996}
 %
-\begin{equation} \label{e:a1100}
+\begin{multline} \label{e:a1100}
  \mathscr{U}^{\rm Coul} \cong \sum_{x\in A}\sum_{y\in B}  T^{xy}\hat{q}^{(x)}\hat{q}^{(y)} -
 \sum_\alpha T^{xy}_\alpha \left( \hat{q}^{(x)} \hat{\mu}^{(y)}_\alpha - \hat{\mu}^{(x)}_\alpha \hat{q}^{(y)}\right)
+\\
  - \sum_{\alpha\beta} T^{xy}_{\alpha\beta} \hat{\mu}^{(x)}_\alpha \hat{\mu}^{(y)}_\beta + \ldots
-\end{equation}
+\end{multline}
 %
 where $x$ and $y$ denote the distributed sites on the solute and solvent
 molecules, respectively. There exists a number of ways of obtaining
@@ -10796,9 +10889,9 @@ q_x              &=Z_x -\sum_{r\in x} \sum_s  P_{rs} \langle r \rvert s \rangle 
           {\bf r}_x \otimes \langle r \lvert {\bf r} \rvert s \rangle \otimes {\bf r}_x \nonumber \\ 
  &\quad- \langle r \lvert {\bf r} \rvert s \rangle \otimes {\bf r}_x \otimes {\bf r}_x +
           {\bf r}_x \otimes \langle r \lvert {\bf r} \otimes {\bf r} \rvert s \rangle +
-          \langle r \lvert {\bf r} \otimes {\bf r}_x \otimes {\bf r} \rvert s \rangle +
-          \langle r \lvert {\bf r} \otimes {\bf r} \rvert s \rangle \otimes {\bf r}_x \nonumber \\ 
- &\quad- \langle r \lvert {\bf r} \otimes {\bf r} \otimes {\bf r} \rvert s \rangle
+          \langle r \lvert {\bf r} \otimes {\bf r}_x \otimes {\bf r} \rvert s \rangle \nonumber \\
+ &\quad+  \langle r \lvert {\bf r} \otimes {\bf r} \rvert s \rangle \otimes {\bf r}_x 
+       - \langle r \lvert {\bf r} \otimes {\bf r} \otimes {\bf r} \rvert s \rangle
 \Big] 
 %\end{gathered}
 \end{align}
@@ -10976,7 +11069,8 @@ the amount of the new terms is quite big though there are no $r^{-1}$
 terms present. In Table~\ref{t:cterms} all the terms for $n=2,3,4$
 are listed and grouped to simplify the expressions.
 
-\begin{table}[ht]
+%\begin{table}[ht]
+\begin{sidewaystable}
 %\resizebox{1.4\textwidth}{!}{\begin{minipage}{\textwidth}
 \caption{List of the additional terms originating from the
 electrostatic interaction that were not included in $\Delta\omega^{\rm SolDMA}$.
@@ -11034,7 +11128,7 @@ $r^{-2}$        && $-q_xq_y r_{xy}^{-3} G^{(i)}_{xy}$
 \end{tabular*}
 %\end{footnotesize}
 %\end{minipage} }
-\end{table}
+\end{sidewaystable}
 
 
 \section{Analysis of the Convergence Properties of Eq.~\eqref{e:dw-solefp-coul-correction}\label{a:convergence-of-the-correction-terms}}
@@ -11194,7 +11288,7 @@ centred at molecular origin. \citep{Lee.Choi.Cho.JCP.2012}
 Atomic Multipole Moments (CAMM) expansion introduced
 by Sokalski and Poirier. \citep{Sokalski.Poirier.CPL.1983}
 Here, CAMMs were obtained using our code,
-{\sc Coulomb}, which uses one\hyp{}particle density matrices retrieved
+{\sc Coulomb}, which uses one\hyp{}particle density matri\-ces retrieved
 from {\sc Gaussian 09} \verb+fchk+ (formatted checkpoint)
 files. 
 \end{itemize}
@@ -11672,7 +11766,7 @@ were obtained in pure forms from Sigma Aldrich and were not further purified.
 \setlength\fboxsep{0.4pt}
 \setlength\fboxrule{0.5pt}
 %\fbox{
-\includegraphics[width=0.8\linewidth]{Fig.S1.eps}
+\includegraphics[width=0.7\linewidth]{Fig.S1.eps}
 %}
 \caption{Experimentally measured FTIR spectra of the CN stretch mode. (a) Those of
 MeCN (see the low frequency bands in the spectra). (b) Those of MeSCN. Note that the high 
