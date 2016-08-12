@@ -1,0 +1,74 @@
+#!/usr/bin/python
+"""
+ Parse the EFPMD trajectory file and save outputs for fast gnuplotting.
+ This tool is for basic initial analysis of MD trajectory by EFPMD code.
+ Usage: [out]
+"""
+print __doc__
+from sys import argv, exit
+if len(argv)==1: exit()
+import string, re, numpy, libbbg.utilities
+re_real = libbbg.utilities.re_templates.re_real
+# note that 'TOTAL ENERGY' in efpmd optput means 'interaction energy'
+E = ['TOTAL ENERGY'               , 'TEMPERATURE \(K\)'        , 'INVARIANT'                ,
+     'ELECTROSTATIC ENERGY'       , 'POLARIZATION ENERGY'      , 'EXCHANGE REPULSION ENERGY',
+     'DISPERSION ENERGY'          , 'CHARGE PENETRATION ENERGY', 'KINETIC ENERGY'           ]
+n = ['EPOT'                       , 'TEMP'                     , 'INVAR'                    ,
+     'ECOUL'                      , 'EPOL'                     , 'EEXREP'                   ,
+     'EDISP'                      , 'ECHPEN'                   , 'EKIN'                     ]
+
+traj = argv[1]
+print " o Reading %s..." % traj
+data = open(traj).read()
+results = {}
+
+# parse the output
+for term in E:
+    print " - searching for %s" % term
+    querry = re.compile( "\s*%s\s*(%s)\s*\n" % (term, re_real) , re.DOTALL)
+    match  = re.findall(querry, data)
+    results[term] = numpy.array(match, dtype=numpy.float64)
+#
+term = 'PERIODIC BOX SIZE'
+print " - searching for %s" % term
+querry = re.compile("\s*%s\s*(%s\s*%s\s*%s) A\^3\s*\n" % (term, re_real, re_real, re_real), re.DOTALL)
+match  = re.findall(querry, data)
+results[term] = match
+print ' ========================================='
+
+# write the reports
+stem = 'summary.'
+for i in range(len(n)):
+    name = n[i]
+    term = E[i]
+    print " - writing %s" % (stem+name)
+    out = open(stem+name,'w')
+    r = results[term]
+    for j in range(len(r)):
+        out.write('%16.6E\n' % r[j])
+    out.close()  
+
+# write result of total energy
+try:
+   out = open(stem+'ETOT','w')
+   r = results['TOTAL ENERGY'] + results['KINETIC ENERGY']
+   print " - writing %s" % (stem+'ETOT')
+   for j in range(len(r)):
+       out.write('%16.6E\n' % r[j])
+   out.close()
+except ValueError:
+   print " * %s is not MD run output, hence no ETOT report." % traj
+
+# write the periodic box sizes and PBC volume in angstroms
+out1 = open(stem+'BOX','w')
+out2 = open(stem+'VOLUME','w')
+r = results['PERIODIC BOX SIZE']
+print " - writing %s" % (stem+'BOX')
+print " - writing %s" % (stem+'VOLUME')
+for j in range(len(r)):
+    v = numpy.array(r[j].split(),float)
+    v = v[0]*v[1]*v[2]
+    out1.write('%s\n' % r[j])
+    out2.write('%16.6E\n' % v)
+out1.close(); out1.close()
+
