@@ -1,0 +1,198 @@
+#!/usr/bin/python
+#*-* coding: utf-8 *-*
+"""
+ ---------------------------------------------------------------------------------------------------------
+                                             SLV-MD-TRAJ
+ ---------------------------------------------------------------------------------------------------------
+
+ Postprocess the EFP-MD trajectory such that the first molecule is in centre and others are in periodic box.
+ Only cubic PBC is now implemented.
+
+ Usage: [opts]
+
+   -h                             help
+   -x [traj]                      trajectory XYZ file                      Optional. Default: traj.xyz
+   -n [n-frames]                  number of frames to read                 Optional. Default: 1
+   -s [stride]                    read every /stride/ frames               Optional. Default: 1
+   -N [int]                       number of atoms in solute molecule       must be specified!
+   -M [int]                       number of atoms in solvent molecule      Optional. Default: 3
+   -K [int]                       number of solvent molecules per frame    Must be specified!
+   -B [X,Y,Z]                     PBC box dimensions in Angstroms          Example: -B 25.5,27.1,26.4
+   -b [file]                      file with box dimensions per frame       Optional. Default: traj.box
+ ---------------------------------------------------------------------------------------------------------
+                                                                               Last Revision: 17 Aug 2016
+"""
+from sys import argv, exit
+from getopt import getopt, GetoptError
+
+
+# ----------------------------------------------------------------------------------------------------
+__title__           = " SLV-MD-TRAJ program" 
+__authors__         = " Bartosz Błasiak (email: blasiak.bartosz@gmai.com)"
+__version__         = " Version: 1.0.1"
+# ----------------------------------------------------------------------------------------------------
+
+def Usage():
+    print __doc__
+    exit()
+
+def Info():
+    print
+    print __title__
+    print __authors__
+    print __version__
+    print " Use -h to see help\n"
+    exit()
+
+def Main(argv):
+    # defaults                                                           Comments:
+    stride                       = 1                                   # frequency of reading (1 means read each frame)
+    n_frames                     = 1                                   # number of frames to read 
+    n_solvent_atoms_per_molecule = 3                                   # defalut is for water
+    n_solute_atoms_per_molecule  = None                                # 
+    n_solvent_molecules          = None                                # number of solvent molecules per frame
+    traj                         = "traj.xyz"                          # trajectory file in XYZ format
+    box_file                     = "traj.box"                          # file with the PBC box dimensions (in Angstroms)
+    box_x, box_y, box_z          = None, None, None                    # dimensions of the PBC box (in Angstroms)
+    #
+    try:
+       opts, args = getopt(argv, "hx:n:s:N:M:K:B:b:" , ["help" , "traj=", "n-frames=", "stride=", "n-solute=", "n-solvent=", "n-solvent-mol=",
+                                                        "box=" , "box-file=",  ])
+    except GetoptError, error:
+        print "\n Invalid option. Please refer to the usage below:" 
+        Usage()
+    if not opts: Info()
+    if ("-h",'') in opts or ("--help", ''  ) in opts: Usage()
+    for opt, arg in opts:
+        if opt in ("-h", "--help"          ): Usage()
+        if opt in ("-x", "--traj"          ): traj                             = arg
+        if opt in ("-N", "--n-solute"      ): n_solute_atoms_per_molecule      = int(arg)
+        if opt in ("-M", "--n-solvent"     ): n_solvent_atoms_per_molecule     = int(arg)
+        if opt in ("-K", "--n-solvent-mol" ): n_solvent_molecules              = int(arg)
+        if opt in ("-s", "--stride"        ): stride                           = int(arg)
+        if opt in ("-n", "--n-frames"      ): n_frames                         = int(arg)
+        if opt in ("-B", "--box"           ): box_x, box_y, box_z              = map(float, arg.split(','))
+        if opt in ("-b", "--box-file"      ): box_file                         = arg
+
+    if box_x is None: BOX_DATA =  box_file
+    else            : BOX_DATA = [box_x, box_y, box_z] 
+
+    run(traj, n_frames, stride, n_solute_atoms_per_molecule, n_solvent_atoms_per_molecule, n_solvent_molecules, BOX_DATA)
+    return
+
+# 
+
+def put_in_box(xyz, box):
+    """put molecule with positions at <xyz> into the cubic box if it is outside"""
+    a,b,c = box
+    x,y,z = xyz.T; N_at = len(xyz)
+    cx, cy, cz   = xyz.sum(axis=0)/N_at
+
+    todo = True
+    iter_i = 1; iter_max = 100
+    while todo:
+       is_x_left = (cx+0.5*a) < 0 ; is_x_right = (cx-0.5*a) > 0
+       is_y_left = (cy+0.5*b) < 0 ; is_y_right = (cy-0.5*b) > 0
+       is_z_left = (cz+0.5*c) < 0 ; is_z_right = (cz-0.5*c) > 0
+
+       todo = (is_x_left or is_x_right) and (is_y_left or is_y_right) and (is_z_left or is_z_right)
+
+       if   is_x_left : x+=a
+       elif is_x_right: x-=a
+       if   is_y_left : y+=b
+       elif is_y_right: y-=b
+       if   is_z_left : z+=c 
+       elif is_z_right: z-=c
+
+       cx = x.sum()/N_at
+       cy = y.sum()/N_at
+       cz = z.sum()/N_at
+
+       iter_i += 1
+       if iter_i > iter_max: 
+          print " Post-processing not successfull"
+          print is_x_left, is_x_right
+          print is_y_left, is_y_right
+          print is_z_left, is_z_right
+          break
+       if todo: continue
+       else: break
+
+    xyz_new = xyz.copy()
+    xyz_new[:,0] = x
+    xyz_new[:,1] = y
+    xyz_new[:,2] = z
+    return xyz_new
+
+def snapshot(xyz, box, n_solute_atoms_per_molecule, 
+                       n_solvent_atoms_per_molecule, 
+                       n_solvent_molecules):
+    a,b,c = box
+    # cog of central molecule
+    cog = xyz[:n_solute_atoms_per_molecule].sum(axis=0) / n_solute_atoms_per_molecule
+    # translate
+    xyz_t = xyz - cog
+    # rotate
+    "no rotation yet"
+    # loop over solvent molecules
+    for i in range(n_solvent_molecules):
+        start = n_solute_atoms_per_molecule + i*n_solvent_atoms_per_molecule
+        xyz_i = xyz_t[start:start+n_solvent_atoms_per_molecule]
+        # check if solvent lies in BOX
+        xyz_i = put_in_box(xyz_i, box)
+        xyz_t[start:start+n_solvent_atoms_per_molecule] = xyz_i
+    return xyz_t
+
+def run(traj_file, n_frames, stride, n_solute_atoms_per_molecule,
+                                     n_solvent_atoms_per_molecule,
+                                     n_solvent_molecules, box_data):
+    """reads xyz trajectory file"""
+    dummy = 'temporary_xyz_12340404040404.xyz'
+    traj_file_post_name = traj_file[:-3] + 'post.xyz'
+    traj_file_post = open(traj_file_post_name,'w')
+
+    # import necessary modules
+    from libbbg.units import UNITS
+    from libbbg.utilities import QMFile
+    from numpy import array, any
+    from scitools import filetable as ft
+    import os
+
+    # read the box
+    if 'list' in str(type(box_data)):
+        box = array(box_data*n_frames).reshape(n_frames, 3) * UNITS.AngstromToBohr
+    else:
+        a = open(box_data,'r')
+        box = ft.read(a) * UNITS.AngstromToBohr ; a.close() 
+
+    # read the number of atoms
+    n_atoms = int(open(traj_file,'r').readline())
+    xyz_traj= open(traj_file,'r')
+    for i in range(n_frames):
+      if not ((i+1)%stride):
+        print " - Reading %04d frame" % (i+1)
+        # read the particular xyz file
+        xyz_file_i = ''
+        for j in range(n_atoms+2): 
+            xyz_file_i+= xyz_traj.readline()
+        o = open(dummy,'w')
+        o.write(xyz_file_i)
+        o.close()
+
+        # postprocess the trajectory
+        o = QMFile(dummy, format='xyz',mol=1)
+        xyz = o.get_pos()
+        xyz = snapshot(xyz, box[i], n_solute_atoms_per_molecule, 
+                                    n_solvent_atoms_per_molecule, 
+                                    n_solvent_molecules)
+        o.set_pos(xyz)
+        o.write(traj_file_post, overwrite=True)
+
+        os.system('rm %s' % dummy)
+
+    traj_file_post.close() 
+    print " The file %s has been created." % traj_file_post_name
+    return
+
+# RUN
+if __name__=='__main__': Main(argv[1:])
