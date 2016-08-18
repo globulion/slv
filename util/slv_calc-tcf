@@ -1,0 +1,60 @@
+#!/usr/bin/python
+"""
+ Compute time correlation functions from the SLV report.
+ Usage: [report] [norm]
+"""
+print __doc__
+from sys import argv, exit
+if len(argv)==1: exit()
+from scitools import filetable
+from numpy import *
+from libbbg.utilities import ft_1d
+import pylab
+
+def cf(y1, y2, norm=False):
+    """Correlation function between y1 and y2"""
+    Y1     = y1-mean(y1); Y2 = y2-mean(y2)
+    result = correlate(Y1, Y2, mode='full')
+    f      = result[result.size/2:]
+    L      = len(f)
+    for i in xrange(L):
+        f[i]/= L - i
+    f/= f[0]
+    if not norm: f*= mean(Y1*Y2)
+    return f
+
+# to be evaluated
+autocorr_files = ['ELE-ELE', 'EXR-EXR', 'POL-POL', 'DIS-DIS', 'TOT-TOT']
+croscorr_files = ['ELE-EXR', 'ELE-POL', 'ELE-DIS', 'EXR-POL', 'EXR-DIS', 'POL-DIS']
+corr_files     = autocorr_files + croscorr_files
+
+# - read inputs
+TRAJ =          argv[1]
+NORM = bool(int(argv[2]))
+
+# - read trajectory
+r = filetable.read(open(TRAJ))
+
+# - parse data
+x     = r[:, 0]                                             ; npoints= len(x)
+r_tot = r[:,13]                                          #  ; r_tot -= mean(r_tot)
+r_xr  = r[:, 8]                                          #  ; r_xr  -= mean(r_xr )
+r_el  = r[:, 1]+r[:, 4]+r[:, 5]                          #  ; r_el  -= mean(r_el )
+r_pol = r[:, 6]                                          #  ; r_pol -= mean(r_pol)
+r_dis = r[:,10]                                          #  ; r_dis -= mean(r_dis)
+
+# - collect data
+data = {'TOT': r_tot, 'ELE': r_el, 'EXR': r_xr, 'POL': r_pol, 'DIS': r_dis}
+
+# - compute correlation functions
+for data_1 in data.keys():
+    for data_2 in data.keys():
+        cf_type = "%s-%s" % (data_1, data_2)
+        if cf_type in corr_files:
+           print " - computing %s correlation..." % cf_type
+           out = open('tcf.%s.dat' % cf_type, 'w')
+           y   = cf(data[data_1], data[data_2], norm=NORM)
+           for i in xrange(npoints):
+               out.write('%6i %13.5E\n' % (x[i],y[i]))
+           out.close()
+
