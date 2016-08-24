@@ -8,28 +8,35 @@
  Compute FTIR spectrum by invoking second-order cumulant expansion of the line shape function.
  Make use of the spectral density.
 
- Usage: [opts] [tcf_file]
+ Usage: [opts] [data_file]
 
  Opts: 
 
    -h                             help
-   -n [int]                       number of delay time points              Optional. Default: 8000
-   -w [float]                     center frequency [cm-1]                  Optional. Default: 2000 
-   -d [float]                     Time sampling in TCF [fs/frame]          Optional. Default: 1
-   -T [float]                     Vibrational relaxation time [ps]         Optional. Default: 100.0   
-
- Additional options:
-  
-   -s [float]                  +/-range of absorption spectrum plot [cm-1] Optional. Default: 30
-   -W [float]                     maximal integration frequency [cm-1]     Optional. Default: 3000
-   -p [int]                       number of padded points for TCF          Optional. Default: 0   
-   --ftir                         read and plot experimental ftir          Optional. Default: None
-   --nw                           number of integration points in freq     Optional. Default: 4097
-   --temp                         temperature [K]                          Optional. Default: 300
-
- Debug:
-
-   --w-min                        minimal integration frequency [rad/ps]   Optional. Default: 1e-6
+   -m [string]                    Select one of the following models: 
+                                    1) "cumulant" : second-order semiclasical approximation (Default).
+                                                    Requires TCF file passed as argument.
+                                    2) "classical": classical averaging method. Requires frequency shift 
+                                                    file passed as argument.
+   -n [int]                       number of delay time points                     Optional. Default: 8000
+   -w [float]                     center frequency [cm-1]                         Optional. Default: 2000.0 
+   -d [float]                     Time sampling in TCF [fs/frame]                 Optional. Default:    1.0
+   -T [float]                     Vibrational relaxation time [ps]                Optional. Default:  100.0   
+   -c [int]                       Column of data in frequency shift file          Optional. Default:   14
+                                                                                                              
+ Additional options:                                                                                          
+                                                                                                              
+   -s [float]                  +/-range of absorption spectrum plot [cm-1]        Optional. Default:   30.0
+   -W [float]                     maximal integration frequency [cm-1]            Optional. Default: 3000.0
+   -p [int]                       number of padded points for TCF                 Optional. Default:    0   
+   --ftir                         read and plot experimental ftir                 Optional. Default: None
+   --nw                           number of integration points in freq            Optional. Default: 4097
+   --temp                         temperature [K]                                 Optional. Default:  300.0
+   --no-apod                      switch off apodization by Hamming windowing     Defalut: windowing is ON
+                                                                                                              
+ Debug:                                                                                                       
+                                                                                                              
+   --w-min                        minimal integration frequency [rad/ps]          Optional. Default:    1e-6
 
  ---------------------------------------------------------------------------------------------------------
                                                                                Last Revision: 17 Aug 2016
@@ -57,6 +64,7 @@ def Info():
 
 def Main(argv):
     # defaults                                                           Comments:
+    model                        = "cumulant"                          # "cumulant" or "classical" available
     dtau_USER                    = 1.0                                 # n*fs; frequency of sampling
     w0_USER                      = 2162.5                              # cm-1; average transition frequency
     dw0_USER                     = 30.0                                # cm-1 ; ranges to plot the spectrum
@@ -69,10 +77,13 @@ def Main(argv):
     NT_USER                      = 1 + 2**12                           # number of integration points in time domain (if interpolation)
     FTIR_READ_FILE               = None
     TEMP                         = 300                                 # temperature
+    NCOL_USER                    = 14-1                                # ID (Python convention) of the frequency shift file y-value column
+    WINDOW_USER                  = True                                # Apply Hamming window
     #
     try:
-       opts, args = getopt(argv, "hd:w:s:T:n:f:N:x:W:p:t:" , ["help", "dtau=", "w0=", "dw-print=", "T1=", "n-delay=",
-                                                              "ftir=", "nw=", "w-min=", "w-max=", "n-pad-time=", "temp="])
+       opts, args = getopt(argv, "hm:d:w:s:T:n:f:N:x:W:p:t:c:a" , ["help", "model=", "dtau=", "w0=", "dw-print=", "T1=", "n-delay=",
+                                                                   "ftir=", "nw=", "w-min=", "w-max=", "n-pad-time=", "temp=", "ncol=",
+                                                                   "no-apod"])
     except GetoptError, error:
         print "\n Invalid option. Please refer to the usage below:" 
         Usage()
@@ -80,6 +91,7 @@ def Main(argv):
     if ("-h",'') in opts or ("--help", ''  ) in opts: Usage()
     for opt, arg in opts:
         if opt in ("-h", "--help"          ): Usage()
+        if opt in ("-m", "--model"         ): model                            =       arg
         if opt in ("-d", "--dtau"          ): dtau_USER                        = float(arg)
         if opt in ("-w", "--w0"            ): w0_USER                          = float(arg)
         if opt in ("-s", "--dw-print"      ): dw0_USER                         = float(arg)
@@ -91,28 +103,34 @@ def Main(argv):
         if opt in ("-W", "--w-max"         ): W_MAX_USER                       = float(arg)
         if opt in ("-p", "--n-pad-time"    ): NT_PAD_USER                      =   int(arg)
         if opt in ("-t", "--temp"          ): TEMP                             = float(arg)
+        if opt in ("-c", "--ncol"          ): NCOL_USER                        =   int(arg)-1
+        if opt in ("-a", "--no-apod"       ): WINDOW_USER                      =   False     
+
 
     #
-    tcf_file = args[0]
-    run(tcf_file, dtau_USER, NP_USER, w0_USER, dw0_USER, T1_USER, TEMP, NT_PAD_USER, W_MIN_USER, W_MAX_USER, NW_USER, FTIR_READ_FILE)
+    data_file = args[0]
+    run(model, data_file, dtau_USER, NP_USER, w0_USER, dw0_USER, T1_USER, TEMP, NT_PAD_USER, W_MIN_USER, W_MAX_USER, NW_USER, FTIR_READ_FILE, NCOL_USER, WINDOW_USER)
     return
 
 
-def run(tcf_file, dtau_USER, NP_USER, w0_USER, dw0_USER, T1_USER, TEMP, NT_PAD_USER, W_MIN_USER, W_MAX_USER, NW_USER, FTIR_READ_FILE):
+def run(model, data_file, dtau_USER, NP_USER, w0_USER, dw0_USER, T1_USER, TEMP, NT_PAD_USER, W_MIN_USER, W_MAX_USER, NW_USER, FTIR_READ_FILE, NCOL_USER, WINDOW_USER):
+    """Simulate 1D IR absorption line shape"""
     # import necessary modules
     import numpy, pylab, math
     import scipy.integrate
     import libbbg.units
     from scitools import filetable
-    # conversion factors
-    CmRecToHz           = libbbg.units.UNITS.CmRecToHz /1e12 # [1/ps]
+    from lib.genres import genresf
+
+    # conversion factors and unit conventions
+    CmRecToHz           = libbbg.units.UNITS.CmRecToHz /1e12 # [rad/ps]
     PlanckConstant      = libbbg.units.UNITS.PlanckConstant * 1e12 \
                         * libbbg.units.UNITS.JouleToHartree * libbbg.units.UNITS.HartreeToCmRec # [(cm-1)*ps]
     BoltzmannConstant   = 1.38064852e-23 \
                         * libbbg.units.UNITS.JouleToHartree * libbbg.units.UNITS.HartreeToCmRec # [(cm-1)/K]
     JouleToCmRec        = 1.0###5.034117471638147e+22
     PicosecondToSecond  = 1.0###1e-12
-    HBar                = PlanckConstant/(2.0*numpy.pi)
+    HBar                = PlanckConstant/(2.0*math.pi)
     Pi2                 = 2.0*math.pi
     
     #print " Boltzman Constante = %10.4f [(cm-1)/K]" % BoltzmannConstant
@@ -130,164 +148,279 @@ def run(tcf_file, dtau_USER, NP_USER, w0_USER, dw0_USER, T1_USER, TEMP, NT_PAD_U
     #
     
     print
-    # [1] Read TCF
-    r      = filetable.read(open(tcf_file))[:NP_USER]
-    r[:,0]*= dtau_USER/1e3 # ps
-    r[:,1]*= (CmRecToHz)**2
-    t_min  = 0.0 # ps
-    TCF    = r[:,1]
-    T      = r[:,0]
-    n_t    = len(T)
-    t_max  = T[-1]
-    dt     = T[1] - T[0]
-    
-    #  -  zero-padding of TCF
-    n_pad = NT_PAD_USER
-    t_pad = dt * (n_t + n_pad - 1)
-    n_t  += n_pad
-    T     = numpy.linspace(t_min, t_pad, n_t)
-    TCF_pad = numpy.zeros(n_pad, dtype=numpy.float64)
-    TCF   = numpy.concatenate([TCF, TCF_pad])
-    t_max = T[-1]
-    
-    #  -  mean square fluctuation amplitude
-    C0    = TCF[0]
-    delta = math.sqrt(C0)
-    print " C0                 = %10.2f [1/ps**2]" % C0
-    print " Delta              = %10.2f [1/ps]"    % delta
-    
-    # [2] TCF in frequency domain
-    #  -  frequency axis
-    w_max = W_MAX_USER * CmRecToHz # [rad/ps]
-    n_w   = NW_USER
-    W     =   numpy.linspace(W_MIN_USER, w_max, n_w); W_cm1 = W/CmRecToHz#/Pi2
-    dw    =   W[1] - W[0]
-    print " Frequency resol.   = %10.4f [cm-1]" % (dw/CmRecToHz)
-    
-    #  -  compute TCF(W)
-    F     = numpy.zeros((n_t, n_w), numpy.float64)
-    for i in range(n_w):
-        F[:,i] = 2/C0 * numpy.cos(W[i] * T) * TCF
-    TCF_W = Integral(F, dt)
-    
-    #  -  correlation time of TCF
-    tau   = Integral(TCF/C0, dt)
-    print " Correlation time   = %10.4f [ps]" % tau
-    #  -  pure dephasing constant
-    t2star= 1./(tau * C0)
-    print " T2*                = %10.4f [ps]" % t2star
-    #  -  homogeneous/inhomogeneous limit?
-    DeltaTau = delta * tau 
-    print " Delta*tau          = %10.4f [-]" % DeltaTau
-    if   DeltaTau <= 0.01:  print " * Homogeneous limit!"
-    elif DeltaTau >= 100.:  print " * Inhomogeneous limit!"
-    else                 :  print " * Between homogeneous and inhomogeneous limit!"
-    #  -  imaginary part C_I
-    pref  = PlanckConstant / (4.0 * numpy.pi * TEMP * BoltzmannConstant)
-    #  -  spectral density R_W
-    R_W   = numpy.tanh(pref * W) * TCF_W
-    #  -  solvent reorganization energy
-    F     = R_W / (numpy.pi * W) * HBar * C0 
-    lam   = Integral(F, dw)
-    print " Sonvent reorganization energy = %10.6f [cm-1]" % (lam * JouleToCmRec)
-    #  -  time of decoherence
-    t12   = math.sqrt( math.log(2.0)*pref*PlanckConstant/(Pi2*lam) ) 
-    print " Time of decoherence = %10.3f [fs]" % (t12 /PicosecondToSecond*1e3)
-    
-    # [3] Line broadening function
-    #  -  real part
-    F     = numpy.zeros((n_w, n_t), numpy.float64)
-    for i in range(n_t):
-        F[:,i] = C0 * R_W * (1.0 - numpy.cos(T[i] * W)) / numpy.tanh(pref * W) / (numpy.pi * W * W)
-    GR_t  = Integral(F, dw)
-    #  -  imaginary part
-    F     = numpy.zeros((n_w, n_t), numpy.float64)
-    for i in range(n_t):
-        F[:,i] = C0 * R_W * (numpy.sin(T[i] * W) - T[i] * W) / (numpy.pi * W * W)
-    GI_t  = Integral(F, dw)
-    #  -  line broadening function
-    G_t   = numpy.exp(-GR_t - 1.0j * GI_t) 
-    
-    # [4] Susceptibility
-    #  -  vibrational lifetime
-    t1    = T1_USER # [ps]
-    #  -  center frequency
-    w_0   = w0_USER * CmRecToHz # [rad/ps]
-    #  -  response function
-    phi_t = numpy.exp(-1.0j*w_0*T) * G_t #- numpy.exp(+1.0j*w_0*T) * G_t.conjugate()
-    phi_t*= numpy.exp(-0.500*T/t1)
-    phi_t*= 1.0j/HBar
-    #  -  frequency-dependent susceptibility
-    v, gr, gi, v_max, v_res = libbbg.utilities.ft_1d(phi_t,t_max,dt,n=2**15,algorithm='ifft',cunit=None)
-    gs = numpy.sqrt(gr**2 + gi**2)
-    v/=CmRecToHz/Pi2; v_max/=CmRecToHz/Pi2; v_res/=CmRecToHz/Pi2
-    print " Maximal FFT freq  = %10.2f" %  v_max
-    print " Resolut FFT freq  = %10.2f" %  v_res
-    
-    #  -  refractive index
-    N_w   = numpy.sqrt(1.0 + gr)
-    #  -  absorption coefficient
-    K_w   = v * gi / N_w
-    
-    # [R]ead experimental data
-    if FTIR_READ_FILE is not None:
-      FTIR  = filetable.read(open(FTIR_READ_FILE))
-      v_exp = FTIR[:,0]; ftir_exp = FTIR[:,1]
-      ftir_exp *= gi.max()/ftir_exp.max()
-      ftir_exp2 = FTIR[:,1] * K_w.max()/ftir_exp.max()
-    
-    # [P]lot
-    #  -  initial graphs
-    figure_1 = pylab.figure()
-    ax_11  = figure_1.add_subplot(321)
-    ax_11  .set_title('$C_{\\rm cl}(t)$')
-    ax_11  .plot(T, TCF, '-')
-    ax_12  = figure_1.add_subplot(322)
-    ax_12  .set_title('$\\widetilde{C}_{\\rm cl}(\\omega)$')
-    ax_12  .plot(W_cm1, TCF_W,'-')
-    ax_13  = figure_1.add_subplot(323)
-    ax_13  .set_title('$\\rm{Re}\\left[\\phi(t)\\right]$')
-    ax_13  .plot(T, phi_t.real, '-')
-    ax_14  = figure_1.add_subplot(324)
-    ax_14  .set_title('$\\rm{Im}\\left[\\phi(t)\\right]$')
-    ax_14  .plot(T, phi_t.imag, '-')
-    ax_15  = figure_1.add_subplot(325)
-    ax_15  .set_title('$\\rm{Im}\\left[g(t)\\right]$')
-    ax_15  .plot(T, GR_t, '-')
-    ax_16  = figure_1.add_subplot(326)
-    ax_16  .set_title('$\\rm{Im}\\left[g(t)\\right]$')
-    ax_16  .plot(T, GI_t, '-')
-    
-    w_min = w0_USER-dw0_USER; w_max = w0_USER+dw0_USER
-    figure_2 = pylab.figure()
-    ax_21  = figure_2.add_subplot(221)
-    ax_21  .set_title('$\\rm{Re}\\left[\\chi(\\omega)\\right]$')
-    ax_21  .plot(v, gr, '-')
-    ax_21  .set_xlim([w_min,w_max])
-    ax_22  = figure_2.add_subplot(222)
-    ax_22  .set_title('$\\rm{Im}\\left[\\chi(\\omega)\\right]$')
-    ax_22  .plot(v, gi, '-', label='Theory')
-    if FTIR_READ_FILE is not None: 
-       ax_22  .plot(v_exp, ftir_exp, '-', label='Exp.')
-    ax_22  .set_xlim([w_min,w_max])
-    ax_23  = figure_2.add_subplot(223)
-    ax_23  .set_title('$n(\\omega)$')
-    ax_23  .plot(v, N_w, '-')
-    ax_23  .set_xlim([w_min,w_max])
-    ax_24  = figure_2.add_subplot(224)
-    ax_24  .set_title('$\\kappa(\\omega)$')
-    ax_24  .plot(v, K_w, '-')
-    if FTIR_READ_FILE is not None: 
-       ax_24  .plot(v_exp, ftir_exp2, '-', label='Exp.')
-    ax_24  .set_xlim([w_min,w_max])
-    
-    #
-    figure_3 = pylab.figure()
-    ax_31  = figure_3.add_subplot(111)
-    ax_31  .plot(W_cm1, R_W, '-')
-    ax_31  .set_title('$\\rho(\\omega)$')
-    
-    pylab.plt.show(block=True)
+    # --------------------------------------------------------------------------------
+    if model == 'cumulant':
+    # --------------------------------------------------------------------------------
+
+       # [1] Read TCF
+       r      = filetable.read(open(data_file))[:NP_USER]
+       r[:,0]*= dtau_USER/1e3 # ps
+       r[:,1]*= (CmRecToHz)**2
+       t_min  = 0.0 # ps
+       TCF    = r[:,1]
+       T      = r[:,0]
+       n_t    = len(T)
+       t_max  = T[-1]
+       dt     = T[1] - T[0]
+ 
+       #  -  Hamming window
+       f_window  = 0.54 + 0.46 * numpy.cos(math.pi*T/T[-1])
+       if WINDOW_USER: 
+          TCF   *= f_window
+          print "\n *** WARNING! Apodization is on, which means that T2*, correlation time and Delta*tau are erroneous!"
+          print "     To estimate these quantities rerun with --no-apod option."
+       
+       #  -  zero-padding of TCF
+       n_pad = NT_PAD_USER
+       t_pad = dt * (n_t + n_pad - 1)
+       n_t  += n_pad
+       T     = numpy.linspace(t_min, t_pad, n_t)
+       TCF_pad = numpy.zeros(n_pad, dtype=numpy.float64)
+       TCF   = numpy.concatenate([TCF, TCF_pad])
+       t_max = T[-1]
+       
+       #  -  mean square fluctuation amplitude
+       C0    = TCF[0]
+       delta = math.sqrt(C0)
+       print " C0                 = %10.2f [1/ps**2]" % C0
+       print " Delta              = %10.2f [1/ps]"    % delta
+       
+       # [2] TCF in frequency domain
+       #  -  frequency axis
+       w_max = W_MAX_USER * CmRecToHz # [rad/ps]
+       n_w   = NW_USER
+       W     =   numpy.linspace(W_MIN_USER, w_max, n_w); W_cm1 = W/CmRecToHz
+       dw    =   W[1] - W[0]
+       print " Frequency resol.   = %10.4f [cm-1]" % (dw/CmRecToHz)
+       
+       #  -  compute TCF(W)
+       F     = numpy.zeros((n_t, n_w), numpy.float64)
+       for i in range(n_w):
+           F[:,i] = 2/C0 * numpy.cos(W[i] * T) * TCF
+       TCF_W = Integral(F, dt)
+       
+       #  -  correlation time of TCF
+       tau   = Integral(TCF/C0, dt)
+       print " Correlation time   = %10.4f [ps]" % tau
+       #  -  pure dephasing constant
+       t2star= 1./(tau * C0)
+       print " T2*                = %10.4f [ps]" % t2star
+       #  -  homogeneous/inhomogeneous limit?
+       DeltaTau = delta * tau 
+       print " Delta*tau          = %10.4f [-]" % DeltaTau
+       if   DeltaTau <= 0.01:  print " * Homogeneous limit!"
+       elif DeltaTau >= 100.:  print " * Inhomogeneous limit!"
+       else                 :  print " * Between homogeneous and inhomogeneous limit!"
+       #  -  imaginary part C_I
+       pref  = PlanckConstant / (4.0 * numpy.pi * TEMP * BoltzmannConstant)
+       #  -  spectral density R_W
+       R_W   = numpy.tanh(pref * W) * TCF_W
+       #  -  solvent reorganization energy
+       F     = R_W / (numpy.pi * W) * HBar * C0 
+       lam   = Integral(F, dw)
+       print " Sonvent reorganization energy = %10.6f [cm-1]" % (lam * JouleToCmRec)
+       #  -  time of decoherence
+       t12   = math.sqrt( math.log(2.0)*pref*PlanckConstant/(Pi2*lam) ) 
+       print " Time of decoherence = %10.3f [fs]" % (t12 /PicosecondToSecond*1e3)
+       
+       # [3] Line broadening function
+       #  -  real part
+       F     = numpy.zeros((n_w, n_t), numpy.float64)
+       for i in range(n_t):
+           F[:,i] = C0 * R_W * (1.0 - numpy.cos(T[i] * W)) / numpy.tanh(pref * W) / (numpy.pi * W * W)
+       GR_t  = Integral(F, dw)
+       #  -  imaginary part
+       F     = numpy.zeros((n_w, n_t), numpy.float64)
+       for i in range(n_t):
+           F[:,i] = C0 * R_W * (numpy.sin(T[i] * W) - T[i] * W) / (numpy.pi * W * W)
+       GI_t  = Integral(F, dw)
+       #  -  line broadening function
+       G_t   = numpy.exp(-GR_t - 1.0j * GI_t) 
+       
+       # [4] Susceptibility
+       #  -  center frequency
+       w_0   = w0_USER * CmRecToHz # [rad/ps]
+       #  -  response function
+       phi_t = numpy.exp(-1.0j*w_0*T) * G_t #- numpy.exp(+1.0j*w_0*T) * G_t.conjugate()
+       phi_t*= numpy.exp(-0.500*T/T1_USER)  # contribution from vibrational lifetime
+       phi_t*= 1.0j/HBar
+       if WINDOW_USER: 
+          phi_t*= f_window
+       #  -  frequency-dependent susceptibility
+       v, gr, gi, v_max, v_res = libbbg.utilities.ft_1d(phi_t,t_max,dt,n=2**15,algorithm='ifft',cunit=None)
+       gs = numpy.sqrt(gr**2 + gi**2)
+       v/=CmRecToHz/Pi2; v_max/=CmRecToHz/Pi2; v_res/=CmRecToHz/Pi2
+       print " Maximal FFT freq  = %10.2f" %  v_max
+       print " Resolut FFT freq  = %10.2f" %  v_res
+       
+       #  -  refractive index
+       N_w   = numpy.sqrt(1.0 + gr)
+       #  -  absorption coefficient
+       K_w   = v * gi / N_w
+       
+       # [R]ead experimental data
+       if FTIR_READ_FILE is not None:
+         FTIR  = filetable.read(open(FTIR_READ_FILE))
+         v_exp = FTIR[:,0]; ftir_exp = FTIR[:,1]
+         ftir_exp *= gi.max()/ftir_exp.max()
+         ftir_exp2 = FTIR[:,1] * K_w.max()/ftir_exp.max()
+       
+       # [P]lot
+       #  -  initial graphs
+       figure_1 = pylab.figure()
+       ax_11  = figure_1.add_subplot(321)
+       ax_11  .set_title('$C_{\\rm cl}(t)$')
+       ax_11  .plot(T, TCF, '-')
+       ax_12  = figure_1.add_subplot(322)
+       ax_12  .set_title('$\\widetilde{C}_{\\rm cl}(\\omega)$')
+       ax_12  .plot(W_cm1, TCF_W,'-')
+       ax_13  = figure_1.add_subplot(323)
+       ax_13  .set_title('$\\rm{Re}\\left[\\phi(t)\\right]$')
+       ax_13  .plot(T, phi_t.real, '-')
+       ax_14  = figure_1.add_subplot(324)
+       ax_14  .set_title('$\\rm{Im}\\left[\\phi(t)\\right]$')
+       ax_14  .plot(T, phi_t.imag, '-')
+       ax_15  = figure_1.add_subplot(325)
+       ax_15  .set_title('$\\rm{Im}\\left[g(t)\\right]$')
+       ax_15  .plot(T, GR_t, '-')
+       ax_16  = figure_1.add_subplot(326)
+       ax_16  .set_title('$\\rm{Im}\\left[g(t)\\right]$')
+       ax_16  .plot(T, GI_t, '-')
+       
+       w_min = w0_USER-dw0_USER; w_max = w0_USER+dw0_USER
+       figure_2 = pylab.figure()
+       ax_21  = figure_2.add_subplot(221)
+       ax_21  .set_title('$\\rm{Re}\\left[\\chi(\\omega)\\right]$')
+       ax_21  .plot(v, gr, '-')
+       ax_21  .set_xlim([w_min,w_max])
+       ax_22  = figure_2.add_subplot(222)
+       ax_22  .set_title('$\\rm{Im}\\left[\\chi(\\omega)\\right]$')
+       ax_22  .plot(v, gi, '-', label='Theory')
+       if FTIR_READ_FILE is not None: 
+          ax_22  .plot(v_exp, ftir_exp, '-', label='Exp.')
+       ax_22  .set_xlim([w_min,w_max])
+       ax_23  = figure_2.add_subplot(223)
+       ax_23  .set_title('$n(\\omega)$')
+       ax_23  .plot(v, N_w, '-')
+       ax_23  .set_xlim([w_min,w_max])
+       ax_24  = figure_2.add_subplot(224)
+       ax_24  .set_title('$\\kappa(\\omega)$')
+       ax_24  .plot(v, K_w, '-')
+       if FTIR_READ_FILE is not None: 
+          ax_24  .plot(v_exp, ftir_exp2, '-', label='Exp.')
+       ax_24  .set_xlim([w_min,w_max])
+       
+       #
+       figure_3 = pylab.figure()
+       ax_31  = figure_3.add_subplot(111)
+       ax_31  .plot(W_cm1, R_W, '-')
+       ax_31  .set_title('$\\rho(\\omega)$')
+       
+       pylab.plt.show(block=True)
+
+    # --------------------------------------------------------------------------------
+    elif model == 'classical':
+    # --------------------------------------------------------------------------------
+
+       if not NP_USER%2: NP_USER-=1
+       r      = filetable.read(open(data_file))[:NP_USER]
+       T      = r[:,0]; y = r[:,NCOL_USER]
+       T     *= dtau_USER/1.0e3 # ps
+       y     *= CmRecToHz  # rad/ps
+       dw_ave = y.mean()
+
+       y     -= dw_ave
+       t_min  = 0.0 # ps
+       dt     = T[1] - T[0]  # ps
+       #  -  response function
+       T      = T[::2] - dt
+       t_max  = T[-1]
+       dt     = T[1] - T[0]
+       if 0:
+          J      = genresf(y,dt)       #d                                  
+          JR     = numpy.concatenate(([1.,], J[:,0]))#[:4500]      #d
+          JI     = numpy.concatenate(([0.,], J[:,1]))#[:4500]      #d
+          out  = open('col.dat','w')                         #d
+          for i in range(len(T)):       #d
+              out.write('%20.9E %25.10E %25.10E\n' % (T[i], JR[i], JI[i]))   #d
+          out.close(); exit()   #d
+
+       import os
+       r  = filetable.read(open(os.environ['__CORDAT__']))      
+       k  = 500
+       JR = r[:,1][:k]   
+       JI = r[:,2][:k]   
+       T  = T[:k]       
+       f  = 0.54 + 0.46 * numpy.cos(math.pi*T/T[-1])        
+       JR*= numpy.exp(-0.500*T/T1_USER)
+       JI*= numpy.exp(-0.500*T/T1_USER)
+       if WINDOW_USER:
+          JR*= f; JI*= f
+
+       n_w   = 2**10
+       w_min = W_MIN_USER * CmRecToHz # [rad/ps]
+       w_max = W_MAX_USER * CmRecToHz # [rad/ps]
+       w_0   = w0_USER * CmRecToHz    # [rad/ps]
+       W     =   numpy.linspace(w_min, w_max, n_w); W_cm1 = W/CmRecToHz
+       DW    =   W - w_0
+       dw    =   W[1] - W[0]
+       print " Frequency resol.   = %10.4f [cm-1]" % (dw/CmRecToHz)
+
+       #  -  real part of I(omega)
+       n_t   = len(T)
+       F     = numpy.zeros((n_t, n_w), numpy.float64)
+       for i in range(n_w):
+           F[:,i] = numpy.cos(DW[i]*T*3.14) * JR 
+       ReI_t  = Integral(F, dt)
+
+       #  -  imaginary part of I(omega)
+       F     = numpy.zeros((n_t, n_w), numpy.float64)
+       for i in range(n_w):
+           F[:,i] =-numpy.sin(DW[i]*T*3.14) * JI
+       ImI_t  = Integral(F, dt)
+
+       #  - spectrum
+       S     = ReI_t + ImI_t
+
+       # [R]ead experimental data
+       if FTIR_READ_FILE is not None:
+          FTIR  = filetable.read(open(FTIR_READ_FILE))
+          v_exp = FTIR[:,0]; ftir_exp = FTIR[:,1]
+          ftir_exp *= S.max()/ftir_exp.max()
+
+       # [P]lot
+       #  -  initial graphs
+       figure_1 = pylab.figure()
+       ax_11  = figure_1.add_subplot(121)
+       ax_11  .set_title('$\\rm{Re}\\left[J_c(t)\\right]$')
+       ax_11  .plot(T, JR, '-')
+       ax_11  .set_ylim([-0.4,1.0])
+       ax_12  = figure_1.add_subplot(122)
+       ax_12  .set_title('$\\rm{Im}\\left[J_c(t)\\right]$')
+       ax_12  .plot(T, JI, '-')
+       ax_12  .set_ylim([-0.4,1.0])
+
+       #  -  spectrum
+       w_min = w0_USER-dw0_USER; w_max = w0_USER+dw0_USER
+       figure_2 = pylab.figure()
+       ax_21  = figure_2.add_subplot(111)
+       ax_21  .plot(W_cm1, ReI_t, '--', lw=1, label='$I_R(\\omega)$')
+       ax_21  .plot(W_cm1, ImI_t, '--', lw=1, label='$I_I(\\omega)$')
+       ax_21  .plot(W_cm1, S    , '-' , lw=2, label='$I(\\omega)$')
+       if FTIR_READ_FILE is not None: 
+          d=0.0#10.2
+          ax_21  .plot(v_exp-d, ftir_exp, '-', lw=2, color='blue', label='Exp.')
+       #ax_21  .set_xlim([w_min,w_max])
+
+       pylab.plt.legend()
+       pylab.plt.show(block=True)
+
+    # --------------------------------------------------------------------------------
+    else:
+    # --------------------------------------------------------------------------------
+
+       print " No model %s implemented. Quitting" % model; exit()
+
     return
 
 # RUN
