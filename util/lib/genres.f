@@ -49,6 +49,66 @@ C
       RETURN
       END
 C-------------------------------------------------
+      SUBROUTINE GENREST(F,N,STEP,RES)
+C
+C     Compute exponential correlation response function
+C
+C     RES(t) = < exp [ -i \int_t0^t F(t') dt' ] >_t0
+C
+C     F     - array of length N
+C     STEP  - integration step for Simpson's rule; STEP = ARG(F(1)) - ARG(F(0))
+C     RES   - output function (length N-1)
+C
+C     Use Trapezoidal rule
+C
+      IMPLICIT DOUBLE PRECISION(A-H,O-Z)
+      DIMENSION F(N), RES(N-1,2)
+Cf2py INTENT(OUT) RES
+      PREF = STEP/2.0D+00
+      MMAX = N-1 
+C
+C     SCRATCH FILE
+C
+      OPEN(UNIT=17,STATUS='SCRATCH',ACTION='READWRITE',
+     &     FORM='UNFORMATTED',ACCESS='SEQUENTIAL')
+C
+C     COMPUTE RUNNING INTEGRALS AND STORE THEM IN SCRATCH FILE
+C
+      DO IP = 1, MMAX
+         X  = 0.0D+00
+         DO IM = IP, MMAX
+C
+            X  = X + PREF * (F(IM) + F(IM+1))
+C
+            WRITE(17) DCOS(X), -DSIN(X)
+C
+         END DO
+      END DO
+C
+      REWIND(UNIT=17)
+C
+C     ACCUMULATE RES INTEGRALS
+C 
+      DO IP = 1, MMAX
+         DO IM = IP, MMAX
+            NR = IM - IP + 1
+            READ(17) VRE, VIM
+            RES(NR,1) = RES(NR,1) + VRE
+            RES(NR,2) = RES(NR,2) + VIM
+         END DO
+      END DO
+C
+C     AVERAGE OUT RES INTEGRALS
+C
+      DO M=1,MMAX
+         VM = DFLOAT(N-M)
+         RES(M,1) = RES(M,1) / VM
+         RES(M,2) = RES(M,2) / VM
+      END DO
+C
+      RETURN
+      END
+C ---------------------------------------------------------------
       SUBROUTINE GENRESF(F,N,STEP,RES)
       IMPLICIT DOUBLE PRECISION(A-H,O-Z)
       DIMENSION F(N), RES((N-1)/2, 2)
