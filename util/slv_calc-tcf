@@ -24,13 +24,15 @@ def cf(y1, y2, norm=False):
     return f
 
 # to be evaluated
-autocorr_files = ['ELE-ELE', 'EXR-EXR', 'POL-POL', 'DIS-DIS', 'TOT-TOT']
-croscorr_files = ['ELE-EXR', 'ELE-POL', 'ELE-DIS', 'EXR-POL', 'EXR-DIS', 'POL-DIS']
+autocorr_files = ['COU-COU', 'EXR-EXR', 'POL-POL', 'DIS-DIS', 'TOT-TOT', 'ELE-ELE', 'EL2-EL2', '1ST-1ST']
+croscorr_files = ['COU-EXR', 'COU-POL', 'COU-DIS', 'EXR-POL', 'EXR-DIS', 'POL-DIS']
 corr_files     = autocorr_files + croscorr_files
 
 # - read inputs
 TRAJ =          argv[1]
 NORM = bool(int(argv[2]))
+if NORM: snorm = 'norm'
+else:    snorm = 'unorm'
 
 # - read trajectory
 r = filetable.read(open(TRAJ))
@@ -39,12 +41,16 @@ r = filetable.read(open(TRAJ))
 x     = r[:, 0]                                             ; npoints= len(x)
 r_tot = r[:,13]                                          #  ; r_tot -= mean(r_tot)
 r_xr  = r[:, 8]                                          #  ; r_xr  -= mean(r_xr )
-r_el  = r[:, 1]+r[:, 4]+r[:, 5]                          #  ; r_el  -= mean(r_el )
+r_cou = r[:, 1]+r[:, 4]+r[:, 5]                          #  ; r_cou -= mean(r_cou)
 r_pol = r[:, 6]                                          #  ; r_pol -= mean(r_pol)
 r_dis = r[:,10]                                          #  ; r_dis -= mean(r_dis)
+r_ele = r_tot - r_xr
+r_ele2= r_ele - r_dis
+r_1st = r_cou + r_xr
+
 
 # - collect data
-data = {'TOT': r_tot, 'ELE': r_el, 'EXR': r_xr, 'POL': r_pol, 'DIS': r_dis}
+data = {'TOT': r_tot, 'ELE': r_ele, 'COU': r_cou, 'EXR': r_xr, 'POL': r_pol, 'DIS': r_dis, 'EL2': r_ele2, '1ST': r_1st}
 
 # - compute correlation functions
 for data_1 in data.keys():
@@ -52,7 +58,7 @@ for data_1 in data.keys():
         cf_type = "%s-%s" % (data_1, data_2)
         if cf_type in corr_files:
            print " - computing %s correlation..." % cf_type
-           out = open('tcf.%s.dat' % cf_type, 'w')
+           out = open('tcf.%s.%s.dat' % (cf_type, snorm), 'w')
            y   = cf(data[data_1], data[data_2], norm=NORM)
            for i in xrange(npoints):
                out.write('%6i %13.5E\n' % (x[i],y[i]))
