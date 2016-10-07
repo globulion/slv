@@ -1,4 +1,4 @@
-\documentclass[b5paper,twoside,fleqn,11pt]{book}
+\documentclass[b5paper,twoside,fleqn,11pt,draft]{book}
 
 % format of the thesis
   %\usepackage{classicthesis} % --- check for compatibility with noweb
@@ -164,6 +164,9 @@
 \color{HotPink3}\boxed {\color{textcolor}#1#2}}
 {}{}
 \makeatother
+
+% double slash sign
+\newcommand{\sslash}{\mathbin{/\mkern-6mu/}}
 
 %---------------------------------------------------
 % SHORTCUTS
@@ -1078,10 +1081,10 @@ In 1998, Reimers and Hall \citep{Reimers.Hall.JACS.1999} investigated in great d
 based on the Ben-Amotz~\emph{et al.}'s and Fawcett~\emph{et al.}'s models in solvents under standard atmospheric pressures. 
 %It is surprising to me what they found.
 From among 33 various solvents ranging from non\hyp{}polar and non\hyp{}protic CCl$_4$, 
-through strongly protic
+through strongly polar non\hyp{}protic
 DMSO to quite acidic trifluoroacetic acid (TFA), they noticed that the electrostatic
 non\hyp{}specific interactions cause much lesser redshifts as compared to the dispersion
-interactions. Note that the latter cannot be correlated with electrostatic potential
+interactions which were relatively large. Note that the latter cannot be correlated with electrostatic potential
 or electric field at all. What is also interesting in their work is that they 
 reported specific (short\hyp{}range) frequency \emph{blue shifts} which were strongly enforced
 in solvents forming H-bonding interactions. In fact, the stronger H-bonds formed between MeCN
@@ -1145,8 +1148,8 @@ that was presented above it is clear that the electrostatic effects
 are not the only phenomena governing the interaction\hyp{}induced 
 vibrational frequency shifts. There is in fact little work done
 to understand the origins of the non\hyp{}Coulmbic effects and their
-role in the spectral line shapes and positions and the comprehensive,
-all\hyp{}encompassing vibrational solvatochromism theory is lacking. Apparently,
+role in the spectral line shapes and positions and the comprehensive and unified
+vibrational solvatochromism theory is lacking. Apparently,
 non\hyp{}Coulombic effects were mostly ignored when analysing and interpreting
 the vibrational spectra.
 
@@ -1157,9 +1160,10 @@ will be derived and shown
 that they can be used to calculate various contributions to the vibrational solvatochromic frequency
 shifts directly by means of quantum chemistry calculations. We shall also test those equations 
 and when combined with CMD we shall show that such a theory can quantitatively predict the
-vibrational solvatochromism of many IR probes. We want to shed new light
+vibrational solvatochromism of many IR probes. Our goal is to shed new light
 on the importance of non\hyp{}Coulombic effects
-in the vibrational solvatochromism.
+in the vibrational solvatochromism, as well as develop an all\hyp{}encompassing model
+that could be used to study complex systems such as macromolecules under biological conditions.
 
 \printbibliography[heading=subbibintoc,title={References}]
 \end{refsection}
@@ -4528,7 +4532,7 @@ by numerical  differentiation (note, that they need to be evaluated only once).
 They can also be calculated analytically by using standard methods implemented
 in current QM packages like {\sc Gaussian} or {\sc Gamess}.
 
-\subsection{Charge-Transfer Effects\label{s:dw-ct}}
+\subsection{Charge Transfer Effects\label{s:dw-ct}}
 
 When two molecules are sufficiently close enough
 their interactions can lead to transfer of the 
@@ -4690,6 +4694,76 @@ in the evaluation of the vibrational frequency shift.
 Fortunately, CT energies are usually quite small
 and can be neglected when extremely high accuracy is not
 a concern (see Chapter~\ref{c:nma-amide-I}).
+
+\subsection{Charge Penetration Effects}
+
+Our explicit models of all electrostatic contributions to the
+vibrational frequency shift (i.e., Coulombic, induction and dispersion)
+were so far based on the distributed multipole expansions. However,
+it turns out that it is not sufficient to describe correctly
+the intermolecular interactions even if the multipole expansions 
+converge well. This is due to the fact that molecular charge densities
+are not finite and are spread in space leading to \emph{charge penetration}.
+This purely quantum mechanical effect influences the electrostatic potential operators and has to be included
+in accurate modelling when molecules are close to each other. 
+In particular, interactions between molecules in which at least one of them is charged
+can lead to quite large charge penetration effects. If such effects were not
+properly included the, so called, `polarization catastrophe` could happen leading
+to unphysically large attraction forces. In practical molecular dynamics calculations, 
+this would first cause implosion and then explosion of the system. It would also cause
+unphysically large induction frequency red shifts. One of such examples is shown
+in Table.
+
+Charge penetration effect on the Coulombic frequency shift 
+can be easily estimated from first principles.
+It was shown that the Coulombic charge penetration energy can be separately computed
+from the following formula:
+%
+\begin{equation}
+ U^{\rm Pen} = \sum_{a\in A}\sum_{b\in B} 
+ U_{ab}^{\rm Pen}
+\end{equation}
+%
+where
+%
+\begin{equation}
+ U_{ab}^{\rm Pen} = -2\sqrt{\frac{-1}{2\ln{\vert S_{ab}\vert}}} \times \frac{S_{ab}^2}{r_{ab}}
+\end{equation}
+%
+Thus, we can find that the associated frequency shift contribution reads
+%
+\begin{equation}
+ \Delta\omega_j^{\rm Pen} \approx -\frac{1}{M_j\omega_j} 
+                          \sum_i \frac{g_{ijj}}{M_i\omega_i^2} 
+                                 \sum_{ab} \left\{
+                                      \frac{S_{ab}}{r_{ab}} \fderiv{S_{ab}}{Q_i}
+                                      \left[ X_{ab} - \frac{2}{X_{ab}}\right]
+                                     +\left( \frac{S_{ab}}{r_{ab}} \right)^2 X_{ab}^{-1} \fderiv{r_{a}}{Q_i}
+                                 \right\}
+\end{equation}
+%
+with
+%
+\begin{equation}
+ X_{ab} \equiv \sqrt{-2\ln{\vert S_{ab} \vert}}
+\end{equation}
+%
+Hence, to compute this contribution one needs the overlap integrals, the LMO centroids
+and their derivatives, which are also necessary for the exchange\hyp{}repulsion
+and the charge\hyp{}transfer frequency shifts calculations. 
+
+Unfortunately, the first\hyp{}principles damping of induction energy
+is not well understood nor developed. There have been semi\hyp{}empirical
+damping formulae used, as in Tang and Toennies, for instance, that are based
+on the overlap... However,
+the empirical nature of such approaches makes the application of the first principles
+model of the vibrational solvatochromism rather tricky because the derivatives
+of the fitting damping parameters with respect to the normal modes are not uniquely defined.
+Nevertheless, it would be interesting to develop a model that includes induction (and dispersion) charge penetration
+effects and is fairly transferable between different types of environments and ions.
+Since most of the systems studied in this Work are neutral, we put this 
+for further development and will not be discussed in this Thesis in detail.
+
 
 \section{Modelling the Solute's Far Environment\label{s:far-environ}}
 
@@ -5434,7 +5508,7 @@ which leads to the following contributions to the vibrational
 frequency shift
 %
 \begin{equation} \label{e:dw-soleds-hf}
- \Delta\omega_j^{\rm SolEDS//HF} = 
+ \Delta\omega_j^{\rm SolEDS\sslash HF} = 
               \Delta \omega_{j;{\rm el}}^{(10)}    + 
               \Delta \omega_{j;{\rm ex}}^{\rm HL}  +
               \Delta \omega_{j;{\rm del}}^{\rm HF}
@@ -5443,7 +5517,7 @@ frequency shift
 and
 %
 \begin{equation} \label{e:dw-soleds-mp2}
- \Delta\omega_j^{\rm SolEDS//MP2} = 
+ \Delta\omega_j^{\rm SolEDS\sslash MP2} = 
               \Delta \omega_{j;{\rm el}}^{(10)}    + 
               \Delta \omega_{j;{\rm ex}}^{\rm HL}  +
               \Delta \omega_{j;{\rm del}}^{\rm HF} +
@@ -5458,8 +5532,8 @@ It is important to emphasise here that the vibrational analysis
 calculations performed at the HF and MP2 levels are based on different
 vibrational potential energy surfaces so that the $\Delta \omega_{j;{\rm el}}^{(10)}$,
 $\Delta \omega_{j;{\rm ex}}^{\rm HL}$ and $\Delta \omega_{j;{\rm del}}^{\rm HF}$ 
-part of $\Delta\omega_j^{\rm SolEDS//MP2}$ quantitatively differs from
-$\Delta\omega_j^{\rm SolEDS/HF}$ obtained at the HF level of theory,
+part of $\Delta\omega_j^{\rm SolEDS\sslash MP2}$ quantitatively differs from
+$\Delta\omega_j^{\rm SolEDS\sslash HF}$ obtained at the HF level of theory,
 though the same notation is used in both Eqs.~\eqref{e:dw-soleds-hf} 
 and \eqref{e:dw-soleds-mp2}.
 
@@ -5493,7 +5567,7 @@ for the interaction energies as
 where the superscripts $n$ and $m$ refer to the order in the
 intermolecular interaction and electron correlation correction,
 respectively. Each $nm$th order term can be split into the long\hyp{}range
-polarization term $E^{(nm)}_{\rm pol}$ ($\mathscr{A}=\mathbb{1}$)
+polarization term $E^{(nm)}_{\rm pol}$ ($\mathscr{A}=\mathbb{I}$)
 and the associated exchange\hyp{}repulsion correction $E^{(nm)}_{\rm ex}$,
 where usually single electron exchange is assumed.
 Thus, the solute\hyp{}solvent interaction potential can be written as
@@ -6440,7 +6514,7 @@ so that it is possible to directly compare SolEFP calculations
 with SolEDS and full QM analysis results. The role of intermolecular dispersion interaction
 will be discussed later because it is virtually absent
 at HF level of theory. Also, we analyse the other electron correlation
-effects by using SolEDS//MP2 method. The orientation\hyp{}
+effects by using SolEDS$\sslash$MP2 method. The orientation\hyp{}
 and distance\hyp{}dependencies of the various contributions
 to the frequency shifts are further studied to elucidate on
 the ranges of Coulombic, induction, dispersion and exchange\hyp{}repulsion
@@ -6594,7 +6668,7 @@ be smaller than 5~cm$^{-1}$.
 \caption{
 (a) The amide I mode frequency shift components that were computed
 for various NMA-(H$_2$O)$_{n = 1-35}$ clusters using 
-SolEFP//HF/6-311++G** method. The repulsion interaction induces amide I
+SolEFP$\sslash$HF/6-311++G** method. The repulsion interaction induces amide I
 frequency blueshifts, whereas the induction (distributed multipole\hyp{}induced
 dipole interaction) interaction causes amide I frequency redshifts.
 For the sake of comparison, we plot also dispersion frequency shifts
@@ -6673,7 +6747,7 @@ respectively. These contributions are gathered in Table~\ref{t:ind-nonadd}
 \caption{
 Many\hyp{}body analysis of excess polarization frequency
 shift (in cm$^{-1}$) of NMA--(H$_2$O)$_3$ tetramer obtained by using 
-SolEFP//HF/6-311++G** method. Water molecules occupy the H-bonding sites
+SolEFP$\sslash$HF/6-311++G** method. Water molecules occupy the H-bonding sites
 A, B, and C as depicted in Fig.~\ref{f:nma-abcde}.
 \label{t:ind-nonadd}}
 \begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } l cccccc }
@@ -6942,7 +7016,7 @@ The starting point was solute\hyp{}solvent complex in its equilibrium geometry
 with $\theta=0$ and $R_d=0$, where $\theta$ is the angle of rotation of solvent
 molecule (see the insets in these figures) and $R_d$ is the displacement along the H-bond axis.
 Positive values of $R_d$ denote moving solvent away from solute. We have performed
-the total scan on a grid of 80 translations for $R_d\in [-1.0,3.0]\text{a.u.}$ 
+the total scan on a grid of 80 translations for $R_d\in [-1.0,3.0]\text{ a.u.}$ 
 and 360 rotations every 1\textdegree.
 
 We found that only $\Delta\omega^{\rm Coul}$ is a strongly directional
@@ -7121,15 +7195,15 @@ in Table~\ref{t:amide-I-bulk}.
 \caption{
 Experimental vibrational frequencies of the amide I mode of
 NMA in gas phase, H$_2$O and CDCl$_3$, and frequency shifts relative to gas
-phase state obtained by SolEFP/6-311++G**//Parm99 method. In this
+phase state obtained by SolEFP/6-311++G**$\sslash$Parm99 method. In this
 Table, we also show full width at half maximum (FWHM) of vibrational
-frequency shift static distributions obtained from SolEFP//Parm99 calculations.
+frequency shift static distributions obtained from SolEFP$\sslash$Parm99 calculations.
 All values in cm$^{-1}$.
 \label{t:amide-I-bulk}}
 \begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } l ccccc }
 \hline\hline
 \multirow{5}{*}{Gas phase} & 1731$^a$ & \multirow{5}{*}{$\Delta\omega^{\rm Expt.}$} 
-                                      & \multirow{5}{*}{$\Delta\omega^{\rm SolEFP//Parm99}$} 
+                                      & \multirow{5}{*}{$\Delta\omega^{\rm SolEFP/sslash Parm99}$} 
                                       & \multirow{5}{*}{Error} & \\
                            & 1714$^a$ & &&&\\
                            & 1731$^b$ & &&&\\
@@ -7228,7 +7302,7 @@ NMA/chloroform solutions, respectively.
 \caption{
 Amide I mode frequency shift distributions and instantaneous 
 frequency shift trajectories obtained by combining 
-the SolEFP//HF/6-311++G** method with molecular dynamics 
+the SolEFP$\sslash$HF/6-311++G** method with molecular dynamics 
 simulation. Panels (a) and (c): NMA in H$_2$O; panels (b) and (d): 
 NMA in CDCl$_3$. In panels (b) and (d), selected 40 ps fragments 
 of frequency shift trajectories were depicted.
@@ -7528,7 +7602,7 @@ refers to the sum of the Coulombic and exchange\hyp{}repulsion
 electric anharmonicity terms, i.e., Heitler\hyp{}London
 term. For example, in the case of the NMA--water complex ``C''
 (Figure~\ref{f:nma-abcde} and Table~\ref{t:amide-I-soleds-solefp}), 
-SolEDS//HF/6-311++G** calculations predict
+SolEDS$\sslash$HF/6-311++G** calculations predict
 this sum to be +7.3~cm$^{-1}$, whereas mechanical and total
 anharmonicity red shifts equal to --33.7 and --27.9~cm$^{-1}$,
 respectively. The analysis made by Farag~\emph{et al.} on a similar
@@ -7902,7 +7976,7 @@ Section~\ref{s:solefp-working-model}).
 \includegraphics[width=0.9\linewidth]{Fig.3.eps}
 }
 \caption{
-SolEFP//HF/6-311++G** frequency shift components. (a) The SolEFP components contributing to the CN
+SolEFP$\sslash$HF/6-311++G** frequency shift components. (a) The SolEFP components contributing to the CN
 frequency shifts of MeSCN in various water and DMSO clusters, MeSCN--(H$_2$O)$_{n=1-27}$ 
 and MeSCN--(DMSO)$_{n=1-7}$.
 The total SolEFP frequency shifts (without dispersion) 
@@ -8077,7 +8151,7 @@ The nature of the frequency shifts of CN stretch mode in various
 H-bonding complexes involving MeCN or MeSCN and H$_2$O, MeOH 
 and CF$_3$CH$_2$OH (structures are shown in Figure~\ref{f:mescn-soleds}). 
 The frequency shift partitioning was performed by using 
-SolEDS//MP2/6-311++G** method. Bond lengths are in Bohr and frequency shifts in
+SolEDS$\sslash$MP2/6-311++G** method. Bond lengths are in Bohr and frequency shifts in
 cm$^{-1}$.
 \label{t:mescn-soleds}}
 \begin{tabular*}{1.0\textwidth}{@{\extracolsep{\fill} } l ccc c ccc}
@@ -8119,7 +8193,7 @@ $^{a)}$ Partially optimised due to energy optimisation problem.
 }
 \caption{
 Molecular structures of the six Me(S)CN--X complexes (X = H$_2$O, MeOH or CF$_3$CH$_2$OH)
-that were studied by using SolEDS//MP2/6-311++G** method.
+that were studied by using SolEDS$\sslash$MP2/6-311++G** method.
 \label{f:mescn-soleds}}
 \end{figure}
 %
@@ -8535,10 +8609,10 @@ Perhaps this is because the
 cooperative induction effects by bonding orbital electrons of
 two different fragments were ignored, which is the problem
 that cannot be easily resolved and is beyond the scope of the
-present work. Nonetheless, our SolEDS//HF frequency shifts are
+present work. Nonetheless, our SolEDS$\sslash$HF frequency shifts are
 in excellent agreement with full \emph{ab initio} results with the errors
 of just $\sim$1~cm$^{-1}$ or lesser. When dispersion is not included in
-SolEFP, those analysis results can be compared to SolEDS//HF
+SolEFP, those analysis results can be compared to SolEDS$\sslash$HF
 results. Overall, the SolEFP, as compared to the SolEDS,
 underestimates the frequency shifts by about 4-10~cm$^{-1}$.
 This is mainly due to the approximate nature of the SolEFP
@@ -8756,7 +8830,7 @@ The results showing each interaction energy contributions to vibrational frequen
 given in Table~\ref{t:cnnc-soleds}, whereas the molecular structures are depicted in Figure~\ref{f:cnnc-soleds-str}.
 %
 \begin{table}[t!]
-\caption{SolEDS//HF/6-311++G** frequency shifts of the CN/NC stretch mode with
+\caption{SolEDS$\sslash$HF/6-311++G** frequency shifts of the CN/NC stretch mode with
 respect to gas phase that were computed for the model solute\hyp{}solvent systems 
 (Figure~\ref{f:cnnc-soleds-str}). The 
 lengths of hydrogen bonds are shown in parentheses below the system label.
@@ -8790,7 +8864,7 @@ Full QM                              &  +5.9   & +20.1    &   +4.1         & +18
 \includegraphics[width=0.9\linewidth]{cnnc.SolEDS.structures.eps}
 }
 \caption{
-Molecular structures of the model systems used for SolEDS//HF/6-311++G**
+Molecular structures of the model systems used for SolEDS$\sslash$HF/6-311++G**
 analyses. (a) MeCN--H$_2$O (b) MeNC--H$_2$O (c) MeCN--CHCl$_3$ and (d) MeNC--CHCl$_3$
 \label{f:cnnc-soleds-str}}
 \end{figure}
@@ -10030,7 +10104,7 @@ Solvshift is very easy in use. It can be accessed
 from Python shell (like {\sc Coulomb} and any externally
 available Python modules and packages\footnote{For example: NumPy, MDAnalysis, PyMol.}).
 User can also communicate via command line using main {\tt slv} script.
-SolEFP//CMD calculations are run by script {\tt slv{\textunderscore}md} which reads the
+SolEFP$\sslash$CMD calculations are run by script {\tt slv{\textunderscore}md} which reads the
 special input file.
 
 \subsection{Steps of Setting Up EFP Environment for SLV Calculations}
@@ -11017,6 +11091,22 @@ and transposed 1-2 outer product is defined to be
 \end{equation}
 %
 for any vector ${\bf a}$ and second-rank tensor ${\bf A}$.
+
+\section{Semi-Empirical Determination of Vibrational Solvatochromic Charges}
+
+In one of the variants of ESF approach, the vibrational frequency shift is modelled as~\citep{Lee.Choi.Cho.JCP.2012}
+%
+\begin{equation} \label{e:esf-charges}
+ \Delta \omega_j \approx \sum_x l^{(j)}_x \phi({\bf r}_x)
+\end{equation}
+%
+where $l^{(j)}_x$ is the solvatochromic charge associated with the $j$th vibrational
+mode and the $x$th distributed (generally non\hyp{}atomic) site. Since the dependence
+of the vibrational frequency on the local environment is far more complicated than 
+shown in Eq.~\eqref{e:esf-charges}, the solvatochromic charges have to be fit onto a carefully
+chosen set of points located at ${\bf r}_x$ to some
+benchmark set of molecular clusters in order to achieve satisfying accuracy.
+
 
 \printbibliography[heading=subbibintoc,title={References}]
 \end{refsection}
