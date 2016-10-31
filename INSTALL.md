@@ -104,7 +104,7 @@
              python setup.py install --prefix=$HOME
 
 
- II.3 Scientific Python with MKL
+ II.3 Scientific Python with MKL **(not necessary for solvshift to function properly, so this step can be skipped)**
 
       II.3.1 Scipy 0.12.1
 
@@ -156,7 +156,7 @@
                                                                                                                                    
          ./install -p $HOME
                                                                                                                                    
-      3) check if it works. On epsilon it should give this message:
+      3) check if it works. On epsilon it gives message similar to the following:
          
          python                                                                                                                          
          >>> import libbbg                                                                                                             
@@ -170,9 +170,7 @@
 
  II.8 Coulomb
 
-      1) line 191:                                                                          
-                                                                                            
-         >>>if Python2.6:
+      1) If Python 2.6: modify the file coulomb/multip.py around line 191:                                                                          
                                                                                             
          hash code for python-2.7 and unhash code for python-2.7. It should look like this:
                                                                                             
