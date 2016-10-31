@@ -11,17 +11,17 @@
                                                                                                                 
       
 **Table 1.** SLV dependencies.
- | Import name     | Package                                | Recommended version      |
- | --------------- | -------------------------------------- | ------------ |
- | pp              | Parallel Python                        | 1.6.4        |
- | numpy           | Numerical Python                       | 1.7.1        |
- | scipy           | Scientific Python Libraries            | 0.12.1       |
- | MDAnalysis      | Molecular Dynamics Analysis Tools      | 0.8.1        |
- | scitools        | Scientific Tools                       | 0.8          |
- | PyQuante        | PyQuante Modified*                     | 1.0.3-BBG    |
- | libbbg          | Quantum Chemistry Libraries package    | 1.0.4        |
- | coulomb         | Coulomb package                        | 1.0.8        |
- | solvshift       | Solvshift package                      | 1.0.2        |
+| Import name     | Package                                | Recommended version      |
+| --------------- | -------------------------------------- | ------------ |
+| pp              | Parallel Python                        | 1.6.4        |
+| numpy           | Numerical Python                       | 1.7.1        |
+| scipy           | Scientific Python Libraries            | 0.12.1       |
+| MDAnalysis      | Molecular Dynamics Analysis Tools      | 0.8.1        |
+| scitools        | Scientific Tools                       | 0.8          |
+| PyQuante        | PyQuante Modified*                     | 1.0.3-BBG    |
+| libbbg          | Quantum Chemistry Libraries package    | 1.0.4        |
+| coulomb         | Coulomb package                        | 1.0.8        |
+| solvshift       | Solvshift package                      | 1.0.2        |
  * version of original PyQuante suite modified by me with a couple of extensions.
  They are: molecular multipole 1-electron integrals, overlap and kinetic 1-electron
  integral derivatives wrt nuclear coordinates, adding 6-311++G**/6D basis set for H, N, C, O, F, S and Na,
