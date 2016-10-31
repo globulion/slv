@@ -4,10 +4,10 @@
 
  I.   INTRODUCTION
  
-      This is the installation instruction to succesfully install SLV on UNIX systems.                           
-      SLV has a lot of dependencies which has to be installed as for now by hand.
-      
-      The list of the dependency packages is enclosed here:
+ This is the installation instruction to succesfully install SLV on UNIX systems.                           
+ SLV has a lot of dependencies which has to be installed as for now by hand.
+ 
+ The list of the dependency packages is enclosed here:
                                                                                                                 
       
       Table 1: SLV dependencies
