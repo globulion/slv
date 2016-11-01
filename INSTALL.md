@@ -24,16 +24,10 @@ is enclosed here:
 | `libbbg`          | Quantum Chemistry Libraries package    | 1.0.4        | Required |
 | `coulomb`         | Coulomb package                        | 1.0.8        | Required |
 | `solvshift`       | Solvshift package                      | 1.0.2        | Required |
-
-* version of original PyQuante suite modified by me with a couple of extensions.
-They are: molecular multipole 1-electron integrals, overlap and kinetic 1-electron
-integral derivatives wrt nuclear coordinates, adding 6-311++G**/6D basis set for H, N, C, O, F, S and Na,
-modification of orbital shell structure for d and f shells, extension of PyQuante.Molecule and
-PyQuante.BasisSet classes, hybrid double-molecular 2-electron J and K integrals
                                                                                                           
 The order of installation is according to the Table 1. Particular caution has to be kept
 when installing a correct version of the packages. As for now, the versions listed
-in the Table 1 are the 'tested' ones which do not cause the API incompatibilities. Therefore,
+in the Table 1 are the _tested_ ones which do not cause the API incompatibilities. Therefore,
 installing a newer version of NumPy or SciPy than recommended here could cause some problems, though
 it is not necessary at all. 
 
