@@ -32,19 +32,22 @@ in the Table 1 are the _tested_ ones which do not cause the API incompatibilitie
 installing a newer version of NumPy or SciPy than recommended here could cause some problems, though 
 it is not necessary at all. 
 
+-----------------------------------------------------------------------------------------------------
+
+
 INSTALLATION STEPS
 ------------------
 
-### $PYTHONPATH variable.
+### 0. `PYTHONPATH` variable.
 
-Change $PYTHONPATH variable if you want to install these Python modules in a non-standard directory.  
+Change `PYTHONPATH` variable if you want to install these Python modules in a non-standard directory.  
 During the installation the scheme is generally like this:
                                                                                                      
 ```bash
 python setup.py <some options may be here> install --prefix=/your/installation/path
 ```
                                                                                                      
-Go to your $HOME/.bashrc file and add the following line:
+Go to your `$HOME/.bashrc` file and add the following line:
 
 ```bash                                                                                                     
 export PYTHONPATH=/your/installation/path/lib/pythonX.Y/site-packages:$PYTHONPATH
@@ -68,44 +71,54 @@ python
 
 For this instruction the prefix will be set to `$HOME/lib64` directory. 
 
-Note: sometimes after the 'install' step you might require logout/login step to update the changes in your system
+Note: sometimes after the `install` step you might require logout/login step to update the changes in your system
 (in PyQuante and NumPy cases probably)
 
- II.1 Parallel Python
+### I. Parallel Python - `pp` module.
 
-      python setup.py install --prefix=$HOME
+```python
+python setup.py install --prefix=$HOME
+```
 
+### II. Numerical Python - `numpy` module.
 
- II.2 Numerical Python
+1. Linking with MKL Intel libraries
 
-      II.2.1 Linking with MKL Intel libraries
+  1. create `site.cfg` file. Its content is given below:
 
-             1) create site.cfg file:                                                                                                            
-                                                                                                                                                
-                [mkl]                                                          
-                library_dirs = /opt/intel/mkl/lib/intel64
-                include_dirs = /opt/intel/mkl/include
-                mkl_libs = mkl_rt
-                                                                                                                                                
-             2) Modify cc_exe in numpy/distutils/intelccompiler.py
-                                                                                                                                                
-                self.cc_exe = 'icc -O3 -g -fPIC -fp-model strict -fomit-frame-pointer -openmp -xhost' 
-                
-                In the case of ILP64 interface add also -DMKL_ILP64 to these options. Add other options if needed.
-                                                                                                                                                
-             3) Modify file numpy/distutils/fcompiler/intel.py
-                                                                                                                                                
-                change the 42 line:
-                   pic_flags = ['-xhost', '-openmp', '-fp-model', 'strict', '-fPIC']
-                                                                                                                                                
-             4) install
-                                                                                                                                                
-                python setup.py config --compiler=intelem build_clib --compiler=intelem build_ext --compiler=intelem install --prefix=$HOME
+```cfg
+[mkl]                                                          
+library_dirs = /opt/intel/mkl/lib/intel64
+include_dirs = /opt/intel/mkl/include
+mkl_libs = mkl_rt
+```
+                                                                                                                                   
+  2. Modify `self.cc_exe` in `numpy/distutils/intelccompiler.py`
+
+     ```python                                                                                                                              
+     self.cc_exe = 'icc -O3 -g -fPIC -fp-model strict -fomit-frame-pointer -openmp -xhost' 
+     ```
+   
+     In the case of ILP64 interface add also `-DMKL_ILP64` to these options. **Add other options if necessary.**
+                                                                                                                                   
+  3. Modify file `numpy/distutils/fcompiler/intel.py`
+                                                                                                                                   
+     change the line no 42 into:
+     ```python
+     pic_flags = ['-xhost', '-openmp', '-fp-model', 'strict', '-fPIC']
+     ```
+                                                                                                                                   
+  4. Install
+     
+     ```bash                                                                                                                              
+     python setup.py config --compiler=intelem build_clib --compiler=intelem build_ext --compiler=intelem install --prefix=$HOME
+     ```
                                                                                                                                          
-                                                                                                                                         
-      II.2.2 Linking with ATLAS
-                                                                                                                                         
-             python setup.py install --prefix=$HOME
+2. Default installation.
+  
+   ```bash                                                                                                                                       
+   python setup.py install --prefix=$HOME
+   ```
 
 
  II.3 Scientific Python with MKL **(not necessary for solvshift to function properly, so this step can be skipped)**
