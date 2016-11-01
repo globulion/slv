@@ -6,24 +6,24 @@ Bartosz Błasiak, Fri 14 Nov 2014
 I.   INTRODUCTION
  
 This is the installation instruction to succesfully install SLV on UNIX systems. 
-SLV has a lot of dependencies which has to be installed as for now by hand.
- 
-The list of the dependency packages is enclosed here:
+SLV has a lot of dependencies which has to be installed as for now by hand. 
+The list of the dependency packages and the supported SLV version 
+is enclosed here:
                                                                                                                 
       
-**Table 1.** SLV dependencies.
+**Table 1.** To install SLV, install the packages following the order given in this Table.
 
-| Import name     | Package                                | Recommended version      |
-| --- | --- | --- |
-| pp              | Parallel Python                        | 1.6.4        |
-| numpy           | Numerical Python                       | 1.7.1        |
-| scipy           | Scientific Python Libraries            | 0.12.1       |
-| MDAnalysis      | Molecular Dynamics Analysis Tools      | 0.8.1        |
-| scitools        | Scientific Tools                       | 0.8          |
-| PyQuante        | PyQuante Modified*                     | 1.0.3-BBG    |
-| libbbg          | Quantum Chemistry Libraries package    | 1.0.4        |
-| coulomb         | Coulomb package                        | 1.0.8        |
-| solvshift       | Solvshift package                      | 1.0.2        |
+| Import name     | Full Package Name                        | Recommended version      |   |
+| --- | --- | --- | --- |
+| `pp`              | Parallel Python                        | 1.6.4        | Optional |
+| `numpy`           | Numerical Python                       | 1.7.1        | Required |
+| `scipy`           | Scientific Python Libraries            | 0.12.1       | Optional |
+| `MDAnalysis`      | Molecular Dynamics Analysis Tools      | 0.8.1        | Required |
+| `scitools`        | Scientific Tools                       | 0.8          | Required |
+| `PyQuante`        | [PyQuante Modified]                    | 1.0.3-BBG    | Required |
+| `libbbg`          | Quantum Chemistry Libraries package    | 1.0.4        | Required |
+| `coulomb`         | Coulomb package                        | 1.0.8        | Required |
+| `solvshift`       | Solvshift package                      | 1.0.2        | Required |
 
 * version of original PyQuante suite modified by me with a couple of extensions.
 They are: molecular multipole 1-electron integrals, overlap and kinetic 1-electron
@@ -37,6 +37,7 @@ in the Table 1 are the 'tested' ones which do not cause the API incompatibilitie
 installing a newer version of NumPy or SciPy than recommended here could cause some problems, though
 it is not necessary at all. 
 
+[PyQuante Modified]: https://github.com/globulion/pyq-mod
 
  II.  INSTALLATION STEPS
 
