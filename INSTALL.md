@@ -40,7 +40,7 @@ INSTALLATION STEPS
 
 ### 0. `PYTHONPATH` variable.
 
-Change `PYTHONPATH` variable if you want to install these Python modules in a non-standard directory.  
+Change `PYTHONPATH` variable if you want to install these Python modules in a non-standard directory. 
 During the installation the scheme is generally like this:
                                                                                                      
 ```bash
@@ -58,21 +58,17 @@ or
 ```bash
 export PYTHONPATH=/your/installation/path/pythonX.Y:$PYTHONPATH
 ```
-                                                                                                     
-depending on the version of Python and maybe UNIX system.
-                                                                                                     
+depending on the version of Python and maybe UNIX system. 
 The searchable directories can be checked by:
-
 ```python
 python
 >>> import sys
 >>> for i in sys.path: print i
 ```
-
 For this instruction the prefix will be set to `$HOME/lib64` directory. 
+> Note: sometimes after the `install` step you might require logout/login step to update the changes in your system 
+> (in PyQuante and NumPy cases probably)
 
-Note: sometimes after the `install` step you might require logout/login step to update the changes in your system
-(in PyQuante and NumPy cases probably)
 
 ### I. Parallel Python - `pp` module.
 
