@@ -14,7 +14,7 @@ The list of the dependency packages is enclosed here:
 **Table 1.** SLV dependencies.
 
 | Import name     | Package                                | Recommended version      |
-| --------------- | -------------------------------------- | ------------ |
+| --- | --- | --- |
 | pp              | Parallel Python                        | 1.6.4        |
 | numpy           | Numerical Python                       | 1.7.1        |
 | scipy           | Scientific Python Libraries            | 0.12.1       |
