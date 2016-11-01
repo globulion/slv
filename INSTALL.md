@@ -1,16 +1,18 @@
- SLV Installation guide
- 
- Bartosz Błasiak, Fri 14 Nov 2014
+SLV Installation guide
+======================
 
- I.   INTRODUCTION
+Bartosz Błasiak, Fri 14 Nov 2014
+
+I.   INTRODUCTION
  
- This is the installation instruction to succesfully install SLV on UNIX systems. 
- SLV has a lot of dependencies which has to be installed as for now by hand.
+This is the installation instruction to succesfully install SLV on UNIX systems. 
+SLV has a lot of dependencies which has to be installed as for now by hand.
  
- The list of the dependency packages is enclosed here:
+The list of the dependency packages is enclosed here:
                                                                                                                 
       
 **Table 1.** SLV dependencies.
+
 | Import name     | Package                                | Recommended version      |
 | --------------- | -------------------------------------- | ------------ |
 | pp              | Parallel Python                        | 1.6.4        |
@@ -22,17 +24,18 @@
 | libbbg          | Quantum Chemistry Libraries package    | 1.0.4        |
 | coulomb         | Coulomb package                        | 1.0.8        |
 | solvshift       | Solvshift package                      | 1.0.2        |
- * version of original PyQuante suite modified by me with a couple of extensions.
- They are: molecular multipole 1-electron integrals, overlap and kinetic 1-electron
- integral derivatives wrt nuclear coordinates, adding 6-311++G**/6D basis set for H, N, C, O, F, S and Na,
- modification of orbital shell structure for d and f shells, extension of PyQuante.Molecule and
- PyQuante.BasisSet classes, hybrid double-molecular 2-electron J and K integrals
-                                                                                                           
- The order of installation is according to the Table 1. Particular caution has to be kept
- when installing a correct version of the packages. As for now, the versions listed
- in the Table 1 are the 'tested' ones which do not cause the API incompatibilities. Therefore,
- installing a newer version of NumPy or SciPy than recommended here could cause some problems, though
- it is not necessary at all. 
+
+* version of original PyQuante suite modified by me with a couple of extensions.
+They are: molecular multipole 1-electron integrals, overlap and kinetic 1-electron
+integral derivatives wrt nuclear coordinates, adding 6-311++G**/6D basis set for H, N, C, O, F, S and Na,
+modification of orbital shell structure for d and f shells, extension of PyQuante.Molecule and
+PyQuante.BasisSet classes, hybrid double-molecular 2-electron J and K integrals
+                                                                                                          
+The order of installation is according to the Table 1. Particular caution has to be kept
+when installing a correct version of the packages. As for now, the versions listed
+in the Table 1 are the 'tested' ones which do not cause the API incompatibilities. Therefore,
+installing a newer version of NumPy or SciPy than recommended here could cause some problems, though
+it is not necessary at all. 
 
 
  II.  INSTALLATION STEPS
