@@ -3,9 +3,10 @@ SLV Installation guide
 
 Bartosz Błasiak, Fri 14 Nov 2014
 
-I.   INTRODUCTION
+INTRODUCTION
+------------
  
-This is the installation instruction to succesfully install SLV on UNIX systems. 
+This is the installation instruction to succesfully install the Solvshift package (SLV) on UNIX systems. 
 SLV has a lot of dependencies which has to be installed as for now by hand. 
 The list of the dependency packages and the supported SLV version 
 is enclosed here:
@@ -13,8 +14,8 @@ is enclosed here:
       
 **Table 1.** To install SLV, install the packages following the order given in this Table.
 
-| Import name     | Full Package Name                        | Recommended version      |   |
-| --- | --- | --- | --- |
+| Import name       | Package Full Name                      | Recommended version     |   |
+| ----------------- | -------------------------------------- | ------------ | -------- |
 | `pp`              | Parallel Python                        | 1.6.4        | Optional |
 | `numpy`           | Numerical Python                       | 1.7.1        | Required |
 | `scipy`           | Scientific Python Libraries            | 0.12.1       | Optional |
@@ -25,44 +26,50 @@ is enclosed here:
 | `coulomb`         | Coulomb package                        | 1.0.8        | Required |
 | `solvshift`       | Solvshift package                      | 1.0.2        | Required |
                                                                                                           
-The order of installation is according to the Table 1. Particular caution has to be kept
-when installing a correct version of the packages. As for now, the versions listed
-in the Table 1 are the _tested_ ones which do not cause the API incompatibilities. Therefore,
-installing a newer version of NumPy or SciPy than recommended here could cause some problems, though
+Please follow the order of installation according to the Table 1. Particular caution has to be kept 
+when installing a correct version of the packages. As for now, the versions listed 
+in the Table 1 are the _tested_ ones which do not cause the API incompatibilities. Therefore, 
+installing a newer version of NumPy or SciPy than recommended here could cause some problems, though 
 it is not necessary at all. 
 
-[PyQuante Modified]: https://github.com/globulion/pyq-mod
+INSTALLATION STEPS
+------------------
 
- II.  INSTALLATION STEPS
+### $PYTHONPATH variable.
 
+Change $PYTHONPATH variable if you want to install these Python modules in a non-standard directory.  
+During the installation the scheme is generally like this:
+                                                                                                     
+```bash
+python setup.py <some options may be here> install --prefix=/your/installation/path
+```
+                                                                                                     
+Go to your $HOME/.bashrc file and add the following line:
 
- II.0 $PYTHONPATH variable
+```bash                                                                                                     
+export PYTHONPATH=/your/installation/path/lib/pythonX.Y/site-packages:$PYTHONPATH
+```
 
-      Change $PYTHONPATH variable if you want to install these Python modules in a non-standard directory.  
-      During the installation the scheme is generally like this:
-                                                                                                           
-          python setup.py <some options may be here> install --prefix=/your/installation/path
-                                                                                                           
-      Go to your $HOME/.bashrc file and add the following line:
-                                                                                                           
-          export PYTHONPATH=/your/installation/path/lib/pythonX.Y/site-packages:$PYTHONPATH
-      
-      or 
-                                                                                                           
-          export PYTHONPATH=/your/installation/path/pythonX.Y:$PYTHONPATH
-                                                                                                           
-      depending on the version of Python and maybe UNIX system.
-                                                                                                           
-      The searchable directories can be checked by:
-      
-      python
-      >>> import sys
-      >>> for i in sys.path: print i
-      
-      For this instruction the prefix will be set to $HOME/lib64 directory. 
+or 
 
-      Note: sometimes after the 'install' step you might require logout/login step to update the changes in your system
-            (in PyQuante and NumPy cases probably)
+```bash
+export PYTHONPATH=/your/installation/path/pythonX.Y:$PYTHONPATH
+```
+                                                                                                     
+depending on the version of Python and maybe UNIX system.
+                                                                                                     
+The searchable directories can be checked by:
+
+```python
+python
+>>> import sys
+>>> for i in sys.path: print i
+```
+
+For this instruction the prefix will be set to `$HOME/lib64` directory. 
+
+Note: sometimes after the 'install' step you might require logout/login step to update the changes in your system
+(in PyQuante and NumPy cases probably)
 
  II.1 Parallel Python
 
@@ -214,5 +221,5 @@ it is not necessary at all.
 
  The End 
 
-
+[PyQuante Modified]: https://github.com/globulion/pyq-mod
 
