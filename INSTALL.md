@@ -86,12 +86,12 @@ python setup.py install --prefix=$HOME
 
   1. create `site.cfg` file. Its content is given below:
 
-```cfg
-[mkl]                                                          
-library_dirs = /opt/intel/mkl/lib/intel64
-include_dirs = /opt/intel/mkl/include
-mkl_libs = mkl_rt
-```
+     ```cfg
+     [mkl]                                                          
+     library_dirs = /opt/intel/mkl/lib/intel64
+     include_dirs = /opt/intel/mkl/include
+     mkl_libs = mkl_rt
+     ```
                                                                                                                                    
   2. Modify `self.cc_exe` in `numpy/distutils/intelccompiler.py`
 
