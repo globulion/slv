@@ -1,7 +1,7 @@
 SLV Installation guide
 ======================
 
-Bartosz Błasiak, Fri 14 Nov 2014
+Bartosz Błasiak, Fri 14 Nov 2014, Updated: 2 Nov 2016
 
 INTRODUCTION
 ------------
@@ -14,17 +14,17 @@ is enclosed here:
       
 **Table 1.** To install SLV, install the packages following the order given in this Table.
 
-| Import name       | Package Full Name                      | Recommended version     |   |
-| ----------------- | -------------------------------------- | ------------ | -------- |
-| `pp`              | Parallel Python                        | 1.6.4        | Optional |
-| `numpy`           | Numerical Python                       | 1.7.1        | Required |
-| `scipy`           | Scientific Python Libraries            | 0.12.1       | Optional |
-| `MDAnalysis`      | Molecular Dynamics Analysis Tools      | 0.8.1        | Required |
-| `scitools`        | Scientific Tools                       | 0.8          | Required |
-| `PyQuante`        | [PyQuante Modified]                    | 1.0.3-BBG    | Required |
-| `libbbg`          | Quantum Chemistry Libraries package    | 1.0.4        | Required |
-| `coulomb`         | Coulomb package                        | 1.0.8        | Required |
-| `solvshift`       | Solvshift package                      | 1.0.2        | Required |
+| Import name       | Package Full Name                      | Recommended version |                |
+| ----------------- | -------------------------------------- | ------------------- | -------------- |
+| `pp`              | [Parallel Python]                      | at least 1.6.4      |    Optional    |
+| `numpy`           | [Numerical Python]                     | 1.7.1               | **_Required_** |
+| `scipy`           | [Scientific Python Libraries]          | 0.12.1              |    Optional    |
+| `MDAnalysis`      | [Molecular Dynamics Analysis Tools]    | 0.8.1               | **_Required_** |
+| `scitools`        | [Scientific Tools]                     | 0.8                 | **_Required_** |
+| `PyQuante`        | [PyQuante Modified]                    | 1.0.3-BBG           | **_Required_** |
+| `libbbg`          | [Quantum Chemistry Libraries package]  | at least 1.0.4      | **_Required_** |
+| `coulomb`         | [Coulomb package]                      | at least 1.0.8      | **_Required_** |
+| `solvshift`       | [Solvshift package]                    | at least 1.0.2      | **_Required_** |
                                                                                                           
 Please follow the order of installation according to the Table 1. Particular caution has to be kept 
 when installing a correct version of the packages. As for now, the versions listed 
@@ -60,11 +60,13 @@ export PYTHONPATH=/your/installation/path/pythonX.Y:$PYTHONPATH
 ```
 depending on the version of Python and maybe UNIX system. 
 The searchable directories can be checked by:
+
 ```python
 python
 >>> import sys
 >>> for i in sys.path: print i
 ```
+
 For this instruction the prefix will be set to `$HOME/lib64` directory. 
 > Note: sometimes after the `install` step you might require logout/login step to update the changes in your system 
 > (in PyQuante and NumPy cases probably)
@@ -72,7 +74,7 @@ For this instruction the prefix will be set to `$HOME/lib64` directory.
 
 ### I. Parallel Python - `pp` module.
 
-```python
+```bash
 python setup.py install --prefix=$HOME
 ```
 
@@ -104,7 +106,7 @@ python setup.py install --prefix=$HOME
      pic_flags = ['-xhost', '-openmp', '-fp-model', 'strict', '-fPIC']
      ```
                                                                                                                                    
-  4. Install
+  4. Install by
      
      ```bash                                                                                                                              
      python setup.py config --compiler=intelem build_clib --compiler=intelem build_ext --compiler=intelem install --prefix=$HOME
@@ -117,118 +119,143 @@ python setup.py install --prefix=$HOME
    ```
 
 
- II.3 Scientific Python with MKL **(not necessary for solvshift to function properly, so this step can be skipped)**
+### III. Scientific Python with MKL **(not necessary for Solvshift to function properly, so this step can be skipped)**
 
-      II.3.1 Scipy 0.12.1
+1. Scipy 0.12.1
 
-         Install by
+   Install by
 
-         python setup.py config --compiler=intelem --fcompiler=intelem build_clib --compiler=intelem --fcompiler=intelem build_ext --compiler=intelem --fcompiler=intelem install --prefix=$HOME
+   ```bash
+   python setup.py config --compiler=intelem --fcompiler=intelem build_clib --compiler=intelem --fcompiler=intelem build_ext --compiler=intelem --fcompiler=intelem install --prefix=$HOME
+   ```
 
-      II.3.2 Older Scipy versions
+2. Older Scipy versions
 
-      1) modify file scipy/spatial/qhull/src/qhull_a.h (line 106)                                                                                                                                    
+  1. Modify file `scipy/spatial/qhull/src/qhull_a.h` (at line 106)
+     ```c++
+     template <typename T>                                                                                                                
+     inline void qhullUnused(T &x) { (void)x; }
+     #  define QHULL_UNUSED(x) qhullUnused(x);
+     ```
+     becomes:
+     ```c++    
+     #define QHULL_UNUSED(x) (x)
+     ```
+         
+     If you want to know more about this step, see the discussion [here](http://scipy-user.10969.n7.nabble.com/Building-SciPy-on-Debian-with-Intel-compilers-td1888.html).
                                                                                                                                                                                                      
-         template <typename T>                                                                                                                
-         inline void qhullUnused(T &x) { (void)x; }
-         #  define QHULL_UNUSED(x) qhullUnused(x);
-         
-         becomes:
-         
-         #define QHULL_UNUSED(x) (x)
-         
-         if curious, see the discussion here: http://scipy-user.10969.n7.nabble.com/Building-SciPy-on-Debian-with-Intel-compilers-td1888.html
-                                                                                                                                                                                                     
-      2) install
-                                                                                                                                                                                                     
-         python setup.py config --compiler=intelem --fcompiler=intelem build_clib --compiler=intelem --fcompiler=intelem build_ext --compiler=intelem --fcompiler=intelem install --prefix=$HOME
+  2. Install by
 
+     ```bash
+     python setup.py config --compiler=intelem --fcompiler=intelem build_clib --compiler=intelem --fcompiler=intelem build_ext --compiler=intelem --fcompiler=intelem install --prefix=$HOME
+     ```
 
- II.4 MDAnalysis
+### IV. MDAnalysis - `MDAnalysis` module.
 
-      python setup.py install --prefix=$HOME
+Install by
+```bash
+python setup.py install --prefix=$HOME
+```
 
+### V. Scientific Tools - `scitools` package.
 
- II.5 SciTools
+Install by
+```bash
+python setup.py install --prefix=$HOME
+```
 
-      python setup.py install --prefix=$HOME
+### VI. PyQuante-Modified package.
 
+Install by
+```bash
+python setup.py install --prefix=$HOME
+```
 
- II.6 PyQuante-Modified
+### VII. Chemistry LibBBG libraries - `libbbg` module.
 
-      python setup.py install --prefix=$HOME
+1. Modify the `install` script by setting the appropriate directories for prefix. 
+                                                                                                                             
+2. Install by
+```bash
+bash install -p $HOME
+```
+                                                                                                                             
+3) Check if you can import `libbbg` module. On certain computer clusters you may see some warnings which are OK. For example, 
+this was one of the messages:
+   
+```python
+python                                                                                                                          
+>>> import libbbg                                                                                                             
+openbabel not found in path, switching to PyQuante backend
+libint extension not found, switching to normal ERI computation
+Gtk-Message: Failed to load module "atk-bridge": libatk-bridge.so: cannot open shared object file: No such file or directory
+                                                                                                                             
+Second line means that libint is not installed. Third line is because incomplete installation of packages which should not
+disrupt slv in work. However, the $DISPLAY variable has to be set so ssh logging has to be done using -XY options!
+```
 
+As long as there is no `ImportError` raised by Python interpreter, everything should work fine.
 
- II.7 LibBBG
+### VIII. Coulomb - `coulomb` package.
 
-      1) modify install (bash script)                                                                                              
-                                                                                                                                   
-         Set the appropriate directories for prefix. 
-                                                                                                                                   
-      2) install
-                                                                                                                                   
-         ./install -p $HOME
-                                                                                                                                   
-      3) check if it works. On epsilon it gives message similar to the following:
-         
-         python                                                                                                                          
-         >>> import libbbg                                                                                                             
-         openbabel not found in path, switching to PyQuante backend
-         libint extension not found, switching to normal ERI computation
-         Gtk-Message: Failed to load module "atk-bridge": libatk-bridge.so: cannot open shared object file: No such file or directory
-                                                                                                                                      
-         Second line means that libint is not installed. Third line is because incomplete installation of packages which should not
-         disrupt slv in work. However, the $DISPLAY variable has to be set so ssh logging has to be done using -XY options!
+1. **Only if you use Python 2.6**: Modify the file `coulomb/multip.py` around line 191.
+Hash the `code for python-2.7` and unhash the `code for python-2.7`. 
+The final code should look like this:
 
+```python                                                                                      
+       ### [2] bond moments
+       # code for python-2.7
+       #qB  = {bond:0                            for bond in self.bonds}
+       #MB  = {bond:zeros( 3     ,dtype=float64) for bond in self.bonds}
+       #QB  = {bond:zeros((3,3  ),dtype=float64) for bond in self.bonds}
+       #OB  = {bond:zeros((3,3,3),dtype=float64) for bond in self.bonds}
+       # code for python-2.6
+       qB = {}
+       MB = {}
+       QB = {}
+       OB = {}
+       for bond in self.bonds:
+           qB.update({bond:0})
+           MB.update({bond:zeros( 3     ,dtype=float64)})
+           QB.update({bond:zeros((3,3  ),dtype=float64)})
+           OB.update({bond:zeros((3,3,3),dtype=float64)})
+```
+>> If you use Python2.7 no changes are necessary and you can go directly to step 2 (installation).
+                                                                                      
+2. Install by
 
- II.8 Coulomb
+```bash
+python setup.py install --prefix=$HOME
+```
 
-      1) If Python 2.6: modify the file coulomb/multip.py around line 191:                                                                          
-                                                                                            
-         hash code for python-2.7 and unhash code for python-2.7. It should look like this:
-                                                                                            
-             ### [2] bond moments
-             # code for python-2.7
-             #qB  = {bond:0                            for bond in self.bonds}
-             #MB  = {bond:zeros( 3     ,dtype=float64) for bond in self.bonds}
-             #QB  = {bond:zeros((3,3  ),dtype=float64) for bond in self.bonds}
-             #OB  = {bond:zeros((3,3,3),dtype=float64) for bond in self.bonds}
-             # code for python-2.6
-             qB = {}
-             MB = {}
-             QB = {}
-             OB = {}
-             for bond in self.bonds:
-                 qB.update({bond:0})
-                 MB.update({bond:zeros( 3     ,dtype=float64)})
-                 QB.update({bond:zeros((3,3  ),dtype=float64)})
-                 OB.update({bond:zeros((3,3,3),dtype=float64)})
-                                                                                            
-         >>>if Python2.7: no changes are necessary
-                                                                                            
-      2) install
-                                                                                            
-         python setup.py install --prefix=$HOME
+### IX. SLV - `solvshift` module.
 
+1. Modify the `install` script by setting the appropriate directories for prefix.
 
- II.9 SLV
+2. Install by
+```bash
+bash install -p $HOME
+```
 
-      1) modify install (bash script)                                                                                              
-                                                                                                                                   
-         Set the appropriate directories for prefix. 
+3. Set the `$SLV_DAT` variable in your `$HOME/.bashrc` file
 
-      2) install
+4. Check if you can import `solvshift` module.
 
-         ./install -p $HOME
+```python
+python
+>>> import solvshift
+```
 
-      3) set the $SLV_DAT variable in your $HOME/.bashrc file
+It should produce neither warnings nor errors.
 
-      4) check if it works:
-     
-         python
-         >>> import solvshift
+----------------------------------------------------------------------------------------------------
 
- The End 
-
+[Parallel Python]: http://www.parallelpython.com/
+[Numerical Python]: http://www.numpy.org/
+[Scientific Python Libraries]: https://www.scipy.org/
+[Molecular Dynamics Analysis Tools]: http://www.mdanalysis.org/
+[Scientific Tools]: https://pypi.python.org/pypi/SciTools
 [PyQuante Modified]: https://github.com/globulion/pyq-mod
-
+[Quantum Chemistry Libraries package]: https://github.com/globulion/libbbg
+[Coulomb package]: https://github.com/globulion/clmb
+[Solvshift package]: https://github.com/globulion/slv
