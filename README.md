@@ -38,9 +38,9 @@ References
 
 [1] [A. D. Buckingham, *Trans. Faraday Soc.* **1960**, 56, 753-760](http://pubs.rsc.org/en/content/articlepdf/1960/tf/tf9605600753 "Title")
 
-[2] [M. Cho, *J. Chem. Phys.* **2009**, 130, 094505](http://scitation.aip.org/content/aip/journal/jcp/130/9/10.1063/1.3079609)
+[2] [M. Cho, *J. Chem. Phys.* **2003**, 118, 3480-3490](http://scitation.aip.org/content/aip/journal/jcp/118/8/10.1063/1.1536979)
 
-[3] [M. Cho, *J. Chem. Phys.* **2003**, 118, 3480-3490](http://scitation.aip.org/content/aip/journal/jcp/118/8/10.1063/1.1536979)
+[3] [M. Cho, *J. Chem. Phys.* **2009**, 130, 094505](http://scitation.aip.org/content/aip/journal/jcp/130/9/10.1063/1.3079609)
 
 [4] [H. Lee, J.-H. Choi and M. Cho, *J. Chem. Phys.* **2012** 137, 114307](http://scitation.aip.org/content/aip/journal/jcp/137/11/10.1063/1.4751477)
 
@@ -53,5 +53,3 @@ References
 [8] [B. Błasiak, A. W. Ritchie, L. J. Webb and M. Cho, *Phys. Chem. Chem. Phys.* **2016** 18, 18094-18111](http://pubs.rsc.org/en/content/articlehtml/2016/cp/c6cp01578f)
 
 [9] [M. Maj, C. Ahn, B. Błasiak, K. Kwak, H. Han and M. Cho, *J. Phys. Chem. B* **2016**, 120, 10167-10180](http://pubs.acs.org/doi/abs/10.1021/acs.jpcb.6b04319)
-
-Molecular Multipole Moments (centered at molecular origin, eg. center of mass)
