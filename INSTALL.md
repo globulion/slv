@@ -133,12 +133,12 @@ python setup.py install --prefix=$HOME
 
   1. Modify file `scipy/spatial/qhull/src/qhull_a.h` (at line 106)
      ```c++
-     template <typename T>                                                                                                                
+     template <typename T>
      inline void qhullUnused(T &x) { (void)x; }
      #  define QHULL_UNUSED(x) qhullUnused(x);
      ```
      becomes:
-     ```c++    
+     ```c++
      #define QHULL_UNUSED(x) (x)
      ```
          
@@ -246,7 +246,7 @@ python setup.py install --prefix=$HOME
    >>> import solvshift
    ```
 
-It should produce neither warnings nor errors.
+   It should produce neither warnings nor errors.
 
 ----------------------------------------------------------------------------------------------------
 
