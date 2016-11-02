@@ -176,75 +176,75 @@ python setup.py install --prefix=$HOME
 1. Modify the `install` script by setting the appropriate directories for prefix. 
                                                                                                                              
 2. Install by
-```bash
-bash install -p $HOME
-```
+   ```bash
+   bash install -p $HOME
+   ```
                                                                                                                              
-3) Check if you can import `libbbg` module. On certain computer clusters you may see some warnings which are OK. For example, 
-this was one of the messages:
+3. Check if you can import `libbbg` module. On certain computer clusters you may see some warnings which are OK. For example, 
+   this was one of the messages:
    
-```python
-python                                                                                                                          
->>> import libbbg                                                                                                             
-openbabel not found in path, switching to PyQuante backend
-libint extension not found, switching to normal ERI computation
-Gtk-Message: Failed to load module "atk-bridge": libatk-bridge.so: cannot open shared object file: No such file or directory
+   ```python
+   python                                                                                                                          
+   >>> import libbbg                                                                                                             
+   openbabel not found in path, switching to PyQuante backend
+   libint extension not found, switching to normal ERI computation
+   Gtk-Message: Failed to load module "atk-bridge": libatk-bridge.so: cannot open shared object file: No such file or directory
+   ```
                                                                                                                              
-Second line means that libint is not installed. Third line is because incomplete installation of packages which should not
-disrupt slv in work. However, the $DISPLAY variable has to be set so ssh logging has to be done using -XY options!
-```
-
-As long as there is no `ImportError` raised by Python interpreter, everything should work fine.
+   Second line means that the LibInt package is not installed. 
+   Third line is because incomplete installation of packages which should not
+   disrupt SLV in work. However, the `$DISPLAY` variable has to be set so logging through `ssh` has to be done using `-XY` options!
+   Nevertheless, ss long as there is no `ImportError` raised by Python interpreter, everything should work fine.
 
 ### VIII. Coulomb - `coulomb` package.
 
 1. **Only if you use Python 2.6**: Modify the file `coulomb/multip.py` around line 191.
-Hash the `code for python-2.7` and unhash the `code for python-2.7`. 
-The final code should look like this:
+   Hash the `code for python-2.7` and unhash the `code for python-2.7`. 
+   The final code should look like this:
 
-```python                                                                                      
-       ### [2] bond moments
-       # code for python-2.7
-       #qB  = {bond:0                            for bond in self.bonds}
-       #MB  = {bond:zeros( 3     ,dtype=float64) for bond in self.bonds}
-       #QB  = {bond:zeros((3,3  ),dtype=float64) for bond in self.bonds}
-       #OB  = {bond:zeros((3,3,3),dtype=float64) for bond in self.bonds}
-       # code for python-2.6
-       qB = {}
-       MB = {}
-       QB = {}
-       OB = {}
-       for bond in self.bonds:
-           qB.update({bond:0})
-           MB.update({bond:zeros( 3     ,dtype=float64)})
-           QB.update({bond:zeros((3,3  ),dtype=float64)})
-           OB.update({bond:zeros((3,3,3),dtype=float64)})
-```
->> If you use Python2.7 no changes are necessary and you can go directly to step 2 (installation).
+   ```python                                                                                      
+          ### [2] bond moments
+          # code for python-2.7
+          #qB  = {bond:0                            for bond in self.bonds}
+          #MB  = {bond:zeros( 3     ,dtype=float64) for bond in self.bonds}
+          #QB  = {bond:zeros((3,3  ),dtype=float64) for bond in self.bonds}
+          #OB  = {bond:zeros((3,3,3),dtype=float64) for bond in self.bonds}
+          # code for python-2.6
+          qB = {}
+          MB = {}
+          QB = {}
+          OB = {}
+          for bond in self.bonds:
+              qB.update({bond:0})
+              MB.update({bond:zeros( 3     ,dtype=float64)})
+              QB.update({bond:zeros((3,3  ),dtype=float64)})
+              OB.update({bond:zeros((3,3,3),dtype=float64)})
+   ```
+   >> If you use Python2.7 no changes are necessary and you can go directly to step 2 (installation).
                                                                                       
 2. Install by
 
-```bash
-python setup.py install --prefix=$HOME
-```
+   ```bash
+   python setup.py install --prefix=$HOME
+   ```
 
 ### IX. SLV - `solvshift` module.
 
 1. Modify the `install` script by setting the appropriate directories for prefix.
 
 2. Install by
-```bash
-bash install -p $HOME
-```
+   ```bash
+   bash install -p $HOME
+   ```
 
 3. Set the `$SLV_DAT` variable in your `$HOME/.bashrc` file
 
 4. Check if you can import `solvshift` module.
 
-```python
-python
->>> import solvshift
-```
+   ```python
+   python
+   >>> import solvshift
+   ```
 
 It should produce neither warnings nor errors.
 
