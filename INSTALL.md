@@ -231,13 +231,17 @@ python setup.py install --prefix=$HOME
 ### IX. SLV - `solvshift` module.
 
 1. Modify the `install` script by setting the appropriate directories for prefix.
+   >> Remember to set the `SLV_LIB` variable properly! As a default it is set to `$PREFIX/lib/python-2.7/dist-packages`
+   >> which may be a wrong destination on your computer.
 
 2. Install by
    ```bash
    bash install -p $HOME
    ```
 
-3. Set the `$SLV_DAT` variable in your `$HOME/.bashrc` file
+3. Set the `SLV_DATA` variable and update your `PYTHONPATH` variable
+   **according to the message printed on the screen**. You can do these
+   by modifying your `$HOME/.bashrc` file.
 
 4. Check if you can import `solvshift` module.
 
