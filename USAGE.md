@@ -18,7 +18,7 @@ The following computations can be performed at present:
 
 ********************
 In the future the solvatochromic transition dipole change calculation, anharmonic analysis in solvents as well as 
-simulation of 1D and 2D infrared spectras are also planned to be added. See the todo lists.
+simulation of 1D and 2D infrared spectras are also planned to be added. See the [todo lists](https://github.com/globulion/slv/projects/1).
 
 Basically, **Solvshift** offers two modes of operation: 
 1. [Input](https://github.com/globulion/slv/blob/master/Inputs.md) and 
@@ -36,7 +36,4 @@ The command
 slv --help
 ```
 will result in help box with a detailed description of Solvshift functionalities and usage.
-
-- [ ] incomplete
-- [x] completed
 
