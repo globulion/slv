@@ -34,6 +34,9 @@ INTERACTING WITH **Solvshift**
 
 Solvshift can be used by many ways depending on what task is to be performed.
 
+![SolEDS](soleds-scheme.png)
+Format: ![Alt Text](url)
+
 ### Interacting through main executable.
 
 In general, simple calculations and tasks can be specified by using the 
