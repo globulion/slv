@@ -12,6 +12,7 @@ At present, the available code allows for the vibrational frequency shift predic
 relative to the gas-phase state, in which IR active spectator is isolated from other substances.
 Discrete solvatochromic models [1-5] and its extended versions [6-9] are currently developed.
 In particular, Solvshift implements:
+******
   * Solvatochromic Effective Fragment Potentials (SolEFP)[6-8]
   * SolEFP coupled with molecular dynamics hybrid method [7,8,10]
   * EFP2/SolEFP biomolecular fragmentation scheme [8]
@@ -20,6 +21,8 @@ In particular, Solvshift implements:
     Available are SolCAMM [5,8,9] models, their arbitrary contractions and SolMMM [5,8,9] models.
   * Kirkwood-Onsager continuum solvatochromic model [5]. This model is highly qualitative
     and is of predominantly didactic importance.
+
+******
 
 **Table 1.** Range of applications of various models implemented in Solvshift.
 
