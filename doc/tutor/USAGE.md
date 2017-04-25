@@ -21,8 +21,8 @@ In the future the solvatochromic transition dipole change calculation, anharmoni
 simulation of 1D and 2D infrared spectras are also planned to be added. See the [ToDo lists].
 
 Basically, **Solvshift** offers two modes of operation: 
-1. [Input](https://github.com/globulion/slv/blob/master/Inputs.md) and 
-2. [Calculation](https://github.com/globulion/slv/blob/master/Calculations.md) mode. 
+1. [Input](https://github.com/globulion/slv/blob/master/doc/tutor/Inputs.md) and 
+2. [Calculation](https://github.com/globulion/slv/blob/master/doc/tutor/Calculations.md) mode. 
 The *Input* mode creates input files needed for finite difference calculations using various differentiation schemes. 
 The default is 5-point central Stencil method. The *Calculation* mode offers calculation of solvatochromic parameters,
 saving them on the disk and calculation of frequency shifts.
