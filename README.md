@@ -13,6 +13,8 @@ relative to the gas-phase state, in which IR active spectator is isolated from o
 Discrete solvatochromic models [1-5] and its extended versions [6-9] are currently developed.
 In particular, Solvshift implements:
   * Solvatochromic Effective Fragment Potentials (SolEFP)[6-8]
+  * SolEFP coupled with molecular dynamics hybrid method [7,8,10]
+  * EFP2/SolEFP biomolecular fragmentation scheme [8]
   * Solvatochromic Shifts from Supermolecular Energy Decomposition Scheme (SolEDS) [6-9]
   * Discrete electrostatic, multipole-based solvatochromic models.
     Available are SolCAMM [5,8,9] models, their arbitrary contractions and SolMMM [5,8,9] models.
@@ -50,8 +52,10 @@ References
 
 [6] [B. Błasiak and M. Cho, *J. Chem. Phys.* **2014** 140, 164107](http://scitation.aip.org/content/aip/journal/jcp/140/16/10.1063/1.4872040)
 
-[7] [B. Błasiak and M. Cho, *J. Chem. Phys.* **2015**, 143, 164111](http://scitation.aip.org/content/aip/journal/jcp/143/16/10.1063/1.4934667)
+[7] [B. Błasiak and M. Cho, *J. Chem. Phys.* **2015** 143, 164111](http://scitation.aip.org/content/aip/journal/jcp/143/16/10.1063/1.4934667)
 
 [8] [B. Błasiak, A. W. Ritchie, L. J. Webb and M. Cho, *Phys. Chem. Chem. Phys.* **2016** 18, 18094-18111](http://pubs.rsc.org/en/content/articlehtml/2016/cp/c6cp01578f)
 
-[9] [M. Maj, C. Ahn, B. Błasiak, K. Kwak, H. Han and M. Cho, *J. Phys. Chem. B* **2016**, 120, 10167-10180](http://pubs.acs.org/doi/abs/10.1021/acs.jpcb.6b04319)
+[9] [M. Maj, C. Ahn, B. Błasiak, K. Kwak, H. Han and M. Cho, *J. Phys. Chem. B* **2016** 120, 10167-10180](http://pubs.acs.org/doi/abs/10.1021/acs.jpcb.6b04319)
+
+[10] [B. Błasiak, C. H. Londergan, L. J. Webb and M. Cho, *Acc. Chem. Res* **2017** 50, 968-976](http://pubs.acs.org/doi/abs/10.1021/acs.accounts.7b00002)
