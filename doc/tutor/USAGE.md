@@ -118,7 +118,7 @@ are listed. The exemplary use of them is also presented in the tutorial [ADD].
 | `class Peak`                | `libbbg.utilities` | Spectral peak |
 | `class Peak2DIR`            | `libbbg.utilities` | 2DIR peak |
 | `class QMOscillator`        | `libbbg.utilities` | Quantum 1-dimensional oscillator in a specified potential |
-| `class CUBFLE`                `coulomb.cube`     | Gaussian CUBE file |
+| `class CUBFLE`              | `coulomb.cube`     | Gaussian CUBE file |
 | `class QMMap`               | `coulomb.cube`     | 3D isocontour object of a scalar function                 |
 | `class MULTIP`              | `coulomb.multip`   | Distributed multipole expansion method                    |
 | `def get_elmtp`             | `libbbg.utilities` | Compute interaction energy between two DMTP objects |
