@@ -9,14 +9,13 @@ INTRODUCTION
 The following small tutorial has the aim to introduce the reader into the basic use of **Solvshift** package.
 If your dream is modelling the solvatochromic response of molecule immerged in solvent environment of other
 molecules **this package is just for you!** Note that this software is a relatively fresh born tool and is still under 
-current intensive work. Therefore, it is still under development stage and has not been published.
+current intensive work. Therefore, it has not been published.
 
-For the time being, **Solvshift** is generally a tool for calculation of solvatochromic vibrational frequency 
+For the time being, **Solvshift** is generally a tool for calculation of the solvatochromic vibrational frequency 
 shifts using mostly **coarse-grained** [models](https://github.com/globulion/slv/blob/master/README.md). 
-In the future the solvatochromic interaction-induced transition dipole change,
+In the future, the implementation of the solvatochromic interaction-induced transition dipole change,
 simulation of 1D and 2D infrared spectra and general improvement of accuracy and performance 
-are under constant development. See the [ToDo lists] for reference upon
-future development plans.
+are planned. See the [ToDo lists] for reference upon current development tasks.
 
 INTERACTING WITH Solvshift
 ------------------------------
@@ -44,6 +43,7 @@ will result in help box with a detailed description of Solvshift functionalities
 Most of the basic steps in setting the calculations can be done by using utility scripts
 that are stored in `util` directory. Below I list their names and function.
 
+*******
 **Table 1. SLV utility scripts.** The overall tool name is constructed from `slv_[Object Name]`.		
 
 | Object Name                 | Purpose                                                |
@@ -71,7 +71,7 @@ that are stored in `util` directory. Below I list their names and function.
 |  **SolEDS Frequency shift** | |
 |  `soleds-analyzer`          | |
 |  `make-soleds-xyz`          | |
-|  **Spectrum Similation**    | |
+|  **Spectrum Simulation**    | |
 |  `calc-ftir`                | |
 |  `calc-tcf`                 | |
 |  **Other**                  | |
