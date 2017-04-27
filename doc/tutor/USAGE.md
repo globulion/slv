@@ -48,7 +48,18 @@ that are stored in `util` directory. Below I list their names and function.
 
 | Object Name                 | Purpose                                                     | Comment   |
 | --------------------------- | ----------------------------------------------------------- | --------- |
-|  **Preparing FRG**          |                                                             |           |
+|                             | **SolEDS Frequency Shifts**                                 |           |
+|  `soleds-analyzer`          | SolEDS inputs and calculations                              | *Important* |
+|  `make-soleds-xyz`          | Construct constrained cluster for SolEDS analysis           |           |
+|                             | **SolEFP Frequency Shift***                                 |           |
+|  `efp-xyz`                  | SolEFP computation on xyz structure                         | Useful    |
+|  `efp-val`                  | SolEFP computations on set of xyz structures                |           |
+|  `md-run`                   | Runs SolEFP/MD calculations with parallel implementation    | Currently not working well |
+|  `md-run_nopp`              | Runs SolEFP/MD calculations without parallel mode           | *Important* |
+|  `efpmd-anal`               | EFPMD trajectory analysis                                   | *Important* |
+|  `efpmd-traj`               | EFPMD trajectory post-processing                            | *Important* |
+|  `md-prepare`               | Generate input file for SolDMTP/MD calculations             | Useful    |
+|                             | **Preparing FRG Files**                                     |           |
 |  `make-frg`                 | Generates the EFP parameters for BSM solvent molecule       | *Important* |
 |  `solefp-frg`               | Generates the SolEFP parameters for BSM solute molecule     | *Important* |
 |  `der-dma`                  | Prepare the SolEFP parameters relating to DMTP              |           | 
@@ -60,21 +71,10 @@ that are stored in `util` directory. Below I list their names and function.
 |  `compare-frg`              | Compare two fragments                                       |           |
 |  `frg_check`                | Check the fragment file                                     |           |
 |  `gen-camm`                 | Generate CAMM distribution                                  | *Important* |
-|  **SolEFP Frequency shift** |                                                             |           |
-|  `efp-xyz`                  | SolEFP computation on xyz structure                         | Useful    |
-|  `efp-val`                  | SolEFP computations on set of xyz structures                |           |
-|  `md-run`                   | Runs SolEFP/MD calculations with parallel implementation    | Currently not working well |
-|  `md-run_nopp`              | Runs SolEFP/MD calculations without parallel mode           | *Important* |
-|  `efpmd-anal`               | EFPMD trajectory analysis                                   | *Important* |
-|  `efpmd-traj`               | EFPMD trajectory post-processing                            | *Important* |
-|  `md-prepare`               | Generate input file for SolDMTP/MD calculations             | Useful    |
-|  **SolEDS Frequency shift** |                                                             |           |
-|  `soleds-analyzer`          | SolEDS inputs and calculations                              | *Important* |
-|  `make-soleds-xyz`          | Construct constrained cluster for SolEDS analysis           |           |
-|  **Spectrum Simulation**    |                                                             |           |
+|                             | **Simulations of Spectra**                                  |           |
 |  `calc-ftir`                | Compute FTIR spectrum                                       | *Important* |
 |  `calc-tcf`                 | Calculate time correlation functions and response functions | *Important* |
-|  **Other**                  |                                                             |           |
+|                             | **Other**                                                   |           |
 |  `anal`                     | Calculates averages from SolEFP/MD output                   | Useful    |
 |  `dat`                      | | |
 |  `hist`                     | Plot histograms from SolEFP/MD output                       |           |
@@ -92,9 +92,37 @@ Solvshift. To see the usage of these tools run them without arguments or with `-
 > rely on simple argument list from command line. This will be changed in the future to 
 > unify the way of using the tools, including printing the usage information (with `-h` option).
 
+### Interacting through Python level.
 
+Solvshift and its modules can be accessed diretcly from Python level. 
+This is particularly useful for writing custom analysis scripts and is the most 
+advanced form of using SLV code. When starting writing own analysis script one can 
+see the SLV tools as examples. Below, the most important classes and modules
+are listed. The exemplary use of them is also presented in the tutorial [ADD].
 
+*******
+**Table 2. The most useful classes of Solvshift and its modules.** Classes are denoted by `class`
+           whereas functions by `def`.
 
+| Object Name                 | Module                                                      | Short Description   |
+| --------------------------- | ----------------------------------------------------------- | --------- |
+| `class Frag`                | `solvshift.slvpar` | EFP2 and SolEFP fragment |                        
+| `class EFP`                 | `solvshift.solefp` | EFP2 and SolEFP calculation method |
+| `class MDInput`             | `solvshift.md`     | SolEFP/MD input file | 
+| `class UNITS`               | `libbbg.units`     | Units and standard converters | 
+| `class DMA`                 | `libbbg.dma`       | Distributed multipole analysis object | 
+| `class QMFile`              | `libbbg.utilities` | File with quantum chemistry calculation results |
+| `class PotentialContourMap` | `libbbg.utilities` | Contour plots for electrostatic potential |
+| `class RungeKutta`          | `libbbg.utilities` | Runge Kutta numerical integration method | 
+| `class Allign`              | `libbbg.utilities` | Align the molecule along specified axis |
+| `class Peak`                | `libbbg.utilities` | Spectral peak |
+| `class Peak2DIR`            | `libbbg.utilities` | 2DIR peak |
+| `class QMOscillator`        | `libbbg.utilities` | Quantum 1-dimensional oscillator in a specified potential |
+| `class CUBFLE`                `coulomb.cube`     | Gaussian CUBE file |
+| `class QMMap`               | `coulomb.cube`     | 3D isocontour object of a scalar function                 |
+| `class MULTIP`              | `coulomb.multip`   | Distributed multipole expansion method                    |
+| `def get_elmtp`             | `libbbg.utilities` | Compute interaction energy between two DMTP objects |
+*******
 
 
 
