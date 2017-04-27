@@ -46,42 +46,51 @@ that are stored in `util` directory. Below I list their names and function.
 *******
 **Table 1. SLV utility scripts.** The overall tool name is constructed from `slv_[Object Name]`.		
 
-| Object Name                 | Purpose                                                |
-| --------------------------- | ------------------------------------------------------ |
-|  **Preparing FRG**          | |
-|  `make-frg`                 | Generates the EFP parameters for BSM solvent molecule |
-|  `solefp-frg`               | Generates the SolEFP parameters for BSM solute molecule |
-|  `der-dma`                  | Prepare the SolEFP parameters relating to DMTP | 
-|  `der-dpol`                 | Prepare the SolEFP parameters relating to polarizabilities |
-|  `der-wfn`                  | Prepare the SolEFP parameters relating to wavefunction |
-|  `calc-gijk-from-hessians`  | | 
-|  `convert-gijj`             | |
-|  `show-frg`                 | |
-|  `compare-frg`              | | 
-|  `frg_check`                | |
-|  `gen-camm`                 | |
-|  **SolEFP Frequency shift** | |
-|  `efp-xyz`                  | |
-|  `efp-val`                  | |
-|  `md-run`                   | |
-|  `md-run_nopp`              | |
-|  `efpmd-anal`               | |
-|  `efpmd-traj`               | |
-|  `md-prepare`               | |
-|  **SolEDS Frequency shift** | |
-|  `soleds-analyzer`          | |
-|  `make-soleds-xyz`          | |
-|  **Spectrum Simulation**    | |
-|  `calc-ftir`                | |
-|  `calc-tcf`                 | |
-|  **Other**                  | |
-|  `anal`                     | |
-|  `dat`                      | |
-|  `hist`                     | |
-|  `slv_check`                | |
-|  `dma-overall`              | |
-|  `parse-itp`                | |
-|  `pick-clusters`            | |
+| Object Name                 | Purpose                                                     | Comment   |
+| --------------------------- | ----------------------------------------------------------- | --------- |
+|  **Preparing FRG**          |                                                             |           |
+|  `make-frg`                 | Generates the EFP parameters for BSM solvent molecule       | *Important* |
+|  `solefp-frg`               | Generates the SolEFP parameters for BSM solute molecule     | *Important* |
+|  `der-dma`                  | Prepare the SolEFP parameters relating to DMTP              |           | 
+|  `der-dpol`                 | Prepare the SolEFP parameters relating to polarizabilities  |           |
+|  `der-wfn`                  | Prepare the SolEFP parameters relating to wavefunction      |           |
+|  `calc-gijk-from-hessians`  | Compute cubic anharmonic constants from Hessian matrices    |           | 
+|  `convert-gijj`             | Convert cubic anharmonic constants units                    |           |
+|  `show-frg`                 | Display fragment info                                       |           |
+|  `compare-frg`              | Compare two fragments                                       |           |
+|  `frg_check`                | Check the fragment file                                     |           |
+|  `gen-camm`                 | Generate CAMM distribution                                  | *Important* |
+|  **SolEFP Frequency shift** |                                                             |           |
+|  `efp-xyz`                  | SolEFP computation on xyz structure                         | Useful    |
+|  `efp-val`                  | SolEFP computations on set of xyz structures                |           |
+|  `md-run`                   | Runs SolEFP/MD calculations with parallel implementation    | Currently not working well |
+|  `md-run_nopp`              | Runs SolEFP/MD calculations without parallel mode           | *Important* |
+|  `efpmd-anal`               | EFPMD trajectory analysis                                   | *Important* |
+|  `efpmd-traj`               | EFPMD trajectory post-processing                            | *Important* |
+|  `md-prepare`               | Generate input file for SolDMTP/MD calculations             | Useful    |
+|  **SolEDS Frequency shift** |                                                             |           |
+|  `soleds-analyzer`          | SolEDS inputs and calculations                              | *Important* |
+|  `make-soleds-xyz`          | Construct constrained cluster for SolEDS analysis           |           |
+|  **Spectrum Simulation**    |                                                             |           |
+|  `calc-ftir`                | Compute FTIR spectrum                                       | *Important* |
+|  `calc-tcf`                 | Calculate time correlation functions and response functions | *Important* |
+|  **Other**                  |                                                             |           |
+|  `anal`                     | Calculates averages from SolEFP/MD output                   | Useful    |
+|  `dat`                      | | |
+|  `hist`                     | Plot histograms from SolEFP/MD output                       |           |
+|  `check`                    | Compute derivatives of overlap integrals numerically and analytically | |
+|  `dma-overall`              | Compute singe-centered multipoles from DMTP distribution    | Useful    |
+|  `parse-itp`                | Parse the charges from GROMACS itp file                     |           |
+|  `pick-clusters`            | Pick the solute-solvent clusters from MD trajectory file    | Useful    |
+
+*******
+
+Some of the above tools automatize work with SLV by the use of other tools. Therefore, not all 
+of the tools are important for a standard use and most of them are for debugging or developing 
+Solvshift. To see the usage of these tools run them without arguments or with `-h` option.
+> The option parsing scheme is now implemented for only some of the tools whereas the rest
+> rely on simple argument list from command line. This will be changed in the future to 
+> unify the way of using the tools, including printing the usage information (with `-h` option).
 
 
 
