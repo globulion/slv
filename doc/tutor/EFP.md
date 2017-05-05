@@ -216,3 +216,19 @@ For example, in the case of MeSCN the contents looks like this:
 ```
 In the example we are interested in CN stretch mode - so the `-m 4` has to be used. 
 
+Running the input file generation by `slv_solefp-frg` script generates
+a series of input files:
+ 1. Gaussian input files to get one-particle density matrices (FCHK files)
+ 2. Gaussian input files to get Hessian matrices (FCHK files) necessary to compute
+    cubic anharmonic constants
+ 3. GAMESS input files to obtain distributed polarizabilities (EFP files)
+
+To create these input files two templates are necessary. They will be first
+written automatically by Solvshift to your working directory by the first run of
+`slv_solefp-frg` script. Then you must re-run the
+script to create the inputs after modifying the template files appropriately
+to your needs. 
+
+Note, that Solvshift creates the separate Gaussian input files for second derivatives
+with respect to the mode of interest (in this case CN stretch) in a separate directory
+`sder/`. 
