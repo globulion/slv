@@ -19,6 +19,7 @@
 import numpy, libbbg, solvshift.slvpar, \
        sys, copy, pp, time, re, MDAnalysis.coordinates.xdrfile.libxdrfile2, \
        MDAnalysis.coordinates.TRJ
+import os
 
 DIM    = MDAnalysis.coordinates.xdrfile.libxdrfile2.DIM
 exdrOK =  MDAnalysis.coordinates.xdrfile.libxdrfile2.exdrOK
@@ -59,11 +60,15 @@ class MDInput:
    from solvshift.slvpar import Frag
    help(Frag)
 
+ Note: argument of MDInput class can be also a string containing 
+       the contents of input file (instead of providing path to
+       a file)
+
  -------------------------------------------------------------------
-                              Last Revision: 18 Feb 2015 @Globulion
+                              Last Revision:  9 May 2017 @Globulion
 """
-   def __init__(self,file):
-       self.__file_name = file
+   def __init__(self,file_name):
+       self.__file_name = file_name if isinstance(file_name,str) else '<<from file>>'
        self.__bsm  = list()
        self.__nmol = list()
        self.__ind  = list()
@@ -72,7 +77,7 @@ class MDInput:
        self.__frag_idx = 0
        self.__frame_slice = list()
 
-       self.__call__(file)
+       self.__call__(file_name)
 
    def get(self):
        """
@@ -100,15 +105,21 @@ Usage:
        """parse EFP coordinates from MD frame"""
        return frame[self.__frame_slice]
 
-   def __call__(self,file):
-       file = open(file)
-       text = file.read()
+   def __call__(self,file_name):
+       if os.path.exists(file_name):
+          fileo = open(file_name)
+          text  = fileo.read()
+          fileo.close()
+       elif '\n' in file_name:
+          text = file_name
+       else:
+          raise IOError, " The input file does not exists."
        self.__input_text = text
-       file.close()
        templ = re.compile(r'\$Frag',re.DOTALL)
        sections = re.split(templ,text)[1:]
        for section in sections:
            self._read(section)
+         
        return
 
    def _read(self,section):
