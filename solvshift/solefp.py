@@ -19,6 +19,7 @@ class EFP(object, libbbg.units.UNITS):
                             EFFECTIVE FRAGMENT POTENTIAL METHOD                            
  =============================================================================================
  
+ Implements EFP2 and especially SolEFP method.
 
  Usage example:
 
@@ -634,7 +635,7 @@ Now, only for exchange-repulsion layer"""
         self.__bsm               = None
         self.__eval_freq         = False
         self.__eval_nlo          = None
-        self.__shift             = dict() # numpy.zeros(9,dtype=numpy.float64)
+        self.__shift             = self._dict()
         self.__rms_central       = None
         self.__rms_ave           = None
         self.__suplist           = None
@@ -649,7 +650,47 @@ Now, only for exchange-repulsion layer"""
         self.__solvent_polar     = None
         self.__solvent_exrep     = None
         return
-  
+ 
+    def _dict(self):
+        """Namespace for all frequency shift terms"""
+        shift = dict()
+        #               Term abbreviation     :   Explanation
+        shift_terms = { \
+                        'ele_mea'             : 'SolCAMM (mechanical anharmonicity)',                                                        
+                        'ele_ea'              : 'SolCAMM (electronic anharmonicity)',
+                        'cor_mea'             : 'Corrections to SolCAMM (mechanical anharmonicity)',
+                        'cor_ea'              : 'Corrections to SolCAMM (electronic anharmonicity)',
+                        'pol_mea'             : 'Induction (mechanical anharmonicity)',
+                        'pol_ea'              : 'Induction (electronic anharmonicity)',
+                        'rep_mea'             : 'Exchange-Repulsion (mechanical anharmonicity)',
+                        'rep_ea'              : 'Exchange-Repulsion (electronic anharmonicity)',
+                        'dis_mea'             : 'Dispersion (anisotropic, mechanical anharmonicity)',
+                        'dis_ea'              : 'Dispersion (anisotropic, electronic anharmonicity)',
+                        'total'               : 'SolEFP (SolCAMM+Corrections, Induction, Exchange-Repulsion, anisotropic Dispersion)',
+                        'total_ele'           : 'SolCAMM+Corrections, Induction and anisotropic Dispersion (mechanical + electronic anharmonicity)',
+                        'total_mea'           : 'All mechanical anharmonicity terms',
+                        'total_ea'            : 'All electronic anharmonicity terms',
+                        'solcamm'             : 'SolCAMM (mechanical + electronic anharmonicity)',
+                        'total_cor'           : 'Corrections (mechanical + electronic anharmonicity)',
+                        'pol_add_mea'         : 'Induction under additive approximation (mechanical anharmonicity)',
+                        'pol_add_ea'          : 'Induction under additive approximation (electronic anharmonicity)',
+                        'dis_mea_iso'         : 'Dispersion (isotropic, mechanical anharmonicity)',
+                        'ele_tot'             : 'SolCAMM+Corrections (mechanical + electronic anharmonicity)',
+                        'pol_tot'             : 'Polarization (mechanical + electronic anharmonicity)',
+                        'rep_tot'             : 'Exchange-Repulsion (mechanical + electronic anharmonicity)',
+                        'dis_tot'             : 'Dispersion (anisotropic, mechanical + electronic anharmonicity)',
+                       'ele_env_mea'          : 'SolCAMM:DMA[non-EFP Environment]: mechanical anharmonicity ',
+                       'ele_env_ea'           : 'SolCAMM:DMA[non-EFP Environment]: electronic anharmonicity ', 
+                       'cor_env_mea'          : 'Corrections:DMA[non-EFP Environment]: mechanical anharmonicity ', 
+                       'cor_env_mea'          : 'Corrections:DMA[non-EFP Environment]: electronic anharmonicity ', 
+                       'tot_env'              : 'SolCAMM+Corrections:DMA[non-EFP Environment]: mechanical + electronic anharmonicity',
+                       'total+env'            : 'SolEFP + DMA[non-EFP Environment] (total+tot_env terms)', \
+                        }
+        for item in shift_terms.keys():
+            shift[item] = numpy.nan
+        self.shift_terms = shift_terms
+        return shift
+ 
     def _update(self,pos):
         """update the neighbour/in-sphere lists based on actual <pos> coordinate array"""
         if not self.__pairwise_all and len(self.__nmol)-1:
@@ -1433,6 +1474,8 @@ Now, only for exchange-repulsion layer"""
         self.__shift['total_cor'] = shift_ele_corr_mea + shift_ele_corr_ea
         self.__shift['pol_add_mea'] = shift_pol_add_mea
         self.__shift['pol_add_ea' ] = shift_pol_add_ea   ; self.__shift['pol_add_tot'] = shift_pol_add_mea + shift_pol_add_ea
+        # in case of DMA environment
+        self.__shift['total+env'] = shift_total + self.__shift['tot_env']
     
         # final printout
         if lwrite:
