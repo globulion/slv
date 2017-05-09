@@ -36,6 +36,7 @@ class EFP(object, libbbg.units.UNITS):
  The global settings for a computation:
  ccut         - Coulomb cutoff
  pcut         - Polarization cutoff
+ ecut         - Exchange-repulsion cutoff
  pairwise_all - count all pairwise interactions (otherwise count
                 only these that include central molecule, False 
                 when frequency shift mode is switched on in freq and mode)
