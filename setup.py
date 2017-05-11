@@ -51,7 +51,10 @@ for mol in molecules:
        for dir in dirs:
            files = ('solvshift-dat/frg/%s/%s' % (mol,dir), [ i for i in glob('frg/%s/%s/*.frg' % (mol, dir)) ] )
            frg_files.append(files)
-       
+
+# data files: MD-EFP2 topology conversion files
+tc_files  = list()
+tc_files.append( ('solvshift-dat/dat/md'       , [ 'dat/gmx.tc', ] ) )
 
 ### install
 
@@ -66,5 +69,5 @@ setup(name='SOLVSHIFT',
                 #'solvshift.diff',
                ],
       ext_modules=[SHFTEX,EFPROT,SHFTCE,EXREP,],
-      data_files=frg_files,
+      data_files=frg_files+tc_files,
      )
