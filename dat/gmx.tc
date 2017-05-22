@@ -217,15 +217,15 @@ supl          1  2  3
 #@phenolate-
 #reorder      11  8  7  9 10 16  6 15  5 17 14  0
 #supl          1  2  3  4  9
-#@me-s-co-ch-ch2.trans
-#reorder       4  0 13  3 12  1  2  0  0  0  0  0
+#@me-s-co-ch-ch2      
+#reorder       4 13  0  3 12  1  2  0  0  0  0  0
 #supl          1  4  6  7
 #
 #[ PCS ]
 #@phenol
 #reorder      11 12  8  9  7  6 16 10 17  5 15 18  0
 #supl          1  2  3 10   
-#@me-s-co-ch-ch2.cis  
+#@me-s-co-ch-ch2      
 #reorder       4  0 14  3 13  1  2  0  0  0  0  0
 #supl          1  4  6  7
 #
