@@ -25,14 +25,16 @@ EFPROT = Extension(name='solvshift.efprot',
 
 
 # data files: BSM fragment files
-molecules = ['water'            , 'water2'           , 'dmso'                , 'meoh'      ,     'chcl3'     ,     
-             'dcm'              , 'na+'              , 'me-so3-'             , 'so3--'     ,     'meoac'     ,
-             'nma'              , 'nma-d7'           , 'mescn'               , 'li+'       ,     'et2coo'    , 
-             'mecn'             , '4-me-imidazole'   , '4-me-phenol'         , 'ccl4'      ,     'etoh'      ,
-             'chonh2'           , 'chonhme'          , 'comenh2'             , 'ethane'    ,     'mecoo-'    ,
-             'menh3+'           , 'methane'          , 'n-propane'           , 'me-guanidinium+'             ,
-             'thf'              , 'dmf'              , 'cyclohexane'         , 'benzene'   ,     'mesh'      ,
-             'menh2'            , 'phenol'           , 'cho-ch-nh2-ch3'      , 'dms'       ,     'imidazole'  ] 
+molecules = ['water'            , 'water2'           , 'dmso'                , 'meoh'      ,     'chcl3'        ,     
+             'dcm'              , 'na+'              , 'me-so3-'             , 'so3--'     ,     'meoac'        ,
+             'nma'              , 'nma-d7'           , 'mescn'               , 'li+'       ,     'et2coo'       , 
+             'mecn'             , '4-me-imidazole'   , '4-me-phenol'         , 'ccl4'      ,     'etoh'         ,
+             'chonh2'           , 'chonhme'          , 'comenh2'             , 'ethane'    ,     'mecoo-'       ,
+             'menh3+'           , 'methane'          , 'n-propane'           , 'me-guanidinium+'                ,
+             'thf'              , 'dmf'              , 'cyclohexane'         , 'benzene'   ,     'mesh'         ,
+             'menh2'            , 'phenol'           , 'cho-ch-nh2-ch3'      , 'dms'       ,     'imidazole'    ,
+             'me-s-cho'         , 'me-s-co-ch-ch2'   , 'mecooh'              , 'phenolate-',     'imidazolium+' , 
+             'cl-'              ,                                                                                ] 
 
 numerical = { 'mescn': ('num_0.006', 'num_0.025') , 
               'nma'  : ('num_0.006',            ) , }

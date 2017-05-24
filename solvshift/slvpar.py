@@ -91,21 +91,23 @@ class Frag(object, libbbg.units.UNITS):
      o dcm              Dichloromethane                 YES    NO     NO  
      o li+              Lithium Cation                  YES    NO     NO
      o na+              Sodium Cation                   YES    NO     NO
+     o cl-              Chloride Anion                  YES    NO     NO
      o me-so3-          Methyl Sulphonate (-1)          YES    NO     NO
      o so3--            SO3 (2-) anion                  YES    NO     NO
      o meoac            Methyl acetate                  YES    YES    NO       C=O stretch                       
      o nma              N-Methyl Acetamide              YES    YES    NO       amide I mode                      
-     o nma-d7           NMA-D7                          YES    YES    NO       amide I' mode
-                                                                              (all H deuterated)
+     o nma-d7           NMA-D7                          YES    YES    NO       amide I' mode (all H deuterated)
      o mescn            Methyl Thiocyanide              YES    YES    NO       C=N stretch
      o mecn             Methyl Nitrile                  YES    YES    NO       C=N stretch
      o et2coo           Diethyl Carbonate               YES    YES    NO       C=O stretch
      o imidazole        Imidazole                       YES    NO     NO
+     o imidazolium+     Imidazolium Cation              YES    NO     NO
      o 4-me-imidazole   4-Methyl Imidazole              YES    NO     NO
      o 4-me-phenol      4-Methyl Phenol                 YES    NO     NO
      o chonh2           Formamide                       YES    NO     NO
      o chonhme          N-Methyl Formamide              YES    NO     NO
      o comenh2          Acetamide                       YES    NO     NO
+     o mecooh           Acetic Acid                     YES    NO     NO
      o mecoo-           Acetate (-1) Anion              YES    NO     NO
      o menh3+           Methyl Ammonium (+1) Cation     YES    NO     NO
      o me-guanidinium+  Methyl Guanidinium (+1) Cation  YES    NO     NO
@@ -115,9 +117,12 @@ class Frag(object, libbbg.units.UNITS):
      o cyclohexane      Cyclohexane                     YES    NO     NO
      o benzene          Benzene                         YES    NO     NO
      o phenole          Phenole                         YES    NO     NO
+     o phelonate-       Phenolate Anion                 YES    NO     NO
      o dmf              Dimethylformamide               YES    NO     NO
      o thf              Tetrahydrofurane                YES    NO     NO
      o cho-ch-nh2-ch3   2-Aminopropanal                 YES    NO     NO
+     o me-s-co-ch-ch2   S-Methyl-2-Propenethioate       YES    NO     NO
+     o me-s-cho         Thiomethylaldehyde              YES    NO     NO
     -----------------------------------------------------------------------------------------------
      frag = Frag(file)   where file is the Frag format file (*.frg) with parame
                          ters created by a user. See slv_der-* for fragment par

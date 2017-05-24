@@ -30,6 +30,7 @@
 !
  [ molecule ]                            
    name       = WATER MOLECULE
+   shortname  = H2O
    basis      = RHF/6-311++G**
    natoms     = 3
    nbasis     = 37
