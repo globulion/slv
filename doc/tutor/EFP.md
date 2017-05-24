@@ -147,9 +147,9 @@ The basis set uses Cartesian *d*
 orbitals on oxygen (six Gaussian-type functions per one *d* orbital). Note that the basis
 set specified here is not a standard GAMESS built-in basis set, but it is read
 from an external file, `slvbas` (which is in your `$EXTBAS` directory that is
-specified within the GAMESS `rungms` or `gms-files.csh` script). The file contains the basis
+specified within the GAMESS `rungms` or `gms-files.csh` scripts). The file contains the basis
 set that is identical to the basis set used in Gaussian to maintain compatibility.
-The `slvbas` file for 6-311++G** basis set and H, C, N, O, F, S, Cl elements 
+The `slvbas` file for 6-311++G** basis set and H, Li, C, N, O, F, Na, S and Cl elements 
 can be found [here](https://github.com/globulion/slv/blob/master/dat/slvbas). 
 > Note that,
 > if you want to use different basis set or elements other than specified above,
