@@ -1,5 +1,10 @@
+# -------------------------------------------------------------------
 # SOLVATOCHROMIC SolEFP TOPOLOGY FILE FOR AMINOACID SIDE-CHAINS
 # FORCE FIELD: gmx
+# Created: Summer 2015, Updated: 24 May 2017
+# -------------------------------------------------------------------
+#
+#
 # ---- AMINOACID RESIDUES ----
 [ ASP ]
 @mecoo-
@@ -7,12 +12,12 @@ reorder       5  6  8  7  0  9 10
 supl          3  6  7
 #
 [ ASN ]
-#@comenh2
-#reorder       8  9  5 10 12 11  6  7  0
-#supl          1  2  4
+###@comenh2
+###reorder       8  9  5 10 12 11  6  7  0
+###supl          1  2  4
 @chonh2
-reorder        8  9  0 10 12 11
-supl           4  5  6
+reorder       8  9  0 10 12 11
+supl          4  5  6
 @methane
 reorder       5  6  7  0  0
 supl          1  2  3
@@ -25,13 +30,13 @@ supl          3  6  7
 reorder       5  6  7  0  0
 supl          1  2  3
 #
-#[ GLH ]
-#@mecooh
-#reorder       8 11 12 13  6  7  0 14
-#supl          2  3  4  8
-#@methane
-#reorder       5  6  7  0  0
-#supl          1  2  3
+[ GLH ]
+@mecooh
+reorder       8 11 12 13  6  7  0 14
+supl          2  3  4  8
+@methane
+reorder       5  6  7  0  0
+supl          1  2  3
 #
 [ GLN ]
 @chonh2
@@ -58,9 +63,9 @@ reorder       7  8  9 10  0
 supl          1  2  3
 #
 [ TYR ]
-#@4-me-phenol
-#reorder       5  6  7  8  0  9 11 13 16 18 10 12 14 17 19 15
-#supl          8 13 16
+###@4-me-phenol
+###reorder       5  6  7  8  0  9 11 13 16 18 10 12 14 17 19 15
+###supl          8 13 16
 @phenol
 reorder      14 15 13 16 11  9 12 18 17  8 10 19  0
 supl          1  2  3 10
@@ -120,12 +125,12 @@ reorder       5  6  7  0  0
 supl          1  2  3
 #
 #[ HIP ]
-#@imidazolium+
-#reorder      15  8  9 11 13 14 16  0 10 12
-#supl          1  2  3  4  5
-#@methane
-#reorder       5  6  7  0  0
-#supl          1  2  3
+@imidazolium+
+reorder      15  8  9 11 13 14 16  0 10 12
+supl          1  2  3  4  5
+@methane
+reorder       5  6  7  0  0
+supl          1  2  3
 #
 [ TRP ]
 #
@@ -213,21 +218,21 @@ reorder      11 12 13 14  0
 supl          1  2  3
 # ---- NON-AMINOACID RESIDUES ----
 #
-#[ PCD ]
-#@phenolate-
-#reorder      11  8  7  9 10 16  6 15  5 17 14  0
-#supl          1  2  3  4  9
-#@me-s-co-ch-ch2      
-#reorder       4 13  0  3 12  1  2  0  0  0  0  0
-#supl          1  4  6  7
+[ PCD ]
+@phenolate-
+reorder      11  8  7  9 10 16  6 15  5 17 14  0
+supl          1  2  3  4  9
+@me-s-co-ch-ch2      
+reorder       4 13  0  3 12  1  2  0  0  0  0  0
+supl          1  4  6  7
 #
-#[ PCS ]
-#@phenol
-#reorder      11 12  8  9  7  6 16 10 17  5 15 18  0
-#supl          1  2  3 10   
-#@me-s-co-ch-ch2      
-#reorder       4  0 14  3 13  1  2  0  0  0  0  0
-#supl          1  4  6  7
+[ PCS ]
+@phenol
+reorder      11 12  8  9  7  6 16 10 17  5 15 18  0
+supl          1  2  3 10   
+@me-s-co-ch-ch2      
+reorder       4  0 14  3 13  1  2  0  0  0  0  0
+supl          1  4  6  7
 #
 # ---- WATER ----
 [ SOL ]
@@ -244,12 +249,11 @@ supl          1
 @na+
 reorder       1
 supl          1
-#[ CL- ]
-#@cl-
-#reorder       1
-#supl          1
-#[ Cl- ]
-#@cl-
-#reorder       1
-#supl          1
-
+[ CL- ]
+@cl-
+reorder       1
+supl          1
+[ Cl- ]
+@cl-
+reorder       1
+supl          1
