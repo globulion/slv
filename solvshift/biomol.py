@@ -39,15 +39,16 @@ class BiomoleculeFragmentation(object):
 
   2) Far zone - all other protein atoms (side chains and other amide I subunits). 
 
- Aminoacid side chains are modelled by sets of EFP2 fragments. Peptide groups (backbone) are approximated by 
- N-methylacetamide (NMA) EFP2's except for the nearest peptide subunits which are directly bonded
- to IR probe residue (near zone amide subunits). Frequency shifts due to this near zone are modelled
- by interaction of SolCAMM with 4-point charge model of CONH groups based on ESP fitting 
- derived from NMA molecule in vacuo. Coulombic, exchange-repulsion and dispersion frequency shifts
- are computed for all fragments as in conventional SolEFP-cutoff scheme. Induction is treated
- in a special way: many-body effects on induction are accounted for only for the set of EFP2's
- that are not in spacial clash with each other. The rest of EFP2's are modelled in a pairwise
- manner. The total frequency shift is written as:
+ Aminoacid side chains are modelled by sets of EFP2 fragments. Peptide groups (backbone) are 
+ approximated by either N-methylacetamide (NMA) or formamide (FORM) EFP2's except for the nearest 
+ peptide subunits which are directly bonded to IR probe residue (near zone amide subunits). 
+ Frequency shifts due to this near zone are modelled by interaction of SolCAMM with 4-point 
+ charge model of CONH groups based on ESP fitting derived from NMA molecule in vacuo. Coulombic, 
+ exchange-repulsion and dispersion frequency shifts are computed for all fragments as in 
+ conventional SolEFP-cutoff scheme. Induction is treated in a special way: many-body effects on 
+ induction are accounted for only for the set of EFP2's that are not in spacial clash with each 
+ other. The rest of EFP2's are modelled in a pairwise manner. The total frequency shift is written 
+ as:
 
           dw = dw(SolCAMM-CONH) + dw(SolEFP) + dw(through-bond) + dw(error)                     (1)
 
@@ -248,10 +249,13 @@ class BiomoleculeFragmentation(object):
             if conh == 'nma':
                res_data = (('nma', [0,3,1,0,2,0,0,4,0,0,0,0], [3,5,2,8]),)           
                atom_numbers = numpy.arange(residue[0],residue[0]+12)+1
-               name = 'CONH'
-               res_logs[name+str(residue)] = self._app(res_data, name, atom_numbers)
+            elif conh == 'form':
+               res_data = (('chonh2', [1,2,0,3,0,4], [1,2,4,6]),)
+               atom_numbers = numpy.arange(residue[0],residue[0]+6)+1
             else: 
                raise NotImplementedError, " Other models of CONH group than NMA are not implemented yet!"
+            name = 'CONH'
+            res_logs[name+str(residue)] = self._app(res_data, name, atom_numbers)
        
         # Aminoacid sidechains
         for residue in residues:
