@@ -106,11 +106,12 @@ class BiomoleculeFragmentation(object):
                        elect=True, polar=True, repul=True, disp=True, correc=True,
                        ccut=20.0, pcut=13.0, ecut=11.0,
                        solcamm=None, lprint=False, is_probe_terminal=False,
-                       report='report.dat', write_solefp_input=False):
+                       report='report.dat', write_solefp_input=False,write_debug_file=False):
         # printout options
         self.report            = report
         self.lprint            = lprint
         self.write_solefp_input= write_solefp_input
+        self.write_debug_file  = write_debug_file
         self.ccut = ccut; self.pcut = pcut; self.ecut = ecut
         # MD topology - EFP fragmentation relationship
         self.__res_biomolecule = self._parse_res(res)
@@ -132,7 +133,7 @@ class BiomoleculeFragmentation(object):
         self._rr               = lambda a, b: math.sqrt(sum((a-b)**2))
         pass
 
-    def run(self, top, traj, dframes=1, nframes=10):
+    def run(self, top, traj, dframes=1, nframes=10, conh='nma', out_inp='biomolecule.sol'):
         """Analyse the MD trajectory"""
         # [0] Read the topology and trajectory
         universe = MDAnalysis.Universe(top, traj)
@@ -162,7 +163,7 @@ class BiomoleculeFragmentation(object):
 
                # [3] Create temporary SolEFP input file
                if self.lprint: print " Creating SolEFP input..."
-               self._create_solefp_inp(residues, amide_atoms_far, amide_atoms_close, out_inp='temporary.sol')
+               self._create_solefp_inp(residues, amide_atoms_far, amide_atoms_close, conh, out_inp)
 
                # [4] Creating MD Input objects
                self._create_mdinput(self.__mdinput_log)
@@ -196,7 +197,7 @@ class BiomoleculeFragmentation(object):
         # 
         self.__SolEFP_Calculator.set(xyz[self.__idx], *self.__args)
         self.__SolEFP_Calculator.eval_dma(self.__conhs_dma, lwrite=self.lprint)
-        self.__SolEFP_Calculator.eval(self.lprint, remove_clashes=True)
+        self.__SolEFP_Calculator.eval(self.lprint+self.write_debug_file, remove_clashes=True)
         rms_c = self.__SolEFP_Calculator.get_rms()
         rms_s = self.__SolEFP_Calculator.get_rms_sol()
         rms_a = self.__SolEFP_Calculator.get_rms_ave()
@@ -227,7 +228,7 @@ class BiomoleculeFragmentation(object):
         self.__conhs_dma.set_structure(pos=xyz_close, equal=True, atoms=','.join(2*['C','O','N','H']))
         return
 
-    def _create_solefp_inp(self, residues, amide_atoms_far, amide_atoms_close, out_inp):
+    def _create_solefp_inp(self, residues, amide_atoms_far, amide_atoms_close, conh, out_inp):
         """find (Sol)EFP fragments for IR probe, far zone amide subunits and all side chains"""
         if self.write_solefp_input:
            inp = open(out_inp, 'w')
@@ -244,10 +245,13 @@ class BiomoleculeFragmentation(object):
 
         # Far amide units
         for residue in amide_atoms_far:
-            res_data = (('nma', [0,3,1,0,2,0,0,4,0,0,0,0], [3,5,2,8]),)
-            atom_numbers = numpy.arange(residue[0],residue[0]+12)+1
-            name = 'CONH'
-            res_logs[name+str(residue)] = self._app(res_data, name, atom_numbers)
+            if conh == 'nma':
+               res_data = (('nma', [0,3,1,0,2,0,0,4,0,0,0,0], [3,5,2,8]),)           
+               atom_numbers = numpy.arange(residue[0],residue[0]+12)+1
+               name = 'CONH'
+               res_logs[name+str(residue)] = self._app(res_data, name, atom_numbers)
+            else: 
+               raise NotImplementedError, " Other models of CONH group than NMA are not implemented yet!"
        
         # Aminoacid sidechains
         for residue in residues:
