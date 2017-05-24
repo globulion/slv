@@ -63,7 +63,7 @@ these initial calculations, Solvshift calculates all the parameters and stores t
 
 The following command needs to be run in order to create solvent FRG file.
 ```
-slv_make-frg [fchk] [camm] None [Gamess efp] [output file] [nae] <basis>
+slv_make-frg [fchk] [camm] None [Gamess efp] [output file] <basis>
 ```
 So far, HF/6-311++G** 6D method was tested and is recommended. 
 
@@ -121,13 +121,45 @@ EFP file has to be created by using `MAKEFP` routine of GAMESS US program.
 Refer to GAMESS manual for usage.
 The required input file for water example is given below:
 ```
+ $system mwords=100 memddi=2 parall=.t. $end
+ $contrl scftyp=rhf runtyp=makefp icharg=1 mult=1 units=angs
+         maxit=100 exetyp=run ispher=-1 nprint=7
+         mplevl=0 cctyp=none icut=20 itol=30 local=pop $end
+ $local  fcore=.false. maxloc=5000 cvgloc=1e-10 $end
+ $scf    dirscf=.t. fdiff=.f. diis=.t. soscf=.f.
+         conv=1d-11  $end
+ $basis  gbasis=slvbasis extfil=.true. $end
+ $data
+ --- CALCULATIONS OF WATER; RHF/6-311++G** ---
+C1 0
+O    8.0    0.000000    0.113009    0.000000
+H    1.0    0.752785   -0.452035    0.000000
+H    1.0   -0.752785   -0.452035    0.000000
+ $end
 ```
+
+For the detailed input keywords explanation refer to the GAMESS manual.
+Shortly, this task specifies generation of EFP2 parameters for 
+closed shell neutral water molecule described at the Hartree-Fock level
+of theory. Canonical orbitals are to be localized by using the Pipek-Mezey method
+with the tight convergence criterion for the transformation matrix. 
+The basis set uses Cartesian *d*
+orbitals on oxygen (six Gaussian-type functions per one *d* orbital). Note that the basis
+set specified here is not a standard GAMESS built-in basis set, but it is read
+from an external file, `slvbasis` (which is in your `$EXTBAS` directory that is
+specified within the GAMESS `rungms` script). The file contains the basis
+set that is identical to the basis set used in Gaussian to maintain compatibility.
+The `slvbasis` file for 6-311++G** basis set and H, C, N, O, F, S, Cl elements 
+can be found [here](https://github.com/globulion/slv/blob/master/dat/slvbas). 
+> Note that,
+> if you want to use different basis set or elements other than specified above,
+> you need to create external basis file on your own.
 
 #### Generation of FRG file from FCHK, CAMM and EFP file.
 
 For water molecule example, the command that needs to be run is as follows:
 ```
-slv_make-frg water.fchk water.camm None water.efp water.frg 5 6-311++G**
+slv_make-frg water.fchk water.camm None water.efp water.frg 6-311++G**
 ```
 The output `water.frg` is the final BSM file for solvent.
 
