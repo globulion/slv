@@ -4,7 +4,7 @@ Computes the SolEFP parameters for BSM solvent molecule
 
 Usage:
 
-  slv_make-frg [fchk] [camm] [Gamess log] [Gamess efp] [output file] [nae] <basis>
+  slv_make-frg [fchk] [camm] [Gamess log] [Gamess efp] [output file] <basis>
 
 Notes: 1. If Gamess log = none then Fock matrix will be parsed from g09 FCHK file
 """
@@ -23,13 +23,12 @@ camm = argv[2]
 glog = argv[3]
 gefp = argv[4]
 outfile = argv[5]
-nae = int(argv[6])
-if len(argv)>7:
-   basis = argv[7]
+if len(argv)>6:
+   basis = argv[6]
 else: basis = '6-311++G**'
 
 # parse basic data, multipoles and WFN
-sefp = FragFactory(fchk=fchk, gmslog=glog if glog.lower()!='none' else None, basis=basis, nae=nae)
+sefp = FragFactory(fchk=fchk, gmslog=glog if glog.lower()!='none' else None, basis=basis)
 sefp.eval(ct=False, cvgloc=1.0E-14)
 par = sefp.get()
 

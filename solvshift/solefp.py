@@ -1939,14 +1939,13 @@ Solvatochromic Effective Fragment Potential Fragment
 
 Usage:
 """
-    def __init__(self,anh=None,basis=None,nae=None,
+    def __init__(self,anh=None,basis=None,
                       fchk=None,gmslog=None,
                       chelpg=None,esp=None,):
         self.__anh    = anh
         self.__fchk   = fchk
         self.__gmslog = gmslog
         self.__basis  = basis
-        self.__nae    = nae
         self.__chlpg  = chelpg
         self.__esp    = esp
         self._init()
@@ -2079,4 +2078,7 @@ the canonical Fock matrix and vectors will be saved."""
            self.__bfs = bfs
            self.__basis_size = basis_size
            self.__natoms = natoms
+           na, nb = libbbg.utilities.ParseElectronsFromFchk(self.__fchk)
+           assert na==nb, 'Open shell systems are not described by SolEFP or EFP methods'
+           self.__nae = na
         return   
