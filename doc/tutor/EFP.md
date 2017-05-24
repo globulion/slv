@@ -122,15 +122,15 @@ Refer to GAMESS manual for usage.
 The required input file for water example is given below:
 ```
  $system mwords=100 memddi=2 parall=.t. $end
- $contrl scftyp=rhf runtyp=makefp icharg=1 mult=1 units=angs
+ $contrl scftyp=rhf runtyp=makefp icharg=0 mult=1 units=angs
          maxit=100 exetyp=run ispher=-1 nprint=7
          mplevl=0 cctyp=none icut=20 itol=30 local=pop $end
  $local  fcore=.false. maxloc=5000 cvgloc=1e-10 $end
  $scf    dirscf=.t. fdiff=.f. diis=.t. soscf=.f.
          conv=1d-11  $end
- $basis  gbasis=slvbasis extfil=.true. $end
+ $basis  gbasis=slvbas extfil=.true. $end
  $data
- --- CALCULATIONS OF WATER; RHF/6-311++G** ---
+ --- EFP2 PARAMETERS FOR WATER; RHF/6-311++G** ---
 C1 0
 O    8.0    0.000000    0.113009    0.000000
 H    1.0    0.752785   -0.452035    0.000000
@@ -146,10 +146,10 @@ with the tight convergence criterion for the transformation matrix.
 The basis set uses Cartesian *d*
 orbitals on oxygen (six Gaussian-type functions per one *d* orbital). Note that the basis
 set specified here is not a standard GAMESS built-in basis set, but it is read
-from an external file, `slvbasis` (which is in your `$EXTBAS` directory that is
+from an external file, `slvbas` (which is in your `$EXTBAS` directory that is
 specified within the GAMESS `rungms` script). The file contains the basis
 set that is identical to the basis set used in Gaussian to maintain compatibility.
-The `slvbasis` file for 6-311++G** basis set and H, C, N, O, F, S, Cl elements 
+The `slvbas` file for 6-311++G** basis set and H, C, N, O, F, S, Cl elements 
 can be found [here](https://github.com/globulion/slv/blob/master/dat/slvbas). 
 > Note that,
 > if you want to use different basis set or elements other than specified above,
