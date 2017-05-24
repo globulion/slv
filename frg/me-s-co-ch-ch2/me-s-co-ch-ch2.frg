@@ -1,6 +1,6 @@
  [ molecule ]                            
    name       = S-Methyl-2-Propenethioate
-   shortname  = ME-S-CO-CH=CH2
+   shortname  = ME-S-CO-CH-CH2
    basis      = HF/6-311++G**
    natoms     = 12
    nbasis     = 188

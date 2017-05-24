@@ -283,7 +283,8 @@ class Frag(object, libbbg.units.UNITS):
               'mecoo-' ,'menh3+' ,'methane' ,'n-propane','me-guanidinium+'    ,
               'ccl4'   ,'benzene','dmf'     ,'thf'      ,'cyclohexane'        ,
               'etoh'   ,'mesh'   ,'menh2'   ,'phenol'   ,'cho-ch-nh2-ch3'     , 
-              'dms'    ,'imidazole'         ,                                  ] 
+              'dms'    ,'imidazole'         ,'mecooh'   ,'me-s-co-ch-ch2'     ,
+              'cl-'    ,'imidazolium+'      ,'me-s-cho' ,'phenolate-'         ,] 
                
     def __init__(self, file=None):
         self.__file = file
