@@ -24,14 +24,11 @@ import coulomb.multip
 import glob
 
 def bua(file_fchk,basis,bonds,vec,vec_ref,method):
-    molecule = libbbg.utilities.Read_xyz_file(file_fchk,mol=True,
-                                       mult=1,charge=0,
-                                       name='happy dummy molecule')
+    molecule = libbbg.utilities.QMFile(file_fchk, mol=True).get_mol()
     
     bfs        = PyQuante.Ints.getbasis(molecule,basis)
     basis_size = len(bfs)
-    #print " - basis size= ", basis_size
-    print " - parsing %s density matrix" % method
+    print " - parsing %s density matrix with basis size %d" % (method, basis_size)
     dmat = libbbg.utilities.ParseDmatFromFchk(file_fchk,basis_size,method)
     def check_sim(l):
         """check the sim list"""
@@ -65,7 +62,7 @@ def bua(file_fchk,basis,bonds,vec,vec_ref,method):
     print " - multipole integrals in AO basis evaluation..."
     camm = coulomb.multip.MULTIP(molecule=molecule,
                                  basis=basis,
-                                 method='b3lyp',
+                                 method=method,
                                  matrix=dmat,
                                  transition=False,
                                  bonds=bonds,vec=vec,hexadecapoles=False)
@@ -81,9 +78,9 @@ def bua(file_fchk,basis,bonds,vec,vec_ref,method):
     return
 
 def CalculateCAMM_not_pp(basis='6-311++G**',bonds=[],ncpus=4,
-                   vec=None,vec_ref=None,method='SCF'): 
+                   vec=None,vec_ref=None,method='SCF', postfix='_.fchk'): 
     """calculates CAMMs from density matrix from GAUSSIAN09 using COULOMB.py routines"""
-    pliki_fchk  = glob.glob('./*_.fchk')
+    pliki_fchk  = glob.glob('./*%s' % postfix)
     pliki_fchk.sort()
     print "\n FCHK Files!\n"  
     for i in range(len(pliki_fchk)):
@@ -92,9 +89,7 @@ def CalculateCAMM_not_pp(basis='6-311++G**',bonds=[],ncpus=4,
     
     # compute reference vectors
     if vec is not None:
-       ref_mol = libbbg.utilities.Read_xyz_file(pliki_fchk[0],mol=True,
-                                         mult=1,charge=0,
-                                         name='happy dummy molecule')
+       ref_mol  = libbbg.utilities.QMFile(pliki_fchk[0], mol=True).get_mol()
        natoms     = len(ref_mol.get_pos())
        bfs_ref    = PyQuante.Ints.getbasis(ref_mol,basis)
        basis_size = len(bfs_ref)
@@ -122,5 +117,5 @@ if __name__=='__main__':
    vec = None
    method = argv[1]
    basis  = argv[2]
-   CalculateCAMM_not_pp(basis=basis,bonds=bonds,vec=vec,method=method)
+   CalculateCAMM_not_pp(basis=basis,bonds=bonds,vec=vec,method=method, postfix='.fchk')
 
