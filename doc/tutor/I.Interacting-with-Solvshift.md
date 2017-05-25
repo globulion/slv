@@ -1,15 +1,10 @@
-Mini-Tutorial
-=============
-
-Bartosz Błasiak, Summer 2013, Updated: 25 April 2017
-
 INTERACTING WITH Solvshift
-------------------------------
+==========================
 
 Solvshift can be used in many ways depending on what task is to be performed.
 
 
-### Interacting through main executable.
+## Interacting through main executable.
 
 In general, simple calculations and tasks can be specified by using the 
 **Solvshift** main executable script, `slv`. 
@@ -24,7 +19,7 @@ slv --help
 will result in help box with a detailed description of Solvshift functionalities and usage.
 > Many of the options are now obsolete. This will be fixed in the future.
 
-### Interacting through SLV tools.
+## Interacting through SLV tools.
 
 Most of the basic steps in setting the calculations can be done by using utility scripts
 that are stored in `util` directory. Below I list their names and function.
@@ -78,7 +73,7 @@ Solvshift. To see the usage of these tools run them without arguments or with `-
 > rely on simple argument list from command line. This will be changed in the future to 
 > unify the way of using the tools, including printing the usage information (with `-h` option).
 
-### Interacting through Python level.
+## Interacting through Python level.
 
 Solvshift and its modules can be accessed diretcly from Python level. 
 This is particularly useful for writing custom analysis scripts and is the most 
