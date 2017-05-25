@@ -266,5 +266,5 @@ with respect to the mode of interest (in this case CN stretch) in a separate dir
 `sder/`. 
 
 *******
-Back to [Start](https://github.com/globulion/slv/tree/master/doc/tutor)
+Back to [Start](https://github.com/globulion/slv/tree/master/doc/tutor/README.md)
 
