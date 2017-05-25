@@ -20,10 +20,10 @@ are planned. See the [ToDo lists] for reference upon current development tasks.
 Contents
 --------
 
- I.   [Interacting with Solvshift](https://github.com/globulion/slv/blob/master/doc/tutor/I.Interacting-with-Solvshift.md)
- II.  [Using SolEDS](https://github.com/globulion/slv/blob/master/doc/tutor/II.SolEDS.md)
- III. [Using SolEFP](https://github.com/globulion/slv/blob/master/doc/tutor/III.SolEFP.md)
- IV.  [Molecular Dynamics](https://github.com/globulion/slv/blob/master/doc/tutor/IV.Molecular-dynamics.md)
+ 1. [Interacting with Solvshift](https://github.com/globulion/slv/blob/master/doc/tutor/I.Interacting-with-Solvshift.md)
+ 2. [Using SolEDS](https://github.com/globulion/slv/blob/master/doc/tutor/II.SolEDS.md)
+ 3. [Using SolEFP](https://github.com/globulion/slv/blob/master/doc/tutor/III.SolEFP.md)
+ 4. [Molecular Dynamics](https://github.com/globulion/slv/blob/master/doc/tutor/IV.Molecular-dynamics.md)
 
 
 [ToDo lists]: https://github.com/globulion/slv/projects/1
