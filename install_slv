@@ -80,8 +80,8 @@ echo Copying shared libraries
 
 # install solpol and solpol2 extensions - requires mathematical libraries linked to NumPy!
 cd solvshift/src
-f2py -c --link-lapack_opt --link-blas_opt -m solpol  solpol.f
-f2py -c --link-lapack_opt --link-blas_opt -m solpol2 solpol2.f
+f2py -c --quiet --link-lapack_opt --link-blas_opt -m solpol  solpol.f
+f2py -c --quiet --link-lapack_opt --link-blas_opt -m solpol2 solpol2.f
 mv -v $PWD/solpol.so $PWD/solpol2.so $SLV_LIB/solvshift
 cd ../..
 
