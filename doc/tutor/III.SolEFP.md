@@ -264,3 +264,7 @@ to your needs.
 Note, that Solvshift creates the separate Gaussian input files for second derivatives
 with respect to the mode of interest (in this case CN stretch) in a separate directory
 `sder/`. 
+
+*******
+Back to [Start](https://github.com/globulion/slv/tree/master/doc/tutor)
+

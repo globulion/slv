@@ -14,3 +14,5 @@ within Solvshift. Figure 1 shows the main principle of SolEDS.
 <img src="soleds-scheme.png" alt="Drawing" style="width: 20px;"/>
 ******
 
+Back to [Start](https://github.com/globulion/slv/tree/master/doc/tutor)
+
