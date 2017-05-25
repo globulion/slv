@@ -149,6 +149,6 @@ the total Hartree-Fock vibrational frequency shift is +20.48 cm^-1.
 Coulombic, exchange-repulsion and charge delocalization frequency shifts are
 8.98, 14.27 and -2.77 cm-1, respectively.
 
-
+*******
 Back to [Start](https://github.com/globulion/slv/tree/master/doc/tutor/README.md)
 

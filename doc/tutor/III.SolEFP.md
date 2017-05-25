@@ -6,6 +6,20 @@ Bartosz Błasiak, May 5, 2017  Updated:
 INTRODUCTION
 ------------
 
+SolEFP method is designed to meet the compromise between speed 
+and accuracy in the vibrational solvatochromism calculations.
+Therefore, it aims to study large and heterogeneous molecular 
+systems, ranging from bulk solvents to even proteins.
+In Figure 1, I depict the working principle of SolEFP.
+
+******
+**Figure 1. The principle of SolEFP.** 
+<img src="solefp-scheme.png" alt="Drawing" style="width: 20px;"/>
+******
+
+CONSTRUCTING OF SolEFP PARAMETER FILES
+--------------------------------------
+
 In the following sections we show how to use EFP2 and SolEFP methods within Solvshift.
 First, the *fragment parameter file format* (FRG) inherently used within SLV is explained.
 Second, the generation of custom FRG files, both for solvent (EFP2), as well a solute 
