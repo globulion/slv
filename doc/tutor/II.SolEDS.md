@@ -58,14 +58,14 @@ is as follows:
 ```
 slv_soleds-analyzer 1 [full opt xyz] [gas phase xyz] [anh] [mode] [line] [suplist] <n> <step-cart> <step-mode>
 ```
-wherease the command line used to compute the SolEDS frequency shifts is
+whereas the command line used to compute the SolEDS frequency shifts is
 ```
 slv_soleds-analyzer 2 [anh] [eds dirs] [mode] [method]
 ```
 The meanings of the arguments passed to `slv_soleds-analyzer` are explained in Table 1.
 
 *******
-**Table 1. Meaning of arguments passed to `slv_soleds-analyzer` tool.** 
+**Table 1. Meaning of the arguments passed to the `slv_soleds-analyzer` tool.** 
 
 | Argument        | Explanation                                                                          | 
 | --------------- | ------------------------------------------------------------------------------------ | 
@@ -81,6 +81,73 @@ The meanings of the arguments passed to `slv_soleds-analyzer` are explained in T
 | `method`        | HF or MP2, depending on the type of EDS calculations.                                |
 
 *******
+
+#### Cubic anharmonic constant sign problem.
+
+After performing step 1 (constrained cluster preparation and all the input files)
+one has to manually inspect the signs of the cubic anharmonic constants in the 
+Gaussian anharmonic analysis file **before the SolEDS calculations are performed!** 
+This is necessary because the phase of the eigenvectors
+from the Gaussian harmonic analysis is not always in agreement with the phase of eigenvectors
+used in the anharmonic code of Gaussian. Therefore, certain cubic anharmonic constants 
+may have signs which are incopmatible with the Wilson matrix printed (and read by SLV)
+in the Gaussian anharmonic file. Therefore, Solvshift has another utility that creates 
+separate input files for calculations of the cubic anharmonic constants. This utility
+is automatically called when running soleds-analyzer. What one needs to do is to
+
+Case study: MeNC-H2O cluster.
+-----------------------------
+
+Here I describe the procedure to obtain the SolEDS frequency shifts
+for methylisocyanate interacting with one water molecule.
+
+After running the soleds-analyzer command to create input files
+```
+slv_soleds-analyzer 1 menc-water.xyz menc.xyz menc-freq.log 4 17 1-4 3 0.006 15
+```
+Solvshift will ask for the GAMESS template input file `gamess.templ` if such file
+is not present in the working directory.
+The contents of this file is shown below:
+
+******
+**Scheme 1. GAMESS template file for SolEDS calculation.** The name of the file is `gamess.templ` 
+            (name should should not be changed).
+```
+$system mwords=7 memddi=12 parall=.t. $end
+$contrl scftyp=rhf runtyp=eds icharg=0 mult=1 units=angs
+        maxit=100 exetyp=run ispher=-1
+        mplevl=2 cctyp=none $end
+$eds    mch(1)=0,0 mmul(1)=1,1 mnr(1)=7 ffeds=.f. $end
+$scf    dirscf=.t. fdiff=.f. diis=.t. soscf=.f.
+        conv=1d-10 $end
+$basis  gbasis=slvbas extfil=.t. $end
+$data
+--- CALCULATIONS OF SOLVATOCHROMIC FREQUENCY SHIFTS OF MENC-WATER FROM EDS ---
+C1 0
+@DATA
+$end
+```
+******
+
+After performing all the calculations (submitting each Gaussian and GAMESS input file)
+one can compute the frequency shifts by the following command:
+```
+slv_soleds-analyzer 2 menc-freq.log ./:./sder/15 4 HF
+```
+which produces the following output:
+```
+E(EL,10)            5.97      3.02      8.98 
+E(EL,MTP)           7.38      1.47      8.85
+E(EL,PEN)          -1.42      1.55      0.13
+E(EX,HL)           13.03      1.24     14.27
+E(DEL)             -2.36     -0.41     -2.77
+DE(HF)             16.63      3.84     20.48
+```
+The first and second columns are the mechanical and electric anharmonicity,
+whereas the third column is their sum, respectively. In this example
+the total Hartree-Fock vibrational frequency shift is +20.48 cm^-1.
+Coulombic, exchange-repulsion and charge delocalization frequency shifts are
+8.98, 14.27 and -2.77 cm-1, respectively.
 
 
 Back to [Start](https://github.com/globulion/slv/tree/master/doc/tutor/README.md)
