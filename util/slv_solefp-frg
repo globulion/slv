@@ -5,9 +5,9 @@
 
  Usage:
 
-   -i [anh] -s [step] -m [mode] -x [xyz]
+   -i [anh] -s [step] -m [mode] -x [xyz] (-S [step_sder])
 
-   -c [anh] -s [step] -m [mode] -f [fchk] -d [dma] -e [efp] -o [frg] (--omit_camm)
+   -c [anh] -s [step] -m [mode] -f [fchk] -d [dma] -e [efp] -o [frg] (--omit_camm) 
 """
 from sys import argv, exit
 from string import Template
@@ -29,6 +29,7 @@ def Main(argv):
     # defaults
     Calc           = True                                              # calculation mode
     step           = 0.006                                             # step of 1st derivative differentiation (Angstrom)
+    step_sder      = 15.0                                              # step of 2st derivative differentiation
     basis          ='6-311++G**'                                       # basis set (6D)
     xyz            ='xyz'                                              # structure of IR active molecule
     fchk           ='fchk'                                             # G09 FCHK file
@@ -40,9 +41,10 @@ def Main(argv):
     omit_camm      = False                                             # whether to omit calculation of CAMM of not
     #
     try:
-       opts, args = getopt(argv, "hi:c:m:x:d:f:e:o:s:O" , ["help" , "inputs=", "calc="
-                                                           "mode=", "xyz="    , "dma=", 
-                                                           "fchk=", "efp="    , "out=", "step=", "omit_camm"])
+       opts, args = getopt(argv, "hi:c:m:x:d:f:e:o:s:OS:" , ["help" , "inputs=", "calc="
+                                                             "mode=", "xyz="    , "dma=", 
+                                                             "fchk=", "efp="    , "out=", "step=", "omit_camm",
+                                                             "sder-step="])
     except GetoptError, error:
         print "\n Invalid option. Please refer to the usage below:" 
         print __doc__
@@ -63,26 +65,28 @@ def Main(argv):
         if opt in ("-o", "--out"):  frg = arg
         if opt in ("-m", "--mode"): mode = int(arg)
         if opt in ("-s", "--step"): step = float(arg)
+        if opt in ("-S", "--step-sder"): step_sder = float(arg)
         if opt in ("-O", "--omit_camm"): omit_camm = True
 
 
-    run(Calc, anh, mode, step, basis, xyz, dma, fchk, efp, frg, omit_camm)
+    run(Calc, anh, mode, step, step_sder, basis, xyz, dma, fchk, efp, frg, omit_camm)
     return
 
 
 # Templates for commands
 t_inp1= Template("slv -m $MODE -a $ANH -gi $XYZ -x 1 -s $STEP")
-t_inp2= Template("slv -m $MODE -a $ANH -i  $XYZ -x 1 -s $STEP")
+t_inp2= Template("slv -m $MODE -a $ANH -gi $XYZ -x 0 -s $STEP")
+t_inp3= Template("slv -m $MODE -a $ANH -i  $XYZ -x 1 -s $STEP")
 t_tar1= Template('tar cfj inp_g09.tar.bz2 g09_*.inp')
 t_tar2= Template('tar cfj inp_gms.tar.bz2 gms_*.inp')
-t_camm= Template("python ~/programs/solvshift/solvshift/diff.py $BASIS SCF")
+t_camm= Template("slv_gen-camm SCF $BASIS")
 t_dma = Template("slv_der-dma $ANH $FCHK $CAMM $STEP __out_dma__.frg")
 t_wfn = Template("slv_der-wfn $ANH $FCHK $CAMM $NAE $BASIS $STEP __out_wfn__.frg")
 t_pol = Template("slv_der-dpol $ANH __out_wfn__.frg $STEP __out_pol__.frg")
 t_gijk= Template("slv_calc-gijk-from-hessians $ANH $STEP $MODE")
 
 
-def run(Calc, anh, mode, step, basis, xyz, dma, fchk, efp, frg, omit_camm):
+def run(Calc, anh, mode, step, step_sder, basis, xyz, dma, fchk, efp, frg, omit_camm):
     """Main routine for generating of SolEFP parameters"""
     if mode is None:
        print "\n Set the mode number!\n"
@@ -97,13 +101,20 @@ def run(Calc, anh, mode, step, basis, xyz, dma, fchk, efp, frg, omit_camm):
        g09_xyz = 'g09_'+xyz
        os.system('cp %s %s' % (xyz, g09_xyz))
        os.system(t_inp1.substitute(MODE=mode-1, ANH=anh, XYZ=g09_xyz, STEP=step))
+       sder_dir = './sder/%4.1f' % step_sder
+       os.system('mkdir -p %s' % sder_dir)
+       os.system('cp -v gaussian.templ %s %s' % (g09_xyz, sder_dir))
+       command = 'cd %s;' % sder_dir
+       command+= t_inp2.substitute(MODE=mode-1, ANH='../../%s' % anh, XYZ=g09_xyz, STEP=step_sder) + ';'
+       command+= 'cd ../..'
+       os.system(command)
        os.system('rm %s' % g09_xyz)
        clock.actualize(' Making G09    input files')
 
        # [2] GAMESS input files
        gms_xyz = 'gms_'+xyz
        os.system('cp %s %s' % (xyz, gms_xyz))
-       os.system(t_inp2.substitute(MODE=mode-1, ANH=anh, XYZ=gms_xyz, STEP=step))
+       os.system(t_inp3.substitute(MODE=mode-1, ANH=anh, XYZ=gms_xyz, STEP=step))
        os.system('rm %s' % gms_xyz)
        clock.actualize(' Making GAMESS input files')
 
@@ -116,11 +127,16 @@ def run(Calc, anh, mode, step, basis, xyz, dma, fchk, efp, frg, omit_camm):
     else: 
 
        nae, nbe = ParseElectronsFromFchk(fchk)
-       assert nae==nbe, 'NAE is not equal to NBE!'
+       assert nae==nbe, 'NAE is not equal to NBE! Only closed shell systems can be treated by SolEFP.'
 
        # [1] Calculation of CAMMs
+       sder_dir = './sder/%4.1f' % step_sder
        if not omit_camm:
           os.system(t_camm.substitute(BASIS=basis)) 
+          command = 'cd %s;' % sder_dir
+          command+= t_camm.substitute(BASIS=basis) + ';'
+          command+= 'cd ../..'
+          os.system(command)
           clock.actualize('Computation of CAMM')
 
        # [2] Calculation of DMA derivatives

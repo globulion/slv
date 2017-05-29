@@ -17,16 +17,13 @@ In Figure 1, I depict the working principle of SolEFP.
 <img src="solefp-scheme.png" alt="Drawing" style="width: 20px;"/>
 ******
 
-CONSTRUCTING OF SolEFP PARAMETER FILES
---------------------------------------
+FRG FILE FORMAT
+---------------
 
 In the following sections we show how to use EFP2 and SolEFP methods within Solvshift.
 First, the *fragment parameter file format* (FRG) inherently used within SLV is explained.
 Second, the generation of custom FRG files, both for solvent (EFP2), as well a solute 
 (SolEFP), is outlined. Finally, SolEFP calculations are demonstrated on simple examples.
-
-FRG FILE FORMAT
----------------
 
 Fragment parameter file format is a Solvshift utility to manage large and extensive
 quantum chemistry information on the benchmark solute/solvent molecule (BSM):
@@ -225,10 +222,11 @@ These are FCHK as well as EFP files.
 It is very easy to create all inputs after the anharmonic file has been obtained.
 The command is:
 ```
-slv_solefp-frg -i [anh] -s [step] -m [mode] -x [xyz]
+slv_solefp-frg -i [anh] -s [step] -S [step_sder] -m [mode] -x [xyz] 
 ```
-where `anh` is the Gaussian (modified as described above) file, `step` is the differentiation step
-in Cartesian coordinate space, `mode` is the normal mode number (in this case number of the nitrile 
+where `anh` is the Gaussian (modified as described above) file, `step` and `step_der` are the differentiation step
+in Cartesian and normal mode coordinate space, respectively, 
+`mode` is the normal mode number (in this case number of the nitrile 
 stretch mode of MeSCN; see below) and `xyz` is the gas-phase optimized XYZ structure file.
 
 Normal mode number is understood as the number of vibration listed in the section of anharmonic analysis 
@@ -262,7 +260,7 @@ For example, in the case of MeSCN the contents looks like this:
 ```
 In the example we are interested in CN stretch mode - so the `-m 4` has to be used. 
 
-Running the input file generation by `slv_solefp-frg` script generates
+Running the input file generation procedure by `slv_solefp-frg` script creates
 a series of input files:
  1. Gaussian input files to get one-particle density matrices (FCHK files)
  2. Gaussian input files to get Hessian matrices (FCHK files) necessary to compute
@@ -273,11 +271,61 @@ To create these input files two templates are necessary. They will be first
 written automatically by Solvshift to your working directory by the first run of
 `slv_solefp-frg` script. Then you must re-run the
 script to create the inputs after modifying the template files appropriately
-to your needs. 
+to your needs. Templates for 6-311++G** Cartesian basis set can be found
+in the links 
+[Gaussian template](https://github.com/globulion/slv/tree/master/dat/gaussian.templ) 
+and 
+[GAMESS template](https://github.com/globulion/slv/tree/master/dat/gamess.templ).
 
-Note, that Solvshift creates the separate Gaussian input files for second derivatives
-with respect to the mode of interest (in this case CN stretch) in a separate directory
-`sder/`. 
+> Note also, that Solvshift creates the separate Gaussian input files for second derivatives
+> with respect to the mode of interest (in this case CN stretch) in a separate directory
+> `sder/%step_sder`. These additional five input files are only Gaussian tasks.
+
+Once all the input files are generated, two tarballs are created: `inp_g09.tar.bz2`
+and `inp_gms.tar.bz2`. They can be sent to your computer cluster for evaluation. 
+Thus, for our example with MeSCN, the required command would be as follows:
+```
+slv_solefp-frg -i mescn-anh.log -s 0.006 -S 15.0 -m 4 -x mescn.xyz
+```
+After completing all the tasks copy the Gaussian output files and EFP files 
+(Gaussian with extension `.log` and GAMESS ending with `.efp`) 
+to the directories of their parent input (`.inp`) files, including the `sder` directory.
+
+### Computation of SolEFP FRG file.
+
+After the last step, you are ready to compute the SolEFP FRG file for your solute!
+The command is
+```
+slv_solefp-frg -c [anh] -s [step] -S [step_sder] -m [mode] -f [fchk] -d [dma] -e [efp] -o [frg] (--omit_camm)
+```
+`-d` option indicates the distributed multipole analysis file for the solute molecule.
+Here, it will be one of the files created by Solvshift during this step. 
+If your Gaussian input file of gas-phase solute structure is 
+`g09_mescn_A000_D00_.inp` (for the example case of MeSCN)
+the CAMM file is just `g09_mescn_A000_D00_.camm`. 
+
+> Here in this step you must pass files with only `_A000_D00_` string which refers
+> to the gas-phase structure. All other files refer to displacements of atoms for
+> finite difference purposes and, hence, cannot be passed here to compute SolEFP parameters.
+
+`-e` option indicates the EFP file for gas-phase solute (e.g., `gms_mescn_A000_D00_.efp`).
+
+`-o` option is the name of the FRG file you want to generate.
+
+`--omit_camm` option is useful if you want to recalculate the SolEFP parameters, but
+you do not want to compute all the CAMM's again (otherwise Solvshift would compute CAMM's
+once again which would take quite long time.
+
+The command line for our MeSCN example is
+```
+slv_solefp-frg -c mescn-freq.log -s 0.006 -S 15.0 -m 4 -f g09_mescn_A000_D00_.fchk -d g09_mescn_A000_D00_.camm -e gms_mescn_A000_D00_.efp -o mescn.frg 
+```
+This step first computes the SolEFP parameters for Coulomb interactions, then calculates parameters
+for exchange-repulsion, and at the end parameters for induction and dispersion. It also computes
+the cubic anharmonic constants and constructs the final `mescn.frg` file. All these calculations
+might take up some time (up to one hour if CAMM's are to be computed and a few minutes otherwise).
+This file can be already used in the SolEFP calculations!
+
 
 *******
 Back to [Start](https://github.com/globulion/slv/tree/master/doc/tutor/README.md)

@@ -1,0 +1,13 @@
+$system mwords=7 memddi=12 parall=.t. $end
+$contrl scftyp=rhf runtyp=makefp icharg=0 mult=1 units=angs
+        maxit=100 exetyp=run ispher=-1 nprint=7
+        mplevl=0 cctyp=none icut=20 itol=30 local=pop $end
+$local  fcore=.false. maxloc=5000 cvgloc=1e-10 $end
+$scf    dirscf=.t. fdiff=.f. diis=.t. soscf=.f.
+        conv=1d-11  $end
+$basis  gbasis=slvbas extfil=.true. $end
+$data
+--- CALCULATIONS OF SOLEFP POLARIZATION PARAMETERS ---
+C1 0
+@DATA
+$end
