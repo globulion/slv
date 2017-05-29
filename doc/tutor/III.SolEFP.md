@@ -276,6 +276,10 @@ in the links
 [Gaussian template](https://github.com/globulion/slv/tree/master/dat/gaussian.templ) 
 and 
 [GAMESS template](https://github.com/globulion/slv/tree/master/dat/gamess.templ).
+> Note that in the GAMESS input template the basis set name is `slvbas` instead
+> of the conventional GAMESS basis set nomenclature. 
+> Refer [here](https://github.com/globulion/slv/tree/master/doc/tutor/II.SolEDS.md) 
+> for mode details on this.
 
 > Note also, that Solvshift creates the separate Gaussian input files for second derivatives
 > with respect to the mode of interest (in this case CN stretch) in a separate directory
@@ -291,7 +295,7 @@ After completing all the tasks copy the Gaussian output files and EFP files
 (Gaussian with extension `.log` and GAMESS ending with `.efp`) 
 to the directories of their parent input (`.inp`) files, including the `sder` directory.
 
-### Computation of SolEFP FRG file.
+#### Computation of SolEFP FRG file.
 
 After the last step, you are ready to compute the SolEFP FRG file for your solute!
 The command is
