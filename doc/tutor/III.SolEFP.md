@@ -126,7 +126,7 @@ slv_gen-camm SCF 6-311++G**
 If `water.fchk` file is saved in the working directory, the script will generate
 `water.camm` file.
 
-#### Generation of EFP file.
+#### Generation of EFP file
 
 EFP file has to be created by using `MAKEFP` routine of GAMESS US program.
 Refer to GAMESS manual for usage.
@@ -278,7 +278,7 @@ and
 [GAMESS template](https://github.com/globulion/slv/tree/master/dat/gamess.templ).
 > Note that in the GAMESS input template the basis set name is `slvbas` instead
 > of the conventional GAMESS basis set nomenclature. 
-> Refer [here](#generation-of-efp-file.) 
+> Refer [here](#generation-of-efp-file) 
 > for mode details on this.
 
 > Note also, that Solvshift creates the separate Gaussian input files for second derivatives
