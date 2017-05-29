@@ -1,29 +1,20 @@
-2. Calculation mode
-===================
+Solvatochromic Distributed Multipoles
+=====================================
 
-Calculation mode in *Solvshift* offers two types of calculations of frequency shifts using either 
-1. goarse-grained or 2. *continuum* models. Because of the fact that the latter is of minor importance and 
-its practical applicability is rather very poor we focus on **coarse-grained** calculations. 
-Continuum model of solvatochromism is actually only an elegant test of solvatochromic operator
-in very simple theoretical framework and should not be used in frequency shift calculations for
-confronting the theory with experiment.
+Here I describe how to handle the Solvatochromic Distributed Multipole Moments
+(SolDMTP) in Solvshift by using main SLV executable. 
+In Solvshift, DMTP's are all treated by `libbbg.dma.DMA` class which unifies
+the following expansions:
+ * Distributed Multipole Analysis (DMA) of Stone
+ * Cumulative Atomic Multipole Moments (CAMM) of Sokalski and Poirier
+ * Contractions of the above (united atoms, etc)
+ * Molecular Multipole Moments centered at origin
+ * all the "Sol" ("Solvatochromic") or "Tr" ("Transition") extensions of the above
 
-# 2.1 Coarse-grained calculations
-
-The coarse-grained calculations of frequency shifts can be easily performed using *Solvshift*. 
-Here it is assumed that you have created all the necessary input files and submitted these tasks
-(so you have all the .log, .camm files, modified properly `slv.step` file and so on). 
-The further prerequisites to be done in the following steps are:
-  * solute gas-phase parameters (frequency analysis file, 
-    SolX parameters, BSM moments and, in case of need, solute DMTP and dDMTP parameters)
-  * files containing the information about the target system (solute and solvent positions etc.)
-  
-The great majority of these files is created automatically by *Solvshift* so you don't need to worry.
-The creation of some of the files which have to be created by the user will be explained in the text below. 
-
+The option which activates the Input generation mode is `-i` option. 
 The option which activates the Calculation mode is `-c` option. It has no additional arguments.
   
-## 2.1.1 Preparation of parameters
+# 1. Preparation of parameters by using SLV executable
 
 The parameters can be calculated either in flow during calculations of frequency shifts
 or as a separate run. The latter method is more convenient because it enables you to 
@@ -45,7 +36,7 @@ This file is written in *coulomb* format (see the link
 only `--save` option is used without specification of a name the file will be written to `slv.par`
 file as a default name.
 
-### Preparation of SolX parameters
+## 1.1 Preparation of SolX parameters
 
 Beneath the suitable commands are provided for creation of various SolX models for
 a molecule under study:
@@ -66,7 +57,7 @@ The last case relates to SolMMM centered at COE molecular point **(add reference
 The other arguments of `--transl` can be `com` (center of mass) and others like weighted
 center between two atoms. For further referene see the `--help` option.
 
-## 2.1.2 Making contracted models
+## 1.2 Making contracted models
 
 It is very easy to create an united atom (contracted) model by using SLV main executable.
 Use `-u` option followed by a string
@@ -86,7 +77,10 @@ as if they were absent.
 It is also possible to create the united atom models directly from Python level.
 Refer to the DMA class documentation for more detailed information and examples.
 
-## 2.1.3 Frequency shift calculations
+# 2. Frequency shift calculations
+
+> This section is obsolete. Certain parts might not work since they have not 
+> been tested for more than one year.
 
 To calculate the frequency shifts you have to provide the structural information
 about solute-solvent system. You can prepare the necessary files directly from using
@@ -99,7 +93,7 @@ optimizations followed by vibrational analyses to correlate the exact frequency 
 with the ones coming from chosen coarse-grained SolX-n models. Remember that SolX-n models
 are purely electrostatic in first order.
 
-### 2.1.3.1 Validation of the SolX-n models
+## 2.1 Validation of the SolX-n models
 
 To validate the parameters you have to make a set of various clusters of solute
 with several solvent molecules (at least 30 clusters). For each system perform
@@ -193,7 +187,7 @@ This convergence value is valid only for SolMMM analysis when solute and solvent
 are **neutral** (terms with hexatecapoles are then zero). Thus for SolCAMM models
 the most accurate prediction of frequency shift is `1+2+3+4` (up to R-4 terms included).
 
-### 2.1.3.2 Calculations of frequency shifts from MD trajectories
+## 2.2 Calculations of frequency shifts from MD trajectories
 
 In preparation. As for now you can calculate frequency shifts
 from:
@@ -208,7 +202,16 @@ The option `--md-package` or `U` provides the package and `-M` provides trajecto
 are treated as last argument so it should be nothigh after their specification within a command line.
 In this run don't use `-f` option because it is not validation of the model mode.
 
-## 2.1.4 Corrections to the SolX-n frequency shifts
+# 3. Corrections to the SolX-n frequency shifts
+
+> This section is obsolete. Certain parts might not work since they have not 
+> been tested for more than one year.
+> The correction terms have been reimplemented from pure Python code of `solvshift.slvcor` module
+> to the Fortran
+> version which is much faster. The interface also changed and is now within
+> `solvshift.solefp.EFP` class. Note that in the new implementation, only 
+> R-2 terms are counted to the total frequency shifts (although R-3 and R-4 terms
+> are also computed).
 
 The correction terms to frequency shifts coming from solely distributed 
 solvatochromic moments can be easily evaluated in Solvshift. However, you have to prepare
@@ -289,5 +292,3 @@ The left panel contains the information about the corrections to
 mechanical (`MA`) and electonic (`EA`) anharmonicities, respectively,
 providing each of R-n contributions. The right panel contains corrected
 frequency shifts.
-
-# 2.2 Continuum models of solvatochromism
