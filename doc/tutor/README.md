@@ -24,9 +24,9 @@ Contents
  2. [SolEDS Calculations](https://github.com/globulion/slv/blob/master/doc/tutor/II.SolEDS.md)
  3. [SolEFP Parameters](https://github.com/globulion/slv/blob/master/doc/tutor/III.SolEFP.md)
  4. [SolEFP with Molecular Dynamics](https://github.com/globulion/slv/blob/master/doc/tutor/IV.Molecular-dynamics.md)
- 5.  Supplementary
-  5.1 [More on generation of input files](https://github.com/globulion/slv/blob/master/doc/tutor/V.Inputs.md)
-  5.2 [SolDMTP Calculations](https://github.com/globulion/slv/blob/master/doc/tutor/V.SolDMTP.md)
+ 5. Supplementary:
+  * [More on generation of input files](https://github.com/globulion/slv/blob/master/doc/tutor/V.Inputs.md)
+  * [SolDMTP Calculations](https://github.com/globulion/slv/blob/master/doc/tutor/V.SolDMTP.md)
 
 
 [ToDo lists]: https://github.com/globulion/slv/projects/1
