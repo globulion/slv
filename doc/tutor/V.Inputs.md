@@ -1,5 +1,5 @@
-1. Input file mode 
-==================
+Input Generation
+================
 
 ## Finite field input files ##
 
@@ -23,8 +23,6 @@ H   -1.053574   -0.363828    3.037984
 H   -1.708339    0.996557    2.097766 
 H    3.016569   -1.045992    1.214026 
 H    2.405729    0.324290    0.263094 
-
-
 ```
 The first line contains the number of atoms, second line is blank and from the third line 
 atomic coordinates are listed (units are *Angstroms*)
