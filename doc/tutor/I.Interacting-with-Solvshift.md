@@ -41,7 +41,7 @@ that are stored in `util` directory. Below I list their names and function.
 |  `efpmd-traj`               | EFPMD trajectory post-processing                            | *Important* |
 |  `md-prepare`               | Generate input file for SolDMTP/MD calculations             | Useful    |
 |                             | **Preparing FRG Files**                                     |           |
-|  `make-frg`                 | Generates the EFP parameters for BSM solvent molecule       | *Important* |
+|  `efp-frg`                  | Generates the EFP parameters for BSM solvent molecule       | *Important* |
 |  `solefp-frg`               | Generates the SolEFP parameters for BSM solute molecule     | *Important* |
 |  `der-dma`                  | Prepare the SolEFP parameters relating to DMTP              |           | 
 |  `der-dpol`                 | Prepare the SolEFP parameters relating to polarizabilities  |           |
