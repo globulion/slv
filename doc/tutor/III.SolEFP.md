@@ -278,7 +278,7 @@ and
 [GAMESS template](https://github.com/globulion/slv/tree/master/dat/gamess.templ).
 > Note that in the GAMESS input template the basis set name is `slvbas` instead
 > of the conventional GAMESS basis set nomenclature. 
-> Refer [here](https://github.com/globulion/slv/tree/master/doc/tutor/II.SolEDS.md) 
+> Refer [here](#generation-of-efp-file.) 
 > for mode details on this.
 
 > Note also, that Solvshift creates the separate Gaussian input files for second derivatives
