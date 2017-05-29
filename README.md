@@ -34,7 +34,7 @@ In particular, Solvshift implements:
 | SolMMM      | Multipole expansion        | Good only for molecular properties | HF, MP2, CC, DFT | Single molecule  | Electrostatic solvatochromic properties (e.g. Stark tuning rates) | 
 | Continuum   | Onsager model              | Very poor             | HF, MP2, CC, DFT | Isotropic bulk systems        | Learning, rough trends with increasing polarity of a solvent |
 
-The [tutorial](https://github.com/globulion/slv/blob/master/doc/tutor/USAGE.md "Title") is under preparation.
+The [tutorial](https://github.com/globulion/slv/blob/master/doc/tutor/README.md "Title") is under preparation.
 Refer to the [installation](https://github.com/globulion/slv/blob/master/doc/INSTALL.md "Title") routines
 for guide on dependencies, building and installing Solvshift.
 
@@ -61,4 +61,4 @@ References
 
 [9] [M. Maj, C. Ahn, B. Błasiak, K. Kwak, H. Han and M. Cho, *J. Phys. Chem. B* **2016** 120, 10167-10180](http://pubs.acs.org/doi/abs/10.1021/acs.jpcb.6b04319)
 
-[10] [B. Błasiak, C. H. Londergan, L. J. Webb and M. Cho, *Acc. Chem. Res* **2017** 50, 968-976](http://pubs.acs.org/doi/abs/10.1021/acs.accounts.7b00002)
+[10] [B. Błasiak, C. H. Londergan, L. J. Webb and M. Cho, *Acc. Chem. Res.* **2017** 50, 968-976](http://pubs.acs.org/doi/abs/10.1021/acs.accounts.7b00002)
