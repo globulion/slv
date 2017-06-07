@@ -1,7 +1,7 @@
 Solvshift - Solvatochromic Shift Quantum Chemistry Program
 ==========================================================
 
-Bartosz Błasiak, 2012-2016 - under constant development.
+Bartosz Błasiak, 2012-present: under constant development.
 
 Description
 -----------
