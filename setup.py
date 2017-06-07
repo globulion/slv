@@ -61,7 +61,7 @@ tc_files.append( ('solvshift-dat/dat/md'       , [ 'dat/gmx.tc', ] ) )
 ### install
 
 setup(name='SOLVSHIFT',
-      version='1.0.1',
+      version='1.0.2',
       description='Solvatochromic shifts from coarse-grained SolEFP theory',
       author='Bartosz Błasiak',
       author_email='blasiak.bartosz@gmail.com',
