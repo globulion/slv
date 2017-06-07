@@ -207,15 +207,19 @@ Notes about keywords:
   It is because I have implemented Cartesian basis sets in Solvshift and the Gaussian log file needs to be compatible with this.
 * Keyword `nosymm` needs to be added all the time as well. This is because otherwise the turn of basis orbitals will be different
   between Gaussian and Solvshift routines and FCHK files will be parsed incorrectly!
-* Gaussian log file format in one place had changed over time. When I wrote part of Solvshift responsible for reading g09 logs 
-  I used old version of Gaussian09. Later they changed one part in log file and since then you need to manually modify 
-  it (otherwise Solvshift will not be able to read file with anharmonic analysis and will prompt error message). 
-  The change one needs to do is to find the line containing `Z-matrix`, cut the whole line and paste it one line above. 
-  The correct final form should be
-  ```
-  Symbolic Z-matrix:
-  Charge =  0 Multiplicity = 1
-  ```
+
+> Gaussian log file format in one place had changed over time. When I wrote part of Solvshift responsible 
+> for reading g09 logs 
+> I used old version of Gaussian09. Later they changed one part in log file and since then you need to manually modify 
+> it (otherwise Solvshift will not be able to read file with anharmonic analysis and will prompt error message). 
+> The change one needs to do is to find the line containing `Z-matrix`, cut the whole line and paste it one line above. 
+> The correct final form should be
+```
+Symbolic Z-matrix:
+Charge =  0 Multiplicity = 1
+```
+> *This is however no longer necessary **starting from 1.0.4-alpha** version of LibBBG.* Thus, if you use this 
+> (or newer version of LibBBG) you do not need to pay attention to this any more.
 
 Now we are ready to generate all the necessary input files for finite field differentiations.
 These are FCHK as well as EFP files.
