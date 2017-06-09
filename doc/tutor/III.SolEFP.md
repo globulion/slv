@@ -184,8 +184,6 @@ In order to complete FRG file generation for solute one has to perform first two
 In energy optimization, `VeryTight` option is a must. Also, remember to use `nosymm` and `6D` all the time!
 The exemplary input for the anharmonic analysis job for nitrile stretch mode of MeSCN is shown below:
 ```
-%chk=mescn.chk
-
 #P RHF/6-311++G** 6D Freq(HPModes,Anharmonic,VibRot) IOP(7/33=1) IOP(6/7=3)
 # SCF(xqc,novaracc,conver=11) nosymm
 
@@ -208,6 +206,8 @@ Notes about keywords:
 * Keyword `nosymm` needs to be added all the time as well. This is because otherwise the turn of basis orbitals will be different
   between Gaussian and Solvshift routines and FCHK files will be parsed incorrectly!
 
+##### Note: For LibBBB versions older than 1.0.4-beta
+
 > Gaussian log file format in one place had changed over time. When I wrote part of Solvshift responsible 
 > for reading g09 logs 
 > I used old version of Gaussian09. Later they changed one part in log file and since then you need to manually modify 
@@ -218,7 +218,7 @@ Notes about keywords:
 Symbolic Z-matrix:
 Charge =  0 Multiplicity = 1
 ```
-> *This is however no longer necessary **starting from 1.0.4-alpha** version of LibBBG.* Thus, if you use this 
+> *This is however no longer necessary **starting from 1.0.4-beta** version of LibBBG.* Thus, if you use this 
 > (or newer version of LibBBG) you do not need to pay attention to this any more.
 
 Now we are ready to generate all the necessary input files for finite field differentiations.
@@ -298,6 +298,21 @@ slv_solefp-frg -i mescn-anh.log -s 0.006 -S 15.0 -m 4 -x mescn.xyz
 After completing all the tasks copy the Gaussian output files and EFP files 
 (Gaussian with extension `.log` and GAMESS ending with `.efp`) 
 to the directories of their parent input (`.inp`) files, including the `sder` directory.
+
+##### Note: For IR probes with rare isotopes
+
+> In case your IR probe contains isotopes, such as deuterium or carbon-13, they should be specified
+> in Gaussian input file by using `A(iso=n)` syntax where `A` is atomic symbol and `n` is atomic mass. 
+> For example, `H(iso=2)` or `C(iso=13)` should be used (note that in Gaussian isotopes can be defined
+> by other way, however, they are not supported in Solvshift). 
+> Solvshift will read these symbols and process them during preparing input files. However,
+> for the time being, it does not distinguish between Gaussian and GAMESS input way of defining
+> atoms. This results in `A(iso=n)` format appearing in GAMESS input files, which will produce
+> syntax error when executing GAMESS. To fix it, one can use one of replacement tools, for example,
+```bash
+perl -pi -e 's/H\(iso=2\)/H/g' gms_*.inp
+```
+> Executing the above command, all entries with `H(iso=2)` will be replaced with `H`.
 
 #### Computation of SolEFP FRG file.
 
