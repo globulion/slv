@@ -206,7 +206,7 @@ Notes about keywords:
 * Keyword `nosymm` needs to be added all the time as well. This is because otherwise the turn of basis orbitals will be different
   between Gaussian and Solvshift routines and FCHK files will be parsed incorrectly!
 
-##### Note: For LibBBB versions older than 1.0.4-beta
+##### Note: For LibBBBG versions older than 1.0.4-beta
 
 > Gaussian log file format in one place had changed over time. When I wrote part of Solvshift responsible 
 > for reading g09 logs 
@@ -284,7 +284,7 @@ and
 > of the conventional GAMESS basis set nomenclature. 
 > Refer [here](#generation-of-efp-file) 
 > for mode details on this.
-
+> 
 > Note also, that Solvshift creates the separate Gaussian input files for second derivatives
 > with respect to the mode of interest (in this case CN stretch) in a separate directory
 > `sder/%step_sder`. These additional five input files are only Gaussian tasks.
@@ -312,7 +312,24 @@ to the directories of their parent input (`.inp`) files, including the `sder` di
 ```bash
 perl -pi -e 's/H\(iso=2\)/H/g' gms_*.inp
 ```
-> Executing the above command, all entries with `H(iso=2)` will be replaced with `H`.
+> Executing the above command makes all entries with `H(iso=2)` replaced with `H` in all the GAMESS input files.
+
+##### Important: Change the second derivative data in slv.step file
+
+It is the last step of creating the inputs before calculating the SolEFP parameters.
+Remember to manually change the directory of second derivatives, as well as
+the step of differentiation in the `slv.step` file (located in the base directory, i.e., 
+where all the `gms_*` and `g09*` input files are stored).
+
+For example, when during calculations the `-S 15.0` option was used,
+the `slv.step` file needs to have the following two lines:
+
+```
+SECOND DERIVATIVE WORKING DIRECTORY: ./sder/15.0/
+SECOND DERIVATIVE DIFFERENIATION STEP (DIMENSIONLESS): 15.000
+```
+
+Not revising these two lines will result in errors during computations of the SolEFP parameters.
 
 #### Computation of SolEFP FRG file.
 
@@ -341,12 +358,13 @@ once again which would take quite long time.
 
 The command line for our MeSCN example is
 ```
-slv_solefp-frg -c mescn-freq.log -s 0.006 -S 15.0 -m 4 -f g09_mescn_A000_D00_.fchk -d g09_mescn_A000_D00_.camm -e gms_mescn_A000_D00_.efp -o mescn.frg 
+slv_solefp-frg -c mescn-freq.log -s 0.006 -S 15.0 -m 4 -f g09_mescn_A000_D00_.fchk -d g09_mescn_A000_D00_.camm -e gms_mescn_A000_D00_.efp -o mescn.frg > solefp.log &
 ```
 This step first computes the SolEFP parameters for Coulomb interactions, then calculates parameters
 for exchange-repulsion, and at the end parameters for induction and dispersion. It also computes
-the cubic anharmonic constants and constructs the final `mescn.frg` file. All these calculations
-might take up some time (up to one hour if CAMM's are to be computed and a few minutes otherwise).
+the cubic anharmonic constants and constructs the final `mescn.frg` file whereas the data from calculations
+of the parameters are stored in the `solefp.log` output file. All these calculations
+might take up some time (up to half an hour if CAMM's are to be computed and a few minutes otherwise).
 This file can be already used in the SolEFP calculations!
 
 
