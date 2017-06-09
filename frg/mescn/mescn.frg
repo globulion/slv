@@ -25,7 +25,7 @@
 !     Notes:
 !     ------
 !
-!        * DMTP type: CAMM-4 (UA is on methyl group carbon atom)
+!        * DMTP type: CAMM-7 (all-atoms)
 !        * DPOL type: GMS DPOL-19
 !        * LMO  type: Pipek-Mezey (19 vectors)
 !        * Fderiv:    0.015 Angs step
@@ -33,6 +33,7 @@
 !
 !                                        11 Sep 2014
 !                              Modified: 23 May 2015
+!                              Modified:  9 Jun 2017
 !
  [ molecule ]                            
    name       = Methyl Thiocyanate
