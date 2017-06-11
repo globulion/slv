@@ -97,7 +97,8 @@ class Frag(object, libbbg.units.UNITS):
      o meoac            Methyl acetate                  YES    YES    NO       C=O stretch                       
      o nma              N-Methyl Acetamide              YES    YES    NO       amide I mode                      
      o nma-d7           NMA-D7                          YES    YES    NO       amide I' mode (all H deuterated)
-     o mescn            Methyl Thiocyanide              YES    YES    NO       C=N stretch
+     o mescn            Methyl Thiocyanate              YES    YES    NO       C=N stretch
+     o me-s-13-15n      Methyl Thiocyanate              YES    YES    NO       13C=15N (nitrile)
      o mecn             Methyl Nitrile                  YES    YES    NO       C=N stretch
      o et2coo           Diethyl Carbonate               YES    YES    NO       C=O stretch
      o imidazole        Imidazole                       YES    NO     NO
@@ -284,7 +285,8 @@ class Frag(object, libbbg.units.UNITS):
               'ccl4'   ,'benzene','dmf'     ,'thf'      ,'cyclohexane'        ,
               'etoh'   ,'mesh'   ,'menh2'   ,'phenol'   ,'cho-ch-nh2-ch3'     , 
               'dms'    ,'imidazole'         ,'mecooh'   ,'me-s-co-ch-ch2'     ,
-              'cl-'    ,'imidazolium+'      ,'me-s-cho' ,'phenolate-'         ,] 
+              'cl-'    ,'imidazolium+'      ,'me-s-cho' ,'phenolate-'         ,
+              'me-s-13c-15n'     ,] 
                
     def __init__(self, file=None):
         self.__file = file

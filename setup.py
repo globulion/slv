@@ -34,7 +34,7 @@ molecules = ['water'            , 'water2'           , 'dmso'                , '
              'thf'              , 'dmf'              , 'cyclohexane'         , 'benzene'   ,     'mesh'         ,
              'menh2'            , 'phenol'           , 'cho-ch-nh2-ch3'      , 'dms'       ,     'imidazole'    ,
              'me-s-cho'         , 'me-s-co-ch-ch2'   , 'mecooh'              , 'phenolate-',     'imidazolium+' , 
-             'cl-'              ,                                                                                ] 
+             'cl-'              , 'me-s-13c-15n'     ,                                                           ] 
 
 numerical = { 'mescn': ('num_0.006', 'num_0.025') , 
               'nma'  : ('num_0.006',            ) , }
@@ -61,7 +61,7 @@ tc_files.append( ('solvshift-dat/dat/md'       , [ 'dat/gmx.tc', ] ) )
 ### install
 
 setup(name='SOLVSHIFT',
-      version='1.0.2',
+      version='1.0.2-alpha',
       description='Solvatochromic shifts from coarse-grained SolEFP theory',
       author='Bartosz Błasiak',
       author_email='blasiak.bartosz@gmail.com',
