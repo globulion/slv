@@ -25,7 +25,7 @@ where X=5,9"""
                  camm=False,pol=False,eds=False,efp=False,
                  solefp=False,nae=0,basis='6-311++G**',
                  dpol=False,lprint=True,sims=None,method='SCF',
-                 eds_method='HF'):
+                 eds_method='HF',cvgloc=1e-14,maxloc=1e5):
 
         self.camm = camm
         # number of normal modes
@@ -99,10 +99,10 @@ where X=5,9"""
            self.__sim_gms = list()
            fdir = solefp
            print " PIPEK-MEZEY LOCALIZATION AND LMTP EVALUATION..."
-           self.tran_set_1, self.lmoc_set_1, self.vecl_set_1 = self.Parse_tran(dir+fdir,nae,basis,method)
+           self.tran_set_1, self.lmoc_set_1, self.vecl_set_1 = self.Parse_tran(dir+fdir,nae,basis,method,cvgloc,maxloc)
            self.U = self.vecl_set_1[0]
            self.rLMO = self.lmoc_set_1[0]
-           print " PARSING FOCK MATRICES..."
+           print " COMPUTING FOCK MATRICES..."
            self.fock_set_1 = self.Parse_fock(dir+fdir,self.vecl_set_1)
            #### reorder Fock matrices!
            #for i in range(len(self.fock_set_1)):
@@ -244,7 +244,7 @@ where X=5,9"""
 
         return first_der_dpoli_mode.reshape(self.nAtoms*3-6,N,12,3,3)
     
-    def Parse_tran(self,dir,nae,basis,method):
+    def Parse_tran(self,dir,nae,basis,method,cvgloc=1e-14,maxloc=100000):
         """parses CMO transformation matrices from fchk files and transforms
 them to LMO space"""
         files_fchk = glob.glob('%s/*_.fchk' % dir)
@@ -266,6 +266,7 @@ them to LMO space"""
         debug_efp = open('debug_efp','w')
         debug_wfn = open('debug_wfn','w')
         # evaluate transformation matrices and LMO centroids
+        print " LMO LOCALIZATION CONVERGENCE: %8.3E" % cvgloc
         for I,fchk in enumerate(files_fchk):
             mol  = libbbg.utilities.Read_xyz_file(fchk,mol=True,
                                            mult=1,charge=0,
@@ -278,7 +279,7 @@ them to LMO space"""
             veccmo= libbbg.utilities.ParseVecFromFchk(fchk)[:nae,:]
             tran, veclmo = libbbg.utilities.get_pmloca(natoms,mapi=bfs.LIST1,sao=SAO,
                                                 vecin=veccmo,nae=nae,
-                                                maxit=100000,conv=1.0E-6,
+                                                maxit=maxloc,conv=cvgloc,
                                                 lprint=True,
                                                 freeze=None)
             if vec_ref is None: vec_ref = veclmo.copy()
@@ -1179,7 +1180,7 @@ using COULOMB.py routines"""
           print " - Pipek-Mezey localization of %i orbitals..." %nae
           tran, vec = libbbg.utilities.get_pmloca(natoms,mapi=bfs.LIST1,sao=SAO,
                                            vecin=vec,nae=nae,
-                                           maxit=100000,conv=1.0E-10,
+                                           maxit=100000,conv=1.0E-14,
                                            lprint=False,
                                            freeze=None)
           vec, sim = libbbg.utilities.order(vec_ref,vec,start=0)
