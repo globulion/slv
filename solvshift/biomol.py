@@ -85,7 +85,8 @@ class BiomoleculeFragmentation(object):
                                    elect=True, polar=True, repul=True, disp=True, correc=True,
                                    ccut=20.0, pcut=13.0, ecut=11.0,
                                    solcamm=None, lprint=False, is_probe_terminal=False,
-                                   report='report.dat', write_solefp_input=False)
+                                   report='report.dat', write_solefp_input=False,
+                                   include_ions=True, include_polar=True)
 
  method.run(top, traj, nframes=10)
 
@@ -107,13 +108,18 @@ class BiomoleculeFragmentation(object):
                        elect=True, polar=True, repul=True, disp=True, correc=True,
                        ccut=20.0, pcut=13.0, ecut=11.0,
                        solcamm=None, lprint=False, is_probe_terminal=False,
-                       report='report.dat', write_solefp_input=False,write_debug_file=False):
+                       report='report.dat', write_solefp_input=False,write_debug_file=False,
+                       rcl_algorithm='remove_by_name', include_ions=True, include_polar=True):
         # printout options
         self.report            = report
         self.lprint            = lprint
         self.write_solefp_input= write_solefp_input
         self.write_debug_file  = write_debug_file
         self.ccut = ccut; self.pcut = pcut; self.ecut = ecut
+        # clash removal options
+        self.rcl_algorithm= rcl_algorithm
+        self.include_ions = include_ions
+        self.include_polar= include_polar
         # MD topology - EFP fragmentation relationship
         self.__res_biomolecule = self._parse_res(res)
         self.__res_probe       = self._parse_res(probe)
@@ -198,7 +204,9 @@ class BiomoleculeFragmentation(object):
         # 
         self.__SolEFP_Calculator.set(xyz[self.__idx], *self.__args)
         self.__SolEFP_Calculator.eval_dma(self.__conhs_dma, lwrite=self.lprint)
-        self.__SolEFP_Calculator.eval(self.lprint+self.write_debug_file, remove_clashes=True)
+        self.__SolEFP_Calculator.eval(self.lprint+self.write_debug_file, remove_clashes=True,
+                                      rcl_algorithm=self.rcl_algorithm, 
+                                      include_ions=self.include_ions, include_polar=self.include_polar)
         rms_c = self.__SolEFP_Calculator.get_rms()
         rms_s = self.__SolEFP_Calculator.get_rms_sol()
         rms_a = self.__SolEFP_Calculator.get_rms_ave()

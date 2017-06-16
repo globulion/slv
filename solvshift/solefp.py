@@ -90,7 +90,8 @@ class EFP(object, libbbg.units.UNITS):
     # P U B L I C
     # OPERATIONAL METHODS
 
-    def eval(self, lwrite=False, num=False, step=0.006, theory=0, remove_clashes=False, rcl_algorithm='remove_by_name'):
+    def eval(self, lwrite=False, num=False, step=0.006, theory=0, remove_clashes=False, rcl_algorithm='remove_by_name',
+                                                                  include_ions=True, include_polar=True):
         """
  ----------------------------------------------------------------------------------------------------------------------
  Evaluate the properties. Currently available ways of usage:
@@ -110,7 +111,8 @@ class EFP(object, libbbg.units.UNITS):
  ----------------------------------------------------------------------------------------------------------------------
  Usage:
 
- efp.eval(lwrite=False, num=False, step=0.006, theory=0, remove_clashes=False, rcl_algorithm='remove_by_name')
+ efp.eval(lwrite=False, num=False, step=0.006, theory=0, remove_clashes=False, rcl_algorithm='remove_by_name',
+                                                         include_ions=True, include_polar=True)
  
  Options:
  lwrite                           Print additional information (superimposition data, molecules in each layer)
@@ -119,10 +121,12 @@ class EFP(object, libbbg.units.UNITS):
  theory                           The level of SolX theory (0 or 2). Relevant if num=True
  remove_clashes                   Remove clashes between EFP residues (only affects polarization frequency shifts!)
  rcl_algorithm                    Algorithm for removing EFP residues when remove_clashes=True
+ include_ions                     Whether include ionic BSM's (relevant for rcl_algorithm='remove_by_name')
+ include_polar                    Whether include polar neutral BSM's (relevant for rcl_algorithm='remove_by_name')
  ----------------------------------------------------------------------------------------------------------------------
-                                                                                            Last Revision: 13 Aug 2015
+                                                                                            Last Revision: 16 June 2017
  """
-        self._eval(lwrite, num, step, theory, remove_clashes, rcl_algorithm)
+        self._eval(lwrite, num, step, theory, remove_clashes, rcl_algorithm, include_ions, include_polar)
         return
 
     def eval_dma(self, dma, lwrite=False):
@@ -745,10 +749,11 @@ Now, only for exchange-repulsion layer"""
 
     # PROPERTY EVALUATORS
 
-    def _eval(self, lwrite, num, step, theory, remove_clashes, rcl_algorithm):
+    def _eval(self, lwrite, num, step, theory, remove_clashes, rcl_algorithm, include_ions, include_polar):
         if lwrite>1: self.__debug = open('__debug_file__','w')
         if self.__pairwise_all:  self._eval_mode_global (lwrite, num, step, theory)
-        else:                    self._eval_mode_central(lwrite, num, step, theory, remove_clashes, rcl_algorithm) 
+        else:                    self._eval_mode_central(lwrite, num, step, theory, remove_clashes, rcl_algorithm, 
+                                                                                    include_ions, include_polar) 
         return
 
     def _eval_dma(self, dma, lwrite):
@@ -873,7 +878,7 @@ Now, only for exchange-repulsion layer"""
         self.__energy_exrep = e_exrep
         return
    
-    def _eval_mode_central(self, lwrite, num, step, theory, remove_clashes, rcl_algorithm, dxyz=None):
+    def _eval_mode_central(self, lwrite, num, step, theory, remove_clashes, rcl_algorithm, include_ions, include_polar, dxyz=None):
         """Includes only EFP layers (DMA environment is not accounted for!)"""
         assert step==0.006, ' Step %10.5f Angstrom is not supported yet!' % step
     
@@ -1087,7 +1092,7 @@ Now, only for exchange-repulsion layer"""
 
               # eliminate clashing molecules
               if remove_clashes:
-                 PAR, QO, PAR_ADD, QO_ADD = self._remove_clashes(PAR, QO, lwrite, rcl_algorithm)
+                 PAR, QO, PAR_ADD, QO_ADD = self._remove_clashes(PAR, QO, lwrite, rcl_algorithm, include_ions, include_polar)
                  N_ADD = len(PAR_ADD) - 1   # these count only solvents (minus solute)
                  N     = len(PAR)     - 1
                  if lwrite: 
@@ -1584,7 +1589,7 @@ The convention is to place -1 in the reord_list for atoms that have to be remove
         freq, redmss, U = vib.get()
         return hess, freq, redmss, U
 
-    def _remove_clashes(self, PAR, QO, lwrite, rcl_algorithm='remove_by_name', include_ions=False, include_polar=False):
+    def _remove_clashes(self, PAR, QO, lwrite, rcl_algorithm='remove_by_name', include_ions=True, include_polar=True):
         """
  Eliminate clashes by some algorithm. Default is by removing residues from the list PAR and QO.
  see .eval method for polarization frequency shifts.
