@@ -196,7 +196,7 @@ where X=5,9"""
             r,a = libbbg.utilities.ParseDistributedPolarizabilitiesWrtImFreqFromGamessEfpFile(file)
             r = r.transpose((1,0,2))                        # transpose to NMOS x 12 x 3
             a = a.transpose((1,0,2,3))                      # transpose to NMOS x 12 x 3 x 3
-            r = libbbg.utilities.reorder(a,sims[i])
+            r = libbbg.utilities.reorder(r,sims[i])# LMOS from GAMESS are not taken; these are the same as computed by SLV
             a = libbbg.utilities.reorder(a,sims[i])
             dPoli.append(a)
         dPoli = numpy.array(dPoli,numpy.float64)
