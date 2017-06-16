@@ -220,8 +220,10 @@ class SLV_Calculator(Fonts,UNITS):
         
         supl = list(); reord = list()
         s_1 = self.supl_1.getvalue(); s_2 = self.supl_2.getvalue()
-        if s_1.lower() == 'none': s_1 = None
-        if s_2.lower() == 'none': s_2 = None
+        if s_1.lower() == 'none':   s_1 = None
+        else:                       s_1 = text_to_list(s_1) - 1
+        if s_2.lower() == 'none':   s_2 = None
+        else:                       s_2 = text_to_list(s_2) - 1
         supl.append(s_1)  # solute
         supl.append(s_2)  # solvent
         reord = [arange(n_solute_atoms), arange(n_solvent_atoms)]
