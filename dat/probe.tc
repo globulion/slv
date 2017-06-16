@@ -1,0 +1,7 @@
+# SOLVATOCHROMIC SolEFP TOPOLOGY FILE FOR MeSCN IR PROBE
+# FORCE FIELD: gmx
+[ SCN ]
+@mescn
+reorder       9 10  8  5  6  7  0
+supl          1  2  3  4
+#
