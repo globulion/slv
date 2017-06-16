@@ -35,6 +35,19 @@
 !                                        16 Jun 2017
 !                              Modified: 
 !
+ [ molecule ]                            
+   name       = Methyl Thiocyanate (Nitrile: 13C-15N)
+   shortname  = MeS13C15N
+   basis      = RHF/6-311++G**
+   natoms     = 7
+   nbasis     = 121
+   nmodes     = 15
+   ndma       = 7
+   npol       = 19
+   nmos       = 19
+   ncmos      = 121
+   mode       = 4
+
  [ Atomic coordinates ]                            N= 21
    -1.7558201000E-01    1.4582619700E+00    2.9858000000E-04   -1.9407676000E-01    3.5966817300E+00
    -6.4250000000E-05   -2.1814243000E-01   -1.7632902300E+00    8.6738000000E-04    3.1696848900E+00
