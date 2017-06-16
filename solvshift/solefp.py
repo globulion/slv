@@ -1584,7 +1584,7 @@ The convention is to place -1 in the reord_list for atoms that have to be remove
         freq, redmss, U = vib.get()
         return hess, freq, redmss, U
 
-    def _remove_clashes(self, PAR, QO, lwrite, rcl_algorithm='remove_by_name'):
+    def _remove_clashes(self, PAR, QO, lwrite, rcl_algorithm='remove_by_name', include_ions=False, include_polar=False):
         """
  Eliminate clashes by some algorithm. Default is by removing residues from the list PAR and QO.
  see .eval method for polarization frequency shifts.
@@ -1595,8 +1595,19 @@ The convention is to place -1 in the reord_list for atoms that have to be remove
         if lwrite: print " CLASH REMOVAL PROCEDURE\n Algorithm: %s\n" % rcl_algorithm
         i = 1
         if rcl_algorithm == 'remove_by_name':
-           removable_pars = ['Methane', 'Ethane', 'N-Propane', 'N-methylacethamide', 'N-methylacethamide D7'] 
-           removable_pars+= ['Benzene', 'Phenol', 'Formamide', 'Methane', 'Methyl amonium cation (+1)', 'Acetate anion (-1)', 'Methyl Guanidinium Cation (+1)', 'Dimethyl Sulfide'  ]
+           # problemmatic BSM's which almost always produce clashes
+           removable_pars = ['Methane', 'Ethane', 'N-Propane', 'N-methylacethamide', 'N-methylacethamide D7']
+           removable_pars+= ['Formamide', 'Dimethyl Sulfide', 'S-Methyl-2-Propenethioate', 'N-Methyl Formamide']
+           removable_pars+= ['4-Methyl Phenol', '4-Methyl Imidazole']
+           # other BSM's that could be excluded
+           removable_pars+= ['Benzene','Dimethyloformamide','Thiomethylaldehyde']
+           # include polar neutral BSM's
+           if not include_polar:
+              removable_pars+= ['Methanol', 'Phenol', 'Acetic acid', 'Imidazole', 'Methyl thiol']
+           # include ionic BSM's
+           if not include_ions:
+              removable_pars+= ['Acetate anion (-1)', 'Methyl Guanidinium Cation (+1)', 'Methyl amonium cation (+1)',
+                                'Imidazolium cation (+1)', 'Phenolate anion (-1)']
            for par in PAR[1:]:
                if lwrite: print "%30s" % par['name'], 
                if par['name'] not in removable_pars: 
