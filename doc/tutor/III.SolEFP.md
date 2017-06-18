@@ -358,7 +358,7 @@ once again which would take quite long time.
 
 The command line for our MeSCN example is
 ```
-slv_solefp-frg -c mescn-freq.log -s 0.006 -S 15.0 -m 4 -f g09_mescn_A000_D00_.fchk -d g09_mescn_A000_D00_.camm -e gms_mescn_A000_D00_.efp -o mescn.frg > solefp.log &
+slv_solefp-frg -c mescn-anh.log -s 0.006 -S 15.0 -m 4 -f g09_mescn_A000_D00_.fchk -d g09_mescn_A000_D00_.camm -e gms_mescn_A000_D00_.efp -o mescn.frg > solefp.log &
 ```
 This step first computes the SolEFP parameters for Coulomb interactions, then calculates parameters
 for exchange-repulsion, and at the end parameters for induction and dispersion. It also computes
