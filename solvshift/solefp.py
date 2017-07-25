@@ -91,7 +91,7 @@ class EFP(object, libbbg.units.UNITS):
     # OPERATIONAL METHODS
 
     def eval(self, lwrite=False, num=False, step=0.006, theory=0, remove_clashes=False, rcl_algorithm='remove_by_name',
-                                                                  include_ions=True, include_polar=True):
+                                                                  include_ions=False, include_polar=False):
         """
  ----------------------------------------------------------------------------------------------------------------------
  Evaluate the properties. Currently available ways of usage:
@@ -123,6 +123,25 @@ class EFP(object, libbbg.units.UNITS):
  rcl_algorithm                    Algorithm for removing EFP residues when remove_clashes=True
  include_ions                     Whether include ionic BSM's (relevant for rcl_algorithm='remove_by_name')
  include_polar                    Whether include polar neutral BSM's (relevant for rcl_algorithm='remove_by_name')
+
+ ----------------------------------------------------------------------------------------------------------------------
+ Remove clashes algorithms:
+  o remove_by_name   (default)    Remove the EFP fragment from the non-additive calculation of induction frequency shift
+                                  based on the name of the fragment. By default, always water and one-atomic ions
+                                  are included and the rest is rejected. Relevant options:
+
+                                    o include_ions  (default: False)
+                                          = True      : include ions other than Na+, Cl-, Li+.
+                                          = False     : do not include ions other than Na+, Cl-, Li+.
+                                                        Na+, Cl-, Li+ are still included.
+
+                                    o include_polar (default: False)   
+                                          = True      : include the following residues:
+                                                        'Methanol', 'Phenol', 'Acetic acid', 'Imidazole', 'Methyl thiol' 
+                                          = False     : do not include the above residues.
+
+  o additive                      Fully additive model of induction. No many-body effects are accounted for.
+ 
  ----------------------------------------------------------------------------------------------------------------------
                                                                                             Last Revision: 16 June 2017
  """
@@ -1589,7 +1608,7 @@ The convention is to place -1 in the reord_list for atoms that have to be remove
         freq, redmss, U = vib.get()
         return hess, freq, redmss, U
 
-    def _remove_clashes(self, PAR, QO, lwrite, rcl_algorithm='remove_by_name', include_ions=True, include_polar=True):
+    def _remove_clashes(self, PAR, QO, lwrite, rcl_algorithm='remove_by_name', include_ions=False, include_polar=False):
         """
  Eliminate clashes by some algorithm. Default is by removing residues from the list PAR and QO.
  see .eval method for polarization frequency shifts.
@@ -1601,7 +1620,7 @@ The convention is to place -1 in the reord_list for atoms that have to be remove
         i = 1
         if rcl_algorithm == 'remove_by_name':
            # problemmatic BSM's which almost always produce clashes
-           removable_pars = ['Methane', 'Ethane', 'N-Propane', 'N-methylacethamide', 'N-methylacethamide D7']
+           removable_pars = ['Methane', 'Ethane', 'N-Propane', 'N-methylacethamide', 'N-methylacethamide-D7']
            removable_pars+= ['Formamide', 'Dimethyl Sulfide', 'S-Methyl-2-Propenethioate', 'N-Methyl Formamide']
            removable_pars+= ['4-Methyl Phenol', '4-Methyl Imidazole']
            # other BSM's that could be excluded
@@ -1612,18 +1631,34 @@ The convention is to place -1 in the reord_list for atoms that have to be remove
            # include ionic BSM's
            if not include_ions:
               removable_pars+= ['Acetate anion (-1)', 'Methyl Guanidinium Cation (+1)', 'Methyl amonium cation (+1)',
-                                'Imidazolium cation (+1)', 'Phenolate anion (-1)']
-           for par in PAR[1:]:
-               if lwrite: print "%30s" % par['name'], 
-               if par['name'] not in removable_pars: 
-                  if lwrite: print " - Included"
-                  PAR_NEW.append(PAR[i])
-                  QO_NEW.append(QO[i])
-               else: 
-                  if lwrite: print " - Rejected"
-                  PAR_ADD.append(PAR[i])
-                  QO_ADD.append(QO[i])
-               i+=1
+                                'Imidazolium cation (+1)', 'Phenolate anion (-1)', 'Methyl Sulphate (VI) -1 anion',]
+
+        elif rcl_algorithm == 'additive':
+           # remove all residues from many-body zone and treat them in a pair-wise manner
+           removable_pars = ['Methane', 'Ethane', 'N-Propane', 'N-methylacethamide', 'N-methylacethamide-D7']
+           removable_pars+= ['Formamide', 'Dimethyl Sulfide', 'S-Methyl-2-Propenethioate', 'N-Methyl Formamide']
+           removable_pars+= ['4-Methyl Phenol', '4-Methyl Imidazole']
+           removable_pars+= ['Benzene','Dimethyloformamide','Thiomethylaldehyde', 'Tetrahydrofurane']
+           removable_pars+= ['Methanol', 'Phenol', 'Acetic acid', 'Imidazole', 'Methyl thiol']
+           removable_pars+= ['Acetate anion (-1)', 'Methyl Guanidinium Cation (+1)', 'Methyl amonium cation (+1)',
+                                'Imidazolium cation (+1)', 'Phenolate anion (-1)', 'Sulphate (VI) -2 anion']
+           removable_pars+= ['Chloride anion (-1)', 'Sodium cation (+1)', 'Lithium cation (+1)']
+           removable_pars+= ['WATER MOLECULE', 'Dichloromethane', 'N-methylacethamide', 'Dimethyl Sulphoxide', 'Acetamide' ]
+           removable_pars+= ['Cyclohexane', 'dummy', 'Methyl Acetate', 'Chloroform', 'Methyl nitrile', 'Diethyl carbonate']
+           removable_pars+= ['Methyl Sulphate (VI) -1 anion']
+
+        for par in PAR[1:]:
+            if lwrite: print "%30s" % par['name'], 
+            if par['name'] not in removable_pars: 
+               if lwrite: print " - Included"
+               PAR_NEW.append(PAR[i])
+               QO_NEW.append(QO[i])
+            else: 
+               if lwrite: print " - Rejected"
+               PAR_ADD.append(PAR[i])
+               QO_ADD.append(QO[i])
+            i+=1
+
         return PAR_NEW, QO_NEW, PAR_ADD, QO_ADD
 
     # PAIR ENERGIES
