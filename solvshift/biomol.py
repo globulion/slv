@@ -40,8 +40,8 @@ class BiomoleculeFragmentation(object):
   2) Far zone - all other protein atoms (side chains and other amide I subunits). 
 
  Aminoacid side chains are modelled by sets of EFP2 fragments. Peptide groups (backbone) are 
- approximated by either N-methylacetamide (NMA) or formamide (FORM) EFP2's except for the nearest 
- peptide subunits which are directly bonded to IR probe residue (near zone amide subunits). 
+ approximated by either N-methylacetamide (NMA), formamide (FORM), CHONHMe or COMeNH2 EFP2's 
+ except for the nearest peptide subunits which are directly bonded to IR probe residue (near zone amide subunits). 
  Frequency shifts due to this near zone are modelled by interaction of SolCAMM with 4-point 
  charge model of CONH groups based on ESP fitting derived from NMA molecule in vacuo. Coulombic, 
  exchange-repulsion and dispersion frequency shifts are computed for all fragments as in 
@@ -88,7 +88,7 @@ class BiomoleculeFragmentation(object):
                                    report='report.dat', write_solefp_input=False,
                                    include_ions=True, include_polar=True)
 
- method.run(top, traj, nframes=10)
+ method.run(top, traj, nframes=10, conh='nma', out_inp='biomolecule.sol')
 
  ---------------------------------------------------------------------------------------------
 
@@ -101,8 +101,14 @@ class BiomoleculeFragmentation(object):
  rep          - evaluate exchange-repulsion
  disp         - evaluate dispersion
 
+ There are four possible models for near-zone CONH's:
+  =nma      uses    @nma     BSM   (C-alpha doubling problem!)
+  =form     uses    @chonh2  BSM   (C-alpha not included!)
+  =chonhme  uses    @chonhme BSM
+  =comenh2  uses    @comenh2 BSM
+
  =============================================================================================
-                                                                 Last Revision: 9 May 2017
+                                                                 Last Revision: 28 July 2017
 """
     def __init__(self, res, probe, mode, 
                        elect=True, polar=True, repul=True, disp=True, correc=True,
@@ -260,8 +266,14 @@ class BiomoleculeFragmentation(object):
             elif conh == 'form':
                res_data = (('chonh2', [1,2,0,3,0,4], [1,2,4,6]),)
                atom_numbers = numpy.arange(residue[0],residue[0]+6)+1
+            elif conh == 'chonhme':
+               res_data = (('chonhme', [1,3,2,0,0,4,0,0,0], [1,2,3,6]),)
+               atom_numbers = numpy.arange(residue[0],residue[0]+9)+1
+            elif conh == 'comenh2':
+               res_data = (('comenh2', [1,2,0,3,0,4,0,0,0], [1,2,4,6]),)
+               atom_numbers = numpy.arange(residue[0],residue[0]+9)+1
             else: 
-               raise NotImplementedError, " Other models of CONH group than NMA are not implemented yet!"
+               raise NotImplementedError, " Other models of CONH group than <%s> are not implemented yet!" % conh
             name = 'CONH'
             res_logs[name+str(residue)] = self._app(res_data, name, atom_numbers)
        
