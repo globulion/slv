@@ -55,6 +55,7 @@ that are stored in `util` directory. Below I list their names and function.
 |                             | **Simulations of Spectra**                                  |           |
 |  `calc-ftir`                | Compute FTIR spectrum                                       | *Important* |
 |  `calc-tcf`                 | Calculate time correlation functions and response functions | *Important* |
+|  `calc-expres`              | Calculate correlation needed for classical averaging method | *Important* |
 |                             | **Other**                                                   |           |
 |  `anal`                     | Calculates averages from SolEFP/MD output                   | Useful    |
 |  `dat`                      | | |
