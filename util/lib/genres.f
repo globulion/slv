@@ -22,6 +22,66 @@ C
       RETURN
       END
 C ------------------------------------------------
+      SUBROUTINE EXPRES(F,STEP,NDEL,RR,RI,NMAX)
+C
+C     Compute exponential correlation function
+C
+C     RES(t) = < exp [ -i \int_t0^t F(t') dt' ] >_t0
+C
+C     F     - array of length N
+C     STEP  - integration step for trapezoidal rule; STEP = ARG(F(1)) - ARG(F(0))
+C     NDEL  - number of delay times (exluding first point)
+C     RR    - real part of correlation function
+C     RI    - imaginary part of correlation function
+C     NMAX  - number of samples
+C
+Cf2py INTENT(OUT) RR, RI
+      INTEGER NMAX, NDEL
+      DOUBLE PRECISION F(NMAX), RR(NDEL+1), RI(NDEL+1)
+      DOUBLE PRECISION STEP
+
+      INTEGER I, J, K, IK
+      DOUBLE PRECISION VH, VJR, VJI, VNJ
+      DOUBLE PRECISION S(NMAX-1)
+      LOGICAL LWRITE
+      VH = STEP/2.0D+00
+      RR(1) = 1.0D+00
+      RI(1) = 0.0D+00
+      LWRITE= .FALSE.
+
+      IF(LWRITE) WRITE(*,*) " COMPUTING PARTIAL SUMS..."
+      DO I = 1, NMAX-1
+         S(I) = (F(I+1) + F(I))*VH
+      ENDDO
+
+      IF(LWRITE) WRITE(*,*) " COMPUTING RESPONSE FUNCTION..."
+      DO J = 1, NDEL
+         VJR = 0.0D+00
+         VJI = 0.0D+00
+         DO I = J, NMAX-1
+            IK  = I - J + 1
+
+            VH = 0.0D+00
+            DO K = IK, I
+               VH = VH + S(IK)
+            ENDDO
+            VJR = VJR + DCOS(VH)
+            VJI = VJI - DSIN(VH)
+         ENDDO
+         VNJ= DFLOAT(NMAX - J)
+         VJR= VJR / VNJ 
+         VJI= VJI / VNJ
+         RR(J+1) = VJR
+         RI(J+1) = VJI
+      ENDDO
+
+      RETURN
+      END
+C ------------------------------------------------
+C
+C  SUBROUTINES BELOW ARE OBSOLETE AND SHOULD NOT BE USED
+C
+C
       SUBROUTINE GENRES(F,N,STEP,RES)
 C
 C     Compute exponential correlation response function

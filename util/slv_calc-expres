@@ -1,0 +1,110 @@
+#!/usr/bin/python
+#*-* coding: utf-8 *-*
+"""
+ ---------------------------------------------------------------------------------------------------------
+                                             SLV-MD-EXP-CORR
+ ---------------------------------------------------------------------------------------------------------
+
+ Compute exponential correlation function spectrum by invoking second-order cumulant expansion of the line shape function.
+
+ Usage: [opts] [data_file]
+
+ Opts: 
+
+   -h                             help
+   -n [int]                       number of delay time points                     Optional. Default: 4000
+   -d [float]                     Time sampling [fs/frame]                        Optional. Default:    1.0
+   -c [int]                       Column of data in frequency shift file          Optional. Default:   14
+   -o [str]                       Output file name                                Optional. Default: expres.dat
+                                                                                                              
+ ---------------------------------------------------------------------------------------------------------
+                                                                               Last Revision:  1 Aug 2017
+"""
+from sys import argv, exit
+from getopt import getopt, GetoptError
+
+# ----------------------------------------------------------------------------------------------------
+__title__           = " SLV-MD-SPECTRUM program" 
+__authors__         = " Bartosz Błasiak (email: blasiak.bartosz@gmai.com)"
+__version__         = " Version: 1.0.1"
+# ----------------------------------------------------------------------------------------------------
+
+def Usage():
+    print __doc__
+    exit()
+
+def Info():
+    print
+    print __title__
+    print __authors__
+    print __version__
+    print " Use -h to see help\n"
+    exit()
+
+def Main(argv):
+    # defaults                                                           Comments:
+    dtau_USER                    = 1.0                                 # n*fs; frequency of sampling
+    NP_USER                      = 4000                                # number of detay time points to consider
+    NCOL_USER                    = 14-1                                # ID (Python convention) of the frequency shift file y-value column
+    out_file                     = 'expres.dat'                        # name of output file
+    #
+    try:
+       opts, args = getopt(argv, "hd:n:c:o:" , ["help", "dtau=", "n-delay=", "ncol=", "out=", ])
+    except GetoptError, error:
+        print "\n Invalid option. Please refer to the usage below:" 
+        Usage()
+    if not opts: Info()
+    if ("-h",'') in opts or ("--help", ''  ) in opts: Usage()
+    for opt, arg in opts:
+        if opt in ("-h", "--help"          ): Usage()
+        if opt in ("-d", "--dtau"          ): dtau_USER                        = float(arg)
+        if opt in ("-n", "--n-delay"       ): NP_USER                          =   int(arg)
+        if opt in ("-c", "--ncol"          ): NCOL_USER                        =   int(arg)-1
+        if opt in ("-o", "--out"           ): out_file                         =       arg    
+
+
+    #
+    data_file = args[0]
+    run(data_file, out_file, dtau_USER, NP_USER, NCOL_USER)
+    return
+
+
+def run(data_file, out_file, dtau_USER, NP_USER, NCOL_USER):
+    """Compute classical exponential correlation function"""
+    # import necessary modules
+    import numpy
+    import libbbg.units
+    import scitools.filetable
+    from lib.genres import expres
+
+    # conversion factors and unit conventions
+    CmRecToHz           = libbbg.units.UNITS.CmRecToHz /1e12 # [rad/ps]
+    JouleToCmRec        = 1.0###5.034117471638147e+22
+    PicosecondToSecond  = 1.0###1e-12
+    
+    print
+    # --------------------------------------------------------------------------------
+    dtau_USER/= 1.0e3  # [ps]
+
+    # read the frequency shift file
+    data = scitools.filetable.read(open(data_file))
+    T    = data[:,0]
+    dw   = data[:,NCOL_USER] * CmRecToHz; dw-= dw.mean()
+    
+    # compute the correlation function
+    rr, ri = expres(dw, dtau_USER, NP_USER)
+    t_max  =(NP_USER+1)*dtau_USER
+    t      = numpy.arange(0.0, t_max, dtau_USER)
+
+    # save in the output file
+    out = open(out_file, 'w')
+    out.write('%13s %17s %17s\n' % ('# Time [ps]'.ljust(13),'Re[Jc(t)]'.ljust(17),'Im[Jc(t)]'.ljust(17)))
+    for i in range(NP_USER+1):
+        out.write('%13.5E %17.6E %17.6E\n' % (t[i], rr[i], ri[i]))
+    out.close()
+    # --------------------------------------------------------------------------------
+    print " EXPRES Done. Saved to %s\n" % out_file
+    return
+
+# RUN
+if __name__=='__main__': Main(argv[1:])
