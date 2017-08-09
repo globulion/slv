@@ -1621,7 +1621,7 @@ The convention is to place -1 in the reord_list for atoms that have to be remove
         if rcl_algorithm == 'remove_by_name':
            # problemmatic BSM's which almost always produce clashes
            removable_pars = ['Methane', 'Ethane', 'N-Propane', 'N-methylacethamide', 'N-methylacethamide-D7']
-           removable_pars+= ['Formamide', 'Dimethyl Sulfide', 'S-Methyl-2-Propenethioate', 'N-Methyl Formamide']
+           removable_pars+= ['Formamide', 'Dimethyl Sulfide', 'S-Methyl-2-Propenethioate', 'N-Methyl Formamide', 'Acetamide']
            removable_pars+= ['4-Methyl Phenol', '4-Methyl Imidazole']
            # other BSM's that could be excluded
            removable_pars+= ['Benzene','Dimethyloformamide','Thiomethylaldehyde']
