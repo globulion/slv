@@ -40,7 +40,7 @@ class BiomoleculeFragmentation(object):
   2) Far zone - all other protein atoms (side chains and other amide I subunits). 
 
  Aminoacid side chains are modelled by sets of EFP2 fragments. Peptide groups (backbone) are 
- approximated by either N-methylacetamide (NMA), formamide (FORM), CHONHMe or COMeNH2 EFP2's 
+ approximated by either N-methylacetamide (NMA), formamide, CHONHMe or COMeNH2 EFP2's 
  except for the nearest peptide subunits which are directly bonded to IR probe residue (near zone amide subunits). 
  Frequency shifts due to this near zone are modelled by interaction of SolCAMM with 4-point 
  charge model of CONH groups based on ESP fitting derived from NMA molecule in vacuo. Coulombic, 
@@ -88,7 +88,7 @@ class BiomoleculeFragmentation(object):
                                    report='report.dat', write_solefp_input=False,
                                    include_ions=True, include_polar=True)
 
- method.run(top, traj, nframes=10, conh='nma', out_inp='biomolecule.sol')
+ method.run(top, traj, nframes=10, conh='nma', include_proline_con=True, out_inp='biomolecule.sol')
 
  ---------------------------------------------------------------------------------------------
 
@@ -102,13 +102,14 @@ class BiomoleculeFragmentation(object):
  disp         - evaluate dispersion
 
  There are four possible models for near-zone CONH's:
-  =nma      uses    @nma     BSM   (C-alpha doubling problem!)
-  =form     uses    @chonh2  BSM   (C-alpha not included!)
-  =chonhme  uses    @chonhme BSM
-  =comenh2  uses    @comenh2 BSM
+   Option      BSM         Comment   
+  =nma         @nma        C-alpha doubling problem for all cases
+  =chonh2      @chonh2     C-alpha not included
+  =chonhme     @chonhme    C-delta doubling problem exists in case of proline
+  =comenh2     @comenh2    C-delta doubling problem avoided in case of proline
 
  =============================================================================================
-                                                                 Last Revision: 28 July 2017
+                                                                 Last Revision: 28 Aug 2017
 """
     def __init__(self, res, probe, mode, 
                        elect=True, polar=True, repul=True, disp=True, correc=True,
@@ -123,9 +124,9 @@ class BiomoleculeFragmentation(object):
         self.write_debug_file  = write_debug_file
         self.ccut = ccut; self.pcut = pcut; self.ecut = ecut
         # clash removal options
-        self.rcl_algorithm= rcl_algorithm
-        self.include_ions = include_ions
-        self.include_polar= include_polar
+        self.rcl_algorithm     = rcl_algorithm
+        self.include_ions      = include_ions
+        self.include_polar     = include_polar
         # MD topology - EFP fragmentation relationship
         self.__res_biomolecule = self._parse_res(res)
         self.__res_probe       = self._parse_res(probe)
@@ -146,7 +147,7 @@ class BiomoleculeFragmentation(object):
         self._rr               = lambda a, b: math.sqrt(sum((a-b)**2))
         pass
 
-    def run(self, top, traj, dframes=1, nframes=10, conh='nma', out_inp='biomolecule.sol'):
+    def run(self, top, traj, dframes=1, nframes=10, conh='nma', include_proline_con=True, out_inp='biomolecule.sol'):
         """Analyse the MD trajectory"""
         # [0] Read the topology and trajectory
         universe = MDAnalysis.Universe(top, traj)
@@ -161,6 +162,7 @@ class BiomoleculeFragmentation(object):
            print "                      Coul   Ind   Disp  ExRep"; c = libbbg.units.UNITS.BohrToAngstrom
            print "       Cutoff [Bohr]  %4.1f  %4.1f  %4.1f  %4.1f" % (self.ccut  , self.pcut  , self.pcut  , self.ecut  )
            print "       Cutoff [Angs]  %4.1f  %4.1f  %4.1f  %4.1f" % (self.ccut*c, self.pcut*c, self.pcut*c, self.ecut*c)
+           print "       Treatment of peptide groups: @%8s (%25s)\n"  % (conh.ljust(8), solvshift.slvpar.Frag(conh).get_name().ljust(25))
 
         # [1] Iterate over the MD trajectory
         for ts in universe.trajectory:
@@ -168,7 +170,7 @@ class BiomoleculeFragmentation(object):
 
             # [2] Find the amide subunits in the first step and create SolEFP input 
             if ts.frame == 1: 
-               amide_atoms_far, amide_atoms_close = self._find_amide_atoms(system)
+               amide_atoms_far, amide_atoms_close, amide_pro_atoms_far = self._find_amide_atoms(system)
                residues = system.residues
                if self.lprint:
                   print " Note: There are %d amide units detected"    % (len(amide_atoms_far) + len(amide_atoms_close)) 
@@ -176,7 +178,7 @@ class BiomoleculeFragmentation(object):
 
                # [3] Create temporary SolEFP input file
                if self.lprint: print " Creating SolEFP input..."
-               self._create_solefp_inp(residues, amide_atoms_far, amide_atoms_close, conh, out_inp)
+               self._create_solefp_inp(residues, amide_atoms_far, amide_pro_atoms_far, amide_atoms_close, conh, include_proline_con, out_inp)
 
                # [4] Creating MD Input objects
                self._create_mdinput(self.__mdinput_log)
@@ -243,7 +245,7 @@ class BiomoleculeFragmentation(object):
         self.__conhs_dma.set_structure(pos=xyz_close, equal=True, atoms=','.join(2*['C','O','N','H']))
         return
 
-    def _create_solefp_inp(self, residues, amide_atoms_far, amide_atoms_close, conh, out_inp):
+    def _create_solefp_inp(self, residues, amide_atoms_far, amide_pro_atoms_far, amide_atoms_close, conh, include_proline_con, out_inp):
         """find (Sol)EFP fragments for IR probe, far zone amide subunits and all side chains"""
         if self.write_solefp_input:
            inp = open(out_inp, 'w')
@@ -258,12 +260,12 @@ class BiomoleculeFragmentation(object):
         # Write the input for non-IR probe fragments
         res_logs = dict() 
 
-        # Far amide units
+        # Far amide units (non-Proline)
         for residue in amide_atoms_far:
             if conh == 'nma':
                res_data = (('nma', [0,3,1,0,2,0,0,4,0,0,0,0], [3,5,2,8]),)           
                atom_numbers = numpy.arange(residue[0],residue[0]+12)+1
-            elif conh == 'form':
+            elif conh == 'chonh2':
                res_data = (('chonh2', [1,2,0,3,0,4], [1,2,4,6]),)
                atom_numbers = numpy.arange(residue[0],residue[0]+6)+1
             elif conh == 'chonhme':
@@ -276,6 +278,26 @@ class BiomoleculeFragmentation(object):
                raise NotImplementedError, " Other models of CONH group than <%s> are not implemented yet!" % conh
             name = 'CONH'
             res_logs[name+str(residue)] = self._app(res_data, name, atom_numbers)
+
+        # Far amide units (near-Proline)
+        if include_proline_con:
+           for residue in amide_pro_atoms_far:
+               if conh == 'nma':
+                  res_data = (('nma', [0,3,1,0,2,0,0,0,0,0,0,0], [3,5,2]),)
+                  atom_numbers = numpy.arange(residue[0],residue[0]+12)+1
+               elif conh == 'chonh2':
+                  res_data = (('chonh2', [1,2,0,3,0,0], [1,2,4]),)
+                  atom_numbers = numpy.arange(residue[0],residue[0]+6)+1
+               elif conh == 'chonhme':
+                  res_data = (('chonhme', [1,3,2,0,0,0,0,0,0], [1,2,3]),)
+                  atom_numbers = numpy.arange(residue[0],residue[0]+9)+1
+               elif conh == 'comenh2':
+                  res_data = (('comenh2', [1,2,0,3,0,0,0,0,0], [1,2,4]),)
+                  atom_numbers = numpy.arange(residue[0],residue[0]+9)+1
+               else:
+                  raise NotImplementedError, " Other models of CONH group than <%s> are not implemented yet!" % conh
+               name = 'CONX'  
+               res_logs[name+str(residue)] = self._app(res_data, name, atom_numbers)
        
         # Aminoacid sidechains
         for residue in residues:
@@ -307,7 +329,7 @@ class BiomoleculeFragmentation(object):
     # --- Determine amide subunits closest to IR probe (Near Zone), and further from it (Far Zone)
     def _find_amide_atoms(self, sel):
         """Returns the atomic indices of CONH groups in far and close regions from IR_PROBE residue"""
-        amides= list()
+        amides= list(); amides_pro= list()
         atoms = sel.names()
         xyz   = sel.get_positions()
         vic   = sel.selectAtoms('around 2.4 (resname %s and name CA)' % self.__probe_label)
@@ -320,6 +342,8 @@ class BiomoleculeFragmentation(object):
                      if atoms[i+2]=='N':
                         if atoms[i+3]=='H':
                            amides.append([i,i+1,i+2,i+3])
+                        else: # proline 
+                           amides_pro.append([i,i+1,i+2])
                except IndexError:
                   print " Omiting %d-th 'C' atom" % (i+1)
                   continue
@@ -336,12 +360,31 @@ class BiomoleculeFragmentation(object):
            amides_detected = libbbg.utilities.choose(amides,chosen_indices)
         except IndexError:
            amides_detected = amides.copy()
-           if self.lprint: print " Note: No improper CONH pairs found."
+           if self.lprint: print " Note: No improper CO-NH pairs found."
         amides_rejected = amides[chosen_indices]
         amides = list(amides_detected)
         if self.lprint: 
-           if len(amides_rejected): print " Note: Removed %d improper CONH pairs." % len(chosen_indices)
-        
+           if len(amides_rejected): print " Note: Removed %d improper CO-NH pairs." % len(chosen_indices)
+
+        # do the same for proline
+        i_pro = 0; chosen_indices_pro = list()
+        for con in amides_pro:
+            c,o,n = xyz[con]
+            if self._rr(c,n) > 2.0: chosen_indices_pro.append(i)
+            i_pro += 1
+        amides_pro = numpy.array(amides_pro)
+        chosen_indices_pro = numpy.array(chosen_indices_pro,int)
+        try:
+           amides_pro_detected = libbbg.utilities.choose(amides_pro,chosen_indices_pro)
+        except IndexError:
+           amides_pro_detected = amides_pro.copy()
+           if self.lprint: print " Note: No improper near-proline CO-N pairs found."
+        amides_pro_rejected = amides_pro[chosen_indices_pro]
+        amides_pro = list(amides_pro_detected)
+        if self.lprint: 
+           if len(amides_pro_rejected): print " Note: Removed %d improper CO-N pairs." % len(chosen_indices_pro)
+        amides_pro_far = amides_pro # assumes that no near-zone CO-N pairs are there
+
         # From among the rejected CONH groups compare CO and NH
         # and determine if some amide groups were missing
         UNDETECTED_AMIDES=0
@@ -355,9 +398,13 @@ class BiomoleculeFragmentation(object):
                    if self._rr(ci,nj) < 2.0: UNDETECTED_AMIDES+=1
                    if self._rr(cj,ni) < 2.0: UNDETECTED_AMIDES+=1
     
-        if UNDETECTED_AMIDES: print " WARNING!!! %d CONH groups were not included due to deviations from atom numbering!" % UNDETECTED_AMIDES
+        if UNDETECTED_AMIDES: print " WARNING!!! %d CONH groups were not included due to deviations from atom numbering!\n" % UNDETECTED_AMIDES
+
+        print " WARNING!!! Near-proline CO-N pairs were not included in the checkup if all amide groups were included! If you have deviations from atomic numbering in your PDB/GRO file, this will lead to the neglect of some CON or CONH groups!\n"
     
         # remove CONH units very close to the IR probe
+        print " WARNING!!! This code assumes that the IR probe is attached to an aminoacid that is not in direct neighbourhood in sequence with Proline (PRO) residue. If your case is different, you must add the relevant code to _find_amide_atoms method of biomol.BiomoleculeFragmentation class!!!\n"
+
         i = 0; close_amide_indices = list()
         for conh in amides:
             for x in conh:
@@ -383,8 +430,11 @@ class BiomoleculeFragmentation(object):
 
         if self.lprint: print " Saving DMA's for the 2 closest CONH subunits"
         self.__conhs_dma = a
-    
-        return amides_far, amides_close
+
+        if self.lprint: print " There are %3d CONH amide groups in the far zone" % len(amides_far)
+        if self.lprint: print " There are %3d CON- amide groups in the far zone" % len(amides_pro_far)     
+
+        return amides_far, amides_close, amides_pro_far
 
     def _init_solefp(self, elect, polar, repul, disp, correc, 
                            ccut, pcut, ecut, mode):
@@ -493,3 +543,11 @@ class BiomoleculeFragmentation(object):
             if not line.strip().startswith(comment_mark):
                new_text.append(line)
         return '\n'.join(new_text)
+
+if __name__=='__main__':
+     res    = 'gmx.res'
+     probe  = 'probe.res'
+     mode   =  4
+     traj   = sys.argv[1]
+     solefp = BiomoleculeFragmentation(res, probe, mode, rcl_algorithm='additive', solcamm=None, lprint=True, ccut=20.0, pcut=12.0, ecut=8.0, report='report-pyp.dark.a-44.proline-form.dat', write_debug_file=True)
+     solefp.run(traj, traj, 1, conh='chonh2', include_proline_con=True)
