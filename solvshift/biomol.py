@@ -191,6 +191,7 @@ class BiomoleculeFragmentation(object):
 
             # [7] Save results on disk
             self.__out.write(log)
+            self.__out.flush()
             
             # [8] Terminate
             if ts.frame == nframes: 
