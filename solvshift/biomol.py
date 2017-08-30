@@ -543,11 +543,3 @@ class BiomoleculeFragmentation(object):
             if not line.strip().startswith(comment_mark):
                new_text.append(line)
         return '\n'.join(new_text)
-
-if __name__=='__main__':
-     res    = 'gmx.res'
-     probe  = 'probe.res'
-     mode   =  4
-     traj   = sys.argv[1]
-     solefp = BiomoleculeFragmentation(res, probe, mode, rcl_algorithm='additive', solcamm=None, lprint=True, ccut=20.0, pcut=12.0, ecut=8.0, report='report-pyp.dark.a-44.proline-form.dat', write_debug_file=True)
-     solefp.run(traj, traj, 1, conh='chonh2', include_proline_con=True)
