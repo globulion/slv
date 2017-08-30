@@ -33,8 +33,8 @@ The solvatochromic solute-solvent interactions are quenched by using the plain c
 with different cut-offs for Coulombic, polarizability and exchange-repulsion interactions.
 At the present moment, only vibrational frequency shifts are computed.
 
-> *Important!* Remember to **always use the post-processed MD trajectories** such that
-> your IR reporter is **centered** in the periodic box in **all** MD snapshots as well
+> **Important!** Remember to *always use the post-processed MD trajectories* such that
+> your IR reporter is **centered** in the periodic box in *all* MD snapshots as well
 > as all the other molecules are put back into the primary cell! Otherwise,
 > the results will be incorrect due to lack of sufficient layers of environment around the solute
 > and migration of molecules out of primary cell
@@ -63,7 +63,7 @@ $Frag
   ...
 $endFrag
 ```
-*Scheme 1. The syntax of SolEFP input file.* Input consists of several `$Frag...$endFrag` entries
+**Scheme 1. The syntax of SolEFP input file.** Input consists of several `$Frag...$endFrag` entries
 specifying all the types of BSM in the system, their positions, superimposition and reordering lists.
 
 First line within each `$Frag...$endFrag` section refers to molecule name and file name with parameters. 
@@ -154,7 +154,7 @@ is given in the SLV tools (see `slv_md-run_nopp` utility script).
 
 In the case when the molecular topology is very complex (like inside the protein)
 writing input string for `MDInput` instance is tedious and impractical.
-Therefore, the system of **SolEFP/MD topology conversion files** (STC) has been introduced within SLV.
+Therefore, the system of *SolEFP/MD topology conversion files* (STC) has been introduced within SLV.
 These files contain general prescription on how to translate the complicated molecular
 topology into the set of (Sol)EFP BSM’s. Example files are stored in `$SLV_DATA/dat/*.tc`.
 However, User is urged to write his/her own STC’s.
