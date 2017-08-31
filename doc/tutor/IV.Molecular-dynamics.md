@@ -201,7 +201,7 @@ In the example above, two different inputs are read which differ only in
 the IR probe entry (particularly, only the name of BSM fragment to be chosen during calculation
 of the frequency shift; the rest remains the same). 
 One must specify the `SELECTION` string defining
-the IR probe atoms (refer to selections in `MDAnalysis`). 
+the IR probe atoms (refer to selections in `MDAnalysis` [here](http://mda-test.readthedocs.io/en/test_readthedocs/documentation_pages/selections.html)). 
 The function `check_conformation` computes certain
 structural parameter (e.g., a dihedral angle) and based on specific criteria
 selects to which class of conformers the actual one belongs (here 'A' or 'B'
