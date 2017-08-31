@@ -147,8 +147,64 @@ of all atoms from MD topology in question. Note that SLV choses only those atoms
 which are within provided Coulomb cut-off by taking only a **slice** of `frame[idx]`.
 
 The more elaborate example for use with one IR probe BSM for homogeneous topology
-is given in the SLV tools (see `slv_md-run_nopp` utility script).
+is given in the SLV tools (see `slv_md-run_nopp` utility script). It can be of course
+modified as user wishes to do. For example, imagine the situation in which your IR probe
+molecule exists in multiple conformations. In fact, the SolEFP parameters can be computed
+for only one particular structure in its energy minimum. Therefore, in such a situation
+it would be preferable to use more than one SolEFP BSM. It is strightforward to modify
+the `slv_md-run_nopp` utility by taking into account several IR probe BSM’s:
 
+```python
+def check_conformation(xyz):
+    "Determine the conformation of IR probe."
+    ### certain code here...
+    if (40.0 < angle < 80.0) or (-80 < angle < -40): return 'A', angle
+    elif ( 120.0 < angle < 160.0)                  : return 'B', angle
+    else                                           : return 'X', angle
+
+# [1] read the inputs
+input_A = MDInput(solinp_A)
+input_B = MDInput(solinp_B)
+args_A, idx_A = input_A.get()
+args_B, idx_B = input_B.get()
+
+# [2] initialize EFP objects
+efp = EFP(elect=not no_elect, pol=not no_polar, rep=not no_repul, disp=not no_disp, corr=not no_correc,
+          ccut=ccut, pcut=pcut, ecut=ecut,
+          freq=True, cunit=True, mode=mode, ea=not no_ea)
+
+# [3] read the trajectory file and initialize the frame of coordinates
+md     = Universe(top, traj)
+system = md.selectAtoms('all')
+probe  = md.selectAtoms(SELECTION)
+
+# [4] iterate over frames and evaluate frequency shifts
+for ts in md.trajectory:
+    frame_no = ts.frame
+    print " * Reading frame %10i" % frame_no           
+    frame = system.atoms.coordinates() * UNITS.AngstromToBohr
+
+    # check the conformation
+    conformation, angle = check_conformation(probe.get_positions())
+    if conformation == 'A': 
+       idx, args = idx_A, args_A
+    elif conformation == 'B':
+       idx, args = idx_B, args_B
+
+    # compute frequency shifts
+    log = eval_parall(efp, idx, args, frame, frame_no, save_avec)
+    out.write(log); out_angle.write('%13.4f %4s\n' % (angle, conformation))
+    out.flush()   ; out_angle.flush()
+    if frame_no==nframes: break
+```
+In the example above, one must specify the `SELECTION` string defining
+the IR probe atoms. The function `check_conformation` computes certain
+structural parameter (e.g., a dihedral angle) and based on specific criteria
+selects to which class of conformers the actual one belongs (here 'A' or 'B'
+for an examplary purpose). Note also that the structural parameter as well as the
+conformation class is being saved as calculation proceeds (in the `out_angle` string stream).
+Similar and much more complex customizations can be undertaken due to easy Python interface
+of SLV classes and functions.
 
 ### Using topology conversion files
 
