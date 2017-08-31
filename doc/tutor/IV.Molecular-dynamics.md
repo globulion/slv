@@ -197,14 +197,20 @@ for ts in md.trajectory:
     out.flush()   ; out_angle.flush()
     if frame_no==nframes: break
 ```
-In the example above, one must specify the `SELECTION` string defining
-the IR probe atoms. The function `check_conformation` computes certain
+In the example above, two different inputs are read which differ only in
+the IR probe entry (particularly, only the name of BSM fragment to be chosen during calculation
+of the frequency shift; the rest remains the same). 
+One must specify the `SELECTION` string defining
+the IR probe atoms (refer to selections in `MDAnalysis`). 
+The function `check_conformation` computes certain
 structural parameter (e.g., a dihedral angle) and based on specific criteria
 selects to which class of conformers the actual one belongs (here 'A' or 'B'
 for an examplary purpose). Note also that the structural parameter as well as the
 conformation class is being saved as calculation proceeds (in the `out_angle` string stream).
-Similar and much more complex customizations can be undertaken due to easy Python interface
-of SLV classes and functions.
+
+> Similar and much more complex customizations can be undertaken due to very easy Python interface
+> of SLV classes and functions which make it a very powerful tool in working with various problems
+> and data structures.
 
 ### Using topology conversion files
 
