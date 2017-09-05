@@ -1,45 +1,97 @@
 #!/usr/bin/python
 #*-* coding: utf-8 *-*
 """
- ---------------------------------------------------------------------------------------------------------
-                                             SLV-MD-FTIR
- ---------------------------------------------------------------------------------------------------------
+ ------------------------------------------------------------------------------------------------------------
+                                                 SLV-MD-FTIR
+ ------------------------------------------------------------------------------------------------------------
 
- Compute FTIR spectrum by invoking second-order cumulant expansion of the line shape function.
- Make use of the spectral density.
+ Compute IR absorption spectrum.
 
- Usage: [opts] [data_file]
+ Description:
+ 
+  Two approaches are implemented:
+
+   1) by invoking second-order cumulant expansion of the line shape function. This makes use of the spectral 
+      density and the program requires the unnormalized frequency-frequency time correlation function (FFCF) 
+      given by:
+
+                                         FFCF(t) = < dw(0) dw(t) >                                       (1)
+ 
+
+      where dw(t) = w(t) - < w > and w is fundamental frequency, <> denotes the ensemble average;
+
+   2) by assuming the classical averaging method. In this case the program requires the function Jc(t)
+      defined as:
+ 
+                                Jc(t) = < exp [-i \int_0^t d(tau) dw(tau) ] >                            (2)
+
+
+ ------------------------------------------------------------------------------------------------------------
+
+ Usage: [opts]
 
  Opts: 
 
    -h                             help
    -m [string]                    Select one of the following models: 
                                     1) "cumulant" : second-order semiclasical approximation (Default).
-                                                    Requires TCF file passed as argument.
-                                    2) "classical": classical averaging method. Requires frequency shift 
-                                                    file passed as argument.
+                                                    Requires FFCF file passed as argument of -i option
+                                    2) "classical": classical averaging method. Requires Jc(t) passed
+                                                    as argument of -i option
+   -i [str]                       data file (FFCF or Jc(t))                        Required
    -n [int]                       number of delay time points                     Optional. Default: 8000
    -w [float]                     center frequency [cm-1]                         Optional. Default: 2000.0 
    -d [float]                     Time sampling in TCF [fs/frame]                 Optional. Default:    1.0
    -T [float]                     Vibrational relaxation time [ps]                Optional. Default:  100.0   
-   -c [int]                       Column of data in frequency shift file          Optional. Default:   14
+   -o [str]                       Output spectrum                                 Optional. Default: spectrum.dat
                                                                                                               
  Additional options:                                                                                          
                                                                                                               
    -s [float]                  +/-range of absorption spectrum plot [cm-1]        Optional. Default:   30.0
-   -W [float]                     maximal integration frequency [cm-1]            Optional. Default: 3000.0
+   -W (--w_max) [float]           maximal integration frequency [cm-1]            Optional. Default: 3000.0
    -p [int]                       number of padded points for TCF                 Optional. Default:    0   
    --ftir                         read and plot experimental ftir                 Optional. Default: None
    --nw                           number of integration points in freq            Optional. Default: 4097
    --temp                         temperature [K]                                 Optional. Default:  300.0
    --no-apod                      switch off apodization by Hamming windowing     Defalut: windowing is ON
-                                                                                                              
- Debug:                                                                                                       
-                                                                                                              
-   --w-min                        minimal integration frequency [rad/ps]          Optional. Default:    1e-6
+   --w-min                        minimal integration frequency 
+                                    if -m classical       :     [cm-1]            Required
+                                    if -m cumulant        :     [rad/ps]          For debuging. Default:    1e-6
 
- ---------------------------------------------------------------------------------------------------------
-                                                                               Last Revision: 17 Aug 2016
+ ------------------------------------------------------------------------------------------------------------
+
+ Notes: 
+
+   1) Calculations using 2-order cumulant expansion method:
+
+        o The format of the FFCF input is:
+
+         # TIME_POINT FFCF[rad²/ps²]
+           int        double
+           ...
+
+        o FFCF can be obtained by using slv_calc-tcf utility.
+
+   2) Calculations using classical averaging method:
+
+        o The format of the Jc(t) input is:
+
+         # TIME[ps] Re(Jc(t)) Im(Jc(t))
+           double   double    double
+           ...
+
+        o Jc(t) can be computed by using slv_calc-expres utility.
+
+        o remember to always specify the minimum and maximum value of frequency for integration (--w-min
+          and --w-max). 
+
+        o number of delay points is an important parameter. For not so long trajectories the Jc(t) can 
+          have high S/N ratio which results in artifacts (spikes) in the FTIR spectrum. In this case
+          number of delay points need to be adjusted (lowered) which results in trimming Jc(t).
+
+
+ ------------------------------------------------------------------------------------------------------------
+                                                                                 Last Revision: 05 Sep 2017
 """
 from sys import argv, exit
 from getopt import getopt, GetoptError
@@ -47,7 +99,7 @@ from getopt import getopt, GetoptError
 # ----------------------------------------------------------------------------------------------------
 __title__           = " SLV-MD-FTIR program" 
 __authors__         = " Bartosz Błasiak (email: blasiak.bartosz@gmai.com)"
-__version__         = " Version: 1.0.1"
+__version__         = " Version: 1.0.2"
 # ----------------------------------------------------------------------------------------------------
 
 def Usage():
@@ -77,13 +129,15 @@ def Main(argv):
     NT_USER                      = 1 + 2**12                           # number of integration points in time domain (if interpolation)
     FTIR_READ_FILE               = None
     TEMP                         = 300                                 # temperature
-    NCOL_USER                    = 14-1                                # ID (Python convention) of the frequency shift file y-value column
     WINDOW_USER                  = True                                # Apply Hamming window
+    FTIR_OUT_FILE                = 'spectrum.dat'                      # output file name
     #
     try:
-       opts, args = getopt(argv, "hm:d:w:s:T:n:f:N:x:W:p:t:c:a" , ["help", "model=", "dtau=", "w0=", "dw-print=", "T1=", "n-delay=",
-                                                                   "ftir=", "nw=", "w-min=", "w-max=", "n-pad-time=", "temp=", "ncol=",
-                                                                   "no-apod"])
+       opts, args = getopt(argv, "hm:d:w:s:T:n:f:N:x:W:p:t:ao:i:" , \
+                           ["help", "model=", "dtau=", "w0=", "dw-print=", "T1=", "n-delay=",
+                            "ftir=", "nw=", "w-min=", "w-max=", "n-pad-time=", "temp=", 
+                            "no-apod", "out=", "inp="])
+
     except GetoptError, error:
         print "\n Invalid option. Please refer to the usage below:" 
         Usage()
@@ -92,35 +146,33 @@ def Main(argv):
     for opt, arg in opts:
         if opt in ("-h", "--help"          ): Usage()
         if opt in ("-m", "--model"         ): model                            =       arg
+        if opt in ("-i", "--inp"           ): data_file                        =       arg
         if opt in ("-d", "--dtau"          ): dtau_USER                        = float(arg)
         if opt in ("-w", "--w0"            ): w0_USER                          = float(arg)
         if opt in ("-s", "--dw-print"      ): dw0_USER                         = float(arg)
-        if opt in ("-T", "--T1="           ): T1_USER                          = float(arg)
+        if opt in ("-T", "--T1"            ): T1_USER                          = float(arg)
         if opt in ("-n", "--n-delay"       ): NP_USER                          =   int(arg)
         if opt in ("-f", "--ftir"          ): FTIR_READ_FILE                   =       arg 
+        if opt in ("-o", "--out"           ): FTIR_OUT_FILE                    =       arg
         if opt in ("-N", "--nw"            ): NW_USER                          =   int(arg)
         if opt in ("-x", "--w-min"         ): W_MIN_USER                       = float(arg)
         if opt in ("-W", "--w-max"         ): W_MAX_USER                       = float(arg)
         if opt in ("-p", "--n-pad-time"    ): NT_PAD_USER                      =   int(arg)
         if opt in ("-t", "--temp"          ): TEMP                             = float(arg)
-        if opt in ("-c", "--ncol"          ): NCOL_USER                        =   int(arg)-1
         if opt in ("-a", "--no-apod"       ): WINDOW_USER                      =   False     
 
 
     #
-    data_file = args[0]
-    run(model, data_file, dtau_USER, NP_USER, w0_USER, dw0_USER, T1_USER, TEMP, NT_PAD_USER, W_MIN_USER, W_MAX_USER, NW_USER, FTIR_READ_FILE, NCOL_USER, WINDOW_USER)
+    run(model, data_file, dtau_USER, NP_USER, w0_USER, dw0_USER, T1_USER, TEMP, NT_PAD_USER, W_MIN_USER, W_MAX_USER, NW_USER, FTIR_READ_FILE, WINDOW_USER, FTIR_OUT_FILE)
     return
 
 
-def run(model, data_file, dtau_USER, NP_USER, w0_USER, dw0_USER, T1_USER, TEMP, NT_PAD_USER, W_MIN_USER, W_MAX_USER, NW_USER, FTIR_READ_FILE, NCOL_USER, WINDOW_USER):
+def run(model, data_file, dtau_USER, NP_USER, w0_USER, dw0_USER, T1_USER, TEMP, NT_PAD_USER, W_MIN_USER, W_MAX_USER, NW_USER, FTIR_READ_FILE, WINDOW_USER, FTIR_OUT_FILE):
     """Simulate 1D IR absorption line shape"""
     # import necessary modules
     import numpy, pylab, math
     import scipy.integrate
     import libbbg.units
-    from scitools import filetable
-    from lib.genres import genresf
 
     # conversion factors and unit conventions
     CmRecToHz           = libbbg.units.UNITS.CmRecToHz /1e12 # [rad/ps]
@@ -128,14 +180,10 @@ def run(model, data_file, dtau_USER, NP_USER, w0_USER, dw0_USER, T1_USER, TEMP, 
                         * libbbg.units.UNITS.JouleToHartree * libbbg.units.UNITS.HartreeToCmRec # [(cm-1)*ps]
     BoltzmannConstant   = 1.38064852e-23 \
                         * libbbg.units.UNITS.JouleToHartree * libbbg.units.UNITS.HartreeToCmRec # [(cm-1)/K]
-    JouleToCmRec        = 1.0###5.034117471638147e+22
-    PicosecondToSecond  = 1.0###1e-12
+    JouleToCmRec        = 1.0
+    PicosecondToSecond  = 1.0
     HBar                = PlanckConstant/(2.0*math.pi)
     Pi2                 = 2.0*math.pi
-    
-    #print " Boltzman Constante = %10.4f [(cm-1)/K]" % BoltzmannConstant
-    #print " Planck Constant    = %10.4f [(cm-1)*ps]" % PlanckConstant
-    #print " cm-1 / ps-1        = %10.4f " % CmRecToHz
     
     # integral function
     Integral = lambda F, dt: numpy.trapz(F, axis=0, dx=dt)
@@ -153,7 +201,7 @@ def run(model, data_file, dtau_USER, NP_USER, w0_USER, dw0_USER, T1_USER, TEMP, 
     # --------------------------------------------------------------------------------
 
        # [1] Read TCF
-       r      = filetable.read(open(data_file))[:NP_USER]
+       r      = numpy.mafromtxt(data_file).data[:NP_USER]
        r[:,0]*= dtau_USER/1e3 # ps
        r[:,1]*= (CmRecToHz)**2
        t_min  = 0.0 # ps
@@ -260,7 +308,7 @@ def run(model, data_file, dtau_USER, NP_USER, w0_USER, dw0_USER, T1_USER, TEMP, 
        
        # [R]ead experimental data
        if FTIR_READ_FILE is not None:
-         FTIR  = filetable.read(open(FTIR_READ_FILE))
+         FTIR  = numpy.mafromtxt(FTIR_READ_FILE).data
          v_exp = FTIR[:,0]; ftir_exp = FTIR[:,1]
          ftir_exp *= gi.max()/ftir_exp.max()
          ftir_exp2 = FTIR[:,1] * K_w.max()/ftir_exp.max()
@@ -315,6 +363,11 @@ def run(model, data_file, dtau_USER, NP_USER, w0_USER, dw0_USER, T1_USER, TEMP, 
        ax_31  = figure_3.add_subplot(111)
        ax_31  .plot(W_cm1, R_W, '-')
        ax_31  .set_title('$\\rho(\\omega)$')
+       # save
+       out_s = open(FTIR_OUT_FILE,'w')
+       for i in range(len(v)):
+           out_s.write('%14.5E %14.5E\n' % (v[i], gi[i]))
+       out_s.close()
        
        pylab.plt.show(block=True)
 
@@ -322,35 +375,27 @@ def run(model, data_file, dtau_USER, NP_USER, w0_USER, dw0_USER, T1_USER, TEMP, 
     elif model == 'classical':
     # --------------------------------------------------------------------------------
 
-       if not NP_USER%2: NP_USER-=1
-       r      = filetable.read(open(data_file))[:NP_USER]
-       T      = r[:,0]; y = r[:,NCOL_USER]
-       T     *= dtau_USER/1.0e3 # ps
-       y     *= CmRecToHz  # rad/ps
-       dw_ave = y.mean()
+       r      = numpy.mafromtxt(data_file).data
+       T      = r[:,0]; n_t = len(T)
 
-       y     -= dw_ave
        t_min  = 0.0 # ps
        dt     = T[1] - T[0]  # ps
-       #  -  response function
-       T      = T[::2] - dt
        t_max  = T[-1]
-       dt     = T[1] - T[0]
-       if 0:
-          J      = genresf(y,dt)       #d                                  
-          JR     = numpy.concatenate(([1.,], J[:,0]))#[:4500]      #d
-          JI     = numpy.concatenate(([0.,], J[:,1]))#[:4500]      #d
-          out  = open('col.dat','w')                         #d
-          for i in range(len(T)):       #d
-              out.write('%20.9E %25.10E %25.10E\n' % (T[i], JR[i], JI[i]))   #d
-          out.close(); exit()   #d
 
-       import os
-       r  = filetable.read(open(os.environ['__CORDAT__']))      
-       k  = 500
-       JR = r[:,1][:k]   
-       JI = r[:,2][:k]   
-       T  = T[:k]       
+       #  -  zero-padding of Jc(t)
+       n_pad = NT_PAD_USER
+       t_pad = dt * (n_t + n_pad - 1)
+       n_t  += n_pad
+       T     = numpy.linspace(t_min, t_pad, n_t)
+       r_pad = numpy.zeros((n_pad, len(r[0])), dtype=numpy.float64)
+       r   = numpy.concatenate([r, r_pad])
+       t_max = T[-1]
+
+
+       #  -  response function
+       JR = r[:,1][:NP_USER]   
+       JI = r[:,2][:NP_USER]   
+       T  = T[:NP_USER]       
        f  = 0.54 + 0.46 * numpy.cos(math.pi*T/T[-1])        
        JR*= numpy.exp(-0.500*T/T1_USER)
        JI*= numpy.exp(-0.500*T/T1_USER)
@@ -370,13 +415,13 @@ def run(model, data_file, dtau_USER, NP_USER, w0_USER, dw0_USER, T1_USER, TEMP, 
        n_t   = len(T)
        F     = numpy.zeros((n_t, n_w), numpy.float64)
        for i in range(n_w):
-           F[:,i] = numpy.cos(DW[i]*T*3.14) * JR 
+           F[:,i] = numpy.cos(DW[i]*T) * JR 
        ReI_t  = Integral(F, dt)
 
        #  -  imaginary part of I(omega)
        F     = numpy.zeros((n_t, n_w), numpy.float64)
        for i in range(n_w):
-           F[:,i] =-numpy.sin(DW[i]*T*3.14) * JI
+           F[:,i] =-numpy.sin(DW[i]*T) * JI
        ImI_t  = Integral(F, dt)
 
        #  - spectrum
@@ -384,7 +429,7 @@ def run(model, data_file, dtau_USER, NP_USER, w0_USER, dw0_USER, T1_USER, TEMP, 
 
        # [R]ead experimental data
        if FTIR_READ_FILE is not None:
-          FTIR  = filetable.read(open(FTIR_READ_FILE))
+          FTIR  = numpy.mafromtxt(FTIR_READ_FILE).data
           v_exp = FTIR[:,0]; ftir_exp = FTIR[:,1]
           ftir_exp *= S.max()/ftir_exp.max()
 
@@ -410,7 +455,13 @@ def run(model, data_file, dtau_USER, NP_USER, w0_USER, dw0_USER, T1_USER, TEMP, 
        if FTIR_READ_FILE is not None: 
           d=0.0#10.2
           ax_21  .plot(v_exp-d, ftir_exp, '-', lw=2, color='blue', label='Exp.')
-       #ax_21  .set_xlim([w_min,w_max])
+       ax_21  .set_xlim([w_min,w_max])
+       # 
+       # save
+       out_s = open(FTIR_OUT_FILE,'w')
+       for i in range(len(W_cm1)):
+           out_s.write('%14.5E %14.5E %14.5E %14.5E\n' % (W_cm1[i], S[i], ReI_t[i], ImI_t[i]))
+       out_s.close()
 
        pylab.plt.legend()
        pylab.plt.show(block=True)
