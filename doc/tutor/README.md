@@ -22,9 +22,10 @@ Contents
 
  1. [Interacting with Solvshift](https://github.com/globulion/slv/blob/master/doc/tutor/I.Interacting-with-Solvshift.md)
  2. [SolEDS Calculations](https://github.com/globulion/slv/blob/master/doc/tutor/II.SolEDS.md)
- 3. [SolEFP Parameters](https://github.com/globulion/slv/blob/master/doc/tutor/III.SolEFP.md)
- 4. [SolEFP with Molecular Dynamics](https://github.com/globulion/slv/blob/master/doc/tutor/IV.Molecular-dynamics.md)
- 5. Supplementary:
+ 3. [SolEFP Parameters](https://github.com/globulion/slv/blob/master/doc/tutor/III.SolEFP.Parameters.md)
+ 4. [SolEFP Computations](https://github.com/globulion/slv/blob/master/doc/tutor/III-b.SolEFP.Calculations.md)
+ 5. [SolEFP with Molecular Dynamics](https://github.com/globulion/slv/blob/master/doc/tutor/IV.Molecular-dynamics.md)
+ 6. Supplementary:
     * [More on generation of input files](https://github.com/globulion/slv/blob/master/doc/tutor/V.Inputs.md)
     * [SolDMTP Calculations](https://github.com/globulion/slv/blob/master/doc/tutor/V.SolDMTP.md)
 

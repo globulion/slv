@@ -39,7 +39,7 @@ quantum chemistry information on the benchmark solute/solvent molecule (BSM):
    with respect to normal coordinates of solute.
 
 Solvshift
-has an internal library of BSM's which are stored under `solvshift/dat` directory.
+has an internal library of BSM’s which are stored under `solvshift/dat` directory.
 
 > WARNING: User should never change the contents of FRG file except adding comments after `!` sign.
 > Changes in numerical values will result in errors in calculations and unphysical results!
@@ -353,7 +353,7 @@ the CAMM file is just `g09_mescn_A000_D00_.camm`.
 `-o` option is the name of the FRG file you want to generate.
 
 `--omit_camm` option is useful if you want to recalculate the SolEFP parameters, but
-you do not want to compute all the CAMM's again (otherwise Solvshift would compute CAMM's
+you do not want to compute all the CAMM’s again (otherwise Solvshift would compute CAMM’s
 once again which would take quite long time.
 
 The command line for our MeSCN example is
@@ -364,9 +364,14 @@ This step first computes the SolEFP parameters for Coulomb interactions, then ca
 for exchange-repulsion, and at the end parameters for induction and dispersion. It also computes
 the cubic anharmonic constants and constructs the final `mescn.frg` file whereas the data from calculations
 of the parameters are stored in the `solefp.log` output file. All these calculations
-might take up some time (up to half an hour if CAMM's are to be computed and a few minutes otherwise).
+might take up some time (up to half an hour if CAMM’s are to be computed and a few minutes otherwise).
 This file can be already used in the SolEFP calculations!
 
+SolEFP Calculations
+-------------------
+
+**Figure 2. The principle of SolEFP/EFP2 superimposition.** 
+<img src="solefp-ibm.png" alt="Drawing" style="width: 20px;"/>
 
 *******
 Back to [Start](https://github.com/globulion/slv/tree/master/doc/tutor/README.md)
