@@ -31,7 +31,7 @@ Solvshift handles the technical aspect of the superimposition by
 An example and the application of these lists are explained in Figure 1 below.
 
 ******
-**Figure 1. The principle of SolEFP/EFP2 superimposition.** Assignment of the 
+**Figure 1. The assignment of SolEFP/EFP2 parameters for superimposition.** Assignment of the 
             reordering and superimposition lists is shown here on tyrosine side chain.
             The phenole fragment is modelled here by phenole as BSM. Exemplary values
             of atomic indices from MD topology are shown here in pink, whereas from BSM
@@ -39,10 +39,10 @@ An example and the application of these lists are explained in Figure 1 below.
             according to the BSM id’s. If BSM atom is not present in MD topology, then a value
             of zero is assumed. The entries of the superimposition lists constitute of BSM id’s
             placed in arbitrary order.
-<img src="solefp-ibm.png" alt="Drawing" style="width: 20px;"/>
+<img src="solefp-ibm.png" alt="Drawing" style="width: 30px;"/>
 ******
 
-
+Thus
 
 *******
 Back to [Start](https://github.com/globulion/slv/tree/master/doc/tutor/README.md)
