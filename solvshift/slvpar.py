@@ -385,6 +385,7 @@ class Frag(object, libbbg.units.UNITS):
         for key, arg in kwargs.items():
             if key == 'rdma'   : self.__rdma  = arg      
             if key == 'rpol'   : self.__rpol  = arg
+            if key == 'npol'   : self.__npol  = arg
             if key == 'dmac'   : self.__dmac  = arg
             if key == 'dmad'   : self.__dmad  = arg
             if key == 'dmaq'   : self.__dmaq  = arg
