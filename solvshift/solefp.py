@@ -659,7 +659,8 @@ Now, only for exchange-repulsion layer"""
         self.__bsm               = None
         self.__eval_freq         = False
         self.__eval_nlo          = None
-        self.__shift             = self._dict()
+        self.__shift             = self._dict(key='freq')
+        self.__eint              = self._dict(key='eint')
         self.__rms_central       = None
         self.__rms_ave           = None
         self.__suplist           = None
@@ -675,45 +676,64 @@ Now, only for exchange-repulsion layer"""
         self.__solvent_exrep     = None
         return
  
-    def _dict(self):
+    def _dict(self, key):
         """Namespace for all frequency shift terms"""
-        shift = dict()
-        #               Term abbreviation     :   Explanation
-        shift_terms = { \
-                        'ele_mea'             : 'SolCAMM (mechanical anharmonicity)',                                                        
-                        'ele_ea'              : 'SolCAMM (electronic anharmonicity)',
-                        'cor_mea'             : 'Corrections to SolCAMM (mechanical anharmonicity)',
-                        'cor_ea'              : 'Corrections to SolCAMM (electronic anharmonicity)',
-                        'pol_mea'             : 'Induction (mechanical anharmonicity)',
-                        'pol_ea'              : 'Induction (electronic anharmonicity)',
-                        'rep_mea'             : 'Exchange-Repulsion (mechanical anharmonicity)',
-                        'rep_ea'              : 'Exchange-Repulsion (electronic anharmonicity)',
-                        'dis_mea'             : 'Dispersion (anisotropic, mechanical anharmonicity)',
-                        'dis_ea'              : 'Dispersion (anisotropic, electronic anharmonicity)',
-                        'total'               : 'SolEFP (SolCAMM+Corrections, Induction, Exchange-Repulsion, anisotropic Dispersion)',
-                        'total_ele'           : 'SolCAMM+Corrections, Induction and anisotropic Dispersion (mechanical + electronic anharmonicity)',
-                        'total_mea'           : 'All mechanical anharmonicity terms',
-                        'total_ea'            : 'All electronic anharmonicity terms',
-                        'solcamm'             : 'SolCAMM (mechanical + electronic anharmonicity)',
-                        'total_cor'           : 'Corrections (mechanical + electronic anharmonicity)',
-                        'pol_add_mea'         : 'Induction under additive approximation (mechanical anharmonicity)',
-                        'pol_add_ea'          : 'Induction under additive approximation (electronic anharmonicity)',
-                        'dis_mea_iso'         : 'Dispersion (isotropic, mechanical anharmonicity)',
-                        'ele_tot'             : 'SolCAMM+Corrections (mechanical + electronic anharmonicity)',
-                        'pol_tot'             : 'Polarization (mechanical + electronic anharmonicity)',
-                        'rep_tot'             : 'Exchange-Repulsion (mechanical + electronic anharmonicity)',
-                        'dis_tot'             : 'Dispersion (anisotropic, mechanical + electronic anharmonicity)',
-                       'ele_env_mea'          : 'SolCAMM:DMA[non-EFP Environment]: mechanical anharmonicity ',
-                       'ele_env_ea'           : 'SolCAMM:DMA[non-EFP Environment]: electronic anharmonicity ', 
-                       'cor_env_mea'          : 'Corrections:DMA[non-EFP Environment]: mechanical anharmonicity ', 
-                       'cor_env_mea'          : 'Corrections:DMA[non-EFP Environment]: electronic anharmonicity ', 
-                       'tot_env'              : 'SolCAMM+Corrections:DMA[non-EFP Environment]: mechanical + electronic anharmonicity',
-                       'total+env'            : 'SolEFP + DMA[non-EFP Environment] (total+tot_env terms)', \
-                        }
-        for item in shift_terms.keys():
-            shift[item] = numpy.nan
-        self.shift_terms = shift_terms
-        return shift
+        if key == 'freq':
+           shift = dict()                                                                                                                               
+           #               Term abbreviation     :   Explanation
+           shift_terms = { \
+                           'ele_mea'             : 'SolCAMM (mechanical anharmonicity)',                                                        
+                           'ele_ea'              : 'SolCAMM (electronic anharmonicity)',
+                           'cor_mea'             : 'Corrections to SolCAMM (mechanical anharmonicity)',
+                           'cor_ea'              : 'Corrections to SolCAMM (electronic anharmonicity)',
+                           'pol_mea'             : 'Induction (mechanical anharmonicity)',
+                           'pol_ea'              : 'Induction (electronic anharmonicity)',
+                           'rep_mea'             : 'Exchange-Repulsion (mechanical anharmonicity)',
+                           'rep_ea'              : 'Exchange-Repulsion (electronic anharmonicity)',
+                           'dis_mea'             : 'Dispersion (anisotropic, mechanical anharmonicity)',
+                           'dis_ea'              : 'Dispersion (anisotropic, electronic anharmonicity)',
+                           'total'               : 'SolEFP (SolCAMM+Corrections, Induction, Exchange-Repulsion, anisotropic Dispersion)',
+                           'total_ele'           : 'SolCAMM+Corrections, Induction and anisotropic Dispersion (mechanical + electronic anharmonicity)',
+                           'total_mea'           : 'All mechanical anharmonicity terms',
+                           'total_ea'            : 'All electronic anharmonicity terms',
+                           'solcamm'             : 'SolCAMM (mechanical + electronic anharmonicity)',
+                           'total_cor'           : 'Corrections (mechanical + electronic anharmonicity)',
+                           'pol_add_mea'         : 'Induction under additive approximation (mechanical anharmonicity)',
+                           'pol_add_ea'          : 'Induction under additive approximation (electronic anharmonicity)',
+                           'dis_mea_iso'         : 'Dispersion (isotropic, mechanical anharmonicity)',
+                           'ele_tot'             : 'SolCAMM+Corrections (mechanical + electronic anharmonicity)',
+                           'pol_tot'             : 'Polarization (mechanical + electronic anharmonicity)',
+                           'rep_tot'             : 'Exchange-Repulsion (mechanical + electronic anharmonicity)',
+                           'dis_tot'             : 'Dispersion (anisotropic, mechanical + electronic anharmonicity)',
+                          'ele_env_mea'          : 'SolCAMM:DMA[non-EFP Environment]: mechanical anharmonicity ',
+                          'ele_env_ea'           : 'SolCAMM:DMA[non-EFP Environment]: electronic anharmonicity ', 
+                          'cor_env_mea'          : 'Corrections:DMA[non-EFP Environment]: mechanical anharmonicity ', 
+                          'cor_env_mea'          : 'Corrections:DMA[non-EFP Environment]: electronic anharmonicity ', 
+                          'tot_env'              : 'SolCAMM+Corrections:DMA[non-EFP Environment]: mechanical + electronic anharmonicity',
+                          'total+env'            : 'SolEFP + DMA[non-EFP Environment] (total+tot_env terms)', \
+                           }
+           for item in shift_terms.keys():
+               shift[item] = numpy.nan
+           self.shift_terms = shift_terms
+           return shift
+
+        elif key == 'eint':
+           eint = dict()
+           #               Term abbreviation     :   Explanation
+           eint_terms = { \
+                           'ele'                 : 'Electrostatic Interaction Energy (CAMM)',
+                           'rep'                 : 'Exchange-Repulsion Interaction Energy (EFP2)',
+                           'pol'                 : 'Polarization Interaction Energy (LMO-DPOL-CPHF)',
+                           'dis'                 : 'Dispersion Interaction Energy (LMO-DPOL-CPHF)',
+                           'total_hf'            : 'Total Interaction Energy with Dispersion (EFP2 with CAMM)',
+                           'total'               : 'Total Interaction Energy without Dispersion (EFP2 with CAMM)',
+                           }
+           for item in eint_terms.keys():
+               eint[item] = numpy.nan
+           self.eint_terms = eint_terms
+           return eint
+
+        else: raise TypeError, "Wrong dictionary type chosen!"
  
     def _update(self,pos):
         """update the neighbour/in-sphere lists based on actual <pos> coordinate array"""
@@ -883,18 +903,109 @@ Now, only for exchange-repulsion layer"""
         return
     
     def _eval_mode_global(self, lwrite, num, step, theory):
-        merror = ' Global mode is not implemented yet!'
-        raise NotImplementedError, merror
+        if self.__eval_disp:
+           merror = ' Global mode is not implemented yet for Dispersion Interaction Energies!'
+           raise NotImplementedError, merror
+
+        # initialize interaction energies
+        e_coul  = 0.0
+        e_exrep = 0.0
+        e_pol   = 0.0
+        e_disp  = 0.0
+
+        PAR = list(); QO = list()
 
         # compute exchange-repulsion energy
-        for parA in PAR:
-            for parB in PAR:
-                e_exrep += self._pair_rep(parA,parB)
+        #for parA in PAR:
+        #    for parB in PAR:
+        #        e_exrep += self._pair_rep(parA,parB)
 
+        # loop over the molecules
+        rms_max = 0.0 
+        rms_ave = 0.0
+        nmols = len(self.__nmol)
+        if lwrite: print " ELECT LAYER: %10d molecules" % nmols
+        for i in xrange(nmols):
+            im = self.__ind[i]
+            nm_prev = sum(self.__nmol[:i])
+            nm_curr = sum(self.__nmol[:i+1])
+            STR = self._reorder_xyz( self.__rcoordc[nm_prev:nm_curr]    , self.__reordlist[im] )  # reorder to BSM-FRG atom order
+            if num: STR = numpy.dot(STR+transl_inv, rot_inv)
+            frg = self.__bsm[im].copy()
+            rms = frg.sup( STR , suplist= self.__suplist[im] ); rms_ave += rms
+            if lwrite: print " %s" % frg.get()['name']
+            if lwrite: print " rms C: ",rms
+            if lwrite:
+               xx = frg.xyz(units='angs'); print xx
+            if lwrite>1: self.__debug.write(xx)
+            if rms > rms_max: rms_max = rms
+            PAR.append(frg.get())
+            QO .append(frg.get_traceless())
+            self.__rms_solvent_max = rms_max
+        self.__rms_ave = rms_ave / numpy.float64(nmols) 
+
+        if self.__eval_elect:
+           ndma = [ x['ndma'] for x in PAR ]                                                  
+           ndmas= sum(ndma)
+           rdma = numpy.concatenate  ([ x['rdma'] for x in PAR ]).reshape(ndmas*3)
+           chg  = numpy.concatenate  ([ x['dmac'] for x in PAR ]).reshape(ndmas)
+           dip  = numpy.concatenate  ([ x['dmad'] for x in PAR ]).reshape(ndmas*3)
+           qad  = numpy.concatenate  ([ QO[x][0]  for x in range(nmols)]).reshape(ndmas*6)
+           oct  = numpy.concatenate  ([ QO[x][1]  for x in range(nmols)]).reshape(ndmas*10)
+                                                                                              
+           e_coul = libbbg.qm.clemtp.edmtpa(rdma,chg,dip,qad,oct,ndma,lwrite)
+
+           if self.__eval_pol:
+              npol = [ x['npol'] for x in PAR ]
+              npols= sum(npol)
+              rpol = numpy.concatenate  ([ x['rpol'] for x in PAR ]).reshape(npols*3)
+              pol  = numpy.concatenate  ([ x['dpol'] for x in PAR ])#.reshape(npols*9)
+              polinv = numpy.concatenate([ numpy.linalg.inv(x) for x in pol ]).reshape(npols*9)
+              DIM  = npols*3
+              flds   = numpy.zeros(DIM, numpy.float64)
+              dipind = numpy.zeros(DIM, numpy.float64)
+              dmat   = numpy.zeros((DIM,DIM), numpy.float64)
+
+              e_pol = solvshift.solpol2.solpol(rdma,chg,dip,qad,oct,rpol,polinv,dmat,flds,dipind,ndma,npol,lwrite)
+
+              if self.__eval_disp:
+                 pass
+
+
+        # sum-up all terms
+        e_tot_hf = e_coul + e_exrep + e_pol
+        e_tot    = e_tot_hf + e_disp
+
+        s_unit = '[A.U.]'
         if self.__cunit:
+           e_coul  *= self.HartreeToKcalPerMole
            e_exrep *= self.HartreeToKcalPerMole
+           e_pol   *= self.HartreeToKcalPerMole
+           e_disp  *= self.HartreeToKcalPerMole
+           e_tot_hf*= self.HartreeToKcalPerMole
+           e_tot   *= self.HartreeToKcalPerMole
+           s_unit   = '[kcal/Mole]'
 
-        self.__energy_exrep = e_exrep
+        # update interaction energy dictionary
+        self.__eint['ele'      ] = e_coul
+        self.__eint['rep'      ] = e_exrep
+        self.__eint['pol'      ] = e_pol
+        self.__eint['dis'      ] = e_disp
+        self.__eint['total_hf' ] = e_tot_hf
+        self.__eint['total'    ] = e_tot
+
+        # final printout
+        if lwrite:
+           print " EFP2 Interaction Energies %s" % s_unit
+           print " =============================================== "
+           print " Electrostatic      Int. Energy    : %10.2f" % e_coul
+           print " Exchange-repulsion Int. Energy    : %10.2f" % e_exrep
+           print " Polarization       Int. Energy    : %10.2f" % e_pol
+           print " Dispersion         Int. Energy    : %10.2f" % e_disp
+           print " ----------------------------------------------- "
+           print " Total Int. Energy                 : %10.2f" % e_tot
+           print " Total Int. Energy (HF)            : %10.2f" % e_tot_hf
+
         return
    
     def _eval_mode_central(self, lwrite, num, step, theory, remove_clashes, rcl_algorithm, include_ions, include_polar, dxyz=None):
