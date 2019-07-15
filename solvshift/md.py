@@ -430,7 +430,7 @@ def md_shifts_pp(frame,frame_idx,
             #if numpy.abs(s[3])>0.: wdma_l[mol].write('solvent-%d.xyz'%(mol+1),'xyz' )
             #if numpy.abs(s[3])>3.: print wdma_l[mol]
             shift_w+=s
-    #print "DUPCIA",water_no,ion_no,prot_no,slt_no
+    #print "TEST",water_no,ion_no,prot_no,slt_no
     shift = shift_e + shift_i + shift_w
     ### update the report
     if not camm: 

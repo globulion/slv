@@ -5,7 +5,9 @@
 """
 autor wzorował się skryptem 
             ff.py 
-Roberta W. Góry (dodaj źródła)
+Roberta W. Góry
+
+https://gitlab.com/rgora/ff.py
 """
 
 #from numpy  import numpy.array, float64, numpy.zeros
@@ -193,7 +195,7 @@ Finite Field computations
        #f_inp_frag+= (self.displacements[i] )
        s_inp_frag = numpy.array([ map( str  , x ) for x in f_inp_frag ])
        inp_frag = inp_frag.tolist()
-       kupa = inp_frag[:]
+       inp_frag_dat = inp_frag[:]
        for j in range(nFrags):
            inp_frag[j] = "POINT %16.10f %16.10f %16.10f %9s\n"\
               % ( f_inp_frag[j][0], f_inp_frag[j][1], f_inp_frag[j][2], 
@@ -243,10 +245,10 @@ Finite Field computations
            #KKKK  = f_inp.copy()###################
            #KKKK*= libbbg.units.UNITS.AngstromToBohr################
            #for j in range(self.nAtoms):#################
-           #    dupa[j] = "POINT %16.10f %16.10f %16.10f %9s\n"\
+           #    inp_string[j] = "POINT %16.10f %16.10f %16.10f %9s\n"\
            #       % ( KKKK[j][0], KKKK[j][1], KKKK[j][2], 
            #            data[j][0] )################
-           #KKKKKKKK=''.join(dupa)################
+           #KKKKKKKK=''.join(inp_string)################
            #KKKKKKKK= KKKKKKKK[:-1] # without blank line!############
            # WRITE REFERENCE FRAGMENT FILE FOR SLV PACKAGE ROUTINES##############
            #slv_str_file = open('slv.str','w')#############
@@ -257,9 +259,9 @@ Finite Field computations
            #################################zdbgiSGfeosahgeasgaweg
            s_inp_frag = numpy.array([ map( str  , x ) for x in f_inp_frag ])
            for j in range(nFrags):
-               kupa[j] = "%-3s %16.10f %16.10f %16.10f\n"\
+               inp_frag_dat[j] = "%-3s %16.10f %16.10f %16.10f\n"\
                   % ( data_frag[j][0] , FFFF[j][0], FFFF[j][1], FFFF[j][2], )
-           BULA=''.join(kupa)
+           BULA=''.join(inp_frag_dat)
            BULA= BULA[:-1] # without blank line!  
                   
            f_inp_frag*= libbbg.units.UNITS.AngstromToBohr
@@ -326,7 +328,7 @@ Finite Field computations
        #f_inp_frag+= (self.displacements[i] )
        s_inp_frag = numpy.array([ map( str  , x ) for x in f_inp_frag ])
        inp_frag = inp_frag.tolist()
-       kupa = inp_frag[:]
+       inp_frag_dat = inp_frag[:]
        for j in range(nFrags):
            inp_frag[j] = "POINT %16.10f %16.10f %16.10f %9s\n"\
               % ( f_inp_frag[j][0], f_inp_frag[j][1], f_inp_frag[j][2], 
@@ -341,9 +343,9 @@ Finite Field computations
        #################################zdbgiSGfeosahgeasgaweg
        s_inp_frag = numpy.array([ map( str  , x ) for x in f_inp_frag ])
        for j in range(nFrags):
-           kupa[j] = "%-3s %16.10f %16.10f %16.10f\n"\
+           inp_frag_dat[j] = "%-3s %16.10f %16.10f %16.10f\n"\
               % ( data_frag[j][0] , FFFF[j][0], FFFF[j][1], FFFF[j][2], )
-       BULA=''.join(kupa)
+       BULA=''.join(inp_frag_dat)
        BULA= BULA[:-1] # without blank line!  
        
        
@@ -354,8 +356,8 @@ Finite Field computations
 
        # zero displacement file
        inp = numpy.array(data[:])
-       dupa = inp[:]
-       dupa = dupa.tolist()       
+       inp_string = inp[:]
+       inp_string = inp_string.tolist()       
        ### atom's list 
        self.atoms = inp
        #print inp
@@ -366,10 +368,10 @@ Finite Field computations
        KKKK  = f_inp.copy()###################
        KKKK*= libbbg.units.UNITS.AngstromToBohr################
        for j in range(self.nAtoms):#################
-           dupa[j] = "POINT %16.10f %16.10f %16.10f %9s\n"\
+           inp_string[j] = "POINT %16.10f %16.10f %16.10f %9s\n"\
               % ( KKKK[j][0], KKKK[j][1], KKKK[j][2], 
                    data[j][0] )################
-       KKKKKKKK=''.join(dupa)################
+       KKKKKKKK=''.join(inp_string)################
        KKKKKKKK= KKKKKKKK[:-1] # without blank line!############
        # WRITE REFERENCE FRAGMENT FILE FOR SLV PACKAGE ROUTINES##############
        slv_str_file = open('slv.str','w')#############

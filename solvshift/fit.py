@@ -120,7 +120,7 @@ Usage:
         self.__par = dot(linalg.inv(B), VV )[:-1]
         
         #if self.__unique_idx is not None:
-        #   print "DUPA"
+        #   print "TEST"
         #   self.__par = self._explicit_params(self.__par,self.__unique_idx)
         #print self.__par.shape
         #print self.__phi_start.shape

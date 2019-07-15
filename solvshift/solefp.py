@@ -2031,7 +2031,7 @@ Notes:
         #print "XA1B %.2f" % (t2-t1)
         #print "VXLN %.2f" % (t3-t2)
         #print "TOTL %.2f" % (t3-t0)
-        #print "DUPA %.2f" % (t4-t3)
+        #print "TTTT %.2f" % (t4-t3)
         # calculate the properties!
         shftma,shftea = solvshift.shftce.shftce(redmss,freq,gijj,eiglvc,
                                       rna,rnb,ria,rib,ria1,                      
