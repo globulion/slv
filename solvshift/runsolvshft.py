@@ -806,7 +806,7 @@ def Main(argv):
                       hess = f.eval_hessian(mol,ua_list,theory=0)
                    else: hess = f.eval_hessian(mol,theory=-1)
                    #print hess.diag().round()
-                   #print PUPA(hess.get())
+                   #print PRINTHELPER(hess.get())
                    print typ
                    print hess
                    ### plot hessians

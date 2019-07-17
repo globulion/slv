@@ -70,7 +70,7 @@
 """
 from sys import argv, exit, stdout
 from libbbg.utilities import Read_xyz_file, MakeMol, ParseDMA, \
-                      PUPA, text_to_list
+                      text_to_list
 from libbbg.units import UNITS as u
 from time import time
 from solvshift.solefp import EFP

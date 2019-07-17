@@ -62,3 +62,5 @@ References
 [9] [M. Maj, C. Ahn, B. Błasiak, K. Kwak, H. Han and M. Cho, *J. Phys. Chem. B* **2016** 120, 10167-10180](http://pubs.acs.org/doi/abs/10.1021/acs.jpcb.6b04319)
 
 [10] [B. Błasiak, C. H. Londergan, L. J. Webb and M. Cho, *Acc. Chem. Res.* **2017** 50, 968-976](http://pubs.acs.org/doi/abs/10.1021/acs.accounts.7b00002)
+
+[11] [R. J. Xu, B. Błasiak, M. Cho, J. P. Layfield, C. H. Londergan, *J. Chem. Phys. Lett.* **2018** 9, 2560-2567](https://pubs.acs.org/doi/abs/10.1021/acs.jpclett.8b00969)
