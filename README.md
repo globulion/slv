@@ -7,15 +7,16 @@ Description
 -----------
 
 The Solvshift (SLV) project is designed to develop a tool that enables performing fast and accurate 
-computations of the interaction-induced vibrational property fluctuations of a chosen solute's vibrational degree of freedom.  
+computations of the interaction-induced vibrational property fluctuations of a chosen solute's vibrational degree of freedom.
 At present, the available code allows for the vibrational frequency shift predictions
 relative to the gas-phase state, in which IR active spectator is isolated from other substances.
 Discrete solvatochromic models [1-5] and its extended versions [6-9] are currently developed.
 In particular, Solvshift implements:
 ******
-  * Solvatochromic Effective Fragment Potentials (SolEFP)[6-8]
-  * SolEFP coupled with molecular dynamics hybrid method [7,8,10]
-  * EFP2/SolEFP biomolecular fragmentation scheme [8]
+  * Weak-Coupling Vibrational Solvatochromism Model for Spatially-Localized Oscillators [1-4]
+  * Solvatochromic Effective Fragment Potential Method (SolEFP)[6-8]
+  * SolEFP coupled with molecular dynamics hybrid method [7,8,10,11]
+  * EFP2/SolEFP Biomolecular Fragmentation Scheme [8,11]
   * Solvatochromic Shifts from Supermolecular Energy Decomposition Scheme (SolEDS) [6-9]
   * Discrete electrostatic, multipole-based solvatochromic models.
     Available are SolCAMM [5,8,9] models, their arbitrary contractions and SolMMM [5,8,9] models.
