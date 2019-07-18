@@ -22,9 +22,9 @@ is enclosed here:
 | `MDAnalysis`      | [Molecular Dynamics Analysis Tools]    | 0.8.1               | **_Required_** |
 | `scitools`        | [Scientific Tools]                     | 0.8                 | **_Required_** |
 | `PyQuante`        | [PyQuante Modified]                    | 1.0.3-BBG           | **_Required_** |
-| `libbbg`          | [Quantum Chemistry Libraries package]  | at least 1.0.4      | **_Required_** |
-| `coulomb`         | [Coulomb package]                      | at least 1.0.8      | **_Required_** |
-| `solvshift`       | [Solvshift package]                    | at least 1.0.2      | **_Required_** |
+| `libbbg`          | [Quantum Chemistry Libraries package]  | at least 1.1.0      | **_Required_** |
+| `coulomb`         | [Coulomb package]                      | at least 1.1.0      | **_Required_** |
+| `solvshift`       | [Solvshift package]                    | at least 2.0.0      | **_Required_** |
                                                                                                           
 Please follow the order of installation according to the Table 1. Particular caution has to be kept 
 when installing a correct version of the packages. As for now, the versions listed 
