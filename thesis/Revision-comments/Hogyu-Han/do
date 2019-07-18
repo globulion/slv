@@ -1,9 +1,0 @@
-#!/bin/bash
-latex   $1.tex
-dvipdf  $1.dvi
-
-#notangle -RMain slv-manual.nw > slv-manual.py
-#noweave  -index -latex -delay slv-manual.nw > slv-manual.tex
-#latex slv-manual.tex
-#dvipdf slv-manual.dvi
-#chmod u+x slv-manual.py
